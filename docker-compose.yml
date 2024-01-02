@@ -19,7 +19,7 @@ services:
     restart: unless-stopped
     user: '0'
     ports:
-      - '3000:4242'
+      - '3000:3000'
     volumes:
       - ./.pv_grafana:/var/lib/grafana
 
@@ -46,8 +46,8 @@ services:
     ports:
       - 80:80
     volumes:
-      - ./global.cfg:/bin/global.cfg
-      - ./web/html:/bin/html
+      - ./global.cfg:/app/global.cfg
+      - ./web/html:/app/html
 
 networks:
   rupl_net:
