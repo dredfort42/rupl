@@ -1,0 +1,54 @@
+---
+version: '3.1'
+
+services:
+
+  # System monitoring
+  prometheus:
+    image: bitnami/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ./.pv_prometheus:/opt/bitnami/prometheus/data
+      - ./monitoring/prometheus.yml:/opt/bitnami/prometheus/conf/prometheus.yml
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    restart: unless-stopped
+    user: '0'
+    ports:
+      - '3000:4242'
+    volumes:
+      - ./.pv_grafana:/var/lib/grafana
+
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node_exporter
+    restart: unless-stopped
+    network_mode: host
+    pid: host
+    command:
+      - '--path.rootfs=/host'
+    volumes:
+      - '/:/host:ro,rslave'
+
+  # Project services
+  ## Web interface
+  web:
+    build: ./web
+    hostname: web
+    container_name: web
+    restart: always
+    networks:
+      - rupl_net
+    ports:
+      - 80:80
+    volumes:
+      - ./global.cfg:/bin/global.cfg
+      - ./web/html:/bin/html
+
+networks:
+  rupl_net:
+    driver: bridge
