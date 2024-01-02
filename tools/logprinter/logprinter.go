@@ -24,7 +24,7 @@ func PrintSuccess(msg string, info string) {
 // PrintWarning prints a warning message
 func PrintWarning(msg string, info string) {
 	if info == "" {
-		fmt.Printf("%sW] %s%s\n", YELLOW, msg, RESET)
+		fmt.Printf("%s[W] %s%s\n", YELLOW, msg, RESET)
 	} else {
 		fmt.Printf("%s[W] %s: %s%s\n", YELLOW, msg, info, RESET)
 	}
@@ -33,7 +33,7 @@ func PrintWarning(msg string, info string) {
 // PrintError prints an error message
 func PrintError(msg string, err error) {
 	if err == nil {
-		fmt.Printf("%sE] %s%s\n", RED, msg, RESET)
+		fmt.Printf("%s[E] %s%s\n", RED, msg, RESET)
 	} else {
 		fmt.Printf("%s[E] %s: %s%s\n", RED, msg, err.Error(), RESET)
 	}
