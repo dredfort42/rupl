@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/dredfort42/rupl/tools/configreader"
-	"github.com/dredfort42/rupl/tools/logprinter"
+	"github.com/dredfort42/tools/configreader"
+	"github.com/dredfort42/tools/logprinter"
 )
 
 func readFile(path string) string {
@@ -35,6 +35,7 @@ func main() {
 
 	port := fmt.Sprintf(":%s", config["entrypoint.port"])
 	url := fmt.Sprintf("%s://%s%s", config["entrypoint.protocol"], config["entrypoint.address"], port)
-	fmt.Printf(logprinter.GREEN+"Open %s in your browser.\n"+logprinter.RESET, url)
+
+	logprinter.PrintSuccess("Entry point", url)
 	log.Fatal(http.ListenAndServe(port, nil))
 }
