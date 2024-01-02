@@ -6,18 +6,18 @@ import (
 	"os"
 	"strings"
 
-	"web/internal/colors"
+	log "github.com/dredfort42/rupl/tools/logprinter"
 )
 
 // ConfigMap is a map containing configuration properties.
 type ConfigMap map[string]string
 
 // ReadConfig reads a configuration file to a ConfigMap and returns an error if it fails.
-func ReadConfig(path string, configMap *map[string]string) error {
+func ReadConfig(path string, config *ConfigMap) error {
 	file, err := os.Open(path)
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, colors.RED+"Failed to open file: %s\n"+colors.RESET, err)
+		log.PrintError("Failed to open file", err)
 		return err
 	}
 	defer file.Close()
@@ -31,7 +31,7 @@ func ReadConfig(path string, configMap *map[string]string) error {
 			if found {
 				parameter := strings.TrimSpace(before)
 				value := strings.TrimSpace(after)
-				(*configMap)[parameter] = value
+				(*config)[parameter] = value
 			}
 		}
 	}
@@ -40,38 +40,39 @@ func ReadConfig(path string, configMap *map[string]string) error {
 		return err
 	}
 
-	fmt.Printf(colors.GREEN+"Successfully read configuration from file: %s\n"+colors.RESET, path)
+	log.PrintSuccess("Successfully read configuration from file", path)
 
 	return nil
 }
 
-// Get configuration from main and extra .config files and returns a ConfigMap and an error if it fails.
+// Get configuration from global and local .cfg files and returns a ConfigMap and an error if it fails.
 func GetConfig() (ConfigMap, error) {
 	success := false
-	configMap := make(map[string]string)
+	config := make(ConfigMap)
 
-	// Read main config file
-	if err := ReadConfig("/app/config/service.cfg", &configMap); err == nil {
+	// Read global config file
+	if err := ReadConfig("./global.cfg", &config); err == nil {
 		success = true
 	}
 
-	// Read extra config file
-	if err := ReadConfig("/app/local.cfg", &configMap); err == nil {
+	// Read local config file
+	if err := ReadConfig("/local.cfg", &config); err == nil {
 		success = true
 	}
 
 	if !success {
-		fmt.Println(colors.RED + "Failed to read configuration" + colors.RESET)
+		log.PrintError("Failed to read configuration", nil)
 		return nil, fmt.Errorf("Failed to read configuration")
 	} else {
-		fmt.Println(colors.GREEN + "Configuration read successfully!" + colors.RESET)
-		return configMap, nil
+		log.PrintSuccess("Successfully read configuration", "")
+		return config, nil
 	}
 }
 
 // PrintConfig prints a ConfigMap to stdout.
-func PrintConfig(configMap ConfigMap) {
-	for key, value := range configMap {
-		fmt.Printf("%s: %s\n", key, value)
+func PrintConfig(config ConfigMap) {
+	log.PrintSuccess("Configuration", "")
+	for key, value := range config {
+		log.PrintSuccess(key, value)
 	}
 }
