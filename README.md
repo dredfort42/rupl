@@ -1,2 +1,2 @@
-# rupl
+# rupl.org
 Your personal running coach
