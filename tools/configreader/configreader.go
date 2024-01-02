@@ -56,7 +56,7 @@ func GetConfig() (ConfigMap, error) {
 	}
 
 	// Read local config file
-	if err := ReadConfig("/local.cfg", &config); err == nil {
+	if err := ReadConfig("./local.cfg", &config); err == nil {
 		success = true
 	}
 
