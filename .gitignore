@@ -52,3 +52,8 @@ fastlane/screenshots/**/*.png
 fastlane/test_output
 ## Code Injection
 iOSInjectionProject/
+## Swift Package Manager
+Packages/
+Package.pins
+Package.resolved
+*.xcodeproj/

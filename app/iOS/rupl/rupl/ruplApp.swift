@@ -9,6 +9,7 @@ import SwiftUI
 
 @main
 struct ruplApp: App {
+	
     var body: some Scene {
         WindowGroup {
             ContentView()
