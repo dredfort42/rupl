@@ -20,7 +20,13 @@ func readFile(path string) string {
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, readFile("./html/index.html"))
+	fmt.Println(r.URL.Path)
+	fmt.Println(r.URL.Path[1:])
+	if r.URL.Path[1:] == "" {
+		fmt.Fprintln(w, readFile("./html/index.html"))
+	} else {
+		fmt.Fprintln(w, readFile("./html"+r.URL.Path))
+	}
 }
 
 func main() {
