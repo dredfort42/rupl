@@ -12,6 +12,8 @@ import HealthKit
 
 @MainActor
 class WorkoutManager: NSObject, ObservableObject {
+	//	Errors counter for mirroring with remote device
+	var mirroringErrorsCounter: UInt8 = 0
 
 	struct SessionSateChange {
 		let newState: HKWorkoutSessionState
@@ -22,10 +24,15 @@ class WorkoutManager: NSObject, ObservableObject {
 	@Published var sessionState: HKWorkoutSessionState = .notStarted
 	@Published var heartRate: Double = 0
 	@Published var activeEnergy: Double = 0
-	@Published var speed: Double = 0
-	@Published var power: Double = 0
-	@Published var cadence: Double = 0
 	@Published var distance: Double = 0
+	@Published var power: Double = 0
+	@Published var speed: Double = 0
+	@Published var strideLength: Double = 0
+	@Published var verticalOscillation: Double = 0
+	@Published var groundContactTime: Double = 0
+	@Published var vo2Max: Double = 0
+	@Published var stepCount: Double = 0
+	@Published var cadence: Double = 0
 	@Published var water: Double = 0
 	@Published var elapsedTimeInterval: TimeInterval = 0
 
@@ -39,18 +46,17 @@ class WorkoutManager: NSObject, ObservableObject {
 
 	//	HealthKit data types to read
 	let typesToRead: Set = [
-		HKQuantityType(.heartRate),
-		HKQuantityType(.activeEnergyBurned),
-		HKQuantityType(.distanceWalkingRunning),
-		HKQuantityType(.runningPower),
-		HKQuantityType(.runningSpeed),
-		HKQuantityType(.runningStrideLength),
-		HKQuantityType(.runningVerticalOscillation),
-		HKQuantityType(.runningGroundContactTime),
-		HKQuantityType(.vo2Max),
-		HKQuantityType(.stepCount),
-		HKQuantityType(.oxygenSaturation),
-		HKQuantityType(.dietaryWater),
+		HKQuantityType(.heartRate), // count/s, Discrete (Temporally Weighted)
+		HKQuantityType(.activeEnergyBurned), // kcal, Cumulative
+		HKQuantityType(.distanceWalkingRunning), // m, Cumulative
+		HKQuantityType(.runningPower), // W, Discrete (Arithmetic)
+		HKQuantityType(.runningSpeed), // m/s, Discrete (Arithmetic)
+		HKQuantityType(.runningStrideLength), // m, Discrete (Arithmetic)
+		HKQuantityType(.runningVerticalOscillation), // cm, Discrete (Arithmetic)
+		HKQuantityType(.runningGroundContactTime), // ms, Discrete (Arithmetic)
+		HKQuantityType(.vo2Max), // ml/(kg*min), Discrete (Arithmetic)
+		HKQuantityType(.stepCount), // count, Cumulative
+		HKQuantityType(.dietaryWater), // mL, Cumulative
 		HKQuantityType.workoutType(),
 		HKObjectType.activitySummaryType()
 	]
@@ -123,21 +129,30 @@ extension WorkoutManager {
 		#endif
 		workout = nil
 		session = nil
-		activeEnergy = 0
-		heartRate = 0
-		distance = 0
-		water = 0
-		power = 0
-		cadence = 0
-		speed = 0
 		sessionState = .notStarted
+		heartRate = 0
+		activeEnergy = 0
+		distance = 0
+		power = 0
+		speed = 0
+		strideLength = 0
+		verticalOscillation = 0
+		groundContactTime = 0
+		vo2Max = 0
+		stepCount = 0
+		cadence = 0
+		water = 0
+		elapsedTimeInterval = 0
 	}
 
 	func sendData(_ data: Data) async {
-		do {
-			try await session?.sendToRemoteWorkoutSession(data: data)
-		} catch {
-			Logger.shared.log("Failed to send data: \(error)")
+		if mirroringErrorsCounter < 100 {
+			do {
+				try await session?.sendToRemoteWorkoutSession(data: data)
+			} catch {
+				mirroringErrorsCounter += 1
+				Logger.shared.log("[\(self.mirroringErrorsCounter)] Failed to send data: \(error)")
+			}
 		}
 	}
 }
@@ -145,23 +160,55 @@ extension WorkoutManager {
 // MARK: - Workout statistics
 //
 extension WorkoutManager {
+
+	// Convert speed from meters per second to minutes per kilometer
+	func convertToMinutesPerKilometer(speedMetersPerSecond: Double) -> Double {
+		return 1 / (speedMetersPerSecond * (60 / 1000))
+	}
+
 	func updateForStatistics(_ statistics: HKStatistics) {
 		switch statistics.quantityType {
-		case HKQuantityType.quantityType(forIdentifier: .heartRate):
-			let heartRateUnit = HKUnit.count().unitDivided(by: .minute())
-			heartRate = statistics.mostRecentQuantity()?.doubleValue(for: heartRateUnit) ?? 0
+			case HKQuantityType.quantityType(forIdentifier: .heartRate):
+				let heartRateUnit = HKUnit.count().unitDivided(by: .minute())
+				heartRate = statistics.mostRecentQuantity()?.doubleValue(for: heartRateUnit) ?? 0
 
-		case HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned):
-			let energyUnit = HKUnit.kilocalorie()
-			activeEnergy = statistics.sumQuantity()?.doubleValue(for: energyUnit) ?? 0
+			case HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned):
+				let energyUnit = HKUnit.kilocalorie()
+				activeEnergy = statistics.sumQuantity()?.doubleValue(for: energyUnit) ?? 0
 
-		case HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning),
-			HKQuantityType.quantityType(forIdentifier: .distanceCycling):
-			let meterUnit = HKUnit.meter()
-			distance = statistics.sumQuantity()?.doubleValue(for: meterUnit) ?? 0
+			case HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning):
+				let distanceUnit = HKUnit.meter()
+				distance = statistics.sumQuantity()?.doubleValue(for: distanceUnit) ?? 0
 
-		default:
-			return
+			case HKQuantityType.quantityType(forIdentifier: .runningPower):
+				let powerUnit = HKUnit.watt()
+				power = statistics.mostRecentQuantity()?.doubleValue(for: powerUnit) ?? 0
+
+			case HKQuantityType.quantityType(forIdentifier: .runningSpeed):
+				let speedUnit = HKUnit.meter().unitDivided(by: HKUnit.second())
+				speed = convertToMinutesPerKilometer(speedMetersPerSecond: statistics.mostRecentQuantity()?.doubleValue(for: speedUnit) ?? 0)
+
+			case HKQuantityType.quantityType(forIdentifier: .runningStrideLength):
+				let lengthUnit = HKUnit.meter()
+				strideLength = statistics.averageQuantity()?.doubleValue(for: lengthUnit) ?? 0
+
+			case HKQuantityType.quantityType(forIdentifier: .runningVerticalOscillation):
+				let verticalOscillationhUnit = HKUnit.meter()
+				verticalOscillation = statistics.sumQuantity()?.doubleValue(for: verticalOscillationhUnit) ?? 0
+
+			case HKQuantityType.quantityType(forIdentifier: .runningGroundContactTime):
+				let contactTimeUnit = HKUnit.secondUnit(with: .milli)
+				groundContactTime = statistics.averageQuantity()?.doubleValue(for: contactTimeUnit) ?? 0
+
+			case HKQuantityType.quantityType(forIdentifier: .vo2Max):
+				let vo2MaxUnit = HKUnit.literUnit(with: .milli).unitDivided(by: HKUnit.gramUnit(with: .kilo).unitDivided(by: HKUnit.minute()))
+				vo2Max = statistics.averageQuantity()?.doubleValue(for: vo2MaxUnit) ?? 0
+
+			case HKQuantityType.quantityType(forIdentifier: .stepCount):
+				stepCount = statistics.mostRecentQuantity()?.doubleValue(for: HKUnit.count()) ?? 0
+
+			default:
+				return
 		}
 	}
 }

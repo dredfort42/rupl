@@ -32,6 +32,12 @@
 		AF5ACB232B4732ED0010C316 /* ControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF5ACB222B4732ED0010C316 /* ControlsView.swift */; };
 		AF5ACB252B4733270010C316 /* MetricsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF5ACB242B4733270010C316 /* MetricsView.swift */; };
 		AF5ACB272B4733510010C316 /* SummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF5ACB262B4733510010C316 /* SummaryView.swift */; };
+		AFA675552B48432A00AD5A69 /* ButtonLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA675542B48432A00AD5A69 /* ButtonLabel.swift */; };
+		AFA675562B48432A00AD5A69 /* ButtonLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA675542B48432A00AD5A69 /* ButtonLabel.swift */; };
+		AFA675582B4848B700AD5A69 /* MetricsTimelineSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA675572B4848B600AD5A69 /* MetricsTimelineSchedule.swift */; };
+		AFA675592B4848B700AD5A69 /* MetricsTimelineSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA675572B4848B600AD5A69 /* MetricsTimelineSchedule.swift */; };
+		AFA6755B2B48494C00AD5A69 /* ElapsedTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA6755A2B48494C00AD5A69 /* ElapsedTimeView.swift */; };
+		AFA6755C2B48494C00AD5A69 /* ElapsedTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA6755A2B48494C00AD5A69 /* ElapsedTimeView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -118,6 +124,9 @@
 		AF5ACB282B4734560010C316 /* rupl-Watch-App-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "rupl-Watch-App-Info.plist"; sourceTree = SOURCE_ROOT; };
 		AF5ACB292B4734790010C316 /* rupl Watch App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "rupl Watch App.entitlements"; sourceTree = "<group>"; };
 		AF5ACB2A2B4736030010C316 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		AFA675542B48432A00AD5A69 /* ButtonLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonLabel.swift; sourceTree = "<group>"; };
+		AFA675572B4848B600AD5A69 /* MetricsTimelineSchedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricsTimelineSchedule.swift; sourceTree = "<group>"; };
+		AFA6755A2B48494C00AD5A69 /* ElapsedTimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElapsedTimeView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -199,6 +208,7 @@
 				AF5ACB2A2B4736030010C316 /* Info.plist */,
 				AF5ACAB62B46D0710010C316 /* ruplApp.swift */,
 				AF5ACAB82B46D0710010C316 /* ContentView.swift */,
+				AF5ACB202B472FAA0010C316 /* WorkoutManager+iOS.swift */,
 				AF5ACABA2B46D07A0010C316 /* Assets.xcassets */,
 				AF5ACABC2B46D07A0010C316 /* Preview Content */,
 			);
@@ -241,6 +251,7 @@
 				AF5ACB222B4732ED0010C316 /* ControlsView.swift */,
 				AF5ACB242B4733270010C316 /* MetricsView.swift */,
 				AF5ACB262B4733510010C316 /* SummaryView.swift */,
+				AF5ACB1A2B4712550010C316 /* WorkoutManager+watchOS.swift */,
 				AF5ACAE22B46D07D0010C316 /* Assets.xcassets */,
 				AF5ACAE42B46D07D0010C316 /* Preview Content */,
 			);
@@ -275,10 +286,11 @@
 		AF5ACB162B4710580010C316 /* shared */ = {
 			isa = PBXGroup;
 			children = (
+				AFA675542B48432A00AD5A69 /* ButtonLabel.swift */,
 				AF5ACB1D2B4713FE0010C316 /* Logger.swift */,
 				AF5ACB172B47107F0010C316 /* WorkoutManager.swift */,
-				AF5ACB202B472FAA0010C316 /* WorkoutManager+iOS.swift */,
-				AF5ACB1A2B4712550010C316 /* WorkoutManager+watchOS.swift */,
+				AFA675572B4848B600AD5A69 /* MetricsTimelineSchedule.swift */,
+				AFA6755A2B48494C00AD5A69 /* ElapsedTimeView.swift */,
 			);
 			path = shared;
 			sourceTree = "<group>";
@@ -506,9 +518,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AFA6755B2B48494C00AD5A69 /* ElapsedTimeView.swift in Sources */,
+				AFA675552B48432A00AD5A69 /* ButtonLabel.swift in Sources */,
 				AF5ACB1E2B4713FE0010C316 /* Logger.swift in Sources */,
 				AF5ACAB92B46D0710010C316 /* ContentView.swift in Sources */,
 				AF5ACB212B472FAA0010C316 /* WorkoutManager+iOS.swift in Sources */,
+				AFA675582B4848B700AD5A69 /* MetricsTimelineSchedule.swift in Sources */,
 				AF5ACAB72B46D0710010C316 /* ruplApp.swift in Sources */,
 				AF5ACB182B47107F0010C316 /* WorkoutManager.swift in Sources */,
 			);
@@ -537,10 +552,13 @@
 			files = (
 				AF5ACB232B4732ED0010C316 /* ControlsView.swift in Sources */,
 				AF5ACAE12B46D07A0010C316 /* ContentView.swift in Sources */,
+				AFA675592B4848B700AD5A69 /* MetricsTimelineSchedule.swift in Sources */,
 				AF5ACB1F2B4713FE0010C316 /* Logger.swift in Sources */,
+				AFA6755C2B48494C00AD5A69 /* ElapsedTimeView.swift in Sources */,
 				AF5ACB1C2B4712550010C316 /* WorkoutManager+watchOS.swift in Sources */,
 				AF5ACB192B47107F0010C316 /* WorkoutManager.swift in Sources */,
 				AF5ACADF2B46D07A0010C316 /* RuplApp.swift in Sources */,
+				AFA675562B48432A00AD5A69 /* ButtonLabel.swift in Sources */,
 				AF5ACB252B4733270010C316 /* MetricsView.swift in Sources */,
 				AF5ACB132B470EF10010C316 /* AppDeligate.swift in Sources */,
 				AF5ACB272B4733510010C316 /* SummaryView.swift in Sources */,
