@@ -44,6 +44,8 @@ struct ControlsView: View {
 	}
 
 	private func startWorkout() {
+		workoutManager.startTime = Date()
+
 		Task {
 			do {
 				let configuration = HKWorkoutConfiguration()

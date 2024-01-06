@@ -18,12 +18,13 @@ struct MetricsView: View {
 			VStack(alignment: .leading) {
 				ElapsedTimeView(elapsedTime: elapsedTime(with: context.date), showSubseconds: context.cadence == .live)
 					.foregroundColor(.ruplYellow)
-					.font(.system(.headline, design: .rounded).monospacedDigit().lowercaseSmallCaps())
-				Text(convertToMinutesAndSeconds(seconds: workoutManager.speed*60) + " m/km")
+				Text(workoutManager.convertToMinutesPerKilometer(speedMetersPerSecond: workoutManager.last100SpeedAverage) + " /km")
 					.foregroundStyle(.ruplBlue)
-				Text((workoutManager.distance / 1000).formatted(.number.precision(.fractionLength(0))) + " km")
+				Text((workoutManager.distance / 1000).formatted(.number.precision(.fractionLength(2))) + " km")
+				Text((workoutManager.heartRate).formatted(.number.precision(.fractionLength(0))) + " bpm")
+					.foregroundStyle(.ruplRed)
 //				Text(workoutManager.power.formatted(.number.precision(.fractionLength(0))) + " w")
-				Text(workoutManager.cadence.formatted(.number.precision(.fractionLength(0))) + " rpm")
+//				Text(workoutManager.cadence.formatted(.number.precision(.fractionLength(0))) + " rpm")
 //				Text(workoutManager.water.formatted(.number.precision(.fractionLength(0))) + " oz")
 			}
 			.font(.system(.title, design: .rounded).monospacedDigit().lowercaseSmallCaps())
@@ -36,12 +37,5 @@ struct MetricsView: View {
 
 	func elapsedTime(with contextDate: Date) -> TimeInterval {
 		return workoutManager.builder?.elapsedTime(at: contextDate) ?? 0
-	}
-
-	func convertToMinutesAndSeconds(seconds: Double) -> String {
-		let minutes = Int(seconds/60)
-		let seconds = Int((seconds - Double(minutes)*60))
-
-		return seconds < 10 ? "\(minutes):0\(seconds)" : "\(minutes):\(seconds)"
 	}
 }

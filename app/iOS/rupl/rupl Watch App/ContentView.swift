@@ -38,7 +38,7 @@ struct ContentView: View {
 		}
 		.onAppear {
 			workoutManager.requestAuthorization()
-			selection = .metrics
+			selection = .controls
 		}
 		.sheet(isPresented: $isSheetActive) {
 			workoutManager.resetWorkout()

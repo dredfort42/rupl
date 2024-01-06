@@ -38,6 +38,7 @@
 		AFA675592B4848B700AD5A69 /* MetricsTimelineSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA675572B4848B600AD5A69 /* MetricsTimelineSchedule.swift */; };
 		AFA6755B2B48494C00AD5A69 /* ElapsedTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA6755A2B48494C00AD5A69 /* ElapsedTimeView.swift */; };
 		AFA6755C2B48494C00AD5A69 /* ElapsedTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA6755A2B48494C00AD5A69 /* ElapsedTimeView.swift */; };
+		AFA6755E2B49A50200AD5A69 /* ActivityRingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA6755D2B49A50200AD5A69 /* ActivityRingsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -127,6 +128,7 @@
 		AFA675542B48432A00AD5A69 /* ButtonLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonLabel.swift; sourceTree = "<group>"; };
 		AFA675572B4848B600AD5A69 /* MetricsTimelineSchedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricsTimelineSchedule.swift; sourceTree = "<group>"; };
 		AFA6755A2B48494C00AD5A69 /* ElapsedTimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElapsedTimeView.swift; sourceTree = "<group>"; };
+		AFA6755D2B49A50200AD5A69 /* ActivityRingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityRingsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -251,6 +253,7 @@
 				AF5ACB222B4732ED0010C316 /* ControlsView.swift */,
 				AF5ACB242B4733270010C316 /* MetricsView.swift */,
 				AF5ACB262B4733510010C316 /* SummaryView.swift */,
+				AFA6755D2B49A50200AD5A69 /* ActivityRingsView.swift */,
 				AF5ACB1A2B4712550010C316 /* WorkoutManager+watchOS.swift */,
 				AF5ACAE22B46D07D0010C316 /* Assets.xcassets */,
 				AF5ACAE42B46D07D0010C316 /* Preview Content */,
@@ -557,6 +560,7 @@
 				AFA6755C2B48494C00AD5A69 /* ElapsedTimeView.swift in Sources */,
 				AF5ACB1C2B4712550010C316 /* WorkoutManager+watchOS.swift in Sources */,
 				AF5ACB192B47107F0010C316 /* WorkoutManager.swift in Sources */,
+				AFA6755E2B49A50200AD5A69 /* ActivityRingsView.swift in Sources */,
 				AF5ACADF2B46D07A0010C316 /* RuplApp.swift in Sources */,
 				AFA675562B48432A00AD5A69 /* ButtonLabel.swift in Sources */,
 				AF5ACB252B4733270010C316 /* MetricsView.swift in Sources */,

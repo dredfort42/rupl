@@ -1,19 +1,18 @@
 //
-//  WorkoutManager.swift
-//  rupl
+//	 WorkoutManager.swift
+//	 rupl
 //
-//  Created by Dmitry Novikov on 04/01/2024.
-//  Copyright © 2024 dredfort.42. All rights reserved.
+//	 Created by Dmitry Novikov on 04/01/2024.
+//	 Copyright © 2024 dredfort.42. All rights reserved.
 //
 
 import Foundation
 import os
 import HealthKit
+import SwiftUI
 
 @MainActor
 class WorkoutManager: NSObject, ObservableObject {
-	//	Errors counter for mirroring with remote device
-	var mirroringErrorsCounter: UInt8 = 0
 
 	struct SessionSateChange {
 		let newState: HKWorkoutSessionState
@@ -46,23 +45,34 @@ class WorkoutManager: NSObject, ObservableObject {
 
 	//	HealthKit data types to read
 	let typesToRead: Set = [
-		HKQuantityType(.heartRate), // count/s, Discrete (Temporally Weighted)
-		HKQuantityType(.activeEnergyBurned), // kcal, Cumulative
-		HKQuantityType(.distanceWalkingRunning), // m, Cumulative
-		HKQuantityType(.runningPower), // W, Discrete (Arithmetic)
-		HKQuantityType(.runningSpeed), // m/s, Discrete (Arithmetic)
-		HKQuantityType(.runningStrideLength), // m, Discrete (Arithmetic)
-		HKQuantityType(.runningVerticalOscillation), // cm, Discrete (Arithmetic)
-		HKQuantityType(.runningGroundContactTime), // ms, Discrete (Arithmetic)
-		HKQuantityType(.vo2Max), // ml/(kg*min), Discrete (Arithmetic)
-		HKQuantityType(.stepCount), // count, Cumulative
-		HKQuantityType(.dietaryWater), // mL, Cumulative
+		HKQuantityType(.heartRate), //	count/s, Discrete (Temporally Weighted)
+		HKQuantityType(.activeEnergyBurned), //	kcal, Cumulative
+		HKQuantityType(.distanceWalkingRunning), //	m, Cumulative
+		HKQuantityType(.runningPower), //	W, Discrete (Arithmetic)
+		HKQuantityType(.runningSpeed), //	m/s, Discrete (Arithmetic)
+		HKQuantityType(.runningStrideLength), //	m, Discrete (Arithmetic)
+		HKQuantityType(.runningVerticalOscillation), //	cm, Discrete (Arithmetic)
+		HKQuantityType(.runningGroundContactTime), //	ms, Discrete (Arithmetic)
+		HKQuantityType(.vo2Max), //	ml/(kg*min), Discrete (Arithmetic)
+		HKQuantityType(.stepCount), //	count, Cumulative
+		HKQuantityType(.dietaryWater), //	mL, Cumulative
 		HKQuantityType.workoutType(),
 		HKObjectType.activitySummaryType()
 	]
 
 	let healthStore = HKHealthStore()
 	var session: HKWorkoutSession?
+
+	//	Errors counter for mirroring with remote device
+	var mirroringErrorsCounter: UInt8 = 0
+
+	var startTime: Date?
+	var stopTime: Date?
+
+	//	Array for store last 100 speed measurements to colculate average speed
+	var last100SpeedMeasurements: [Double] = []
+	var last100SpeedMeasurementsSum: Double = 0
+	var last100SpeedAverage: Double = 0
 
 	#if os(watchOS)
 		var builder: HKLiveWorkoutBuilder?
@@ -108,6 +118,7 @@ class WorkoutManager: NSObject, ObservableObject {
 
 			let finishedWorkout: HKWorkout?
 			do {
+				stopTime = Date()
 				try await builder.endCollection(at: change.date)
 				finishedWorkout = try await builder.finishWorkout()
 				session?.end()
@@ -120,7 +131,7 @@ class WorkoutManager: NSObject, ObservableObject {
 	}
 }
 
-// MARK: - Workout session management
+//	MARK: - Workout session management
 //
 extension WorkoutManager {
 	func resetWorkout() {
@@ -130,6 +141,9 @@ extension WorkoutManager {
 		workout = nil
 		session = nil
 		sessionState = .notStarted
+		last100SpeedMeasurements = []
+		last100SpeedMeasurementsSum = 0
+		last100SpeedAverage = 0
 		heartRate = 0
 		activeEnergy = 0
 		distance = 0
@@ -157,14 +171,58 @@ extension WorkoutManager {
 	}
 }
 
-// MARK: - Workout statistics
+//	MARK: - Workout measurements conversions
 //
 extension WorkoutManager {
 
-	// Convert speed from meters per second to minutes per kilometer
-	func convertToMinutesPerKilometer(speedMetersPerSecond: Double) -> Double {
-		return 1 / (speedMetersPerSecond * (60 / 1000))
+	//	Calculate average speed from last 100 measurements
+	func calculateLast100SpeedAverage(lastSpeedMeasurement: Double) {
+		if lastSpeedMeasurement == 0 {
+			return
+		}
+
+		if last100SpeedMeasurements.count > 100 {
+			last100SpeedMeasurementsSum -= last100SpeedMeasurements[0]
+			last100SpeedMeasurements.remove(at: 0)
+		}
+
+		last100SpeedMeasurementsSum += lastSpeedMeasurement
+		last100SpeedMeasurements.append(lastSpeedMeasurement)
+
+		last100SpeedAverage = last100SpeedMeasurementsSum / Double(last100SpeedMeasurements.count)
 	}
+
+	//	Convert speed from meters per second to minutes per kilometer
+	func convertToMinutesPerKilometer(speedMetersPerSecond: Double) -> String {
+		if speedMetersPerSecond == 0 {
+			return "00:00"
+		}
+
+		let secondsPerKilometer: Double = 1 / (speedMetersPerSecond * (1 / 1000))
+		
+		return formatDuration(seconds: secondsPerKilometer)
+	}
+
+	//	Format duration in seconds into HH:MM:SS
+	func formatDuration(seconds: TimeInterval) -> String {
+		let hours = Int(seconds / 3600)
+		let minutes = Int((seconds.truncatingRemainder(dividingBy: 3600)) / 60)
+		let seconds = Int(seconds.truncatingRemainder(dividingBy: 60))
+
+		var formattedString: String
+		if hours > 0 {
+			formattedString = String(format: "%02d:%02d:%02d", hours, minutes, seconds)
+		} else {
+			formattedString = String(format: "%02d:%02d", minutes, seconds)
+		}
+
+		return formattedString
+	}
+}
+
+//	MARK: - Workout statistics
+//
+extension WorkoutManager {
 
 	func updateForStatistics(_ statistics: HKStatistics) {
 		switch statistics.quantityType {
@@ -186,7 +244,8 @@ extension WorkoutManager {
 
 			case HKQuantityType.quantityType(forIdentifier: .runningSpeed):
 				let speedUnit = HKUnit.meter().unitDivided(by: HKUnit.second())
-				speed = convertToMinutesPerKilometer(speedMetersPerSecond: statistics.mostRecentQuantity()?.doubleValue(for: speedUnit) ?? 0)
+				speed = statistics.mostRecentQuantity()?.doubleValue(for: speedUnit) ?? 0
+				calculateLast100SpeedAverage(lastSpeedMeasurement: speed)
 
 			case HKQuantityType.quantityType(forIdentifier: .runningStrideLength):
 				let lengthUnit = HKUnit.meter()
@@ -213,9 +272,9 @@ extension WorkoutManager {
 	}
 }
 
-// MARK: - HKWorkoutSessionDelegate
-// HealthKit calls the delegate methods on an anonymous serial background queue,
-// so the methods need to be nonisolated explicitly.
+//	MARK: - HKWorkoutSessionDelegate
+//	HealthKit calls the delegate methods on an anonymous serial background queue,
+//	so the methods need to be nonisolated explicitly.
 //
 extension WorkoutManager: HKWorkoutSessionDelegate {
 	nonisolated func workoutSession(_ workoutSession: HKWorkoutSession,
@@ -270,14 +329,14 @@ extension WorkoutManager: HKWorkoutSessionDelegate {
 	}
 }
 
-// MARK: - A structure for synchronizing the elapsed time.
+//	MARK: - A structure for synchronizing the elapsed time.
 //
 struct WorkoutElapsedTime: Codable {
 	var timeInterval: TimeInterval
 	var date: Date
 }
 
-// MARK: - Convenient workout state
+//	MARK: - Convenient workout state
 //
 extension HKWorkoutSessionState {
 	var isActive: Bool {
