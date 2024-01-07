@@ -52,15 +52,15 @@ struct SummaryView: View {
 			).foregroundColor(.ruplBlue)
 
 			SummaryMetricView(title: "Average power",
-							  value: averagePower.formatted(.number.precision(.fractionLength(2)))
+							  value: averagePower.formatted(.number.precision(.fractionLength(0)))
 			)
 
 			SummaryMetricView(title: "Calories",
-							  value: calories.formatted(.number.precision(.fractionLength(2)))
+							  value: calories.formatted(.number.precision(.fractionLength(0)))
 			)
 
 			SummaryMetricView(title: "Average heart rate",
-							  value: averageHeartRate.formatted(.number.precision(.fractionLength(2)))
+							  value: averageHeartRate.formatted(.number.precision(.fractionLength(0)))
 			).foregroundStyle(.ruplRed)
 
 //			SummaryMetricView(title: "Total workout time",
