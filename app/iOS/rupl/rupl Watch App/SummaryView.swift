@@ -30,13 +30,42 @@ struct SummaryView: View {
 
 	@ViewBuilder
 	private func summaryListView(workout: HKWorkout) -> some View {
-		VStack(alignment: .leading) {
-			SummaryMetricView(title: "Total time",
-							  value: workoutManager.formatDuration(seconds: ((workoutManager.stopTime ?? Date()).timeIntervalSince(workoutManager.startTime ?? Date()))))
+		let totalWorkoutTime: TimeInterval = (workoutManager.stopTime ?? Date()).timeIntervalSince(workoutManager.startTime ?? Date())
+		let runDuration: TimeInterval = workout.duration
+		let distance: Double = workout.statistics(for: HKQuantityType(.distanceWalkingRunning))?.sumQuantity()?.doubleValue(for: HKUnit.meterUnit(with: .kilo)) ?? 0
+		let speedMetersPerSecond: Double = distance * 1000 / runDuration
+		let averagePower: Double = workout.statistics(for: HKQuantityType(.runningPower))?.averageQuantity()?.doubleValue(for: HKUnit.watt()) ?? 0
+		let calories: Double = workout.statistics(for: HKQuantityType(.activeEnergyBurned))?.sumQuantity()?.doubleValue(for: HKUnit.largeCalorie()) ?? 0
+		let averageHeartRate: Double = workout.statistics(for: HKQuantityType(.heartRate))?.averageQuantity()?.doubleValue(for: HKUnit.count().unitDivided(by: .minute())) ?? 0
 
+		VStack(alignment: .leading) {
 			SummaryMetricView(title: "Run duration",
-							  value: workoutManager.formatDuration(seconds: workout.duration))
-			.foregroundStyle(.yellow)
+							  value: workoutManager.formatDuration(seconds: runDuration)
+			).foregroundStyle(.ruplYellow)
+
+			SummaryMetricView(title: "Distance",
+							  value: distance.formatted(.number.precision(.fractionLength(2)))
+			)
+
+			SummaryMetricView(title: "Average pace",
+							  value: workoutManager.convertToMinutesPerKilometer(speedMetersPerSecond: speedMetersPerSecond)
+			).foregroundColor(.ruplBlue)
+
+			SummaryMetricView(title: "Average power",
+							  value: averagePower.formatted(.number.precision(.fractionLength(2)))
+			)
+
+			SummaryMetricView(title: "Calories",
+							  value: calories.formatted(.number.precision(.fractionLength(2)))
+			)
+
+			SummaryMetricView(title: "Average heart rate",
+							  value: averageHeartRate.formatted(.number.precision(.fractionLength(2)))
+			).foregroundStyle(.ruplRed)
+
+//			SummaryMetricView(title: "Total workout time",
+//							  value: workoutManager.formatDuration(seconds: totalWorkoutTime)
+//			)
 
 			Group {
 				Text("Activity rings")

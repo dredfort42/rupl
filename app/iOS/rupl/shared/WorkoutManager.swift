@@ -63,7 +63,6 @@ class WorkoutManager: NSObject, ObservableObject {
 	let healthStore = HKHealthStore()
 	var session: HKWorkoutSession?
 
-	//	Errors counter for mirroring with remote device
 	var mirroringErrorsCounter: UInt8 = 0
 
 	var startTime: Date?
@@ -163,9 +162,10 @@ extension WorkoutManager {
 		if mirroringErrorsCounter < 100 {
 			do {
 				try await session?.sendToRemoteWorkoutSession(data: data)
+				mirroringErrorsCounter = 0
 			} catch {
-				mirroringErrorsCounter += 1
 				Logger.shared.log("[\(self.mirroringErrorsCounter)] Failed to send data: \(error)")
+				mirroringErrorsCounter += 1
 			}
 		}
 	}
