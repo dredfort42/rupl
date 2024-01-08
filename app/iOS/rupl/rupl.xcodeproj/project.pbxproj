@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AF43BF3C2B4C9EE800E5A89C /* WorkoutParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF43BF3B2B4C9EE800E5A89C /* WorkoutParameters.swift */; };
+		AF43BF3D2B4C9EE900E5A89C /* WorkoutParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF43BF3B2B4C9EE800E5A89C /* WorkoutParameters.swift */; };
 		AF5ACAB72B46D0710010C316 /* ruplApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF5ACAB62B46D0710010C316 /* ruplApp.swift */; };
 		AF5ACAB92B46D0710010C316 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF5ACAB82B46D0710010C316 /* ContentView.swift */; };
 		AF5ACABB2B46D07A0010C316 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AF5ACABA2B46D07A0010C316 /* Assets.xcassets */; };
@@ -94,6 +96,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		AF43BF3B2B4C9EE800E5A89C /* WorkoutParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutParameters.swift; sourceTree = "<group>"; };
 		AF5ACAB32B46D0710010C316 /* rupl.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = rupl.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF5ACAB62B46D0710010C316 /* ruplApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ruplApp.swift; sourceTree = "<group>"; };
 		AF5ACAB82B46D0710010C316 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -294,6 +297,7 @@
 				AF5ACB172B47107F0010C316 /* WorkoutManager.swift */,
 				AFA675572B4848B600AD5A69 /* MetricsTimelineSchedule.swift */,
 				AFA6755A2B48494C00AD5A69 /* ElapsedTimeView.swift */,
+				AF43BF3B2B4C9EE800E5A89C /* WorkoutParameters.swift */,
 			);
 			path = shared;
 			sourceTree = "<group>";
@@ -524,6 +528,7 @@
 				AFA6755B2B48494C00AD5A69 /* ElapsedTimeView.swift in Sources */,
 				AFA675552B48432A00AD5A69 /* ButtonLabel.swift in Sources */,
 				AF5ACB1E2B4713FE0010C316 /* Logger.swift in Sources */,
+				AF43BF3C2B4C9EE800E5A89C /* WorkoutParameters.swift in Sources */,
 				AF5ACAB92B46D0710010C316 /* ContentView.swift in Sources */,
 				AF5ACB212B472FAA0010C316 /* WorkoutManager+iOS.swift in Sources */,
 				AFA675582B4848B700AD5A69 /* MetricsTimelineSchedule.swift in Sources */,
@@ -556,6 +561,7 @@
 				AF5ACB232B4732ED0010C316 /* ControlsView.swift in Sources */,
 				AF5ACAE12B46D07A0010C316 /* ContentView.swift in Sources */,
 				AFA675592B4848B700AD5A69 /* MetricsTimelineSchedule.swift in Sources */,
+				AF43BF3D2B4C9EE900E5A89C /* WorkoutParameters.swift in Sources */,
 				AF5ACB1F2B4713FE0010C316 /* Logger.swift in Sources */,
 				AFA6755C2B48494C00AD5A69 /* ElapsedTimeView.swift in Sources */,
 				AF5ACB1C2B4712550010C316 /* WorkoutManager+watchOS.swift in Sources */,
@@ -754,14 +760,14 @@
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Your workout related data will be used to display your saved workouts in rupl app and rupl.org.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Workouts tracked by rupl app will be saved to HealthKit";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = dredfort.42.rupl;
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = dredfort.42.org.rupl;
 				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = dredfort.42.rupl.watchkitapp;
+				PRODUCT_BUNDLE_IDENTIFIER = dredfort.42.org.rupl.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -789,14 +795,14 @@
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Your workout related data will be used to display your saved workouts in rupl app and rupl.org.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Workouts tracked by rupl app will be saved to HealthKit";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = dredfort.42.rupl;
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = dredfort.42.org.rupl;
 				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = dredfort.42.rupl.watchkitapp;
+				PRODUCT_BUNDLE_IDENTIFIER = dredfort.42.org.rupl.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -837,7 +843,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = dredfort.42.rupl;
+				PRODUCT_BUNDLE_IDENTIFIER = dredfort.42.org.rupl;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -878,7 +884,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = dredfort.42.rupl;
+				PRODUCT_BUNDLE_IDENTIFIER = dredfort.42.org.rupl;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

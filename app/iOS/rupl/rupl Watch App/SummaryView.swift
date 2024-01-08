@@ -30,7 +30,7 @@ struct SummaryView: View {
 
 	@ViewBuilder
 	private func summaryListView(workout: HKWorkout) -> some View {
-		let totalWorkoutTime: TimeInterval = (workoutManager.stopTime ?? Date()).timeIntervalSince(workoutManager.startTime ?? Date())
+		let totalWorkoutTime: TimeInterval = workoutManager.stopTime.timeIntervalSince(workoutManager.startTime)
 		let runDuration: TimeInterval = workout.duration
 		let distance: Double = workout.statistics(for: HKQuantityType(.distanceWalkingRunning))?.sumQuantity()?.doubleValue(for: HKUnit.meterUnit(with: .kilo)) ?? 0
 		let speedMetersPerSecond: Double = distance * 1000 / runDuration
@@ -39,6 +39,10 @@ struct SummaryView: View {
 		let averageHeartRate: Double = workout.statistics(for: HKQuantityType(.heartRate))?.averageQuantity()?.doubleValue(for: HKUnit.count().unitDivided(by: .minute())) ?? 0
 
 		VStack(alignment: .leading) {
+			SummaryMetricView(title: "Total workout time",
+							  value: workoutManager.formatDuration(seconds: totalWorkoutTime)
+			)
+			
 			SummaryMetricView(title: "Run duration",
 							  value: workoutManager.formatDuration(seconds: runDuration)
 			).foregroundStyle(.ruplYellow)
@@ -62,10 +66,6 @@ struct SummaryView: View {
 			SummaryMetricView(title: "Average heart rate",
 							  value: averageHeartRate.formatted(.number.precision(.fractionLength(0)))
 			).foregroundStyle(.ruplRed)
-
-//			SummaryMetricView(title: "Total workout time",
-//							  value: workoutManager.formatDuration(seconds: totalWorkoutTime)
-//			)
 
 			Group {
 				Text("Activity rings")

@@ -32,7 +32,6 @@ class WorkoutManager: NSObject, ObservableObject {
 	@Published var vo2Max: Double = 0
 	@Published var stepCount: Double = 0
 	@Published var cadence: Double = 0
-	@Published var water: Double = 0
 	@Published var elapsedTimeInterval: TimeInterval = 0
 
 	//	SummaryView (watchOS) changes from Saving Workout to the metric
@@ -40,8 +39,7 @@ class WorkoutManager: NSObject, ObservableObject {
 	@Published var workout: HKWorkout?
 
 	//	HealthKit data types to share
-	let typesToShare: Set = [HKQuantityType.workoutType(),
-							 HKQuantityType(.dietaryWater)]
+	let typesToShare: Set = [HKQuantityType.workoutType()]
 
 	//	HealthKit data types to read
 	let typesToRead: Set = [
@@ -55,23 +53,25 @@ class WorkoutManager: NSObject, ObservableObject {
 		HKQuantityType(.runningGroundContactTime), //	ms, Discrete (Arithmetic)
 		HKQuantityType(.vo2Max), //	ml/(kg*min), Discrete (Arithmetic)
 		HKQuantityType(.stepCount), //	count, Cumulative
-		HKQuantityType(.dietaryWater), //	mL, Cumulative
 		HKQuantityType.workoutType(),
 		HKObjectType.activitySummaryType()
 	]
 
+	let parameters = WorkoutParameters()
 	let healthStore = HKHealthStore()
 	var session: HKWorkoutSession?
 
+	var isMirroring: Bool = false
 	var mirroringErrorsCounter: UInt8 = 0
 
-	var startTime: Date?
-	var stopTime: Date?
+	var isPauseSetWithButton: Bool = false
+	var startTime: Date = Date()
+	var stopTime: Date = Date()
 
-	//	Array for store last 100 speed measurements to colculate average speed
-	var last100SpeedMeasurements: [Double] = []
-	var last100SpeedMeasurementsSum: Double = 0
-	var last100SpeedAverage: Double = 0
+	//	Array for store last 10 speed measurements to colculate average speed
+	var last10SpeedMeasurements: [Double] = []
+	var last10SpeedMeasurementsSum: Double = 0
+	var last10SpeedAverage: Double = 0
 
 	#if os(watchOS)
 		var builder: HKLiveWorkoutBuilder?
@@ -103,12 +103,15 @@ class WorkoutManager: NSObject, ObservableObject {
 
 		//	Wait for the session to transition states before ending the builder
 		#if os(watchOS)
+
 			//	Send the elapsed time to the iOS side
 			let elapsedTimeInterval = session?.associatedWorkoutBuilder().elapsedTime(at: change.date) ?? 0
 			let elapsedTime = WorkoutElapsedTime(timeInterval: elapsedTimeInterval, date: change.date)
 
-			if let elapsedTimeData = try? JSONEncoder().encode(elapsedTime) {
-				await sendData(elapsedTimeData)
+			if isMirroring {
+				if let elapsedTimeData = try? JSONEncoder().encode(elapsedTime) {
+					await sendData(elapsedTimeData)
+				}
 			}
 
 			guard change.newState == .stopped, let builder else {
@@ -140,9 +143,9 @@ extension WorkoutManager {
 		workout = nil
 		session = nil
 		sessionState = .notStarted
-		last100SpeedMeasurements = []
-		last100SpeedMeasurementsSum = 0
-		last100SpeedAverage = 0
+		last10SpeedMeasurements = []
+		last10SpeedMeasurementsSum = 0
+		last10SpeedAverage = 0
 		heartRate = 0
 		activeEnergy = 0
 		distance = 0
@@ -154,12 +157,11 @@ extension WorkoutManager {
 		vo2Max = 0
 		stepCount = 0
 		cadence = 0
-		water = 0
 		elapsedTimeInterval = 0
 	}
 
 	func sendData(_ data: Data) async {
-		if mirroringErrorsCounter < 100 {
+		if mirroringErrorsCounter < parameters.maxMirroringErrors {
 			do {
 				try await session?.sendToRemoteWorkoutSession(data: data)
 				mirroringErrorsCounter = 0
@@ -175,24 +177,28 @@ extension WorkoutManager {
 //
 extension WorkoutManager {
 
-	//	Calculate average speed from last 100 measurements
-	func calculateLast100SpeedAverage(lastSpeedMeasurement: Double) {
-		if lastSpeedMeasurement == 0 {
+	//	Calculate average speed from last 10 measurements
+	func calculateLast10SpeedAverage(lastSpeedMeasurement: Double) {
+		if lastSpeedMeasurement < parameters.paceForAutoPause {
 			return
 		}
 
-		if last100SpeedMeasurements.count > 100 {
-			last100SpeedMeasurementsSum -= last100SpeedMeasurements[0]
-			last100SpeedMeasurements.remove(at: 0)
+		if last10SpeedMeasurements.count > 10 {
+			last10SpeedMeasurementsSum -= last10SpeedMeasurements[0]
+			last10SpeedMeasurements.remove(at: 0)
 		}
 
-		last100SpeedMeasurementsSum += lastSpeedMeasurement
-		last100SpeedMeasurements.append(lastSpeedMeasurement)
+		last10SpeedMeasurementsSum += lastSpeedMeasurement
+		last10SpeedMeasurements.append(lastSpeedMeasurement)
 
-		last100SpeedAverage = last100SpeedMeasurementsSum / Double(last100SpeedMeasurements.count)
+		last10SpeedAverage = last10SpeedMeasurementsSum / Double(last10SpeedMeasurements.count)
 	}
 
 	//	Convert speed from meters per second to minutes per kilometer
+	func convertToMinutesPerKilometer(speedMetersPerSecond: Double) -> Double {
+		return speedMetersPerSecond > 0 ? (1 / (speedMetersPerSecond * (60 / 1000))) : 0
+	}
+
 	func convertToMinutesPerKilometer(speedMetersPerSecond: Double) -> String {
 		if speedMetersPerSecond == 0 {
 			return "00:00"
@@ -217,6 +223,28 @@ extension WorkoutManager {
 		}
 
 		return formattedString
+	}
+}
+
+//	MARK: - Auto pause logic
+//
+extension WorkoutManager {
+	func autoPause(lastSpeedMeasurement: Double) {
+		if !isPauseSetWithButton {
+			if sessionState == .running {
+				if lastSpeedMeasurement < parameters.paceForAutoPause {
+					sessionState = .paused
+					session?.pause()
+					print("auto pause on")
+				}
+			} else {
+				if lastSpeedMeasurement > parameters.paceForAutoResume {
+					session?.resume()
+					sessionState = .running
+					print("auto pause off")
+				}
+			}
+		}
 	}
 }
 
@@ -245,7 +273,9 @@ extension WorkoutManager {
 			case HKQuantityType.quantityType(forIdentifier: .runningSpeed):
 				let speedUnit = HKUnit.meter().unitDivided(by: HKUnit.second())
 				speed = statistics.mostRecentQuantity()?.doubleValue(for: speedUnit) ?? 0
-				calculateLast100SpeedAverage(lastSpeedMeasurement: speed)
+				calculateLast10SpeedAverage(lastSpeedMeasurement: speed)
+				autoPause(lastSpeedMeasurement: speed)
+
 
 			case HKQuantityType.quantityType(forIdentifier: .runningStrideLength):
 				let lengthUnit = HKUnit.meter()
@@ -299,7 +329,7 @@ extension WorkoutManager: HKWorkoutSessionDelegate {
 	//	the mirrored workout session is invalid
 	nonisolated func workoutSession(_ workoutSession: HKWorkoutSession,
 									didDisconnectFromRemoteDeviceWithError error: Error?) {
-		Logger.shared.log("\(#function): \(error)")
+			Logger.shared.log("\(#function): \(error)")
 	}
 
 
@@ -319,9 +349,9 @@ extension WorkoutManager: HKWorkoutSessionDelegate {
 		Logger.shared.log("\(#function): \(data.debugDescription)")
 		Task { @MainActor in
 			do {
-				for anElement in data {
-					try handleReceivedData(anElement)
-				}
+					for anElement in data {
+						try handleReceivedData(anElement)
+					}
 			} catch {
 				Logger.shared.log("Failed to handle received data: \(error))")
 			}

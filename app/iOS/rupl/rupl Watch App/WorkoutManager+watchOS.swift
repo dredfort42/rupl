@@ -33,12 +33,15 @@ extension WorkoutManager {
 		builder?.delegate = self
 		builder?.dataSource = HKLiveWorkoutDataSource(healthStore: healthStore, workoutConfiguration: workoutConfiguration)
 
-		//	Start mirroring the session to the companion device
-		try await session?.startMirroringToCompanionDevice()
+		if isMirroring {
+			//	Start mirroring the session to the companion device
+			try await session?.startMirroringToCompanionDevice()
+		}
 
 		//	Start the workout session activity
 		let startDate = Date()
 		session?.startActivity(with: startDate)
+		session?.pause()
 		try await builder?.beginCollection(at: startDate)
 	}
 
@@ -46,7 +49,6 @@ extension WorkoutManager {
 		guard let decodedQuantity = try NSKeyedUnarchiver.unarchivedObject(ofClass: HKQuantity.self, from: data) else {
 			return
 		}
-		water += decodedQuantity.doubleValue(for: HKUnit.fluidOunceUS())
 
 		let sampleDate = Date()
 		Task {
@@ -77,14 +79,16 @@ extension WorkoutManager: HKLiveWorkoutBuilderDelegate {
 				}
 			}
 
-			let archivedData = try? NSKeyedArchiver.archivedData(withRootObject: allStatistics, requiringSecureCoding: true)
-			guard let archivedData = archivedData, !archivedData.isEmpty else {
-				Logger.shared.log("Encoded cycling data is empty")
-				return
-			}
+			if isMirroring {
+				let archivedData = try? NSKeyedArchiver.archivedData(withRootObject: allStatistics, requiringSecureCoding: true)
+				guard let archivedData = archivedData, !archivedData.isEmpty else {
+					Logger.shared.log("Encoded running data is empty")
+					return
+				}
 
-			//	Send a Data object to the connected remote workout session.
-			await sendData(archivedData)
+				//	Send a Data object to the connected remote workout session.
+				await sendData(archivedData)
+			}
 		}
 	}
 
