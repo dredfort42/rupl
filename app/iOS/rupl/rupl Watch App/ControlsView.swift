@@ -24,8 +24,8 @@ struct ControlsView: View {
 			.tint(.ruplBlue)
 
 			Button {
+				workoutManager.isPauseSetWithButton = workoutManager.sessionState == .running
 				workoutManager.sessionState == .running ? workoutManager.session?.pause() : workoutManager.session?.resume()
-				workoutManager.isPauseSetWithButton = !workoutManager.isPauseSetWithButton
 			} label: {
 				let title = workoutManager.sessionState == .running ? "Pause" : "Resume"
 				let systemImage = workoutManager.sessionState == .running ? "pause" : "play"

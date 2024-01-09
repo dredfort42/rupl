@@ -12,8 +12,8 @@ import Foundation
 //
 struct WorkoutParameters {
 	let maxMirroringErrors: UInt8 = 100
-	let paceForAutoPause: Double = 0.8 // m/s
-	let paceForAutoResume: Double = 1.6 // m/s
-//	let paceForAutoPause: Double = 3.9 // m/s
-//	let paceForAutoResume: Double = 4.2 // m/s
+//	let paceForAutoPause: Double = 1.0 // m/s
+//	let paceForAutoResume: Double = 2.0 // m/s
+	let paceForAutoPause: Double = 3.9 // m/s
+	let paceForAutoResume: Double = 4.2 // m/s
 }

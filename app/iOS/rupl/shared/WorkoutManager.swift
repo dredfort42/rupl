@@ -137,15 +137,7 @@ class WorkoutManager: NSObject, ObservableObject {
 //
 extension WorkoutManager {
 	func resetWorkout() {
-		#if os(watchOS)
-			builder = nil
-		#endif
-		workout = nil
-		session = nil
 		sessionState = .notStarted
-		last10SpeedMeasurements = []
-		last10SpeedMeasurementsSum = 0
-		last10SpeedAverage = 0
 		heartRate = 0
 		activeEnergy = 0
 		distance = 0
@@ -158,6 +150,19 @@ extension WorkoutManager {
 		stepCount = 0
 		cadence = 0
 		elapsedTimeInterval = 0
+		workout = nil
+		session = nil
+		mirroringErrorsCounter = 0
+		isPauseSetWithButton = false
+		startTime = Date()
+		stopTime = startTime
+		last10SpeedMeasurements = []
+		last10SpeedMeasurementsSum = 0
+		last10SpeedAverage = 0
+
+		#if os(watchOS)
+			builder = nil
+		#endif
 	}
 
 	func sendData(_ data: Data) async {
@@ -235,13 +240,13 @@ extension WorkoutManager {
 				if lastSpeedMeasurement < parameters.paceForAutoPause {
 					sessionState = .paused
 					session?.pause()
-					print("auto pause on")
+//					print("auto pause on", "button pressed:", isPauseSetWithButton)
 				}
 			} else {
 				if lastSpeedMeasurement > parameters.paceForAutoResume {
-					session?.resume()
 					sessionState = .running
-					print("auto pause off")
+					session?.resume()
+//					print("auto pause off", "button pressed:", isPauseSetWithButton)
 				}
 			}
 		}
