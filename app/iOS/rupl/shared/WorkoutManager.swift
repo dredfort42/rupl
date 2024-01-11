@@ -58,8 +58,8 @@ class WorkoutManager: NSObject, ObservableObject {
 	]
 
 	let parameters = WorkoutParameters()
-	var isTimetStarted: Bool = false
-	let timer = DispatchSource.makeTimerSource(queue: DispatchQueue.main)
+//	var isTimetStarted: Bool = false
+//	let timer = DispatchSource.makeTimerSource(queue: DispatchQueue.main)
 	let locationManager = LocationManager()
 	let healthStore = HKHealthStore()
 	var session: HKWorkoutSession?
@@ -264,6 +264,8 @@ extension WorkoutManager {
 //
 extension WorkoutManager {
 	func updateForStatistics(_ statistics: HKStatistics) {
+		autoPause()
+		
 		switch statistics.quantityType {
 			case HKQuantityType.quantityType(forIdentifier: .heartRate):
 				let heartRateUnit = HKUnit.count().unitDivided(by: .minute())
