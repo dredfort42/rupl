@@ -58,6 +58,9 @@ class WorkoutManager: NSObject, ObservableObject {
 	]
 
 	let parameters = WorkoutParameters()
+	var isTimetStarted: Bool = false
+	let timer = DispatchSource.makeTimerSource(queue: DispatchQueue.main)
+	let locationManager = LocationManager()
 	let healthStore = HKHealthStore()
 	var session: HKWorkoutSession?
 
@@ -65,7 +68,6 @@ class WorkoutManager: NSObject, ObservableObject {
 	var mirroringErrorsCounter: UInt8 = 0
 
 	var isPauseSetWithButton: Bool = false
-	var startTime: Date = Date()
 	var stopTime: Date = Date()
 
 	//	Array for store last 10 speed measurements to colculate average speed
@@ -73,11 +75,11 @@ class WorkoutManager: NSObject, ObservableObject {
 	var last10SpeedMeasurementsSum: Double = 0
 	var last10SpeedAverage: Double = 0
 
-	#if os(watchOS)
-		var builder: HKLiveWorkoutBuilder?
-	#else
-		var contextDate: Date?
-	#endif
+#if os(watchOS)
+	var builder: HKLiveWorkoutBuilder?
+#else
+	var contextDate: Date?
+#endif
 
 	let asynStreamTuple = AsyncStream.makeStream(of: SessionSateChange.self, bufferingPolicy: .bufferingNewest(1))
 
@@ -89,6 +91,15 @@ class WorkoutManager: NSObject, ObservableObject {
 	//	the next iteration, which serializes the asynchronous operations
 	private override init() {
 		super.init()
+
+		Task {
+			do {
+				try await healthStore.requestAuthorization(toShare: typesToShare, read: typesToRead)
+			} catch {
+				Logger.shared.log("Failed to request authorization: \(error)")
+			}
+		}
+		
 		Task {
 			for await value in asynStreamTuple.stream {
 				await consumeSessionStateChange(value)
@@ -102,34 +113,34 @@ class WorkoutManager: NSObject, ObservableObject {
 		sessionState = change.newState
 
 		//	Wait for the session to transition states before ending the builder
-		#if os(watchOS)
+#if os(watchOS)
 
-			//	Send the elapsed time to the iOS side
-			let elapsedTimeInterval = session?.associatedWorkoutBuilder().elapsedTime(at: change.date) ?? 0
-			let elapsedTime = WorkoutElapsedTime(timeInterval: elapsedTimeInterval, date: change.date)
+		//	Send the elapsed time to the iOS side
+		let elapsedTimeInterval = session?.associatedWorkoutBuilder().elapsedTime(at: change.date) ?? 0
+		let elapsedTime = WorkoutElapsedTime(timeInterval: elapsedTimeInterval, date: change.date)
 
-			if isMirroring {
-				if let elapsedTimeData = try? JSONEncoder().encode(elapsedTime) {
-					await sendData(elapsedTimeData)
-				}
+		if isMirroring {
+			if let elapsedTimeData = try? JSONEncoder().encode(elapsedTime) {
+				await sendData(elapsedTimeData)
 			}
+		}
 
-			guard change.newState == .stopped, let builder else {
-				return
-			}
+		guard change.newState == .stopped, let builder else {
+			return
+		}
 
-			let finishedWorkout: HKWorkout?
-			do {
-				stopTime = Date()
-				try await builder.endCollection(at: change.date)
-				finishedWorkout = try await builder.finishWorkout()
-				session?.end()
-			} catch {
-				Logger.shared.log("Failed to end workout: \(error))")
-				return
-			}
-			workout = finishedWorkout
-		#endif
+		let finishedWorkout: HKWorkout?
+		do {
+			stopTime = Date()
+			try await builder.endCollection(at: change.date)
+			finishedWorkout = try await builder.finishWorkout()
+			session?.end()
+		} catch {
+			Logger.shared.log("Failed to end workout: \(error))")
+			return
+		}
+		workout = finishedWorkout
+#endif
 	}
 }
 
@@ -154,15 +165,14 @@ extension WorkoutManager {
 		session = nil
 		mirroringErrorsCounter = 0
 		isPauseSetWithButton = false
-		startTime = Date()
-		stopTime = startTime
+		stopTime = session?.startDate ?? Date()
 		last10SpeedMeasurements = []
 		last10SpeedMeasurementsSum = 0
 		last10SpeedAverage = 0
 
-		#if os(watchOS)
-			builder = nil
-		#endif
+#if os(watchOS)
+		builder = nil
+#endif
 	}
 
 	func sendData(_ data: Data) async {
@@ -181,7 +191,6 @@ extension WorkoutManager {
 //	MARK: - Workout measurements conversions
 //
 extension WorkoutManager {
-
 	//	Calculate average speed from last 10 measurements
 	func calculateLast10SpeedAverage(lastSpeedMeasurement: Double) {
 		if lastSpeedMeasurement < parameters.paceForAutoPause {
@@ -210,7 +219,7 @@ extension WorkoutManager {
 		}
 
 		let secondsPerKilometer: Double = 1 / (speedMetersPerSecond * (1 / 1000))
-		
+
 		return formatDuration(seconds: secondsPerKilometer)
 	}
 
@@ -234,19 +243,17 @@ extension WorkoutManager {
 //	MARK: - Auto pause logic
 //
 extension WorkoutManager {
-	func autoPause(lastSpeedMeasurement: Double) {
-		if !isPauseSetWithButton {
+	func autoPause() {
+		if sessionState.isActive && !isPauseSetWithButton {
 			if sessionState == .running {
-				if lastSpeedMeasurement < parameters.paceForAutoPause {
+				if locationManager.autoPauseState {
 					sessionState = .paused
 					session?.pause()
-//					print("auto pause on", "button pressed:", isPauseSetWithButton)
 				}
 			} else {
-				if lastSpeedMeasurement > parameters.paceForAutoResume {
+				if !locationManager.autoPauseState {
 					sessionState = .running
 					session?.resume()
-//					print("auto pause off", "button pressed:", isPauseSetWithButton)
 				}
 			}
 		}
@@ -256,7 +263,6 @@ extension WorkoutManager {
 //	MARK: - Workout statistics
 //
 extension WorkoutManager {
-
 	func updateForStatistics(_ statistics: HKStatistics) {
 		switch statistics.quantityType {
 			case HKQuantityType.quantityType(forIdentifier: .heartRate):
@@ -279,8 +285,6 @@ extension WorkoutManager {
 				let speedUnit = HKUnit.meter().unitDivided(by: HKUnit.second())
 				speed = statistics.mostRecentQuantity()?.doubleValue(for: speedUnit) ?? 0
 				calculateLast10SpeedAverage(lastSpeedMeasurement: speed)
-				autoPause(lastSpeedMeasurement: speed)
-
 
 			case HKQuantityType.quantityType(forIdentifier: .runningStrideLength):
 				let lengthUnit = HKUnit.meter()
@@ -334,7 +338,7 @@ extension WorkoutManager: HKWorkoutSessionDelegate {
 	//	the mirrored workout session is invalid
 	nonisolated func workoutSession(_ workoutSession: HKWorkoutSession,
 									didDisconnectFromRemoteDeviceWithError error: Error?) {
-			Logger.shared.log("\(#function): \(error)")
+		Logger.shared.log("\(#function): \(error)")
 	}
 
 
@@ -354,9 +358,9 @@ extension WorkoutManager: HKWorkoutSessionDelegate {
 		Logger.shared.log("\(#function): \(data.debugDescription)")
 		Task { @MainActor in
 			do {
-					for anElement in data {
-						try handleReceivedData(anElement)
-					}
+				for anElement in data {
+					try handleReceivedData(anElement)
+				}
 			} catch {
 				Logger.shared.log("Failed to handle received data: \(error))")
 			}

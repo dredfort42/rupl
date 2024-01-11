@@ -30,7 +30,7 @@ struct SummaryView: View {
 
 	@ViewBuilder
 	private func summaryListView(workout: HKWorkout) -> some View {
-		let totalWorkoutTime: TimeInterval = workoutManager.stopTime.timeIntervalSince(workoutManager.startTime)
+		let totalWorkoutTime: TimeInterval = workoutManager.stopTime.timeIntervalSince(workoutManager.session?.startDate ?? Date())
 		let runDuration: TimeInterval = workout.duration
 		let distance: Double = workout.statistics(for: HKQuantityType(.distanceWalkingRunning))?.sumQuantity()?.doubleValue(for: HKUnit.meterUnit(with: .kilo)) ?? 0
 		let speedMetersPerSecond: Double = distance * 1000 / runDuration

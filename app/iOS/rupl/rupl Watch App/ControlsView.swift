@@ -25,7 +25,8 @@ struct ControlsView: View {
 
 			Button {
 				workoutManager.isPauseSetWithButton = workoutManager.sessionState == .running
-				workoutManager.sessionState == .running ? workoutManager.session?.pause() : workoutManager.session?.resume()
+				workoutManager.sessionState = workoutManager.sessionState == .running ? .paused : .running
+				workoutManager.session?.state == .running ? workoutManager.session?.pause() : workoutManager.session?.resume()
 			} label: {
 				let title = workoutManager.sessionState == .running ? "Pause" : "Resume"
 				let systemImage = workoutManager.sessionState == .running ? "pause" : "play"
@@ -45,8 +46,6 @@ struct ControlsView: View {
 	}
 
 	private func startWorkout() {
-		workoutManager.startTime = Date()
-
 		Task {
 			do {
 				let configuration = HKWorkoutConfiguration()

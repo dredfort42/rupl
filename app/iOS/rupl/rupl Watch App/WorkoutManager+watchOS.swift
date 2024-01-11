@@ -14,19 +14,16 @@ import HealthKit
 //
 extension WorkoutManager {
 
-	//	Use healthStore.requestAuthorization to request authorization
-	//	in watchOS when healthDataAccessRequest isn't available yet
-	func requestAuthorization() {
-		Task {
-			do {
-				try await healthStore.requestAuthorization(toShare: typesToShare, read: typesToRead)
-			} catch {
-				Logger.shared.log("Failed to request authorization: \(error)")
-			}
-		}
-	}
-
 	func startWorkout(workoutConfiguration: HKWorkoutConfiguration) async throws {
+		locationManager.locationManager.startUpdatingLocation()
+
+		if !isTimetStarted {
+			isTimetStarted = true
+			timer.schedule(deadline: .now(), repeating: .seconds(1))
+			timer.setEventHandler {self.autoPause()}
+			timer.resume()
+		}
+
 		session = try HKWorkoutSession(healthStore: healthStore, configuration: workoutConfiguration)
 		builder = session?.associatedWorkoutBuilder()
 		session?.delegate = self
@@ -41,7 +38,6 @@ extension WorkoutManager {
 		//	Start the workout session activity
 		let startDate = Date()
 		session?.startActivity(with: startDate)
-		session?.pause()
 		try await builder?.beginCollection(at: startDate)
 	}
 
@@ -64,7 +60,7 @@ extension WorkoutManager {
 //	The methods need to be nonisolated explicitly.
 //
 extension WorkoutManager: HKLiveWorkoutBuilderDelegate {
-	
+
 	nonisolated func workoutBuilder(_ workoutBuilder: HKLiveWorkoutBuilder, didCollectDataOf collectedTypes: Set<HKSampleType>) {
 
 		//	HealthKit calls this method on an anonymous serial background queue.

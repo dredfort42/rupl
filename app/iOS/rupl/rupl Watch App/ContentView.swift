@@ -37,7 +37,6 @@ struct ContentView: View {
 			}
 		}
 		.onAppear {
-			workoutManager.requestAuthorization()
 			selection = .controls
 		}
 		.sheet(isPresented: $isSheetActive) {
