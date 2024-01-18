@@ -15,33 +15,40 @@ struct ControlsView: View {
 
 	var body: some View {
 		VStack {
-			Button {
-				startWorkout()
-			} label: {
-				ButtonLabel(title: "Start", systemImage: "figure.run")
-			}
-			.disabled(workoutManager.sessionState.isActive)
-			.tint(.ruplBlue)
+			if (!workoutManager.isSessionEnded) {
+				Button {
+					startWorkout()
+				} label: {
+					ButtonLabel(title: "Start", systemImage: "figure.run")
+				}
+				.disabled(workoutManager.sessionState.isActive)
+				.tint(.ruplBlue)
 
-			Button {
-				workoutManager.isPauseSetWithButton = workoutManager.sessionState == .running
-				workoutManager.sessionState = workoutManager.sessionState == .running ? .paused : .running
-				workoutManager.session?.state == .running ? workoutManager.session?.pause() : workoutManager.session?.resume()
-			} label: {
-				let title = workoutManager.sessionState == .running ? "Pause" : "Resume"
-				let systemImage = workoutManager.sessionState == .running ? "pause" : "play"
-				ButtonLabel(title: title, systemImage: systemImage)
-			}
-			.disabled(!workoutManager.sessionState.isActive)
-			.tint(.ruplYellow)
+				Button {
+					workoutManager.isPauseSetWithButton = workoutManager.sessionState == .running
+					workoutManager.sessionState = workoutManager.sessionState == .running ? .paused : .running
+					workoutManager.session?.state == .running ? workoutManager.session?.pause() : workoutManager.session?.resume()
+				} label: {
+					let title = workoutManager.sessionState == .running ? "Pause" : "Resume"
+					let systemImage = workoutManager.sessionState == .running ? "pause" : "play"
+					ButtonLabel(title: title, systemImage: systemImage)
+				}
+				.disabled(!workoutManager.sessionState.isActive)
+				.tint(.ruplYellow)
 
-			Button {
-				workoutManager.session?.stopActivity(with: .now)
-			} label: {
-				ButtonLabel(title: "End", systemImage: "xmark")
+				Button {
+					workoutManager.isSessionEnded = true
+					workoutManager.session?.stopActivity(with: .now)
+				} label: {
+					ButtonLabel(title: "End", systemImage: "xmark")
+				}
+				.disabled(!workoutManager.sessionState.isActive)
+				.tint(.ruplRed)
+			} else {
+				Text("Loading...")
+					.foregroundColor(.ruplBlue)
+					.fontWeight(.light)
 			}
-			.tint(.ruplRed)
-			.disabled(!workoutManager.sessionState.isActive)
 		}
 	}
 

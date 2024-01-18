@@ -17,12 +17,12 @@ extension WorkoutManager {
 	func startWorkout(workoutConfiguration: HKWorkoutConfiguration) async throws {
 		locationManager.locationManager.startUpdatingLocation()
 
-//		if !isTimetStarted {
-//			isTimetStarted = true
-//			timer.schedule(deadline: .now(), repeating: .seconds(1))
-//			timer.setEventHandler {self.autoPause()}
-//			timer.resume()
-//		}
+		if !isTimerStarted {
+			isTimerStarted = true
+			timer.schedule(deadline: .now(), repeating: .seconds(1))
+			timer.setEventHandler {self.autoPause()}
+			timer.resume()
+		}
 
 		session = try HKWorkoutSession(healthStore: healthStore, configuration: workoutConfiguration)
 		builder = session?.associatedWorkoutBuilder()
@@ -38,6 +38,8 @@ extension WorkoutManager {
 		//	Start the workout session activity
 		let startDate = Date()
 		session?.startActivity(with: startDate)
+		sessionState = .paused
+		session?.pause()
 		try await builder?.beginCollection(at: startDate)
 	}
 

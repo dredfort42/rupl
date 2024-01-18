@@ -93,3 +93,9 @@ struct SummaryMetricView: View {
 		Divider()
 	}
 }
+
+//#Preview {
+//	SummaryMetricView(title: "Average heart rate",
+//					  value: "5:04 /km")
+//	.foregroundStyle(.ruplYellow)
+//}
