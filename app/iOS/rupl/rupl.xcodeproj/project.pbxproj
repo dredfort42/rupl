@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		AF43BF3C2B4C9EE800E5A89C /* WorkoutParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF43BF3B2B4C9EE800E5A89C /* WorkoutParameters.swift */; };
 		AF43BF3D2B4C9EE900E5A89C /* WorkoutParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF43BF3B2B4C9EE800E5A89C /* WorkoutParameters.swift */; };
+		AF45FD772B59BDF0009E7B4B /* TimerActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF45FD762B59BDF0009E7B4B /* TimerActions.swift */; };
+		AF45FD782B59BDF0009E7B4B /* TimerActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF45FD762B59BDF0009E7B4B /* TimerActions.swift */; };
 		AF5ACAB72B46D0710010C316 /* ruplApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF5ACAB62B46D0710010C316 /* ruplApp.swift */; };
 		AF5ACAB92B46D0710010C316 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF5ACAB82B46D0710010C316 /* ContentView.swift */; };
 		AF5ACABB2B46D07A0010C316 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AF5ACABA2B46D07A0010C316 /* Assets.xcassets */; };
@@ -99,6 +101,7 @@
 
 /* Begin PBXFileReference section */
 		AF43BF3B2B4C9EE800E5A89C /* WorkoutParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutParameters.swift; sourceTree = "<group>"; };
+		AF45FD762B59BDF0009E7B4B /* TimerActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerActions.swift; sourceTree = "<group>"; };
 		AF5ACAB32B46D0710010C316 /* rupl.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = rupl.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF5ACAB62B46D0710010C316 /* ruplApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ruplApp.swift; sourceTree = "<group>"; };
 		AF5ACAB82B46D0710010C316 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -296,12 +299,13 @@
 			isa = PBXGroup;
 			children = (
 				AFA675542B48432A00AD5A69 /* ButtonLabel.swift */,
-				AF5ACB1D2B4713FE0010C316 /* Logger.swift */,
-				AF5ACB172B47107F0010C316 /* WorkoutManager.swift */,
-				AFA675572B4848B600AD5A69 /* MetricsTimelineSchedule.swift */,
 				AFA6755A2B48494C00AD5A69 /* ElapsedTimeView.swift */,
-				AF43BF3B2B4C9EE800E5A89C /* WorkoutParameters.swift */,
 				AF720D422B504326008423D6 /* LocationManager.swift */,
+				AF5ACB1D2B4713FE0010C316 /* Logger.swift */,
+				AFA675572B4848B600AD5A69 /* MetricsTimelineSchedule.swift */,
+				AF45FD762B59BDF0009E7B4B /* TimerActions.swift */,
+				AF5ACB172B47107F0010C316 /* WorkoutManager.swift */,
+				AF43BF3B2B4C9EE800E5A89C /* WorkoutParameters.swift */,
 			);
 			path = shared;
 			sourceTree = "<group>";
@@ -530,6 +534,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AFA6755B2B48494C00AD5A69 /* ElapsedTimeView.swift in Sources */,
+				AF45FD772B59BDF0009E7B4B /* TimerActions.swift in Sources */,
 				AFA675552B48432A00AD5A69 /* ButtonLabel.swift in Sources */,
 				AF720D432B504326008423D6 /* LocationManager.swift in Sources */,
 				AF5ACB1E2B4713FE0010C316 /* Logger.swift in Sources */,
@@ -578,6 +583,7 @@
 				AF5ACB252B4733270010C316 /* MetricsView.swift in Sources */,
 				AF5ACB132B470EF10010C316 /* AppDeligate.swift in Sources */,
 				AF5ACB272B4733510010C316 /* SummaryView.swift in Sources */,
+				AF45FD782B59BDF0009E7B4B /* TimerActions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

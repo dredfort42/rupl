@@ -39,7 +39,10 @@ class WorkoutManager: NSObject, ObservableObject {
 	@Published var workout: HKWorkout?
 
 	//	HealthKit data types to share
-	let typesToShare: Set = [HKQuantityType.workoutType()]
+	let typesToShare: Set = [
+		HKQuantityType.workoutType(),
+		HKSeriesType.workoutRoute()
+	]
 
 	//	HealthKit data types to read
 	let typesToRead: Set = [
@@ -54,7 +57,8 @@ class WorkoutManager: NSObject, ObservableObject {
 		HKQuantityType(.vo2Max), //	ml/(kg*min), Discrete (Arithmetic)
 		HKQuantityType(.stepCount), //	count, Cumulative
 		HKQuantityType.workoutType(),
-		HKObjectType.activitySummaryType()
+		HKObjectType.activitySummaryType(),
+		HKSeriesType.workoutRoute()
 	]
 
 	let parameters = WorkoutParameters()
@@ -75,6 +79,8 @@ class WorkoutManager: NSObject, ObservableObject {
 	var last10SpeedMeasurements: [Double] = []
 	var last10SpeedMeasurementsSum: Double = 0
 	var last10SpeedAverage: Double = 0
+	
+	lazy var routeBuilder = HKWorkoutRouteBuilder(healthStore: healthStore, device: nil)
 
 #if os(watchOS)
 	var builder: HKLiveWorkoutBuilder?
@@ -134,8 +140,8 @@ class WorkoutManager: NSObject, ObservableObject {
 		locationManager.locationManager.stopUpdatingLocation()
 
 		let finishedWorkout: HKWorkout?
+		stopTime = Date()
 		do {
-			stopTime = Date()
 			try await builder.endCollection(at: change.date)
 			finishedWorkout = try await builder.finishWorkout()
 			session?.end()
@@ -144,6 +150,17 @@ class WorkoutManager: NSObject, ObservableObject {
 			return
 		}
 		workout = finishedWorkout
+
+		guard finishedWorkout != nil else {
+			return
+		}
+
+		do {
+			try await routeBuilder.finishRoute(with: finishedWorkout!, metadata: nil)
+		} catch {
+			Logger.shared.log("Failed to associate the route with the workout: \(error)")
+			return
+		}
 #endif
 	}
 }
@@ -174,7 +191,6 @@ extension WorkoutManager {
 		last10SpeedMeasurements = []
 		last10SpeedMeasurementsSum = 0
 		last10SpeedAverage = 0
-
 #if os(watchOS)
 		builder = nil
 #endif
@@ -242,26 +258,6 @@ extension WorkoutManager {
 		}
 
 		return formattedString
-	}
-}
-
-//	MARK: - Auto pause logic
-//
-extension WorkoutManager {
-	func autoPause() {
-		if sessionState.isActive && !isPauseSetWithButton {
-			if sessionState == .running {
-				if locationManager.autoPauseState {
-					sessionState = .paused
-					session?.pause()
-				}
-			} else {
-				if !locationManager.autoPauseState {
-					sessionState = .running
-					session?.resume()
-				}
-			}
-		}
 	}
 }
 

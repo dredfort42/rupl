@@ -20,7 +20,7 @@ extension WorkoutManager {
 		if !isTimerStarted {
 			isTimerStarted = true
 			timer.schedule(deadline: .now(), repeating: .seconds(1))
-			timer.setEventHandler {self.autoPause()}
+			timer.setEventHandler {self.timerActions()}
 			timer.resume()
 		}
 
