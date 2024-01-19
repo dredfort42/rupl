@@ -9,6 +9,7 @@
 import os
 import SwiftUI
 import HealthKit
+import AVFoundation
 
 struct ControlsView: View {
 	@EnvironmentObject var workoutManager: WorkoutManager

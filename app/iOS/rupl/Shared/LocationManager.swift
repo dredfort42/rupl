@@ -49,7 +49,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 	}
 
 	func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-		print("Location manager error: \(error.localizedDescription)")
+		Logger.shared.log("Location manager error: \(error.localizedDescription)")
 	}
 }
 

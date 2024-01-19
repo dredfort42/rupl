@@ -27,11 +27,19 @@ extension WorkoutManager {
 				if locationManager.autoPauseState {
 					sessionState = .paused
 					session?.pause()
+					sounds.stopSound?.play()
+#if os(watchOS)
+					Vibration.vibrate()
+#endif
 				}
 			} else {
 				if !locationManager.autoPauseState {
 					sessionState = .running
 					session?.resume()
+					sounds.startSound?.play()
+#if os(watchOS)
+					Vibration.vibrate()
+#endif
 				}
 			}
 		}

@@ -62,6 +62,7 @@ class WorkoutManager: NSObject, ObservableObject {
 	]
 
 	let parameters = WorkoutParameters()
+	let sounds = SoundEffects()
 	var isTimerStarted: Bool = false
 	let timer = DispatchSource.makeTimerSource(queue: DispatchQueue.main)
 	let locationManager = LocationManager()
