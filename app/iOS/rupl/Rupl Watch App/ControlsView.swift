@@ -17,6 +17,17 @@ struct ControlsView: View {
 	var body: some View {
 		VStack {
 			if (!workoutManager.isSessionEnded) {
+
+//	Voice notification doesn't work
+//				Button {
+//					SpeechSynthesizer.convertTextToSpeech()
+//					Vibration.vibrate()
+//				} label: {
+//					ButtonLabel(title: "Speak", systemImage: "pencil.and.outline")
+//				}
+//				.tint(.ruplRed)
+
+
 				Button {
 					startWorkout()
 				} label: {
@@ -65,4 +76,5 @@ struct ControlsView: View {
 			}
 		}
 	}
+
 }

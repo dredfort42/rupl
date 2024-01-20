@@ -29,7 +29,7 @@ extension WorkoutManager {
 					session?.pause()
 					sounds.stopSound?.play()
 #if os(watchOS)
-					Vibration.vibrate()
+					Vibration.vibrate(type: .notification)
 #endif
 				}
 			} else {
@@ -38,7 +38,7 @@ extension WorkoutManager {
 					session?.resume()
 					sounds.startSound?.play()
 #if os(watchOS)
-					Vibration.vibrate()
+					Vibration.vibrate(type: .notification)
 #endif
 				}
 			}

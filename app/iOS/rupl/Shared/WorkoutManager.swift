@@ -80,7 +80,10 @@ class WorkoutManager: NSObject, ObservableObject {
 	var last10SpeedMeasurements: [Double] = []
 	var last10SpeedMeasurementsSum: Double = 0
 	var last10SpeedAverage: Double = 0
-	
+
+	var lastSegment: Int = 0
+
+
 	lazy var routeBuilder = HKWorkoutRouteBuilder(healthStore: healthStore, device: nil)
 
 #if os(watchOS)
@@ -278,6 +281,14 @@ extension WorkoutManager {
 			case HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning):
 				let distanceUnit = HKUnit.meter()
 				distance = statistics.sumQuantity()?.doubleValue(for: distanceUnit) ?? 0
+				let segment = Int(distance / 1000)
+				if lastSegment != segment {
+					lastSegment = segment
+					sounds.segmentSound?.play()
+#if os(watchOS)
+					Vibration.vibrate(type: .success)
+#endif
+				}
 
 //			case HKQuantityType.quantityType(forIdentifier: .runningPower):
 //				let powerUnit = HKUnit.watt()

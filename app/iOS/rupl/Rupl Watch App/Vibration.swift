@@ -9,7 +9,7 @@
 import WatchKit
 
 class Vibration: WKInterfaceController {
-	static func vibrate() {
-		WKInterfaceDevice.current().play(.notification)
+	static func vibrate(type: WKHapticType) {
+		WKInterfaceDevice.current().play(type)
 	}
 }
