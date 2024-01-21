@@ -11,6 +11,7 @@ import HealthKit
 
 struct MetricsView: View {
 	@EnvironmentObject var workoutManager: WorkoutManager
+	@State private var isSegmentSheetActive = false
 
 	var body: some View {
 		TimelineView(MetricsTimelineSchedule(from: workoutManager.session?.startDate ?? Date(),
@@ -34,7 +35,16 @@ struct MetricsView: View {
 			.ignoresSafeArea(edges: .bottom)
 			.scenePadding()
 			.padding([.top], 30)
+			.onChange(of: workoutManager.lastSegment) {
+				isSegmentSheetActive = true
+			}
+			.sheet(isPresented: $isSegmentSheetActive) {
+//				print("segment changed")
+			} content: {
+				LastSegmentView()
+			}
 		}
+
 	}
 
 	func elapsedTime(with contextDate: Date) -> TimeInterval {

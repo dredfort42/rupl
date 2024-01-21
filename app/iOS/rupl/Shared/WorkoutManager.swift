@@ -82,7 +82,11 @@ class WorkoutManager: NSObject, ObservableObject {
 	var last10SpeedAverage: Double = 0
 
 	var lastSegment: Int = 0
-
+	var lastSegmentStartTime: Date = Date()
+	var lastSegmentStopTime: Date = Date()
+	var lastSegmentHeartRatesSum: Double = 0
+	var lastSegmentHeartRatesCount: Int = 0
+	var lastSegmentViewPresentTime: Int = 0
 
 	lazy var routeBuilder = HKWorkoutRouteBuilder(healthStore: healthStore, device: nil)
 
@@ -195,6 +199,12 @@ extension WorkoutManager {
 		last10SpeedMeasurements = []
 		last10SpeedMeasurementsSum = 0
 		last10SpeedAverage = 0
+		lastSegment = 0
+		lastSegmentStartTime = Date()
+		lastSegmentStopTime = lastSegmentStartTime
+		lastSegmentHeartRatesSum = 0
+		lastSegmentHeartRatesCount = 0
+		lastSegmentViewPresentTime = 0
 #if os(watchOS)
 		builder = nil
 #endif
@@ -273,6 +283,10 @@ extension WorkoutManager {
 			case HKQuantityType.quantityType(forIdentifier: .heartRate):
 				let heartRateUnit = HKUnit.count().unitDivided(by: .minute())
 				heartRate = statistics.mostRecentQuantity()?.doubleValue(for: heartRateUnit) ?? 0
+				if heartRate != 0 {
+					lastSegmentHeartRatesSum += heartRate
+					lastSegmentHeartRatesCount += 1
+				}
 
 //			case HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned):
 //				let energyUnit = HKUnit.kilocalorie()
@@ -283,6 +297,8 @@ extension WorkoutManager {
 				distance = statistics.sumQuantity()?.doubleValue(for: distanceUnit) ?? 0
 				let segment = Int(distance / 1000)
 				if lastSegment != segment {
+					lastSegmentStopTime = Date()
+					lastSegmentViewPresentTime = parameters.timeForShowLastSegmentView
 					lastSegment = segment
 					sounds.segmentSound?.play()
 #if os(watchOS)

@@ -45,6 +45,7 @@
 		AF7B30382B5ABC10002FEDC9 /* WorkoutStopSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AF7B30352B5ABC10002FEDC9 /* WorkoutStopSound.aif */; };
 		AF7B30392B5ABC10002FEDC9 /* WorkoutStartSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AF7B30362B5ABC10002FEDC9 /* WorkoutStartSound.aif */; };
 		AF7B303A2B5ABC10002FEDC9 /* WorkoutStartSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AF7B30362B5ABC10002FEDC9 /* WorkoutStartSound.aif */; };
+		AF7F52932B5D265700856DEA /* LastSegmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF7F52922B5D265700856DEA /* LastSegmentView.swift */; };
 		AFA675552B48432A00AD5A69 /* ButtonLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA675542B48432A00AD5A69 /* ButtonLabel.swift */; };
 		AFA675562B48432A00AD5A69 /* ButtonLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA675542B48432A00AD5A69 /* ButtonLabel.swift */; };
 		AFA675582B4848B700AD5A69 /* MetricsTimelineSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA675572B4848B600AD5A69 /* MetricsTimelineSchedule.swift */; };
@@ -148,6 +149,7 @@
 		AF720D422B504326008423D6 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		AF7B30352B5ABC10002FEDC9 /* WorkoutStopSound.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = WorkoutStopSound.aif; sourceTree = "<group>"; };
 		AF7B30362B5ABC10002FEDC9 /* WorkoutStartSound.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = WorkoutStartSound.aif; sourceTree = "<group>"; };
+		AF7F52922B5D265700856DEA /* LastSegmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastSegmentView.swift; sourceTree = "<group>"; };
 		AFA675542B48432A00AD5A69 /* ButtonLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonLabel.swift; sourceTree = "<group>"; };
 		AFA675572B4848B600AD5A69 /* MetricsTimelineSchedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricsTimelineSchedule.swift; sourceTree = "<group>"; };
 		AFA6755A2B48494C00AD5A69 /* ElapsedTimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElapsedTimeView.swift; sourceTree = "<group>"; };
@@ -279,6 +281,7 @@
 				AF5ACB222B4732ED0010C316 /* ControlsView.swift */,
 				AF5ACB242B4733270010C316 /* MetricsView.swift */,
 				AF5ACB262B4733510010C316 /* SummaryView.swift */,
+				AF7F52922B5D265700856DEA /* LastSegmentView.swift */,
 				AFA6755D2B49A50200AD5A69 /* ActivityRingsView.swift */,
 				AF5ACB1A2B4712550010C316 /* WorkoutManager+watchOS.swift */,
 				AF53FF072B5B40BA005DE76D /* Vibration.swift */,
@@ -624,6 +627,7 @@
 				AF5ACB272B4733510010C316 /* SummaryView.swift in Sources */,
 				AFD0B1932B5C67F00027001F /* SpeechSynthesizer.swift in Sources */,
 				AF45FD782B59BDF0009E7B4B /* TimerActions.swift in Sources */,
+				AF7F52932B5D265700856DEA /* LastSegmentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -15,6 +15,7 @@ extension WorkoutManager {
 	func timerActions() {
 		autoPause()
 		addLocationsToRoute()
+		lastSegmentViewPresentTimer()
 	}
 }
 
@@ -56,6 +57,16 @@ extension WorkoutManager {
 			if !success {
 				Logger.shared.log("Failed to add locations to the route: \(error))")
 			}
+		}
+	}
+}
+
+//	MARK: - LastSegmentView present timer
+//
+extension WorkoutManager {
+	func lastSegmentViewPresentTimer() {
+		if lastSegmentViewPresentTime > 0 {
+			lastSegmentViewPresentTime -= 1
 		}
 	}
 }
