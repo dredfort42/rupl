@@ -13,6 +13,7 @@ import AVFoundation
 
 struct ControlsView: View {
 	@EnvironmentObject var workoutManager: WorkoutManager
+	@State private var isAnimating = false
 
 	var body: some View {
 		VStack {
@@ -57,14 +58,13 @@ struct ControlsView: View {
 				.disabled(!workoutManager.sessionState.isActive)
 				.tint(.ruplRed)
 			} else {
-				Text("Loading...")
-					.foregroundColor(.ruplBlue)
-					.fontWeight(.light)
+				LoadingIndicatorView()
 			}
 		}
 	}
 
 	private func startWorkout() {
+		workoutManager.resetWorkout()
 		Task {
 			do {
 				let configuration = HKWorkoutConfiguration()

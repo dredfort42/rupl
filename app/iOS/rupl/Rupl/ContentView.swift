@@ -14,7 +14,7 @@ struct ContentView: View {
 				.imageScale(.large)
             Text("rupl")
 				.font(.system(size: 50, weight: .medium, design: .rounded))
-				.foregroundStyle(.ruplHeader)
+				.foregroundStyle(.ruplBlue)
 
         }
         .padding()

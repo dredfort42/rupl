@@ -18,6 +18,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 	var autoPauseState: Bool = false
 	var speed: CLLocationSpeed = 0
 	var filteredLocations: [CLLocation] = []
+	var last3SpeedMeasurements: [CLLocationSpeed] = []
 
 	override init() {
 		super.init()
@@ -43,9 +44,13 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 
 		// Access the speed property from the location object
 		speed = location.speed
-//		print("Current Speed: \(speed) meters per second")
 
-		autoPause(speed: speed)
+		last3SpeedMeasurements.append(speed)
+		while last3SpeedMeasurements.count > 3 {
+			last3SpeedMeasurements.remove(at: 0)
+		}
+
+		checkAutoPause()
 	}
 
 	func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
@@ -56,8 +61,16 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 //	MARK: - Auto pause based on CLLocationManager
 //
 extension LocationManager {
-	func autoPause(speed: Double) {
-		if speed < parameters.paceForAutoPause {
+	func checkAutoPause() {
+		let checkPause = last3SpeedMeasurements.filter { (measurment: CLLocationSpeed) -> Bool in
+			measurment < parameters.paceForAutoPause
+		}
+
+//		let checkResume = last3SpeedMeasurements.filter { (measurment: CLLocationSpeed) -> Bool in
+//			measurment > parameters.paceForAutoResume
+//		}
+
+		if checkPause.count == 3 {
 			autoPauseState = true
 		} else if speed > parameters.paceForAutoResume {
 			autoPauseState = false
