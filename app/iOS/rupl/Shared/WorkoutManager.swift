@@ -74,6 +74,7 @@ class WorkoutManager: NSObject, ObservableObject {
 
 	var isSessionEnded: Bool = false
 	var isPauseSetWithButton: Bool = false
+	var pauseStartTime: Date = Date()
 	var stopTime: Date = Date()
 
 	//	Array for store last 10 speed measurements to colculate average speed
@@ -140,34 +141,39 @@ class WorkoutManager: NSObject, ObservableObject {
 			}
 		}
 
-		guard change.newState == .stopped, let builder else {
-			return
-		}
+		switch change.newState {
+			case .paused:
+				pauseStartTime = Date()
+			case .running:
+				lastSegmentStartTime += pauseStartTime.timeIntervalSinceNow
+			case .stopped:
+				timer.cancel()
+				locationManager.locationManager.stopUpdatingLocation()
 
-		timer.cancel()
-		locationManager.locationManager.stopUpdatingLocation()
+				let finishedWorkout: HKWorkout?
+				stopTime = Date()
+				do {
+					try await builder?.endCollection(at: change.date)
+					finishedWorkout = try await builder?.finishWorkout()
+					session?.end()
+				} catch {
+					Logger.shared.log("Failed to end workout: \(error))")
+					return
+				}
+				workout = finishedWorkout
 
-		let finishedWorkout: HKWorkout?
-		stopTime = Date()
-		do {
-			try await builder.endCollection(at: change.date)
-			finishedWorkout = try await builder.finishWorkout()
-			session?.end()
-		} catch {
-			Logger.shared.log("Failed to end workout: \(error))")
-			return
-		}
-		workout = finishedWorkout
+				guard finishedWorkout != nil else {
+					return
+				}
 
-		guard finishedWorkout != nil else {
-			return
-		}
-
-		do {
-			try await routeBuilder.finishRoute(with: finishedWorkout!, metadata: nil)
-		} catch {
-			Logger.shared.log("Failed to associate the route with the workout: \(error)")
-			return
+				do {
+					try await routeBuilder.finishRoute(with: finishedWorkout!, metadata: nil)
+				} catch {
+					Logger.shared.log("Failed to associate the route with the workout: \(error)")
+					return
+				}
+			default:
+				return
 		}
 #endif
 	}
@@ -195,6 +201,7 @@ extension WorkoutManager {
 		mirroringErrorsCounter = 0
 		isSessionEnded = false
 		isPauseSetWithButton = false
+		pauseStartTime = Date()
 		stopTime = session?.startDate ?? Date()
 		last10SpeedMeasurements = []
 		last10SpeedMeasurementsSum = 0
@@ -314,6 +321,7 @@ extension WorkoutManager {
 				let speedUnit = HKUnit.meter().unitDivided(by: HKUnit.second())
 				speed = statistics.mostRecentQuantity()?.doubleValue(for: speedUnit) ?? 0
 				calculateLast10SpeedAverage(lastSpeedMeasurement: speed)
+//				Logger.shared.log("speed: \(self.speed) | avgSpeed: \(self.last10SpeedAverage) | clSpeed: \(self.locationManager.speed)")
 
 //			case HKQuantityType.quantityType(forIdentifier: .runningStrideLength):
 //				let lengthUnit = HKUnit.meter()

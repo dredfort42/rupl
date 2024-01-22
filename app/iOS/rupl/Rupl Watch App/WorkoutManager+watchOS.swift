@@ -38,8 +38,8 @@ extension WorkoutManager {
 		//	Start the workout session activity
 		let startDate = Date()
 		session?.startActivity(with: startDate)
-		sessionState = .paused
-		session?.pause()
+//		sessionState = .paused
+//		session?.pause()
 		try await builder?.beginCollection(at: startDate)
 	}
 

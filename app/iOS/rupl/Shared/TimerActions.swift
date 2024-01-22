@@ -25,7 +25,7 @@ extension WorkoutManager {
 	func autoPause() {
 		if sessionState.isActive && !isPauseSetWithButton {
 			if sessionState == .running {
-				if locationManager.autoPauseState {
+				if locationManager.autoPauseState && speed < parameters.paceForAutoPause {
 					sessionState = .paused
 					session?.pause()
 					sounds.stopSound?.play()
