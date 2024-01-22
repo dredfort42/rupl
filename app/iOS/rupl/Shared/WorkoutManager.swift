@@ -69,8 +69,10 @@ class WorkoutManager: NSObject, ObservableObject {
 	let healthStore = HKHealthStore()
 	var session: HKWorkoutSession?
 
-	var isMirroring: Bool = false
-	var mirroringErrorsCounter: UInt8 = 0
+//	--------------------
+//	var isMirroring: Bool = true
+//	var mirroringErrorsCounter: UInt8 = 0
+//	--------------------
 
 	var isSessionEnded: Bool = false
 	var isPauseSetWithButton: Bool = false
@@ -88,6 +90,8 @@ class WorkoutManager: NSObject, ObservableObject {
 	var lastSegmentHeartRatesSum: Double = 0
 	var lastSegmentHeartRatesCount: Int = 0
 	var lastSegmentViewPresentTime: Int = 0
+
+	var pulseNotificationTimer: Int = 0
 
 	lazy var routeBuilder = HKWorkoutRouteBuilder(healthStore: healthStore, device: nil)
 
@@ -131,15 +135,17 @@ class WorkoutManager: NSObject, ObservableObject {
 		//	Wait for the session to transition states before ending the builder
 #if os(watchOS)
 
+//	--------------------
 		//	Send the elapsed time to the iOS side
-		let elapsedTimeInterval = session?.associatedWorkoutBuilder().elapsedTime(at: change.date) ?? 0
-		let elapsedTime = WorkoutElapsedTime(timeInterval: elapsedTimeInterval, date: change.date)
-
-		if isMirroring {
-			if let elapsedTimeData = try? JSONEncoder().encode(elapsedTime) {
-				await sendData(elapsedTimeData)
-			}
-		}
+//		let elapsedTimeInterval = session?.associatedWorkoutBuilder().elapsedTime(at: change.date) ?? 0
+//		let elapsedTime = WorkoutElapsedTime(timeInterval: elapsedTimeInterval, date: change.date)
+//
+//		if isMirroring {
+//			if let elapsedTimeData = try? JSONEncoder().encode(elapsedTime) {
+//				await sendData(elapsedTimeData)
+//			}
+//		}
+//	--------------------
 
 		switch change.newState {
 			case .paused:
@@ -198,7 +204,12 @@ extension WorkoutManager {
 		elapsedTimeInterval = 0
 		workout = nil
 		session = nil
-		mirroringErrorsCounter = 0
+
+//	--------------------
+//		isMirroring = true
+//		mirroringErrorsCounter = 0
+//	--------------------
+
 		isSessionEnded = false
 		isPauseSetWithButton = false
 		pauseStartTime = Date()
@@ -212,22 +223,28 @@ extension WorkoutManager {
 		lastSegmentHeartRatesSum = 0
 		lastSegmentHeartRatesCount = 0
 		lastSegmentViewPresentTime = 0
+		pulseNotificationTimer = 0
 #if os(watchOS)
 		builder = nil
 #endif
 	}
 
-	func sendData(_ data: Data) async {
-		if mirroringErrorsCounter < parameters.maxMirroringErrors {
-			do {
-				try await session?.sendToRemoteWorkoutSession(data: data)
-				mirroringErrorsCounter = 0
-			} catch {
-				Logger.shared.log("[\(self.mirroringErrorsCounter)] Failed to send data: \(error)")
-				mirroringErrorsCounter += 1
-			}
-		}
-	}
+//	--------------------
+//	func sendData(_ data: Data) async {
+//		if isMirroring && mirroringErrorsCounter < parameters.maxMirroringErrors {
+//			do {
+//				try await session?.sendToRemoteWorkoutSession(data: data)
+//				mirroringErrorsCounter = 0
+//			} catch {
+//				Logger.shared.log("[\(self.mirroringErrorsCounter)] Failed to send data: \(error)")
+//				mirroringErrorsCounter += 1
+//			}
+//		} else {
+//			isMirroring = false
+//		}
+//	}
+//	--------------------
+
 }
 
 //	MARK: - Workout measurements conversions
@@ -393,15 +410,19 @@ extension WorkoutManager: HKWorkoutSessionDelegate {
 	nonisolated func workoutSession(_ workoutSession: HKWorkoutSession,
 									didReceiveDataFromRemoteWorkoutSession data: [Data]) {
 		Logger.shared.log("\(#function): \(data.debugDescription)")
-		Task { @MainActor in
-			do {
-				for anElement in data {
-					try handleReceivedData(anElement)
-				}
-			} catch {
-				Logger.shared.log("Failed to handle received data: \(error))")
-			}
-		}
+		
+//	--------------------
+//		Task { @MainActor in
+//			do {
+//				for anElement in data {
+//					try handleReceivedData(anElement)
+//				}
+//			} catch {
+//				Logger.shared.log("Failed to handle received data: \(error))")
+//			}
+//		}
+//	--------------------
+
 	}
 }
 

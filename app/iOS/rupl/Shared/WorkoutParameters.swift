@@ -26,4 +26,11 @@ struct WorkoutParameters {
 
 	//	Last segmetn metrics
 	let timeForShowLastSegmentView = 20 // s
+
+	//	Pulse zones
+	let pz1NotInZone: Int = 126 // bpm
+	let pz2Easy: Int = 137 // bpm
+	let pz3FatBurning: Int = 147 // bpm
+	let pz4Aerobic: Int = 158 // bpm
+	let pz5Anaerobic: Int = 168 // bpm
 }

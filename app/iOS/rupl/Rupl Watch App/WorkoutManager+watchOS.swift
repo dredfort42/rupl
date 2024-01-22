@@ -30,10 +30,12 @@ extension WorkoutManager {
 		builder?.delegate = self
 		builder?.dataSource = HKLiveWorkoutDataSource(healthStore: healthStore, workoutConfiguration: workoutConfiguration)
 
-		if isMirroring {
-			//	Start mirroring the session to the companion device
-			try await session?.startMirroringToCompanionDevice()
-		}
+//	--------------------
+//		if isMirroring {
+//			//	Start mirroring the session to the companion device
+//			try await session?.startMirroringToCompanionDevice()
+//		}
+//	--------------------
 
 		//	Start the workout session activity
 		let startDate = Date()
@@ -43,17 +45,19 @@ extension WorkoutManager {
 		try await builder?.beginCollection(at: startDate)
 	}
 
-	func handleReceivedData(_ data: Data) throws {
-		guard let decodedQuantity = try NSKeyedUnarchiver.unarchivedObject(ofClass: HKQuantity.self, from: data) else {
-			return
-		}
-
-		let sampleDate = Date()
-		Task {
-			let waterSample = [HKQuantitySample(type: HKQuantityType(.dietaryWater), quantity: decodedQuantity, start: sampleDate, end: sampleDate)]
-			try await builder?.addSamples(waterSample)
-		}
-	}
+//	--------------------
+//	func handleReceivedData(_ data: Data) throws {
+//		guard let decodedQuantity = try NSKeyedUnarchiver.unarchivedObject(ofClass: HKQuantity.self, from: data) else {
+//			return
+//		}
+//
+//		let sampleDate = Date()
+//		Task {
+//			let waterSample = [HKQuantitySample(type: HKQuantityType(.dietaryWater), quantity: decodedQuantity, start: sampleDate, end: sampleDate)]
+//			try await builder?.addSamples(waterSample)
+//		}
+//	}
+//	--------------------
 
 }
 
@@ -77,16 +81,19 @@ extension WorkoutManager: HKLiveWorkoutBuilderDelegate {
 				}
 			}
 
-			if isMirroring {
-				let archivedData = try? NSKeyedArchiver.archivedData(withRootObject: allStatistics, requiringSecureCoding: true)
-				guard let archivedData = archivedData, !archivedData.isEmpty else {
-					Logger.shared.log("Encoded running data is empty")
-					return
-				}
-
-				//	Send a Data object to the connected remote workout session.
-				await sendData(archivedData)
-			}
+//	--------------------
+//			if isMirroring {
+//				let archivedData = try? NSKeyedArchiver.archivedData(withRootObject: allStatistics, requiringSecureCoding: true)
+//				guard let archivedData = archivedData, !archivedData.isEmpty else {
+//					Logger.shared.log("Encoded running data is empty")
+//					return
+//				}
+//
+//				//	Send a Data object to the connected remote workout session.
+//				await sendData(archivedData)
+//			}
+//	--------------------
+			
 		}
 	}
 

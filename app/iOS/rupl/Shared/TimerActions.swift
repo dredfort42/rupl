@@ -13,9 +13,29 @@ import os
 //
 extension WorkoutManager {
 	func timerActions() {
+		checkPulse()
 		autoPause()
 		addLocationsToRoute()
 		lastSegmentViewPresentTimer()
+	}
+}
+
+//	MARK: - Check pulse zone
+//
+extension WorkoutManager {
+	func checkPulse() {
+		if pulseNotificationTimer == 0 {
+			//	Checking the critical heart rate level
+			if Int(heartRate) > parameters.pz5Anaerobic {
+				pulseNotificationTimer = 10
+				sounds.alarmSound?.play()
+#if os(watchOS)
+				Vibration.vibrate(type: .underwaterDepthCriticalPrompt)
+#endif
+			}
+		} else {
+			pulseNotificationTimer -= 1
+		}
 	}
 }
 

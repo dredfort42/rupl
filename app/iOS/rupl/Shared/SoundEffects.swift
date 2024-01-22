@@ -13,6 +13,7 @@ struct SoundEffects {
 	var startSound: AVAudioPlayer?
 	var stopSound: AVAudioPlayer?
 	var segmentSound: AVAudioPlayer?
+	var alarmSound: AVAudioPlayer?
 
 	private let workoutStartSound: URL? = Bundle.main.url(
 		forResource: "WorkoutStartSound",
@@ -26,6 +27,11 @@ struct SoundEffects {
 
 	private let workoutSegmentSound: URL? = Bundle.main.url(
 		forResource: "WorkoutSegmentSound",
+		withExtension: "aif"
+	)
+
+	private let workoutAlarmSound: URL? = Bundle.main.url(
+		forResource: "WorkoutAlarmSound",
 		withExtension: "aif"
 	)
 
@@ -46,6 +52,9 @@ struct SoundEffects {
 			}
 			if workoutSegmentSound != nil {
 				segmentSound = try AVAudioPlayer(contentsOf: workoutSegmentSound!)
+			}
+			if workoutAlarmSound != nil {
+				alarmSound = try AVAudioPlayer(contentsOf: workoutAlarmSound!)
 			}
 		} catch {
 			print("Error preparing sounds: \(error.localizedDescription)")
