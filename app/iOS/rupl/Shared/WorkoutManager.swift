@@ -32,7 +32,7 @@ class WorkoutManager: NSObject, ObservableObject {
 	@Published var vo2Max: Double = 0
 	@Published var stepCount: Double = 0
 	@Published var cadence: Double = 0
-	@Published var elapsedTimeInterval: TimeInterval = 0
+//	@Published var elapsedTimeInterval: TimeInterval = 0
 
 	//	SummaryView (watchOS) changes from Saving Workout to the metric
 	//	summary view when a workout changes from nil to a valid value.
@@ -91,7 +91,7 @@ class WorkoutManager: NSObject, ObservableObject {
 	var lastSegmentHeartRatesCount: Int = 0
 	var lastSegmentViewPresentTime: Int = 0
 
-	var pulseNotificationTimer: Int = 0
+	var heartRateNotificationTimer: Int = 0
 
 	lazy var routeBuilder = HKWorkoutRouteBuilder(healthStore: healthStore, device: nil)
 
@@ -151,7 +151,7 @@ class WorkoutManager: NSObject, ObservableObject {
 			case .paused:
 				pauseStartTime = Date()
 			case .running:
-				lastSegmentStartTime += pauseStartTime.timeIntervalSinceNow
+					lastSegmentStartTime -= pauseStartTime.timeIntervalSinceNow
 			case .stopped:
 				timer.cancel()
 				locationManager.locationManager.stopUpdatingLocation()
@@ -201,7 +201,7 @@ extension WorkoutManager {
 		vo2Max = 0
 		stepCount = 0
 		cadence = 0
-		elapsedTimeInterval = 0
+//		elapsedTimeInterval = 0
 		workout = nil
 		session = nil
 
@@ -223,7 +223,7 @@ extension WorkoutManager {
 		lastSegmentHeartRatesSum = 0
 		lastSegmentHeartRatesCount = 0
 		lastSegmentViewPresentTime = 0
-		pulseNotificationTimer = 0
+		heartRateNotificationTimer = 0
 #if os(watchOS)
 		builder = nil
 #endif
@@ -247,58 +247,6 @@ extension WorkoutManager {
 
 }
 
-//	MARK: - Workout measurements conversions
-//
-extension WorkoutManager {
-	//	Calculate average speed from last 10 measurements
-	func calculateLast10SpeedAverage(lastSpeedMeasurement: Double) {
-		if lastSpeedMeasurement < parameters.paceForAutoPause {
-			return
-		}
-
-		if last10SpeedMeasurements.count > 10 {
-			last10SpeedMeasurementsSum -= last10SpeedMeasurements[0]
-			last10SpeedMeasurements.remove(at: 0)
-		}
-
-		last10SpeedMeasurementsSum += lastSpeedMeasurement
-		last10SpeedMeasurements.append(lastSpeedMeasurement)
-
-		last10SpeedAverage = last10SpeedMeasurementsSum / Double(last10SpeedMeasurements.count)
-	}
-
-	//	Convert speed from meters per second to minutes per kilometer
-	func convertToMinutesPerKilometer(speedMetersPerSecond: Double) -> Double {
-		return speedMetersPerSecond > 0 ? (1 / (speedMetersPerSecond * (60 / 1000))) : 0
-	}
-
-	func convertToMinutesPerKilometer(speedMetersPerSecond: Double) -> String {
-		if speedMetersPerSecond == 0 {
-			return "00:00"
-		}
-
-		let secondsPerKilometer: Double = 1 / (speedMetersPerSecond * (1 / 1000))
-
-		return formatDuration(seconds: secondsPerKilometer)
-	}
-
-	//	Format duration in seconds into HH:MM:SS
-	func formatDuration(seconds: TimeInterval) -> String {
-		let hours = Int(seconds / 3600)
-		let minutes = Int((seconds.truncatingRemainder(dividingBy: 3600)) / 60)
-		let seconds = Int(seconds.truncatingRemainder(dividingBy: 60))
-
-		var formattedString: String
-		if hours > 0 {
-			formattedString = String(format: "%02d:%02d:%02d", hours, minutes, seconds)
-		} else {
-			formattedString = String(format: "%02d:%02d", minutes, seconds)
-		}
-
-		return formattedString
-	}
-}
-
 //	MARK: - Workout statistics
 //
 extension WorkoutManager {
@@ -307,10 +255,7 @@ extension WorkoutManager {
 			case HKQuantityType.quantityType(forIdentifier: .heartRate):
 				let heartRateUnit = HKUnit.count().unitDivided(by: .minute())
 				heartRate = statistics.mostRecentQuantity()?.doubleValue(for: heartRateUnit) ?? 0
-				if heartRate != 0 {
-					lastSegmentHeartRatesSum += heartRate
-					lastSegmentHeartRatesCount += 1
-				}
+				checkHeartRate()
 
 //			case HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned):
 //				let energyUnit = HKUnit.kilocalorie()
@@ -319,16 +264,7 @@ extension WorkoutManager {
 			case HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning):
 				let distanceUnit = HKUnit.meter()
 				distance = statistics.sumQuantity()?.doubleValue(for: distanceUnit) ?? 0
-				let segment = Int(distance / 1000)
-				if lastSegment != segment {
-					lastSegmentStopTime = Date()
-					lastSegmentViewPresentTime = parameters.timeForShowLastSegmentView
-					lastSegment = segment
-					sounds.segmentSound?.play()
-#if os(watchOS)
-					Vibration.vibrate(type: .success)
-#endif
-				}
+				checkLastSegment()
 
 //			case HKQuantityType.quantityType(forIdentifier: .runningPower):
 //				let powerUnit = HKUnit.watt()
@@ -337,7 +273,7 @@ extension WorkoutManager {
 			case HKQuantityType.quantityType(forIdentifier: .runningSpeed):
 				let speedUnit = HKUnit.meter().unitDivided(by: HKUnit.second())
 				speed = statistics.mostRecentQuantity()?.doubleValue(for: speedUnit) ?? 0
-				calculateLast10SpeedAverage(lastSpeedMeasurement: speed)
+				checkSpeed()
 //				Logger.shared.log("speed: \(self.speed) | avgSpeed: \(self.last10SpeedAverage) | clSpeed: \(self.locationManager.speed)")
 
 //			case HKQuantityType.quantityType(forIdentifier: .runningStrideLength):

@@ -40,8 +40,8 @@ extension MirroringWorkoutView {
 		VStack {
 			Spacer(minLength: 30)
 			LabeledContent {
-				ElapsedTimeView(elapsedTime: workoutTimeInterval(context.date), showSubseconds: context.cadence == .live)
-					.font(.system(.title, design: .rounded).monospacedDigit().lowercaseSmallCaps())
+//				ElapsedTimeView(elapsedTime: workoutTimeInterval(context.date), showSubseconds: context.cadence == .live)
+//					.font(.system(.title, design: .rounded).monospacedDigit().lowercaseSmallCaps())
 			} label: {
 				Text("Elapsed")
 			}
@@ -51,22 +51,22 @@ extension MirroringWorkoutView {
 		}
 	}
 
-	private func workoutTimeInterval(_ contextDate: Date) -> TimeInterval {
-		var timeInterval = workoutManager.elapsedTimeInterval
-		if workoutManager.sessionState == .running {
-			if let referenceContextDate = workoutManager.contextDate {
-				timeInterval += (contextDate.timeIntervalSinceReferenceDate - referenceContextDate.timeIntervalSinceReferenceDate)
-			} else {
-				workoutManager.contextDate = contextDate
-			}
-		} else {
-			var date = contextDate
-			date.addTimeInterval(workoutManager.elapsedTimeInterval)
-			timeInterval = date.timeIntervalSinceReferenceDate - contextDate.timeIntervalSinceReferenceDate
-			workoutManager.contextDate = nil
-		}
-		return timeInterval
-	}
+//	private func workoutTimeInterval(_ contextDate: Date) -> TimeInterval {
+////		var timeInterval = workoutManager.elapsedTimeInterval
+//		if workoutManager.sessionState == .running {
+//			if let referenceContextDate = workoutManager.contextDate {
+//				timeInterval += (contextDate.timeIntervalSinceReferenceDate - referenceContextDate.timeIntervalSinceReferenceDate)
+//			} else {
+//				workoutManager.contextDate = contextDate
+//			}
+//		} else {
+//			var date = contextDate
+//			date.addTimeInterval(workoutManager.elapsedTimeInterval)
+//			timeInterval = date.timeIntervalSinceReferenceDate - contextDate.timeIntervalSinceReferenceDate
+//			workoutManager.contextDate = nil
+//		}
+//		return timeInterval
+//	}
 
 	@ViewBuilder
 	private func metricsView() -> some View {

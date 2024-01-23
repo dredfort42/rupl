@@ -52,7 +52,7 @@ struct SummaryView: View {
 			)
 
 			SummaryMetricView(title: "Average pace",
-							  value: workoutManager.convertToMinutesPerKilometer(speedMetersPerSecond: speedMetersPerSecond)
+							  value: workoutManager.convertToMinutesPerKilometer(metersPerSecond: speedMetersPerSecond)
 			).foregroundColor(.ruplBlue)
 
 			SummaryMetricView(title: "Average power",

@@ -18,7 +18,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 	var autoPauseState: Bool = false
 	var speed: CLLocationSpeed = 0
 	var filteredLocations: [CLLocation] = []
-	var last3SpeedMeasurements: [CLLocationSpeed] = []
+	var autoPauseIndicator: Int = 0
 
 	override init() {
 		super.init()
@@ -45,11 +45,6 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 		// Access the speed property from the location object
 		speed = location.speed
 
-		last3SpeedMeasurements.append(speed)
-		while last3SpeedMeasurements.count > 3 {
-			last3SpeedMeasurements.remove(at: 0)
-		}
-
 		checkAutoPause()
 	}
 
@@ -62,18 +57,19 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 //
 extension LocationManager {
 	func checkAutoPause() {
-		let checkPause = last3SpeedMeasurements.filter { (measurment: CLLocationSpeed) -> Bool in
-			measurment < parameters.paceForAutoPause
-		}
+		DispatchQueue.main.async {
+			if self.speed < self.parameters.paceForAutoPause {
+				self.autoPauseIndicator += 1
+			} else if self.autoPauseIndicator > 0 {
+				self.autoPauseIndicator -= 1
+			}
 
-//		let checkResume = last3SpeedMeasurements.filter { (measurment: CLLocationSpeed) -> Bool in
-//			measurment > parameters.paceForAutoResume
-//		}
-
-		if checkPause.count == 3 {
-			autoPauseState = true
-		} else if speed > parameters.paceForAutoResume {
-			autoPauseState = false
+			if self.speed > self.parameters.paceForAutoResume {
+				self.autoPauseIndicator = 0
+				self.autoPauseState = false
+			} else if self.autoPauseIndicator == 5 {
+				self.autoPauseState = true
+			}
 		}
 	}
 }

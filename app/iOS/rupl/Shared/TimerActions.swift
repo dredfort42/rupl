@@ -13,29 +13,10 @@ import os
 //
 extension WorkoutManager {
 	func timerActions() {
-		checkPulse()
 		autoPause()
 		addLocationsToRoute()
+		heartRateTimer()
 		lastSegmentViewPresentTimer()
-	}
-}
-
-//	MARK: - Check pulse zone
-//
-extension WorkoutManager {
-	func checkPulse() {
-		if pulseNotificationTimer == 0 {
-			//	Checking the critical heart rate level
-			if Int(heartRate) > parameters.pz5Anaerobic {
-				pulseNotificationTimer = 10
-				sounds.alarmSound?.play()
-#if os(watchOS)
-				Vibration.vibrate(type: .underwaterDepthCriticalPrompt)
-#endif
-			}
-		} else {
-			pulseNotificationTimer -= 1
-		}
 	}
 }
 
@@ -43,21 +24,22 @@ extension WorkoutManager {
 //
 extension WorkoutManager {
 	func autoPause() {
-		if sessionState.isActive && !isPauseSetWithButton {
-			if sessionState == .running {
-				if locationManager.autoPauseState && speed < parameters.paceForAutoPause {
-					sessionState = .paused
-					session?.pause()
-					sounds.stopSound?.play()
+		if self.sessionState.isActive && !self.isPauseSetWithButton {
+			if self.sessionState == .running {
+				if self.locationManager.autoPauseState ||
+					(self.speed < self.parameters.paceForAutoPause && self.speed > 0) {
+					self.sessionState = .paused
+					self.session?.pause()
+					self.sounds.stopSound?.play()
 #if os(watchOS)
 					Vibration.vibrate(type: .notification)
 #endif
 				}
 			} else {
-				if !locationManager.autoPauseState {
-					sessionState = .running
-					session?.resume()
-					sounds.startSound?.play()
+				if !self.locationManager.autoPauseState {
+					self.sessionState = .running
+					self.session?.resume()
+					self.sounds.startSound?.play()
 #if os(watchOS)
 					Vibration.vibrate(type: .notification)
 #endif
@@ -71,11 +53,25 @@ extension WorkoutManager {
 //
 extension WorkoutManager {
 	func addLocationsToRoute() {
-		guard !locationManager.filteredLocations.isEmpty else { return }
+		DispatchQueue.global().async {
+			guard !self.locationManager.filteredLocations.isEmpty else { return }
+			
+			self.routeBuilder.insertRouteData(self.locationManager.filteredLocations) { (success, error) in
+				if !success {
+					Logger.shared.log("Failed to add locations to the route: \(error))")
+				}
+			}
+		}
+	}
+}
 
-		routeBuilder.insertRouteData(locationManager.filteredLocations) { (success, error) in
-			if !success {
-				Logger.shared.log("Failed to add locations to the route: \(error))")
+//	MARK: - Check heart rate zone
+//
+extension WorkoutManager {
+	func heartRateTimer() {
+		DispatchQueue.main.async {
+			if self.heartRateNotificationTimer != 0 {
+				self.heartRateNotificationTimer -= 1
 			}
 		}
 	}
@@ -85,8 +81,10 @@ extension WorkoutManager {
 //
 extension WorkoutManager {
 	func lastSegmentViewPresentTimer() {
-		if lastSegmentViewPresentTime > 0 {
-			lastSegmentViewPresentTime -= 1
+		DispatchQueue.main.async {
+			if self.lastSegmentViewPresentTime != 0 {
+				self.lastSegmentViewPresentTime -= 1
+			}
 		}
 	}
 }
