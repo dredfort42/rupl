@@ -9,14 +9,46 @@
 import SwiftUI
 
 struct LoadingIndicatorView: View {
+	var wheelSize: CGFloat = 100.0
+	var wheelStartPosition: Double = 0.0
+	var wheelAnimation: Bool = true
+
+	@State private var wheelRotating: Double = 0.0
 
 	var body: some View {
-			ProgressView()
-				.progressViewStyle(CircularProgressViewStyle(tint: .ruplBlue))
-				.scaleEffect(2, anchor: .center)
+		let shadowShift: CGFloat = wheelSize / 10
+		let shadowRadius: CGFloat = shadowShift / 20
+		ZStack {
+			Circle()
+				.shadow(color: .ruplBlue.opacity(0.5), radius: shadowRadius, x: 0, y: -shadowShift)
+				.shadow(color: .ruplYellow.opacity(0.5), radius: shadowRadius, x: 0, y: shadowShift)
+				.shadow(color: .ruplRed.opacity(0.5), radius: shadowRadius, x: shadowShift, y: 0)
+				.shadow(color: .ruplGreen.opacity(0.5), radius: shadowRadius, x: -shadowShift, y: 0)
+				.rotationEffect(.degrees(wheelAnimation ? wheelRotating : wheelStartPosition))
+
+			Circle()
+				.fill(.black)
+				.shadow(color: .black, radius: 5)
+
+		}
+		.frame(width: wheelSize, height: wheelSize)
+		.padding(10)
+		.onAppear {
+			if wheelAnimation {
+				withAnimation(
+					.linear(duration: 1)
+					.speed(0.1)
+					.repeatForever(autoreverses: false)
+				) {
+					wheelRotating = 360.0
+				}
+			}
+		}
 	}
 }
 
-//#Preview {
-//    LoadingIndicatorView()
+//struct SpinningWheelView_Previews: PreviewProvider {
+//	static var previews: some View {
+//		LoadingIndicatorView()
+//	}
 //}

@@ -27,7 +27,7 @@ extension WorkoutManager {
 		if self.sessionState.isActive && !self.isPauseSetWithButton {
 			if self.sessionState == .running {
 				if self.locationManager.autoPauseState ||
-					(self.speed < self.parameters.paceForAutoPause && self.speed > 0) {
+					(self.speed < self.parameters.paceForAutoPause && self.speed > self.parameters.paceForAutoPause / 2) {
 					self.sessionState = .paused
 					self.session?.pause()
 					self.sounds.stopSound?.play()
