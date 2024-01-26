@@ -22,7 +22,6 @@ extension WorkoutManager {
 
 			//	Checking the critical heart rate level
 			if pulse > self.parameters.pz5Anaerobic {
-				self.heartRateNotificationTimer = 0
 				self.sounds.alarmSound?.play()
 #if os(watchOS)
 				Vibration.vibrate(type: .underwaterDepthCriticalPrompt)
@@ -30,14 +29,14 @@ extension WorkoutManager {
 			}
 
 			// 	MARK: - TMP Checking the puls zone
-			if self.sessionState.isActive {
-				if pulse > self.parameters.pz3FatBurning {
+			if self.session?.state != .paused && self.heartRateNotificationTimer == 0 {
+				if pulse > self.parameters.pz4Aerobic {
 					self.heartRateNotificationTimer = 10
 					self.sounds.runSlower?.play()
 #if os(watchOS)
 					Vibration.vibrate(type: .directionDown)
 #endif
-				} else if pulse < self.parameters.pz2Easy && (-(self.session?.startDate?.timeIntervalSinceNow ?? 0) > 600) {
+				} else if pulse < self.parameters.pz3FatBurning && (-(self.session?.startDate?.timeIntervalSinceNow ?? 0) > 600) {
 					self.heartRateNotificationTimer = 10
 					self.sounds.runFaster?.play()
 #if os(watchOS)

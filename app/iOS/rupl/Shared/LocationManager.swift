@@ -9,16 +9,15 @@
 import Foundation
 import os
 import CoreLocation
-import HealthKit
-import SwiftUI
 
 class LocationManager: NSObject, CLLocationManagerDelegate {
 	private let parameters = WorkoutParameters()
 	let locationManager = CLLocationManager()
-	var autoPauseState: Bool = false
 	var speed: CLLocationSpeed = 0
+	var accuracy: CLLocationAccuracy = 1000
 	var filteredLocations: [CLLocation] = []
 	var autoPauseIndicator: Int = 0
+	var autoPauseState: Bool = false
 
 	override init() {
 		super.init()
@@ -33,6 +32,8 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 	// MARK: - CLLocationManagerDelegate
 	//
 	func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+
+		accuracy = locations.last?.horizontalAccuracy ?? 1000
 
 		// Filter the raw data.
 		filteredLocations = locations.filter { (location: CLLocation) -> Bool in
@@ -53,7 +54,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 	}
 }
 
-//	MARK: - Auto pause based on CLLocationManager
+//	MARK: - Auto pause based on CoreLocation
 //
 extension LocationManager {
 	func checkAutoPause() {

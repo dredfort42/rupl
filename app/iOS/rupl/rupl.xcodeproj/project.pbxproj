@@ -20,6 +20,8 @@
 		AF53FF052B5AE4D5005DE76D /* SoundEffects.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF53FF042B5AE4D5005DE76D /* SoundEffects.swift */; };
 		AF53FF062B5AE4D5005DE76D /* SoundEffects.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF53FF042B5AE4D5005DE76D /* SoundEffects.swift */; };
 		AF53FF092B5B40BA005DE76D /* Vibration.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF53FF072B5B40BA005DE76D /* Vibration.swift */; };
+		AF56CDEE2B644C47009E8CB8 /* MotionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF56CDED2B644C47009E8CB8 /* MotionManager.swift */; };
+		AF56CDEF2B644C47009E8CB8 /* MotionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF56CDED2B644C47009E8CB8 /* MotionManager.swift */; };
 		AF5ACAB72B46D0710010C316 /* ruplApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF5ACAB62B46D0710010C316 /* ruplApp.swift */; };
 		AF5ACABB2B46D07A0010C316 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AF5ACABA2B46D07A0010C316 /* Assets.xcassets */; };
 		AF5ACABE2B46D07A0010C316 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AF5ACABD2B46D07A0010C316 /* Preview Assets.xcassets */; };
@@ -134,6 +136,7 @@
 		AF45FD762B59BDF0009E7B4B /* TimerActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerActions.swift; sourceTree = "<group>"; };
 		AF53FF042B5AE4D5005DE76D /* SoundEffects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundEffects.swift; sourceTree = "<group>"; };
 		AF53FF072B5B40BA005DE76D /* Vibration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vibration.swift; sourceTree = "<group>"; };
+		AF56CDED2B644C47009E8CB8 /* MotionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionManager.swift; sourceTree = "<group>"; };
 		AF5ACAB32B46D0710010C316 /* rupl.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = rupl.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF5ACAB62B46D0710010C316 /* ruplApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ruplApp.swift; sourceTree = "<group>"; };
 		AF5ACABA2B46D07A0010C316 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -361,6 +364,7 @@
 				AF53FF042B5AE4D5005DE76D /* SoundEffects.swift */,
 				AFA196062B5FAF62002EB704 /* CheckCurrentMetrics.swift */,
 				AFA196092B5FBD95002EB704 /* MeasurementsConverters.swift */,
+				AF56CDED2B644C47009E8CB8 /* MotionManager.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -624,6 +628,7 @@
 				AF720D432B504326008423D6 /* LocationManager.swift in Sources */,
 				AF5ACB1E2B4713FE0010C316 /* Logger.swift in Sources */,
 				AFA1960A2B5FBD95002EB704 /* MeasurementsConverters.swift in Sources */,
+				AF56CDEE2B644C47009E8CB8 /* MotionManager.swift in Sources */,
 				AF43BF3C2B4C9EE800E5A89C /* WorkoutParameters.swift in Sources */,
 				AFEEDE4A2B5EBACA00B2C27A /* ChartView.swift in Sources */,
 				AF5ACB212B472FAA0010C316 /* WorkoutManager+iOS.swift in Sources */,
@@ -663,6 +668,7 @@
 				AFA675592B4848B700AD5A69 /* MetricsTimelineSchedule.swift in Sources */,
 				AF43BF3D2B4C9EE900E5A89C /* WorkoutParameters.swift in Sources */,
 				AF5ACB1F2B4713FE0010C316 /* Logger.swift in Sources */,
+				AF56CDEF2B644C47009E8CB8 /* MotionManager.swift in Sources */,
 				AF53FF092B5B40BA005DE76D /* Vibration.swift in Sources */,
 				AFA6755C2B48494C00AD5A69 /* ElapsedTimeView.swift in Sources */,
 				AF5ACB1C2B4712550010C316 /* WorkoutManager+watchOS.swift in Sources */,
@@ -868,6 +874,7 @@
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Your workout related data will be used to display your saved workouts in rupl app and rupl.org.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Workouts tracked by rupl app will be saved to HealthKit";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to create workout route";
+				INFOPLIST_KEY_NSMotionUsageDescription = "We need your motion data to pause and resume your workout";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = dredfort.42.org.rupl;
 				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
@@ -904,6 +911,7 @@
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Your workout related data will be used to display your saved workouts in rupl app and rupl.org.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Workouts tracked by rupl app will be saved to HealthKit";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to create workout route";
+				INFOPLIST_KEY_NSMotionUsageDescription = "We need your motion data to pause and resume your workout";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = dredfort.42.org.rupl;
 				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
@@ -942,6 +950,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Your workout related data will be used to display your saved workouts in rupl app and rupl.org.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Workouts tracked by rupl app will be saved to HealthKit";
+				INFOPLIST_KEY_NSMotionUsageDescription = "We need your motion data to pause and resume your workout";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -984,6 +993,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Your workout related data will be used to display your saved workouts in rupl app and rupl.org.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Workouts tracked by rupl app will be saved to HealthKit";
+				INFOPLIST_KEY_NSMotionUsageDescription = "We need your motion data to pause and resume your workout";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

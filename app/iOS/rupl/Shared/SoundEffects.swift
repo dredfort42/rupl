@@ -75,7 +75,7 @@ struct SoundEffects {
 				runSlower = try AVAudioPlayer(contentsOf: workoutRunSlowerSound!)
 			}
 		} catch {
-			print("Error preparing sounds: \(error.localizedDescription)")
+			Logger.shared.log("Error preparing sounds: \(error.localizedDescription)")
 		}
 	}
 }

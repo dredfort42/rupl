@@ -66,6 +66,7 @@ class WorkoutManager: NSObject, ObservableObject {
 	var isTimerStarted: Bool = false
 	let timer = DispatchSource.makeTimerSource(queue: DispatchQueue.main)
 	let locationManager = LocationManager()
+	let motionManager = MotionManager()
 	let healthStore = HKHealthStore()
 	var session: HKWorkoutSession?
 
