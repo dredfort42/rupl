@@ -24,11 +24,17 @@ extension WorkoutManager {
 //
 extension WorkoutManager {
 	func autoPause() {
-		if self.sessionState.isActive && !self.isPauseSetWithButton {
+		if self.useAutoPause == 1 && self.sessionState.isActive && !self.isPauseSetWithButton {
+			var isPaused: Bool = false
+
+			if self.locationManager.accuracy > self.permissibleHorizontalAccuracy {
+				isPaused = self.motionManager.autoPauseState
+			} else {
+				isPaused = self.locationManager.autoPauseState
+			}
+
 			if self.sessionState == .running {
-				if self.locationManager.autoPauseState || 
-					(self.locationManager.accuracy > (self.parameters.minHorizontalAccuracy * 0.8) &&
-					 self.motionManager.autoPauseState) {
+				if isPaused {
 					self.sessionState = .paused
 					self.session?.pause()
 					self.sounds.stopSound?.play()
@@ -37,9 +43,7 @@ extension WorkoutManager {
 #endif
 				}
 			} else {
-				if !self.locationManager.autoPauseState || 
-					(self.locationManager.accuracy > (self.parameters.minHorizontalAccuracy * 0.8) &&
-					 !self.motionManager.autoPauseState) {
+				if !isPaused {
 					self.sessionState = .running
 					self.session?.resume()
 					self.sounds.startSound?.play()

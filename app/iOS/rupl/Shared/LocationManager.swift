@@ -11,13 +11,16 @@ import os
 import CoreLocation
 
 class LocationManager: NSObject, CLLocationManagerDelegate {
-	private let parameters = WorkoutParameters()
+	private let permissibleHorizontalAccuracy: Double = AppSettings.shared.permissibleHorizontalAccuracy
+	private let paceForAutoPause: Double = AppSettings.shared.paceForAutoPause
+	private let paceForAutoResume: Double = AppSettings.shared.paceForAutoResume
+
 	let locationManager = CLLocationManager()
 	var speed: CLLocationSpeed = 0
 	var accuracy: CLLocationAccuracy = 1000
 	var filteredLocations: [CLLocation] = []
 	var autoPauseIndicator: Int = 0
-	var autoPauseState: Bool = false
+	var autoPauseState: Bool = true
 
 	override init() {
 		super.init()
@@ -33,14 +36,19 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 	//
 	func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
 
-		accuracy = locations.last?.horizontalAccuracy ?? 1000
+		accuracy = locations.max(by: { $0.horizontalAccuracy < $1.horizontalAccuracy })?.horizontalAccuracy ?? 1000
 
 		// Filter the raw data.
 		filteredLocations = locations.filter { (location: CLLocation) -> Bool in
-			location.horizontalAccuracy <= parameters.minHorizontalAccuracy
+			location.horizontalAccuracy <= permissibleHorizontalAccuracy
 		}
 
-		guard !filteredLocations.isEmpty else { return }
+		guard !filteredLocations.isEmpty else {
+			if autoPauseIndicator > 0 {
+				autoPauseIndicator -= 1
+			}
+			return
+		}
 		guard let location = filteredLocations.last else { return }
 
 		// Access the speed property from the location object
@@ -59,13 +67,13 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 extension LocationManager {
 	func checkAutoPause() {
 		DispatchQueue.main.async {
-			if self.speed < self.parameters.paceForAutoPause {
+			if self.speed < self.paceForAutoPause {
 				self.autoPauseIndicator += 1
 			} else if self.autoPauseIndicator > 0 {
 				self.autoPauseIndicator -= 1
 			}
 
-			if self.speed > self.parameters.paceForAutoResume {
+			if self.speed > self.paceForAutoResume {
 				self.autoPauseIndicator = 0
 				self.autoPauseState = false
 			} else if self.autoPauseIndicator == 5 {

@@ -21,7 +21,7 @@ extension WorkoutManager {
 			let pulse: Int = Int(self.heartRate)
 
 			//	Checking the critical heart rate level
-			if pulse > self.parameters.pz5Anaerobic {
+			if pulse > self.pz5Anaerobic {
 				self.sounds.alarmSound?.play()
 #if os(watchOS)
 				Vibration.vibrate(type: .underwaterDepthCriticalPrompt)
@@ -30,13 +30,13 @@ extension WorkoutManager {
 
 			// 	MARK: - TMP Checking the puls zone
 			if self.session?.state != .paused && self.heartRateNotificationTimer == 0 {
-				if pulse > self.parameters.pz4Aerobic {
+				if pulse > self.pz2Easy {
 					self.heartRateNotificationTimer = 10
 					self.sounds.runSlower?.play()
 #if os(watchOS)
 					Vibration.vibrate(type: .directionDown)
 #endif
-				} else if pulse < self.parameters.pz3FatBurning && (-(self.session?.startDate?.timeIntervalSinceNow ?? 0) > 600) {
+				} else if pulse < self.pz1NotInZone && (-(self.session?.startDate?.timeIntervalSinceNow ?? 0) > 600) {
 					self.heartRateNotificationTimer = 10
 					self.sounds.runFaster?.play()
 #if os(watchOS)
@@ -56,7 +56,7 @@ extension WorkoutManager {
 			let segment = Int(self.distance / 1000)
 			if self.lastSegment != segment {
 				self.lastSegmentStopTime = Date()
-				self.lastSegmentViewPresentTime = self.parameters.timeForShowLastSegmentView
+				self.lastSegmentViewPresentTime = self.timeForShowLastSegmentView
 				self.lastSegment = segment
 				self.sounds.segmentSound?.play()
 #if os(watchOS)
@@ -73,7 +73,7 @@ extension WorkoutManager {
 	func checkSpeed() {
 		DispatchQueue.global().async {
 			//	Calculate average speed from last 10 measurements
-			if self.speed < self.parameters.paceForAutoPause {
+			if self.speed < self.paceForAutoPause {
 				return
 			}
 

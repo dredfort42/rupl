@@ -61,7 +61,18 @@ class WorkoutManager: NSObject, ObservableObject {
 		HKSeriesType.workoutRoute()
 	]
 
-	let parameters = WorkoutParameters()
+//	let parameters = WorkoutParameters()
+	let permissibleHorizontalAccuracy: Double = AppSettings.shared.permissibleHorizontalAccuracy
+	var useAutoPause: Int = AppSettings.shared.useAutoPause - 1
+	var paceForAutoPause: Double = AppSettings.shared.paceForAutoPause
+	var paceForAutoResume: Double = AppSettings.shared.paceForAutoResume
+	var pz1NotInZone: Int = AppSettings.shared.pz1NotInZone
+	var pz2Easy: Int = AppSettings.shared.pz2Easy
+	var pz3FatBurning: Int = AppSettings.shared.pz3FatBurning
+	var pz4Aerobic: Int = AppSettings.shared.pz4Aerobic
+	var pz5Anaerobic: Int = AppSettings.shared.pz5Anaerobic
+	var timeForShowLastSegmentView: Int = AppSettings.shared.timeForShowLastSegmentView
+
 	let sounds = SoundEffects()
 	var isTimerStarted: Bool = false
 	let timer = DispatchSource.makeTimerSource(queue: DispatchQueue.main)

@@ -17,7 +17,7 @@ struct LoadingIndicatorView: View {
 
 	var body: some View {
 		let shadowShift: CGFloat = wheelSize / 10
-		let shadowRadius: CGFloat = shadowShift / 20
+		let shadowRadius: CGFloat = shadowShift / 10
 		ZStack {
 			Circle()
 				.shadow(color: .ruplBlue.opacity(0.5), radius: shadowRadius, x: 0, y: -shadowShift)
@@ -25,11 +25,9 @@ struct LoadingIndicatorView: View {
 				.shadow(color: .ruplRed.opacity(0.5), radius: shadowRadius, x: shadowShift, y: 0)
 				.shadow(color: .ruplGreen.opacity(0.5), radius: shadowRadius, x: -shadowShift, y: 0)
 				.rotationEffect(.degrees(wheelAnimation ? wheelRotating : wheelStartPosition))
-
 			Circle()
-				.fill(.black)
-				.shadow(color: .black, radius: 5)
-
+				.fill(.ruplBackground)
+				.shadow(color: .ruplBackground, radius: 5)
 		}
 		.frame(width: wheelSize, height: wheelSize)
 		.padding(10)

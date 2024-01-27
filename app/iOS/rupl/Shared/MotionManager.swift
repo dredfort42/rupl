@@ -11,9 +11,8 @@ import os
 import CoreMotion
 
 class MotionManager {
-	private let parameters = WorkoutParameters()
 	let motionActivityManager = CMMotionActivityManager()
-	var autoPauseState: Bool = false
+	var autoPauseState: Bool = true
 
 	init() {
 		if CMMotionActivityManager.isActivityAvailable() {
