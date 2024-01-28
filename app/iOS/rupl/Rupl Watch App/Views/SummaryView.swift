@@ -23,7 +23,7 @@ struct SummaryView: View {
 			.navigationTitle("Summary")
 			.navigationBarTitleDisplayMode(.inline)
 		} else {
-			ProgressView("Saving Workout")
+			LoadingIndicatorView()
 				.navigationBarHidden(true)
 		}
 	}

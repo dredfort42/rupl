@@ -14,23 +14,30 @@ struct LoadingIndicatorView: View {
 	var wheelAnimation: Bool = true
 
 	@State private var wheelRotating: Double = 0.0
+	@State private var wheelOpacity: Double = 0.2
 
 	var body: some View {
 		let shadowShift: CGFloat = wheelSize / 10
 		let shadowRadius: CGFloat = shadowShift / 10
 		ZStack {
 			Circle()
-				.shadow(color: .ruplBlue.opacity(0.5), radius: shadowRadius, x: 0, y: -shadowShift)
-				.shadow(color: .ruplYellow.opacity(0.5), radius: shadowRadius, x: 0, y: shadowShift)
-				.shadow(color: .ruplRed.opacity(0.5), radius: shadowRadius, x: shadowShift, y: 0)
-				.shadow(color: .ruplGreen.opacity(0.5), radius: shadowRadius, x: -shadowShift, y: 0)
+				.shadow(color: .ruplBlue.opacity(0.8), radius: shadowRadius, x: 0, y: -shadowShift)
+				.shadow(color: .ruplYellow.opacity(0.8), radius: shadowRadius, x: 0, y: shadowShift)
+				.shadow(color: .ruplRed.opacity(0.8), radius: shadowRadius, x: shadowShift, y: 0)
+				.shadow(color: .ruplGreen.opacity(0.8), radius: shadowRadius, x: -shadowShift, y: 0)
 				.rotationEffect(.degrees(wheelAnimation ? wheelRotating : wheelStartPosition))
+				.opacity(wheelOpacity)
 			Circle()
 				.fill(.ruplBackground)
-				.shadow(color: .ruplBackground, radius: 5)
+				.shadow(color: .ruplBackground, radius: 2)
 		}
 		.frame(width: wheelSize, height: wheelSize)
 		.padding(10)
+		.foregroundStyle(
+			.shadow(.inner(color: .ruplBackground, radius: 2))
+		)
+		.clipShape(Circle())
+
 		.onAppear {
 			if wheelAnimation {
 				withAnimation(
@@ -39,6 +46,13 @@ struct LoadingIndicatorView: View {
 					.repeatForever(autoreverses: false)
 				) {
 					wheelRotating = 360.0
+				}
+				withAnimation(
+					.easeInOut(duration: 0.8)
+					.speed(0.2)
+					.repeatForever(autoreverses: true)
+				) {
+					wheelOpacity = 1.0
 				}
 			}
 		}

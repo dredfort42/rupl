@@ -120,7 +120,7 @@ class AppSettings {
 
 	private func checkAndSetDefaultSettings() {
 		if permissibleHorizontalAccuracy == 0.0 {
-			permissibleHorizontalAccuracy = 16.0
+			permissibleHorizontalAccuracy = 8.0
 		}
 
 		if useAutoPause == 0 {

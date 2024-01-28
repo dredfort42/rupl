@@ -14,6 +14,8 @@ import AVFoundation
 struct ControlsView: View {
 	@EnvironmentObject var workoutManager: WorkoutManager
 	@State private var isAnimating = false
+	@State private var isSettingsActive = false
+
 
 	var body: some View {
 		VStack {
@@ -39,7 +41,7 @@ struct ControlsView: View {
 					}
 					.clipShape(Circle())
 					.overlay {
-						Circle().stroke(.ruplBlue, lineWidth: 1)
+						Circle().stroke(.ruplBlue, lineWidth: 2)
 					}
 					.buttonStyle(.bordered)
 					.frame(width: 140, height: 140)
@@ -48,6 +50,7 @@ struct ControlsView: View {
 
 					HStack {
 						Button {
+							isSettingsActive = true
 							print("show settings screen ->")
 						} label: {
 							ZStack {
@@ -61,7 +64,7 @@ struct ControlsView: View {
 						}
 						.clipShape(Circle())
 						.overlay {
-							Circle().stroke(.gray, lineWidth: 1)
+							Circle().stroke(.gray, lineWidth: 2)
 						}
 						.buttonStyle(.bordered)
 						.frame(width: 30, height: 30)
@@ -95,7 +98,7 @@ struct ControlsView: View {
 						}
 						.clipShape(Circle())
 						.overlay {
-							Circle().stroke(.ruplYellow, lineWidth: 1)
+							Circle().stroke(.ruplYellow, lineWidth: 2)
 						}
 						.buttonStyle(.bordered)
 						.frame(width: 120, height: 120)
@@ -128,7 +131,7 @@ struct ControlsView: View {
 						}
 						.clipShape(Circle())
 						.overlay {
-							Circle().stroke(.ruplRed, lineWidth: 1)
+							Circle().stroke(.ruplRed, lineWidth: 2)
 						}
 						.buttonStyle(.bordered)
 						.frame(width: 80, height: 80)
@@ -139,6 +142,11 @@ struct ControlsView: View {
 			} else {
 				LoadingIndicatorView()
 			}
+		}
+		.sheet(isPresented: $isSettingsActive) {
+			print("show settings screen Go Go Go")
+		} content: {
+			SettingsView()
 		}
 	}
 

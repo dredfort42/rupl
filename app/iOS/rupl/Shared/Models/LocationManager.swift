@@ -28,7 +28,9 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 		// Set up CLLocationManager
 		locationManager.delegate = self
 		locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
-		locationManager.requestWhenInUseAuthorization()
+		locationManager.allowsBackgroundLocationUpdates = true
+		locationManager.requestAlwaysAuthorization()
+//		locationManager.requestWhenInUseAuthorization()
 		locationManager.startUpdatingLocation()
 	}
 

@@ -9,7 +9,6 @@ import SwiftUI
 
 @main
 struct Rupl_Watch_AppApp: App {
-	@WKApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 	private let workoutManager = WorkoutManager.shared
     
 	@SceneBuilder var body: some Scene {
