@@ -12,9 +12,11 @@ import Foundation
 //
 class AppSettings {
 	static let shared = AppSettings()
-	
+
+	static let useAutoPauseKey = "useAutoPause"
+	static let connectedToRuplKey = "connectedToRupl"
+	private let vendorIDKey = "vendorID"
 	private let permissibleHorizontalAccuracyKey = "permissibleHorizontalAccuracy"
-	private let useAutoPauseKey = "useAutoPause"
 	private let paceForAutoPauseKey = "paceForAutoPause"
 	private let paceForAutoResumeKey = "paceForAutoResume"
 	private let timeForShowLastSegmentViewKey = "timeForShowLastSegmentView"
@@ -24,21 +26,36 @@ class AppSettings {
 	private let pz4AerobicKey = "pz4Aerobic"
 	private let pz5AnaerobicKey = "pz5Anaerobic"
 
+	var vendorID: String {
+		get {
+			return UserDefaults.standard.string(forKey: vendorIDKey) ?? ""
+		}
+	}
+
+	var useAutoPause: Bool {
+		get {
+			return UserDefaults.standard.bool(forKey: AppSettings.useAutoPauseKey)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: AppSettings.useAutoPauseKey)
+		}
+	}
+
+	var connectedToRupl: Bool {
+		get {
+			return UserDefaults.standard.bool(forKey: AppSettings.connectedToRuplKey)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: AppSettings.connectedToRuplKey)
+		}
+	}
+
 	var permissibleHorizontalAccuracy: Double {
 		get {
 			return UserDefaults.standard.double(forKey: permissibleHorizontalAccuracyKey)
 		}
 		set {
 			UserDefaults.standard.set(newValue, forKey: permissibleHorizontalAccuracyKey)
-		}
-	}
-
-	var useAutoPause: Int {
-		get {
-			return UserDefaults.standard.integer(forKey: useAutoPauseKey)
-		}
-		set {
-			UserDefaults.standard.set(newValue, forKey: useAutoPauseKey)
 		}
 	}
 
@@ -115,23 +132,17 @@ class AppSettings {
 	}
 
 	private init() {
-		checkAndSetDefaultSettings()
-	}
+		if vendorID == "" {
+			UserDefaults.standard.set(UUID().uuidString, forKey: vendorIDKey)
+		}
 
-	private func checkAndSetDefaultSettings() {
 		if permissibleHorizontalAccuracy == 0.0 {
 			permissibleHorizontalAccuracy = 8.0
 		}
 
-		if useAutoPause == 0 {
-			useAutoPause = 2 // 1 - off | 2 - on
-		}
-
-		if paceForAutoPause == 0.0 {
+		if paceForAutoPause == 0.0 || paceForAutoResume == 0.0 {
+			useAutoPause = true
 			paceForAutoPause = 1.85
-		}
-
-		if paceForAutoResume == 0.0 {
 			paceForAutoResume = 2.25
 		}
 
@@ -139,23 +150,11 @@ class AppSettings {
 			timeForShowLastSegmentView = 20
 		}
 
-		if pz1NotInZone == 0 {
+		if pz1NotInZone == 0 || pz2Easy == 0 || pz3FatBurning == 0 || pz4Aerobic == 0 || pz5Anaerobic == 0 {
 			pz1NotInZone = 126
-		}
-
-		if pz2Easy == 0 {
 			pz2Easy = 137
-		}
-
-		if pz3FatBurning == 0 {
 			pz3FatBurning = 147
-		}
-
-		if pz4Aerobic == 0 {
 			pz4Aerobic = 158
-		}
-
-		if pz5Anaerobic == 0 {
 			pz5Anaerobic = 168
 		}
 	}

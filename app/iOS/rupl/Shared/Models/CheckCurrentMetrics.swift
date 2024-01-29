@@ -30,13 +30,13 @@ extension WorkoutManager {
 
 			// 	MARK: - TMP Checking the puls zone
 			if self.session?.state != .paused && self.heartRateNotificationTimer == 0 {
-				if pulse > self.pz2Easy {
+				if pulse > self.pz3FatBurning {
 					self.heartRateNotificationTimer = 10
 					self.sounds.runSlower?.play()
 #if os(watchOS)
 					Vibration.vibrate(type: .directionDown)
 #endif
-				} else if pulse < self.pz1NotInZone && (-(self.session?.startDate?.timeIntervalSinceNow ?? 0) > 600) {
+				} else if pulse < self.pz2Easy && (-(self.session?.startDate?.timeIntervalSinceNow ?? 0) > 600) {
 					self.heartRateNotificationTimer = 10
 					self.sounds.runFaster?.play()
 #if os(watchOS)

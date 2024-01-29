@@ -13,9 +13,8 @@ import AVFoundation
 
 struct ControlsView: View {
 	@EnvironmentObject var workoutManager: WorkoutManager
-	@State private var isAnimating = false
+	
 	@State private var isSettingsActive = false
-
 
 	var body: some View {
 		VStack {
@@ -41,7 +40,7 @@ struct ControlsView: View {
 					}
 					.clipShape(Circle())
 					.overlay {
-						Circle().stroke(.ruplBlue, lineWidth: 2)
+						Circle().stroke(.ruplBlue.opacity(0.8), lineWidth: 2)
 					}
 					.buttonStyle(.bordered)
 					.frame(width: 140, height: 140)
@@ -56,15 +55,15 @@ struct ControlsView: View {
 							ZStack {
 								Circle()
 									.frame(width: 30, height: 30)
-									.foregroundColor(.gray)
+									.foregroundColor(.ruplGray)
 									.opacity(0.1)
 								Image(systemName: "gear")
-									.foregroundColor(.gray)
+									.foregroundColor(.ruplGray)
 							}
 						}
 						.clipShape(Circle())
 						.overlay {
-							Circle().stroke(.gray, lineWidth: 2)
+							Circle().stroke(.ruplGray.opacity(0.8), lineWidth: 2)
 						}
 						.buttonStyle(.bordered)
 						.frame(width: 30, height: 30)
@@ -98,7 +97,7 @@ struct ControlsView: View {
 						}
 						.clipShape(Circle())
 						.overlay {
-							Circle().stroke(.ruplYellow, lineWidth: 2)
+							Circle().stroke(.ruplYellow.opacity(0.8), lineWidth: 2)
 						}
 						.buttonStyle(.bordered)
 						.frame(width: 120, height: 120)
@@ -131,7 +130,7 @@ struct ControlsView: View {
 						}
 						.clipShape(Circle())
 						.overlay {
-							Circle().stroke(.ruplRed, lineWidth: 2)
+							Circle().stroke(.ruplRed.opacity(0.8), lineWidth: 2)
 						}
 						.buttonStyle(.bordered)
 						.frame(width: 80, height: 80)

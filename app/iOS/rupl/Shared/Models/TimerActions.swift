@@ -24,7 +24,7 @@ extension WorkoutManager {
 //
 extension WorkoutManager {
 	func autoPause() {
-		if self.useAutoPause == 1 && self.sessionState.isActive && !self.isPauseSetWithButton {
+		if self.useAutoPause && self.sessionState.isActive && !self.isPauseSetWithButton {
 			var isPaused: Bool = false
 
 			if self.locationManager.accuracy > self.permissibleHorizontalAccuracy {

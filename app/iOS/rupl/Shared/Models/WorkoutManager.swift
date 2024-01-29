@@ -63,7 +63,7 @@ class WorkoutManager: NSObject, ObservableObject {
 
 //	let parameters = WorkoutParameters()
 	let permissibleHorizontalAccuracy: Double = AppSettings.shared.permissibleHorizontalAccuracy
-	var useAutoPause: Int = AppSettings.shared.useAutoPause - 1
+	var useAutoPause: Bool = AppSettings.shared.useAutoPause
 	var paceForAutoPause: Double = AppSettings.shared.paceForAutoPause
 	var paceForAutoResume: Double = AppSettings.shared.paceForAutoResume
 	var pz1NotInZone: Int = AppSettings.shared.pz1NotInZone
