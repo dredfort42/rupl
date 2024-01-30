@@ -27,6 +27,11 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func deviceAuthHandler(w http.ResponseWriter, r *http.Request) {
+	print(r)
+	w.Write("0123456789")
+}
+
 func main() {
 	config, err := configreader.GetConfig()
 
@@ -35,6 +40,7 @@ func main() {
 	}
 
 	http.HandleFunc("/", homeHandler)
+	http.HandleFunc("/api/device_authorization", deviceAuthHandler)
 
 	port := fmt.Sprintf(":%s", config["entrypoint.port"])
 	url := fmt.Sprintf("%s://%s%s", config["entrypoint.protocol"], config["entrypoint.address"], port)
