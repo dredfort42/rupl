@@ -15,7 +15,7 @@ class AppSettings {
 
 	static let useAutoPauseKey = "useAutoPause"
 	static let connectedToRuplKey = "connectedToRupl"
-	private let vendorIDKey = "vendorID"
+	private let clientIDKey = "clientID"
 	private let permissibleHorizontalAccuracyKey = "permissibleHorizontalAccuracy"
 	private let paceForAutoPauseKey = "paceForAutoPause"
 	private let paceForAutoResumeKey = "paceForAutoResume"
@@ -26,9 +26,9 @@ class AppSettings {
 	private let pz4AerobicKey = "pz4Aerobic"
 	private let pz5AnaerobicKey = "pz5Anaerobic"
 
-	var vendorID: String {
+	var clientID: String {
 		get {
-			return UserDefaults.standard.string(forKey: vendorIDKey) ?? ""
+			return UserDefaults.standard.string(forKey: clientIDKey) ?? ""
 		}
 	}
 
@@ -132,8 +132,8 @@ class AppSettings {
 	}
 
 	private init() {
-		if vendorID == "" {
-			UserDefaults.standard.set(UUID().uuidString, forKey: vendorIDKey)
+		if clientID == "" {
+			UserDefaults.standard.set(UUID().uuidString, forKey: clientIDKey)
 		}
 
 		if permissibleHorizontalAccuracy == 0.0 {

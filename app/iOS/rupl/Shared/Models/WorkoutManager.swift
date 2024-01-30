@@ -22,20 +22,18 @@ class WorkoutManager: NSObject, ObservableObject {
 	//	The workout session live states that the UI observes.
 	@Published var sessionState: HKWorkoutSessionState = .notStarted
 	@Published var heartRate: Double = 0
-	@Published var activeEnergy: Double = 0
+//	@Published var activeEnergy: Double = 0
 	@Published var distance: Double = 0
-	@Published var power: Double = 0
+//	@Published var power: Double = 0
 	@Published var speed: Double = 0
-	@Published var strideLength: Double = 0
-	@Published var verticalOscillation: Double = 0
-	@Published var groundContactTime: Double = 0
-	@Published var vo2Max: Double = 0
-	@Published var stepCount: Double = 0
-	@Published var cadence: Double = 0
+//	@Published var strideLength: Double = 0
+//	@Published var verticalOscillation: Double = 0
+//	@Published var groundContactTime: Double = 0
+//	@Published var vo2Max: Double = 0
+//	@Published var stepCount: Double = 0
+//	@Published var cadence: Double = 0
 //	@Published var elapsedTimeInterval: TimeInterval = 0
 
-	//	SummaryView (watchOS) changes from Saving Workout to the metric
-	//	summary view when a workout changes from nil to a valid value.
 	@Published var workout: HKWorkout?
 
 	//	HealthKit data types to share
@@ -72,7 +70,6 @@ class WorkoutManager: NSObject, ObservableObject {
 	var pz4Aerobic: Int = AppSettings.shared.pz4Aerobic
 	var pz5Anaerobic: Int = AppSettings.shared.pz5Anaerobic
 	var timeForShowLastSegmentView: Int = AppSettings.shared.timeForShowLastSegmentView
-
 	let sounds = SoundEffects()
 	var isTimerStarted: Bool = false
 	let timer = DispatchSource.makeTimerSource(queue: DispatchQueue.main)
@@ -80,12 +77,6 @@ class WorkoutManager: NSObject, ObservableObject {
 	let motionManager = MotionManager()
 	let healthStore = HKHealthStore()
 	var session: HKWorkoutSession?
-
-//	--------------------
-//	var isMirroring: Bool = true
-//	var mirroringErrorsCounter: UInt8 = 0
-//	--------------------
-
 	var isSessionEnded: Bool = false
 	var isPauseSetWithButton: Bool = false
 	var pauseStartTime: Date = Date()
@@ -117,10 +108,6 @@ class WorkoutManager: NSObject, ObservableObject {
 
 	static let shared = WorkoutManager()
 
-	//	Kick off a task to consume the async stream.
-	//	The next value in the stream can't start processing until
-	//	"await consumeSessionStateChange(value)" returns and the loop enters
-	//	the next iteration, which serializes the asynchronous operations
 	private override init() {
 		super.init()
 
@@ -139,26 +126,10 @@ class WorkoutManager: NSObject, ObservableObject {
 		}
 	}
 
-	//	Consume the session state change from the async stream to update sessionState
-	//	and finish the workout
 	private func consumeSessionStateChange(_ change: SessionSateChange) async {
 		sessionState = change.newState
 
-		//	Wait for the session to transition states before ending the builder
 #if os(watchOS)
-
-//	--------------------
-		//	Send the elapsed time to the iOS side
-//		let elapsedTimeInterval = session?.associatedWorkoutBuilder().elapsedTime(at: change.date) ?? 0
-//		let elapsedTime = WorkoutElapsedTime(timeInterval: elapsedTimeInterval, date: change.date)
-//
-//		if isMirroring {
-//			if let elapsedTimeData = try? JSONEncoder().encode(elapsedTime) {
-//				await sendData(elapsedTimeData)
-//			}
-//		}
-//	--------------------
-
 		switch change.newState {
 			case .paused:
 				pauseStartTime = Date()
@@ -203,25 +174,19 @@ extension WorkoutManager {
 	func resetWorkout() {
 		sessionState = .notStarted
 		heartRate = 0
-		activeEnergy = 0
+//		activeEnergy = 0
 		distance = 0
-		power = 0
+//		power = 0
 		speed = 0
-		strideLength = 0
-		verticalOscillation = 0
-		groundContactTime = 0
-		vo2Max = 0
-		stepCount = 0
-		cadence = 0
+//		strideLength = 0
+//		verticalOscillation = 0
+//		groundContactTime = 0
+//		vo2Max = 0
+//		stepCount = 0
+//		cadence = 0
 //		elapsedTimeInterval = 0
 		workout = nil
 		session = nil
-
-//	--------------------
-//		isMirroring = true
-//		mirroringErrorsCounter = 0
-//	--------------------
-
 		isSessionEnded = false
 		isPauseSetWithButton = false
 		pauseStartTime = Date()
@@ -240,23 +205,6 @@ extension WorkoutManager {
 		builder = nil
 #endif
 	}
-
-//	--------------------
-//	func sendData(_ data: Data) async {
-//		if isMirroring && mirroringErrorsCounter < parameters.maxMirroringErrors {
-//			do {
-//				try await session?.sendToRemoteWorkoutSession(data: data)
-//				mirroringErrorsCounter = 0
-//			} catch {
-//				Logger.shared.log("[\(self.mirroringErrorsCounter)] Failed to send data: \(error)")
-//				mirroringErrorsCounter += 1
-//			}
-//		} else {
-//			isMirroring = false
-//		}
-//	}
-//	--------------------
-
 }
 
 //	MARK: - Workout statistics
@@ -324,8 +272,6 @@ extension WorkoutManager: HKWorkoutSessionDelegate {
 									date: Date) {
 		Logger.shared.log("Session state changed from \(fromState.rawValue) to \(toState.rawValue)")
 
-		//	Yield the new state change to the async stream synchronously.
-		//	asynStreamTuple is a constant, so it's nonisolated
 		let sessionSateChange = SessionSateChange(newState: toState, date: date)
 		asynStreamTuple.continuation.yield(sessionSateChange)
 	}
@@ -335,42 +281,14 @@ extension WorkoutManager: HKWorkoutSessionDelegate {
 		Logger.shared.log("\(#function): \(error)")
 	}
 
-
-	//	HealthKit calls this method when it determines that
-	//	the mirrored workout session is invalid
 	nonisolated func workoutSession(_ workoutSession: HKWorkoutSession,
 									didDisconnectFromRemoteDeviceWithError error: Error?) {
 		Logger.shared.log("\(#function): \(error)")
 	}
 
-
-	//	In iOS, the sample app can go into the background and become suspended.
-	//	When suspended, HealthKit gathers the data coming from the remote session.
-	//	When the app resumes, HealthKit sends an array containing all the data objects
-	//	it has accumulated to this delegate method.
-	//	The data objects in the array appear in the order that the local system received them.
-	//
-	//	On watchOS, the workout session keeps the app running even if it is
-	//	in the background; however, the system can temporarily suspend the app
-	//	for example, if the app uses an excessive amount of CPU in the background.
-	//	While suspended, HealthKit caches the incoming data objects and delivers
-	//	an array of data objects when the app resumes, just like in the iOS app.
 	nonisolated func workoutSession(_ workoutSession: HKWorkoutSession,
 									didReceiveDataFromRemoteWorkoutSession data: [Data]) {
 		Logger.shared.log("\(#function): \(data.debugDescription)")
-		
-//	--------------------
-//		Task { @MainActor in
-//			do {
-//				for anElement in data {
-//					try handleReceivedData(anElement)
-//				}
-//			} catch {
-//				Logger.shared.log("Failed to handle received data: \(error))")
-//			}
-//		}
-//	--------------------
-
 	}
 }
 

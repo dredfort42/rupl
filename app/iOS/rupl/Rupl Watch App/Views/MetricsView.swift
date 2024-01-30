@@ -19,16 +19,11 @@ struct MetricsView: View {
 			VStack(alignment: .leading) {
 				ElapsedTimeView(elapsedTime: elapsedTime(with: context.date), showSubseconds: context.cadence == .live)
 					.foregroundColor(.ruplYellow)
-//				Text(workoutManager.speed.description + " /km")
-//					.foregroundStyle(.ruplBlue)
 				Text(workoutManager.convertToMinutesPerKilometer(metersPerSecond: workoutManager.last10SpeedAverage) + " /km")
 					.foregroundStyle(.ruplBlue)
 				Text((workoutManager.distance / 1000).formatted(.number.precision(.fractionLength(2))) + " km")
 				Text((workoutManager.heartRate).formatted(.number.precision(.fractionLength(0))) + " bpm")
 					.foregroundStyle(.ruplRed)
-//				Text(workoutManager.power.formatted(.number.precision(.fractionLength(0))) + " w")
-//				Text(workoutManager.cadence.formatted(.number.precision(.fractionLength(0))) + " rpm")
-//				Text(workoutManager.water.formatted(.number.precision(.fractionLength(0))) + " oz")
 			}
 			.font(.system(.title, design: .rounded).monospacedDigit().lowercaseSmallCaps())
 			.frame(maxWidth: .infinity, alignment: .leading)
@@ -36,10 +31,12 @@ struct MetricsView: View {
 			.scenePadding()
 			.padding([.top], 30)
 			.onChange(of: workoutManager.lastSegment) {
-				isSegmentSheetActive = true
+				if workoutManager.lastSegment > 0 {
+					isSegmentSheetActive = true
+				}
 			}
 			.sheet(isPresented: $isSegmentSheetActive) {
-//				print("segment changed")
+//				print("last segment view closed")
 			} content: {
 				LastSegmentView()
 			}

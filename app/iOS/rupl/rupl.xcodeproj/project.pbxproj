@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AF06CC452B69132200943CEB /* LoadingIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF06CC442B69132200943CEB /* LoadingIndicatorView.swift */; };
 		AF1C0C5B2B5EE5C800E1F9E4 /* WorkoutAlarmSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AF1C0C5A2B5EE5C800E1F9E4 /* WorkoutAlarmSound.aif */; };
 		AF1C0C5C2B5EE5C800E1F9E4 /* WorkoutAlarmSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AF1C0C5A2B5EE5C800E1F9E4 /* WorkoutAlarmSound.aif */; };
 		AF2DBABA2B601F5B00E50B47 /* WorkoutRunSlowerSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AF2DBAB82B601F5B00E50B47 /* WorkoutRunSlowerSound.aif */; };
@@ -14,7 +15,6 @@
 		AF2DBABC2B601F5B00E50B47 /* WorkoutRunFasterSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AF2DBAB92B601F5B00E50B47 /* WorkoutRunFasterSound.aif */; };
 		AF2DBABD2B601F5B00E50B47 /* WorkoutRunFasterSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AF2DBAB92B601F5B00E50B47 /* WorkoutRunFasterSound.aif */; };
 		AF3F35512B66ACD8007399F9 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF3F35502B66ACD8007399F9 /* SettingsView.swift */; };
-		AF41FA862B6825B5004FC0AB /* ConnectToEnv.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF41FA852B6825B5004FC0AB /* ConnectToEnv.swift */; };
 		AF41FA872B6825B5004FC0AB /* ConnectToEnv.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF41FA852B6825B5004FC0AB /* ConnectToEnv.swift */; };
 		AF43BF3C2B4C9EE800E5A89C /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF43BF3B2B4C9EE800E5A89C /* AppSettings.swift */; };
 		AF43BF3D2B4C9EE900E5A89C /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF43BF3B2B4C9EE800E5A89C /* AppSettings.swift */; };
@@ -65,7 +65,6 @@
 		AFA6755C2B48494C00AD5A69 /* ElapsedTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA6755A2B48494C00AD5A69 /* ElapsedTimeView.swift */; };
 		AFA6755E2B49A50200AD5A69 /* ActivityRingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA6755D2B49A50200AD5A69 /* ActivityRingsView.swift */; };
 		AFCBC3702B5D82FF000E2D41 /* LoadingIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFCBC36F2B5D82FF000E2D41 /* LoadingIndicatorView.swift */; };
-		AFCBC3712B5D82FF000E2D41 /* LoadingIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFCBC36F2B5D82FF000E2D41 /* LoadingIndicatorView.swift */; };
 		AFD0B1982B5C74B90027001F /* WorkoutSegmentSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AFD0B1972B5C74B90027001F /* WorkoutSegmentSound.aif */; };
 		AFD0B1992B5C74B90027001F /* WorkoutSegmentSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AFD0B1972B5C74B90027001F /* WorkoutSegmentSound.aif */; };
 		AFEEDE442B5EB69700B2C27A /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEEDE432B5EB69700B2C27A /* StartView.swift */; };
@@ -128,6 +127,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		AF06CC442B69132200943CEB /* LoadingIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingIndicatorView.swift; sourceTree = "<group>"; };
 		AF1C0C592B5ECDA500E1F9E4 /* rupl.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = rupl.entitlements; sourceTree = "<group>"; };
 		AF1C0C5A2B5EE5C800E1F9E4 /* WorkoutAlarmSound.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = WorkoutAlarmSound.aif; sourceTree = "<group>"; };
 		AF2DBAB82B601F5B00E50B47 /* WorkoutRunSlowerSound.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = WorkoutRunSlowerSound.aif; sourceTree = "<group>"; };
@@ -242,6 +242,7 @@
 				AF5ACB242B4733270010C316 /* MetricsView.swift */,
 				AF3F35502B66ACD8007399F9 /* SettingsView.swift */,
 				AF5ACB262B4733510010C316 /* SummaryView.swift */,
+				AF06CC442B69132200943CEB /* LoadingIndicatorView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -249,6 +250,7 @@
 		AF3F354B2B66AB79007399F9 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				AF41FA852B6825B5004FC0AB /* ConnectToEnv.swift */,
 				AF53FF072B5B40BA005DE76D /* Vibration.swift */,
 				AF5ACB1A2B4712550010C316 /* WorkoutManager+watchOS.swift */,
 			);
@@ -263,6 +265,7 @@
 				AFEEDE432B5EB69700B2C27A /* StartView.swift */,
 				AFEEDE4B2B5EBAF800B2C27A /* SummaryView.swift */,
 				AFEEDE472B5EB8DE00B2C27A /* WorkoutListView.swift */,
+				AFCBC36F2B5D82FF000E2D41 /* LoadingIndicatorView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -279,7 +282,6 @@
 			isa = PBXGroup;
 			children = (
 				AFA6755A2B48494C00AD5A69 /* ElapsedTimeView.swift */,
-				AFCBC36F2B5D82FF000E2D41 /* LoadingIndicatorView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -297,7 +299,6 @@
 				AF53FF042B5AE4D5005DE76D /* SoundEffects.swift */,
 				AF45FD762B59BDF0009E7B4B /* TimerActions.swift */,
 				AF5ACB172B47107F0010C316 /* WorkoutManager.swift */,
-				AF41FA852B6825B5004FC0AB /* ConnectToEnv.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -668,7 +669,6 @@
 				AFEEDE462B5EB78000B2C27A /* MirroringWorkoutView.swift in Sources */,
 				AFCBC3702B5D82FF000E2D41 /* LoadingIndicatorView.swift in Sources */,
 				AFEEDE482B5EB8DE00B2C27A /* WorkoutListView.swift in Sources */,
-				AF41FA862B6825B5004FC0AB /* ConnectToEnv.swift in Sources */,
 				AFA6755B2B48494C00AD5A69 /* ElapsedTimeView.swift in Sources */,
 				AF45FD772B59BDF0009E7B4B /* TimerActions.swift in Sources */,
 				AF53FF052B5AE4D5005DE76D /* SoundEffects.swift in Sources */,
@@ -726,9 +726,9 @@
 				AFA6755E2B49A50200AD5A69 /* ActivityRingsView.swift in Sources */,
 				AF5ACADF2B46D07A0010C316 /* ruplApp.swift in Sources */,
 				AF5ACB252B4733270010C316 /* MetricsView.swift in Sources */,
+				AF06CC452B69132200943CEB /* LoadingIndicatorView.swift in Sources */,
 				AF53FF062B5AE4D5005DE76D /* SoundEffects.swift in Sources */,
 				AF5ACB272B4733510010C316 /* SummaryView.swift in Sources */,
-				AFCBC3712B5D82FF000E2D41 /* LoadingIndicatorView.swift in Sources */,
 				AF45FD782B59BDF0009E7B4B /* TimerActions.swift in Sources */,
 				AF7F52932B5D265700856DEA /* LastSegmentView.swift in Sources */,
 				AF3F35512B66ACD8007399F9 /* SettingsView.swift in Sources */,

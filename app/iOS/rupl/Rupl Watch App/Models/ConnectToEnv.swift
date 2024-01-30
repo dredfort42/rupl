@@ -10,23 +10,24 @@ import Foundation
 import os
 
 class ConnectToEnv {
-	let apiUrl = URL(string: "http://rupl.org/api")!
-	let vendorID = AppSettings.shared.vendorID
-
-	
+	let apiUrl = URL(string: "http://rupl.org/api/device_authorization")!
+	let clientID = AppSettings.shared.clientID
 
 	init() {
-		print("Vendor ID: \(vendorID)")
-		sendRequest(requestData: ["uuid": vendorID])
+		print("Vendor ID: \(clientID)")
+		sendRequest(requestData: ["client_id": clientID])
 	}
 
 	func sendRequest(requestData: [String: String]) {
+
 		if let jsonData = try? JSONSerialization.data(withJSONObject: requestData) {
 
 			// Create a URL request
 			var request = URLRequest(url: apiUrl)
 			request.httpMethod = "POST"
+			request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 			request.httpBody = jsonData
+
 
 			// Perform the network request
 			let task = URLSession.shared.dataTask(with: request) { (data, response, error) in

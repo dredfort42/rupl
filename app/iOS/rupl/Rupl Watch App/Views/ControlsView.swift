@@ -106,7 +106,6 @@ struct ControlsView: View {
 						Spacer()
 					}
 
-
 					HStack {
 						Spacer()
 
@@ -162,5 +161,4 @@ struct ControlsView: View {
 			}
 		}
 	}
-
 }

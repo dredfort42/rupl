@@ -29,98 +29,95 @@ struct SettingsView: View {
 	//	]
 
 	var body: some View {
-		NavigationStack {
-			VStack {
+		
+		VStack {
 
 
-				Form {
-					Section {
-						Toggle("Auto pause", isOn: $useAutoPauseIsOn)
-							.toggleStyle(SwitchToggleStyle(tint: .ruplBlue))
-					}
-				footer: {
+			Form {
+				Section {
+					Toggle("Auto pause", isOn: $useAutoPauseIsOn)
+						.toggleStyle(SwitchToggleStyle(tint: .ruplBlue))
+				} footer: {
 					Text("Automatically pauses workout when you have paused your activity")
 				}
 
 
 
-					Section {
-						//											Toggle("Something Else", isOn: $somethingElseIsOn)
-						//
+				Section {
+					//											Toggle("Something Else", isOn: $somethingElseIsOn)
+					//
 
-						//
-						//											Slider(value: $amount, in: 0...100)
-						if isConnectedToRupl {
-							Button {
-								isConnectedToRupl = !isConnectedToRupl
-							} label: {
-								HStack {
-									Image(systemName: "xmark")
-										.padding()
-									Text("Disconnect")
-								}
-							}.foregroundColor(.ruplRed)
-						} else {
-							Button {
-								isConnectedToRupl = !isConnectedToRupl
-							} label: {
-								HStack {
-									Image(systemName: "link")
-										.padding()
-									Text("Connect")
-								}
+					//
+					//											Slider(value: $amount, in: 0...100)
+					if isConnectedToRupl {
+						Button {
+							isConnectedToRupl = !isConnectedToRupl
+						} label: {
+							HStack {
+								Image(systemName: "xmark")
+									.padding()
+								Text("Disconnect")
 							}
-							//							.foregroundColor(.ruplBlue)
+						}.foregroundColor(.ruplRed)
+					} else {
+						Button {
+							isConnectedToRupl = !isConnectedToRupl
+						} label: {
+							HStack {
+								Image(systemName: "link")
+									.padding()
+								Text("Connect")
+							}
 						}
-						//
+						//							.foregroundColor(.ruplBlue)
 					}
-				header: {
+					//
+				} header: {
 					Text("Connection to rupl.org")
-				}
-				footer: {
+				} footer: {
 					if isConnectedToRupl {
 						Text("Disconnect from rupl.org and stop uploading running results")
 					} else {
 						Text("Connect to rupl.org and get training tasks to your watch")
 					}
 				}
-					//
-					//					Section {
-					//						Toggle("Another Thing", isOn: $anotherThingIsOn)
-					//
-					//						Text("Quantity: \(quantity)")
-					//
-					//						Slider(value: $quantity, in: 0...100)
+				//
+				//					Section {
+				//						Toggle("Another Thing", isOn: $anotherThingIsOn)
+				//
+				//						Text("Quantity: \(quantity)")
+				//
+				//						Slider(value: $quantity, in: 0...100)
 
-					//					} header: {
-					//						Text("Even More Settings")
-					//					}
-					//
-					//					Section {
-					//						Image(systemName: "photo")
-					//							.resizable()
-					//							.scaledToFit()
-					//
-					//						Image(systemName: "photo")
-					//							.resizable()
-					//							.scaledToFit()
-					//					} header: {
-					//						Text("Photos")
-					//					}
+				//					} header: {
+				//						Text("Even More Settings")
+				//					}
+				//
+				//					Section {
+				//						Image(systemName: "photo")
+				//							.resizable()
+				//							.scaledToFit()
+				//
+				//						Image(systemName: "photo")
+				//							.resizable()
+				//							.scaledToFit()
+				//					} header: {
+				//						Text("Photos")
+				//					}
 
-					Button {
-						dismiss()
-					} label: {
-						Text("Done")
-					}
+				Button {
+					dismiss()
+				} label: {
+					Text("Done")
 				}
-
-
 			}
+
+
 		}
 	}
+
 }
 
-#Preview {
-	SettingsView()
-}
+//#Preview {
+//	SettingsView()
+//}

@@ -13,58 +13,72 @@ import SwiftUI
 struct LastSegmentView: View {
 	@EnvironmentObject var workoutManager: WorkoutManager
 	@Environment(\.dismiss) var dismiss
-
+	
 	@State var lastSegmentStartTime: Date = Date()
 	@State var lastSegmentStopTime: Date = Date()
 	@State var lastSegmentHeartRatesSum: Double = 0
 	@State var lastSegmentHeartRatesCount: Int = 0
-
-
+	
+	
 	var body: some View {
-			ScrollView {
-				summaryListView()
-					.scenePadding()
+		ScrollView {
+			LastSegmentSummaryView()
+				.scenePadding()
+		}
+		.onAppear() {
+			lastSegmentStartTime = workoutManager.lastSegmentStartTime
+			lastSegmentStopTime = workoutManager.lastSegmentStopTime
+			lastSegmentHeartRatesSum = workoutManager.lastSegmentHeartRatesSum
+			lastSegmentHeartRatesCount = workoutManager.lastSegmentHeartRatesCount
+			
+			workoutManager.lastSegmentStartTime = workoutManager.lastSegmentStopTime
+			workoutManager.lastSegmentHeartRatesSum = 0
+			workoutManager.lastSegmentHeartRatesCount = 0
+		}
+		.onChange(of: workoutManager.lastSegmentViewPresentTime) {_, time in
+			if time == 0 {
+				dismiss()
 			}
-//			.navigationTitle("Segment")
-//			.navigationBarTitleDisplayMode(.inline)
-			.onAppear() {
-				lastSegmentStartTime = workoutManager.lastSegmentStartTime
-				lastSegmentStopTime = workoutManager.lastSegmentStopTime
-				lastSegmentHeartRatesSum = workoutManager.lastSegmentHeartRatesSum
-				lastSegmentHeartRatesCount = workoutManager.lastSegmentHeartRatesCount
-
-				workoutManager.lastSegmentStartTime = workoutManager.lastSegmentStopTime
-				workoutManager.lastSegmentHeartRatesSum = 0
-				workoutManager.lastSegmentHeartRatesCount = 0
-			}
-			.onChange(of: workoutManager.lastSegmentViewPresentTime) {_, time in
-				if time == 0 {
-					dismiss()
-				}
-			}
+		}
 	}
-
+	
 	@ViewBuilder
-	private func summaryListView() -> some View {
+	private func LastSegmentSummaryView() -> some View {
 		let pace: TimeInterval = lastSegmentStopTime.timeIntervalSince(lastSegmentStartTime)
 		let averageHeartRate: Double = lastSegmentHeartRatesSum / Double(lastSegmentHeartRatesCount)
-
+		
 		VStack(alignment: .leading) {
-
-			Text("Distance: \(workoutManager.lastSegment) km")
-				.font(.system(.title3, design: .rounded).monospacedDigit().lowercaseSmallCaps())
-				.padding([.top], 15)
-
+			HStack(alignment: .lastTextBaseline) {
+				Spacer()
+				Text("\(workoutManager.lastSegment)")
+					.font(.system(size: 40, weight: .regular, design: .rounded).monospacedDigit().lowercaseSmallCaps())
+				Text(" km")
+					.font(.system(size: 25, weight: .medium, design: .rounded).monospacedDigit().lowercaseSmallCaps())
+			}
+			.padding([.top], -18)
+			.padding([.bottom], -2)
+			
 			Divider()
-
-			Text(workoutManager.formatDuration(seconds: pace) + " /km")
-				.font(.system(.title, design: .rounded).monospacedDigit().lowercaseSmallCaps())
-				.foregroundColor(.ruplBlue)
-
-			Text(averageHeartRate.formatted(.number.precision(.fractionLength(0))) + " bpm")
-				.font(.system(.title, design: .rounded).monospacedDigit().lowercaseSmallCaps())
-				.foregroundColor(.ruplRed)
-
+			
+			HStack(alignment: .lastTextBaseline) {
+				Spacer()
+				Text(workoutManager.formatDuration(seconds: pace))
+					.font(.system(.title, design: .rounded).monospacedDigit().lowercaseSmallCaps())
+				
+				Text(" /km")
+					.font(.system(size: 20, weight: .medium, design: .rounded).monospacedDigit().lowercaseSmallCaps())
+			}
+			.foregroundColor(.ruplBlue)
+			.padding([.top], -2)
+			
+			HStack(alignment: .lastTextBaseline) {
+				Spacer()
+				Text(averageHeartRate.formatted(.number.precision(.fractionLength(0))))
+					.font(.system(.title, design: .rounded).monospacedDigit().lowercaseSmallCaps())
+				Text(" bpm")
+					.font(.system(size: 20, weight: .medium, design: .rounded).monospacedDigit().lowercaseSmallCaps())
+			}
+			.foregroundColor(.ruplRed)
 		}
 	}
 }
