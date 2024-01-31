@@ -62,6 +62,7 @@ struct SettingsView: View {
 					} else {
 						Button {
 							isConnectedToRupl = !isConnectedToRupl
+							let connect = OAuth2()
 						} label: {
 							HStack {
 								Image(systemName: "link")

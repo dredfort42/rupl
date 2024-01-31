@@ -15,7 +15,7 @@
 		AF2DBABC2B601F5B00E50B47 /* WorkoutRunFasterSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AF2DBAB92B601F5B00E50B47 /* WorkoutRunFasterSound.aif */; };
 		AF2DBABD2B601F5B00E50B47 /* WorkoutRunFasterSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AF2DBAB92B601F5B00E50B47 /* WorkoutRunFasterSound.aif */; };
 		AF3F35512B66ACD8007399F9 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF3F35502B66ACD8007399F9 /* SettingsView.swift */; };
-		AF41FA872B6825B5004FC0AB /* ConnectToEnv.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF41FA852B6825B5004FC0AB /* ConnectToEnv.swift */; };
+		AF41FA872B6825B5004FC0AB /* OAuth2.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF41FA852B6825B5004FC0AB /* OAuth2.swift */; };
 		AF43BF3C2B4C9EE800E5A89C /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF43BF3B2B4C9EE800E5A89C /* AppSettings.swift */; };
 		AF43BF3D2B4C9EE900E5A89C /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF43BF3B2B4C9EE800E5A89C /* AppSettings.swift */; };
 		AF45FD772B59BDF0009E7B4B /* TimerActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF45FD762B59BDF0009E7B4B /* TimerActions.swift */; };
@@ -133,7 +133,7 @@
 		AF2DBAB82B601F5B00E50B47 /* WorkoutRunSlowerSound.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = WorkoutRunSlowerSound.aif; sourceTree = "<group>"; };
 		AF2DBAB92B601F5B00E50B47 /* WorkoutRunFasterSound.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = WorkoutRunFasterSound.aif; sourceTree = "<group>"; };
 		AF3F35502B66ACD8007399F9 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		AF41FA852B6825B5004FC0AB /* ConnectToEnv.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectToEnv.swift; sourceTree = "<group>"; };
+		AF41FA852B6825B5004FC0AB /* OAuth2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuth2.swift; sourceTree = "<group>"; };
 		AF43BF3B2B4C9EE800E5A89C /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		AF45FD762B59BDF0009E7B4B /* TimerActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerActions.swift; sourceTree = "<group>"; };
 		AF53FF042B5AE4D5005DE76D /* SoundEffects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundEffects.swift; sourceTree = "<group>"; };
@@ -250,7 +250,7 @@
 		AF3F354B2B66AB79007399F9 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				AF41FA852B6825B5004FC0AB /* ConnectToEnv.swift */,
+				AF41FA852B6825B5004FC0AB /* OAuth2.swift */,
 				AF53FF072B5B40BA005DE76D /* Vibration.swift */,
 				AF5ACB1A2B4712550010C316 /* WorkoutManager+watchOS.swift */,
 			);
@@ -715,7 +715,7 @@
 				AF720D442B504326008423D6 /* LocationManager.swift in Sources */,
 				AFA675592B4848B700AD5A69 /* MetricsTimelineSchedule.swift in Sources */,
 				AF43BF3D2B4C9EE900E5A89C /* AppSettings.swift in Sources */,
-				AF41FA872B6825B5004FC0AB /* ConnectToEnv.swift in Sources */,
+				AF41FA872B6825B5004FC0AB /* OAuth2.swift in Sources */,
 				AF5ACB1F2B4713FE0010C316 /* Logger.swift in Sources */,
 				AF56CDEF2B644C47009E8CB8 /* MotionManager.swift in Sources */,
 				AF53FF092B5B40BA005DE76D /* Vibration.swift in Sources */,

@@ -1,5 +1,5 @@
 //
-//  ConnectToEnv.swift
+//  OAuth2.swift
 //  rupl
 //
 //  Created by Dmitry Novikov on 29/01/2024.
@@ -9,12 +9,13 @@
 import Foundation
 import os
 
-class ConnectToEnv {
-	let apiUrl = URL(string: "http://rupl.org/api/device_authorization")!
-	let clientID = AppSettings.shared.clientID
+
+class OAuth2 {
+	let apiUrl = URL(string: "https://rupl.org/api/device_authorization")!
+	let clientID: String = AppSettings.shared.clientID
 
 	init() {
-		print("Vendor ID: \(clientID)")
+		print("client_id: \(clientID)")
 		sendRequest(requestData: ["client_id": clientID])
 	}
 
@@ -22,14 +23,11 @@ class ConnectToEnv {
 
 		if let jsonData = try? JSONSerialization.data(withJSONObject: requestData) {
 
-			// Create a URL request
 			var request = URLRequest(url: apiUrl)
 			request.httpMethod = "POST"
 			request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 			request.httpBody = jsonData
 
-
-			// Perform the network request
 			let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
 				if let error = error {
 					Logger.shared.log("Error: \(error)")
@@ -38,13 +36,21 @@ class ConnectToEnv {
 
 				if let data = data {
 					do {
-						// Parse the received JSON data
 						if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-							// Extract and handle the random 6 digits
-							if let randomDigits = json["randomDigits"] as? Int {
-								print("Received random 4 digits: \(randomDigits)")
-							} else {
-								Logger.shared.log("Error: Unable to retrieve random digits from response.")
+
+							if let deviceCode = json["device_code"] as? String,
+							   let userCode = json["user_code"] as? String,
+							   let verificationUri = json["verification_uri"] as? String,
+							   let verificationUriComplete = json["verification_uri_complete"] as? String,
+							   let expiresIn = json["expires_in"] as? Int,
+							   let interval = json["interval"] as? Int {
+							
+								print("Device Code: \(deviceCode)")
+								print("User Code: \(userCode)")
+								print("Verification URI: \(verificationUri)")
+								print("Verification URI Complete: \(verificationUriComplete)")
+								print("Expires In: \(expiresIn)")
+								print("Interval: \(interval)")
 							}
 						}
 					} catch {
@@ -53,7 +59,6 @@ class ConnectToEnv {
 				}
 			}
 
-			// Start the network task
 			task.resume()
 		} else {
 			Logger.shared.log("Error converting request data to JSON")
