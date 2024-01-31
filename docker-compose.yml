@@ -44,10 +44,13 @@ services:
     networks:
       - rupl_net
     ports:
+      - 443:443
       - 80:80
     volumes:
       - ./global.cfg:/app/global.cfg
       - ./web/html:/app/html
+      - /etc/letsencrypt/live/rupl.org/fullchain.pem:/app/ssl/fullchain.pem
+      - /etc/letsencrypt/live/rupl.org/privkey.pem:/app/ssl/privkey.pem
 
 networks:
   rupl_net:
