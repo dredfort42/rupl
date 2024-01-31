@@ -30,9 +30,9 @@ struct LoadingIndicatorView: View {
 			Circle()
 				.trim(from: /*@START_MENU_TOKEN@*/0.0/*@END_MENU_TOKEN@*/, to: 0.33)
 				.stroke(indicatorColor, lineWidth: 2)
+				.rotationEffect(.degrees(wheelAnimation ? wheelRotating : wheelStartPosition))
 		}
 		.frame(width: wheelSize, height: wheelSize , alignment: .center)
-		.rotationEffect(.degrees(wheelAnimation ? wheelRotating : wheelStartPosition))
 
 		.onAppear {
 			if wheelAnimation {
