@@ -46,19 +46,10 @@ func deviceAuthHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("[in]\n\t method: %s\n\t scheme %s\n\t host: %s\n\t path: %s\n\t requestURI: %s\n\t forceQuery: %t\n",
 		r.Method, r.URL.Scheme, r.URL.Host, r.URL.Path, r.RequestURI, r.URL.RawQuery, r.URL.ForceQuery)
 
-	respond := `
-	{
-    	"device_code": "GmRhmhcxhwAzkoEqiMEg_DnyEysNkuNhszIySk9eS",
-        "user_code": "WDJB-MJHT",
-        "verification_uri": "https://example.com/device",
-        "verification_uri_complete":
-            "https://example.com/device?user_code=WDJB-MJHT",
-        "expires_in": 1800,
-        "interval": 5
-    }`
-
-	fmt.Fprintln(w, respond)
+	// fmt.Fprintln(w, api.DeviceAuthorization(r, url))
 }
+
+var url string
 
 func main() {
 	config, err := configreader.GetConfig()
@@ -68,7 +59,7 @@ func main() {
 	}
 
 	http.HandleFunc("/", homeHandler)
-	http.HandleFunc("/api/device_authorization", deviceAuthHandler)
+	http.HandleFunc("/api/v1/device_authorization", deviceAuthHandler)
 
 	// port := fmt.Sprintf(":%s", config["entrypoint.port"])
 	// url := fmt.Sprintf("%s://%s%s", config["entrypoint.protocol"], config["entrypoint.address"], port)
@@ -84,7 +75,7 @@ func main() {
 	// Certbot has set up a scheduled task to automatically renew this certificate in the background.
 
 	port := fmt.Sprintf(":%s", config["entrypoint.port.ssl"])
-	url := fmt.Sprintf("%s://%s%s", config["entrypoint.protocol.ssl"], config["entrypoint.address"], port)
+	url = fmt.Sprintf("%s://%s%s", config["entrypoint.protocol.ssl"], config["entrypoint.address"], port)
 	certFile := "./ssl/fullchain.pem"
 	keyFile := "./ssl/privkey.pem"
 
