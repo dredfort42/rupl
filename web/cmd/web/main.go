@@ -55,7 +55,7 @@ func proxyRequest(w http.ResponseWriter, r *http.Request) {
 
 	request, err := http.NewRequest(r.Method, r.URL.Path, nil)
 	if err != nil {
-		logprinter.PrintError("Error creating request: %v\n", err)
+		logprinter.PrintError("Error creating request", err)
 		return
 	}
 

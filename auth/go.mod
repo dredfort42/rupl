@@ -3,7 +3,7 @@ module auth
 go 1.21.2
 
 require (
-	github.com/dredfort42/tools v0.0.0-20240102131453-38d4fb849b20
+	github.com/dredfort42/tools v0.0.2
 	github.com/gin-contrib/cors v1.5.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/google/uuid v1.6.0
