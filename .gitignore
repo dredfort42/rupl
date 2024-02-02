@@ -3,6 +3,7 @@
 .build/
 local.cfg
 go.sum
+main
 
 # MacOS
 ## General
