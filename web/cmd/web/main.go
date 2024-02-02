@@ -83,8 +83,7 @@ func proxyRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	logprinter.PrintInfo("Response body:", body)
-
+	logprinter.PrintInfo("Response status", response.Status)
 	w.Header().Set("Content-Type", response.Header.Get("Content-Type"))
 
 	if _, err := w.Write(body); err != nil {
