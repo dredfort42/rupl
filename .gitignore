@@ -29,7 +29,9 @@ Temporary Items
 
 # Xcode
 ## User settings
-xcuserdata/
+*/xcuserdata/
+*.xcuserdata/
+*.xcuserstate
 ## Obj-C/Swift specific
 *.hmap
 ## App packaging
