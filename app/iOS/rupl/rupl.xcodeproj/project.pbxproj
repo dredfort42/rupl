@@ -55,6 +55,7 @@
 		AF7B30392B5ABC10002FEDC9 /* WorkoutStartSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AF7B30362B5ABC10002FEDC9 /* WorkoutStartSound.aif */; };
 		AF7B303A2B5ABC10002FEDC9 /* WorkoutStartSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AF7B30362B5ABC10002FEDC9 /* WorkoutStartSound.aif */; };
 		AF7F52932B5D265700856DEA /* LastSegmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF7F52922B5D265700856DEA /* LastSegmentView.swift */; };
+		AFA0ECEA2B6D5E5B009AC138 /* OAuthInstructionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA0ECE92B6D5E5B009AC138 /* OAuthInstructionView.swift */; };
 		AFA196072B5FAF62002EB704 /* CheckCurrentMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA196062B5FAF62002EB704 /* CheckCurrentMetrics.swift */; };
 		AFA196082B5FAF62002EB704 /* CheckCurrentMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA196062B5FAF62002EB704 /* CheckCurrentMetrics.swift */; };
 		AFA1960A2B5FBD95002EB704 /* MeasurementsConverters.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA196092B5FBD95002EB704 /* MeasurementsConverters.swift */; };
@@ -172,6 +173,7 @@
 		AF7B30352B5ABC10002FEDC9 /* WorkoutStopSound.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = WorkoutStopSound.aif; sourceTree = "<group>"; };
 		AF7B30362B5ABC10002FEDC9 /* WorkoutStartSound.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = WorkoutStartSound.aif; sourceTree = "<group>"; };
 		AF7F52922B5D265700856DEA /* LastSegmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastSegmentView.swift; sourceTree = "<group>"; };
+		AFA0ECE92B6D5E5B009AC138 /* OAuthInstructionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthInstructionView.swift; sourceTree = "<group>"; };
 		AFA196062B5FAF62002EB704 /* CheckCurrentMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckCurrentMetrics.swift; sourceTree = "<group>"; };
 		AFA196092B5FBD95002EB704 /* MeasurementsConverters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasurementsConverters.swift; sourceTree = "<group>"; };
 		AFA675572B4848B600AD5A69 /* MetricsTimelineSchedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricsTimelineSchedule.swift; sourceTree = "<group>"; };
@@ -243,6 +245,7 @@
 				AF3F35502B66ACD8007399F9 /* SettingsView.swift */,
 				AF5ACB262B4733510010C316 /* SummaryView.swift */,
 				AF06CC442B69132200943CEB /* LoadingIndicatorView.swift */,
+				AFA0ECE92B6D5E5B009AC138 /* OAuthInstructionView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -720,6 +723,7 @@
 				AF56CDEF2B644C47009E8CB8 /* MotionManager.swift in Sources */,
 				AF53FF092B5B40BA005DE76D /* Vibration.swift in Sources */,
 				AFA6755C2B48494C00AD5A69 /* ElapsedTimeView.swift in Sources */,
+				AFA0ECEA2B6D5E5B009AC138 /* OAuthInstructionView.swift in Sources */,
 				AF5ACB1C2B4712550010C316 /* WorkoutManager+watchOS.swift in Sources */,
 				AFA196082B5FAF62002EB704 /* CheckCurrentMetrics.swift in Sources */,
 				AF5ACB192B47107F0010C316 /* WorkoutManager.swift in Sources */,
