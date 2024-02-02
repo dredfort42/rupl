@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	authURL
+	authURL string
 )
 
 func readFile(path string) string {
@@ -61,7 +61,7 @@ func proxyRequest(w http.ResponseWriter, r *http.Request) {
 
 	request.URL.Scheme = "http"
 	if strings.HasPrefix(r.URL.Path, "/api/v1/auth/") {
-		request.URL.Host = managerURL
+		request.URL.Host = authURL
 	}
 
 	request.Body = r.Body
