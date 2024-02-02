@@ -11,7 +11,7 @@ import os
 
 
 class OAuth2 {
-	let apiUrl = URL(string: "https://rupl.org/api/v1/device_authorization")!
+	let apiUrl = URL(string: "https://rupl.org/api/v1/auth/device_authorization")!
 	let clientID: String = AppSettings.shared.clientID
 
 	init() {

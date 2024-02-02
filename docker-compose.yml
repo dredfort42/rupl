@@ -35,6 +35,18 @@ services:
       - '/:/host:ro,rslave'
 
   # Project services
+  ## Auth service
+  auth:
+    build: ./auth
+    hostname: auth
+    container_name: auth
+    restart: always
+    networks:
+      - rupl_net
+    volumes:
+      - ./global.cfg:/app/global.cfg
+      # - ./auth/data:/app/data
+
   ## Web interface
   web:
     build: ./web

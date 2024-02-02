@@ -5,7 +5,6 @@ import (
 
 	"auth/internal/api"
 	"github.com/dredfort42/tools/configreader"
-	// "github.com/dredfort42/tools/logprinter"
 )
 
 func main() {
@@ -15,5 +14,5 @@ func main() {
 		os.Exit(1)
 	}
 
-	api.StartService(config)
+	api.Start(config)
 }

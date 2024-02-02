@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -10,7 +11,7 @@ import (
 )
 
 // DeviceAuthorization adds new device
-func DeviceAuthorization(c *gin.Context, url string) {
+func DeviceAuthorization(c *gin.Context) {
 	var request DeviceAuthorizationRequest
 	var response DeviceAuthorizationResponse
 
@@ -21,9 +22,11 @@ func DeviceAuthorization(c *gin.Context, url string) {
 
 		errorResponse.Error = "invalid_request"
 		errorResponse.ErrorDescription = "Missing required parameter: client_id"
-		c.IndentedJSON(http.StatusBadRequest, gin.H{errorResponse})
+		c.IndentedJSON(http.StatusBadRequest, errorResponse)
 		return
 	}
+
+	url := fmt.Sprintf("%s://%s", config["entrypoint.protocol.ssl"], config["entrypoint.address"])
 
 	response.DeviceCode = uuid.New().String()
 	response.UserCode = strconv.Itoa(generateRandomDigits(4)) + "-" + strconv.Itoa(generateRandomDigits(4))
@@ -32,7 +35,7 @@ func DeviceAuthorization(c *gin.Context, url string) {
 	response.ExpiresIn = 1800
 	response.Interval = 5
 
-	c.IndentedJSON(http.StatusOK, gin.H{response})
+	c.IndentedJSON(http.StatusOK, response)
 }
 
 func generateRandomDigits(numDigits int) int {
