@@ -10,8 +10,8 @@ RUN if [ ! -e "/app/local.cfg" ]; then \
     fi
 
 FROM scratch
-COPY --from=build /app/auth /bin/auth
+COPY --from=build /app/auth /app/auth
 COPY --from=build /app/local.cfg /app/local.cfg
 
 EXPOSE 80
-CMD ["/bin/auth"]
+CMD ["/app/auth"]
