@@ -47,7 +47,7 @@ services:
       - ./global.cfg:/app/global.cfg
       # - ./auth/data:/app/data
 
-  ## Web interface
+      ## Web interface
   web:
     build: ./web
     hostname: web
@@ -60,9 +60,9 @@ services:
       - 80:80
     volumes:
       - ./global.cfg:/app/global.cfg
-      - ./web/html:/app/html
-      - /etc/letsencrypt/live/rupl.org/fullchain.pem:/app/ssl/fullchain.pem
-      - /etc/letsencrypt/live/rupl.org/privkey.pem:/app/ssl/privkey.pem
+      - ./web/html:/html
+      - /etc/letsencrypt/live/rupl.org/fullchain.pem:/app/fullchain.pem
+      - /etc/letsencrypt/live/rupl.org/privkey.pem:/app/privkey.pem
 
 networks:
   rupl_net:

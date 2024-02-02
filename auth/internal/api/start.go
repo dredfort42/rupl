@@ -14,7 +14,6 @@ var config configreader.ConfigMap
 
 // Start starts the web service
 func Start(configMap configreader.ConfigMap) {
-
 	config = configMap
 
 	router := gin.Default()
@@ -25,7 +24,8 @@ func Start(configMap configreader.ConfigMap) {
 	// router.POST("/cameras/update", UpdateEntry)
 	// router.DELETE("/cameras/:uuid", DeleteEntryByUUID)
 
-	url := fmt.Sprintf("%s:%s", config["auch.host"], config["auch.port"])
+	url := fmt.Sprintf("%s:%s", config["auth.host"], config["auth.port"])
+
 	logprinter.PrintSuccess("Entry point", url)
 	router.Run(url)
 

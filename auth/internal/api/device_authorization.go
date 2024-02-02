@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -12,12 +11,12 @@ import (
 
 // DeviceAuthorization adds new device
 func DeviceAuthorization(c *gin.Context) {
-	var request DeviceAuthorizationRequest
 	var response DeviceAuthorizationResponse
 
-	c.BindJSON(&request)
+	clientID := c.Request.URL.Query().Get("client_id")
+	fmt.Println("client_id:", clientID)
 
-	if request.ClientID == "" || len(request.ClientID) < 32 || len(request.ClientID) > 36 {
+	if clientID == "" || len(clientID) < 32 || len(clientID) > 36 {
 		var errorResponse DeviceAuthorizationError
 
 		errorResponse.Error = "invalid_request"
@@ -29,7 +28,7 @@ func DeviceAuthorization(c *gin.Context) {
 	url := fmt.Sprintf("%s://%s", config["entrypoint.protocol.ssl"], config["entrypoint.address"])
 
 	response.DeviceCode = uuid.New().String()
-	response.UserCode = strconv.Itoa(generateRandomDigits(4)) + "-" + strconv.Itoa(generateRandomDigits(4))
+	response.UserCode =  fmt.Sprintf("%04d-%04d", generateRandomDigits(4), generateRandomDigits(4))
 	response.VerificationURI = url + "/device"
 	response.VerificationURIComplete = url + "/device?user_code=" + response.UserCode
 	response.ExpiresIn = 1800

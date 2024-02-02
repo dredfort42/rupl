@@ -1,9 +1,9 @@
 package api
 
-// DeviceAuthorizationRequest is a struct for JSON
-type DeviceAuthorizationRequest struct {
-	ClientID string `json:"client_id"`
-}
+// // DeviceAuthorizationRequest is a struct for JSON
+// type DeviceAuthorizationRequest struct {
+// 	ClientID string `json:"client_id"`
+// }
 
 // DeviceAuthorizationResponse is a struct for JSON
 type DeviceAuthorizationResponse struct {
