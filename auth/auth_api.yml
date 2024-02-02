@@ -1,0 +1,518 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: rupl.org
+  termsOfService: "https://rupl.org/terms/"
+  contact:
+    name: Rupl
+    email: i@rupl.org
+    url: "https://rupl.org/contact"
+  license:
+    name: GNU Affero General Public License v3.0
+    url: "https://www.gnu.org/licenses/agpl-3.0.en.html"
+  x-logo:
+    url: "https://rupl.org/rupl-logo.png"
+  description: |
+    This is a description of the rupl.org authorization service API and its operations.
+tags:
+  - name: OAuth 2.0 Device Authorization
+    description: >-
+      The OAuth 2.0 device authorization for browserless and input-constrained devices like watches and fitness trackers.
+servers:
+  - url: "https://rupl.org/api/v1"
+    description: "Production server"
+  - url: "https://dev.rupl.org/api/v1"
+    description: "Development server"
+  - url: "https://staging.rupl.org/api/v1"
+    description: "Staging server"
+paths:
+  # "/users/{username}":
+  #   parameters:
+  #     - name: pretty_print
+  #       in: query
+  #       description: Pretty print response
+  #       schema:
+  #         type: boolean
+  #   get:
+  #     tags:
+  #       - User
+  #     summary: Get user by user name
+  #     description: |
+  #       Some description of the operation. test
+  #       You can use `markdown` here.
+  #     operationId: getUserByName
+  #     parameters:
+  #       - name: username
+  #         in: path
+  #         description: The name that needs to be fetched
+  #         required: true
+  #         schema:
+  #           type: string
+  #       - name: with_email
+  #         in: query
+  #         description: Filter users without email
+  #         schema:
+  #           type: boolean
+  #     security:
+  #       - main_auth:
+  #           - "read:users"
+  #       - api_key: []
+  #     responses:
+  #       "200":
+  #         description: Success
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/User"
+  #             example:
+  #               username: user1
+  #               email: user@example.com
+  #       "403":
+  #         description: Forbidden
+  #       "404":
+  #         description: User not found
+  #   put:
+  #     tags:
+  #       - User
+  #     summary: Updated user
+  #     description: This can only be done by the logged in user.
+  #     operationId: updateUser
+  #     parameters:
+  #       - name: username
+  #         in: path
+  #         description: The name that needs to be updated
+  #         required: true
+  #         schema:
+  #           type: string
+  #     security:
+  #       - main_auth:
+  #           - "write:users"
+  #     responses:
+  #       "200":
+  #         description: OK
+  #       "400":
+  #         description: Invalid user supplied
+  #       "404":
+  #         description: User not found
+  #     requestBody:
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: "#/components/schemas/User"
+  #         application/xml:
+  #           schema:
+  #             $ref: "#/components/schemas/User"
+  #       description: Updated user object
+  #       required: true
+  /api/v1/auth/device_authorization:
+    post:
+      security:
+        - basic_auth: []
+      tags:
+        - OAuth 2.0 Device Authorization
+      summary: Device Authorization Request
+      description: |
+        The client initiates the authorization flow by requesting a set of 
+        verification codes from the authorization server by making an HTTP "POST"
+        request to the device authorization endpoint.
+      operationId: device_authorization
+      parameters:
+        - name: client_id
+          in: query
+          description: The client identifier
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/DeviceAuthorizationRequest"
+        description: |
+          A device authorization request to the device
+          authorization endpoint
+        required: true
+      responses:
+        "200":
+          description: OK
+          headers:
+            Content-Type:
+              description: |
+                The authorization server MUST include the "Content-Type: application/json" HTTP response header field.
+              schema:
+                type: string
+                example: application/json
+            Cache-Control:
+              description: |
+                The authorization server MUST include the "Cache-Control: no-store" HTTP response header field.
+              schema:
+                type: string
+                example: no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeviceAuthorizationResponse"
+        "400":
+          description: Bad Request
+          headers:
+            Content-Type:
+              description: |
+                The authorization server MUST include the "Content-Type: application/json" HTTP response header field.
+              schema:
+                type: string
+                example: application/json
+            Cache-Control:
+              description: |
+                The authorization server MUST include the "Cache-Control: no-store" HTTP response header field.
+              schema:
+                type: string
+                example: no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeviceAuthorizationErrorResponse"
+
+  # /pathItem:
+  #   post:
+  #     tags:
+  #       - Tag
+  #     summary: Operation summary
+  #     description: |
+  #       Operation description **markdown**.
+  #     operationId: operationId
+  #     security:
+  #       - api_key: []
+  #       - basic_auth: []
+  #     responses:
+  #       "200":
+  #         description: OK
+  #         headers:
+  #           X-Rate-Limit:
+  #             description: Calls per hour allowed by the user.
+  #             schema:
+  #               type: integer
+  #               format: int32
+  #           X-Expires-After:
+  #             $ref: "#/components/headers/ExpiresAfter"
+  #         content:
+  #           application/json:
+  #             schema:
+  # $ref: "#/components/schemas/Schema"
+  #     requestBody:
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: "#/components/schemas/Schema"
+  #       description: requestBody description
+  #       required: true
+  # /pathItemWithExamples:
+  #   post:
+  #     tags:
+  #       - Tag
+  #     summary: Operation summary with examples
+  #     description: |
+  #       Operation description **markdown**.
+  #     operationId: postPathItemWithExamples
+  #     security:
+  #       - api_key: []
+  #       - basic_auth: []
+  #     responses:
+  #       "200":
+  #         description: OK
+  #         headers:
+  #           X-Rate-Limit:
+  #             description: calls per hour allowed by the user
+  #             schema:
+  #               type: integer
+  #               format: int32
+  #           X-Expires-After:
+  #             $ref: "#/components/headers/ExpiresAfter"
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/Schema"
+  #     requestBody:
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: "#/components/schemas/Schema"
+  #           examples:
+  #             mapName:
+  #               summary: My first example
+  #               description: My first example's description.
+  #               value:
+  #                 stringProperty: tada
+  #             mapNameDoesNotShowInDocsUnlessSummaryIsNotProvided:
+  #               value:
+  #                 stringProperty: checkmark
+  #       description: requestBody description
+  #       required: true
+components:
+  securitySchemes:
+    basic_auth:
+      type: http
+      scheme: basic
+    main_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: "http://example.com/api/oauth/dialog"
+          scopes:
+            "read:users": read users info
+            "write:users": modify or remove users
+  #     api_key:
+  #       type: apiKey
+  #       in: header
+  #       name: api_key
+  schemas:
+    #     Email:
+    #       description: User email address
+    #       type: string
+    #       format: test
+    #       example: john.smith@example.com
+    #     User:
+    #       type: object
+    #       properties:
+    #         username:
+    #           description: User supplied username
+    #           type: string
+    #           minLength: 4
+    #           example: John78
+    #         firstName:
+    #           description: User first name
+    #           type: string
+    #           minLength: 1
+    #           example: John
+    #         lastName:
+    #           description: User last name
+    #           type: string
+    #           minLength: 1
+    #           example: Smith
+    #         email:
+    #           $ref: "#/components/schemas/Email"
+
+    DeviceAuthorizationRequest:
+      type: object
+      title: Device Authorization Request
+      description: |
+        The client initiates the authorization flow by requesting a set of
+        verification codes from the authorization server by making an HTTP "POST"
+        request to the device authorization endpoint.
+      properties:
+        client_id:
+          description: |
+            REQUIRED. The client identifier.
+          type: string
+          example: C8FF9127-5C0C-43D2-A08B-382E4D64AF20
+
+    DeviceAuthorizationResponse:
+      type: object
+      title: Device Authorization Response
+      description: |
+        In response, the authorization server generates a unique device
+        verification code and an end-user code that are valid for a limited
+        time and includes them in the HTTP response body using the
+        "application/json" format [RFC8259] with a 200 (OK) status code.
+      properties:
+        device_code:
+          description: |
+            The device verification code, which is a case-sensitive string
+            opaque to the client.
+          type: string
+          example: 4924e489-349c-4b9f-852f-b18e94de50bb
+        user_code:
+          description: |
+            The end-user verification code, which is a case-sensitive string
+            opaque to the client.
+          type: string
+          example: WDJB-MJHT
+        verification_uri:
+          description: |
+            The end-user verification URI on the authorization server. The URI
+            should be short and easy to remember as end users will be asked to
+            manually type it into their user-agent.
+          type: string
+          example: https://rupl.org/device
+        verification_uri_complete:
+          description: |
+            A verification URI that includes the "user_code" (or other
+            information with the same function as the "user_code"), which is
+            designed for non-textual transmission.
+          type: string
+          example: https://rupl.org/device?user_code=WDJB-MJHT
+        expires_in:
+          description: |
+            The lifetime in seconds of the "device_code" and "user_code".
+          type: integer
+          example: 1800
+        interval:
+          description: |
+            The minimum amount of time in seconds that the client SHOULD wait
+            between polling requests to the token endpoint. If no value is
+            provided, clients MUST use 5 as the default.
+          type: integer
+          example: 5
+    DeviceAuthorizationErrorResponse:
+      type: object
+      title: Device Authorization Error Response
+      description: |
+        If the request failed verification or is invalid, the authorization
+        server returns an HTTP error response with a 4xx or 5xx HTTP status
+        code to the client.
+      properties:
+        error:
+          description: |
+            REQUIRED. A single error code from the following:
+            "invalid_request", "unauthorized_client", "access_denied",
+            "unsupported_response_type", "invalid_scope", "server_error",
+            "temporarily_unavailable", "slow_down", or "expired_token".
+          type: string
+          example: invalid_request
+        error_description:
+          description: |
+            OPTIONAL. Human-readable text providing additional
+            information, used to assist the client developer in understanding
+            the error that occurred.
+          type: string
+          example: "Missing required parameter: client_id"
+#     Schema:
+#       type: object
+#       title: Scalars
+#       properties:
+#         stringProperty:
+#           description: Property name's description (type is string)1111
+#           type: string
+#           example: example
+#         readOnlyStringProperty:
+#           description: Notice this only appears in the response.
+#           type: string
+#           readOnly: true
+#           example: example
+#         writeOnlyStringProperty:
+#           description: Notice this only appears in the request.
+#           type: string
+#           writeOnly: true
+#           example: example
+#         minLengthString:
+#           description: Property name's description (type is string)
+#           type: string
+#           minLength: 4
+#           example: example
+#         maxLengthString:
+#           description: Property name's description (type is string)
+#           type: string
+#           maxLength: 140
+#           example: example
+#         minAndMaxLengthString:
+#           description: Property name's description (type is string)
+#           type: string
+#           minLength: 4
+#           maxLength: 140
+#           example: example
+#         stringEnumValues:
+#           description: Property name's description (type is string)
+#           type: string
+#           enum:
+#             - sample
+#             - example
+#             - specimen
+#             - case
+#             - instance
+#             - illustration
+#         stringDateTime:
+#           description: "Property name's description (type is string, format is date-time)"
+#           type: string
+#           format: date-time
+#         stringDate:
+#           description: "Property name's description (type is string, format is date-time)"
+#           type: string
+#           format: date
+#         stringEmail:
+#           description: "Property name's description (type is string, format is email)"
+#           type: string
+#           format: email
+#         stringIpAddressV4:
+#           description: "Property name's description (type is string, format is ipv4 address)"
+#           type: string
+#           format: ipv4
+#         stringIpAddressV6:
+#           description: "Property name's description (type is string, format is ipv6 address)"
+#           type: string
+#           format: ipv6
+#         stringPassword:
+#           description: "Property name's description (type is string, format is password)"
+#           type: string
+#           format: password
+#         stringHostname:
+#           description: "Property name's description (type is string, format is hostname)"
+#           type: string
+#           format: hostname
+#         stringUri:
+#           description: "Property name's description (type is string, format is uri)"
+#           type: string
+#           format: uri
+#         stringUuid:
+#           description: "Property name's description (type is string, format is uuid)"
+#           type: string
+#           format: uuid
+#         numberProperty:
+#           description: Property name's description (type is number)
+#           type: number
+#           example: 8
+#         numberFloat:
+#           description: "Property name's description (type is number, format is float)"
+#           type: number
+#           format: float
+#         numberDouble:
+#           description: "Property name's description (type is number, format is double)"
+#           type: number
+#           format: double
+#         numberGreaterThanOrEquals:
+#           description: Property name's description (type is number)
+#           type: number
+#           minimum: 5
+#         numberGreaterThan:
+#           description: Property name's description (type is number)
+#           type: number
+#         numberLessThan:
+#           description: Property name's description (type is number)
+#           type: number
+#         numberLessThanOrEquals:
+#           description: Property name's description (type is number)
+#           type: number
+#           maximum: 8
+#         numberRange:
+#           description: Property name's description (type is number)
+#           type: number
+#           minimum: 5
+#           maximum: 8
+#         numberRangeExclusiveMaximum:
+#           description: Property name's description (type is number)
+#           type: number
+#         numberRangeExclusiveMinimumAndMaximum:
+#           description: Property name's description (type is number)
+#           type: number
+#         numberMultipleOf:
+#           description: Property name's description (type is number)
+#           type: number
+#           multipleOf: 2
+#         integerType:
+#           description: Property name's description (type is integer)
+#           type: integer
+#         integer32bit:
+#           description: "Property name's description (type is integer, format is int32)"
+#           type: integer
+#           format: int32
+#         integer64bit:
+#           description: "Property name's description (type is integer, format is int64)"
+#           type: integer
+#           format: int64
+#         booleanProperty:
+#           description: Property name's description (type is boolean)
+#           type: boolean
+#   headers:
+#     ExpiresAfter:
+#       description: date in UTC when token expires
+#       schema:
+#         type: string
+#         format: date-time
