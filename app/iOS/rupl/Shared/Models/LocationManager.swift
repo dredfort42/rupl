@@ -29,14 +29,13 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 		locationManager.delegate = self
 		locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
 		locationManager.allowsBackgroundLocationUpdates = true
-		locationManager.requestAlwaysAuthorization()
-//		locationManager.requestWhenInUseAuthorization()
+		locationManager.requestWhenInUseAuthorization()
 		locationManager.startUpdatingLocation()
 	}
 
 	// MARK: - CLLocationManagerDelegate
 	//
-	func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+	@MainActor func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
 
 		accuracy = locations.max(by: { $0.horizontalAccuracy < $1.horizontalAccuracy })?.horizontalAccuracy ?? 1000
 
@@ -51,6 +50,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 			}
 			return
 		}
+		
 		guard let location = filteredLocations.last else { return }
 
 		// Access the speed property from the location object

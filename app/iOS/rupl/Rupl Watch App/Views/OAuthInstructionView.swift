@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct OAuthInstructionView: View {
-	@State private var opacityAnimation: Double = 0.0
+	@State private var opacityAnimation: Double = 0.2
 
 	let url: String
 	let code: String
@@ -26,7 +26,7 @@ struct OAuthInstructionView: View {
 				.font(.caption2)
 
 			Divider()
-				.background(getColor())
+				.background(.ruplGray)
 				.frame(height: 1)
 				.opacity(opacityAnimation)
 
@@ -45,12 +45,8 @@ struct OAuthInstructionView: View {
 				.linear(duration: 1)
 				.speed(0.5)
 				.repeatForever(autoreverses: true)
-			) {opacityAnimation = 1.0}
+			) { opacityAnimation = 1.0 }
 		}
-	}
-
-	private func getColor() -> Color {
-		return ([.ruplBlue, .ruplRed, .ruplYellow, .ruplGreen, .ruplGray].randomElement() ?? .ruplBlue)
 	}
 }
 

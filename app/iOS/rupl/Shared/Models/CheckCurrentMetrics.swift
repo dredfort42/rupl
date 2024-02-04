@@ -22,9 +22,13 @@ extension WorkoutManager {
 
 			//	Checking the critical heart rate level
 			if pulse > self.pz5Anaerobic {
+#if targetEnvironment(simulator)
+				print("* Alarm sound")
+#else
 				self.sounds.alarmSound?.play()
 #if os(watchOS)
 				Vibration.vibrate(type: .underwaterDepthCriticalPrompt)
+#endif
 #endif
 			}
 
@@ -32,15 +36,23 @@ extension WorkoutManager {
 			if self.session?.state != .paused && self.heartRateNotificationTimer == 0 {
 				if pulse > self.pz3FatBurning {
 					self.heartRateNotificationTimer = 10
+#if targetEnvironment(simulator)
+					print("* Run slower sound")
+#else
 					self.sounds.runSlower?.play()
 #if os(watchOS)
 					Vibration.vibrate(type: .directionDown)
 #endif
-				} else if pulse < self.pz2Easy && (-(self.session?.startDate?.timeIntervalSinceNow ?? 0) > 600) {
+#endif
+				} else if pulse < self.pz1NotInZone && (-(self.session?.startDate?.timeIntervalSinceNow ?? 0) > 600) {
 					self.heartRateNotificationTimer = 10
+#if targetEnvironment(simulator)
+					print("* Run faster sound")
+#else
 					self.sounds.runFaster?.play()
 #if os(watchOS)
 					Vibration.vibrate(type: .directionUp)
+#endif
 #endif
 				}
 			}
@@ -58,9 +70,13 @@ extension WorkoutManager {
 				self.lastSegmentStopTime = Date()
 				self.lastSegmentViewPresentTime = self.timeForShowLastSegmentView
 				self.lastSegment = segment
+#if targetEnvironment(simulator)
+					print("* Segment sound")
+#else
 				self.sounds.segmentSound?.play()
 #if os(watchOS)
 				Vibration.vibrate(type: .success)
+#endif
 #endif
 			}
 		}

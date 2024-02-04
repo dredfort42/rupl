@@ -136,9 +136,9 @@ class AppSettings {
 			UserDefaults.standard.set(UUID().uuidString, forKey: clientIDKey)
 		}
 
-		if permissibleHorizontalAccuracy == 0.0 {
-			permissibleHorizontalAccuracy = 8.0
-		}
+//		if permissibleHorizontalAccuracy == 0.0 {
+			permissibleHorizontalAccuracy = 16.0
+//		}
 
 		if paceForAutoPause == 0.0 || paceForAutoResume == 0.0 {
 			useAutoPause = true
@@ -146,9 +146,9 @@ class AppSettings {
 			paceForAutoResume = 2.25
 		}
 
-		if timeForShowLastSegmentView == 0 {
+//		if timeForShowLastSegmentView == 0 {
 			timeForShowLastSegmentView = 20
-		}
+//		}
 
 		if pz1NotInZone == 0 || pz2Easy == 0 || pz3FatBurning == 0 || pz4Aerobic == 0 || pz5Anaerobic == 0 {
 			pz1NotInZone = 126

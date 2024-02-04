@@ -37,18 +37,26 @@ extension WorkoutManager {
 				if isPaused {
 					self.sessionState = .paused
 					self.session?.pause()
+#if targetEnvironment(simulator)
+					print("* Stop sound")
+#else
 					self.sounds.stopSound?.play()
 #if os(watchOS)
 					Vibration.vibrate(type: .notification)
+#endif
 #endif
 				}
 			} else {
 				if !isPaused {
 					self.sessionState = .running
 					self.session?.resume()
+#if targetEnvironment(simulator)
+					print("* Start sound")
+#else
 					self.sounds.startSound?.play()
 #if os(watchOS)
 					Vibration.vibrate(type: .notification)
+#endif
 #endif
 				}
 			}
@@ -60,10 +68,10 @@ extension WorkoutManager {
 //
 extension WorkoutManager {
 	func addLocationsToRoute() {
-		DispatchQueue.global().async {
+		DispatchQueue.main.async {
 			guard !self.locationManager.filteredLocations.isEmpty else { return }
 			
-			self.routeBuilder.insertRouteData(self.locationManager.filteredLocations) { (success, error) in
+			self.routeBuilder?.insertRouteData(self.locationManager.filteredLocations) { (success, error) in
 				if !success {
 					Logger.shared.log("Failed to add locations to the route: \(error))")
 				}

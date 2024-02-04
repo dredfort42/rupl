@@ -83,7 +83,7 @@ struct ControlsView: View {
 
 							ZStack {
 								Circle()
-									.frame(width: 120, height: 120)
+									.frame(width: 100, height: 100)
 									.foregroundColor(.ruplYellow)
 									.opacity(0.1)
 								VStack {
@@ -100,7 +100,7 @@ struct ControlsView: View {
 							Circle().stroke(.ruplYellow.opacity(0.8), lineWidth: 2)
 						}
 						.buttonStyle(.bordered)
-						.frame(width: 120, height: 120)
+						.frame(width: 100, height: 100)
 						.padding(.leading)
 
 						Spacer()
@@ -115,7 +115,7 @@ struct ControlsView: View {
 						} label: {
 							ZStack {
 								Circle()
-									.frame(width: 80, height: 80)
+									.frame(width: 60, height: 60)
 									.foregroundColor(.ruplRed)
 									.opacity(0.1)
 								VStack {
@@ -132,7 +132,7 @@ struct ControlsView: View {
 							Circle().stroke(.ruplRed.opacity(0.8), lineWidth: 2)
 						}
 						.buttonStyle(.bordered)
-						.frame(width: 80, height: 80)
+						.frame(width: 60, height: 60)
 						.padding(.leading)
 					}
 					.padding(.top, -20)

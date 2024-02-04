@@ -48,6 +48,6 @@ struct LoadingIndicatorView: View {
 	}
 }
 
-#Preview {
-	LoadingIndicatorView()
-}
+//#Preview {
+//	LoadingIndicatorView()
+//}

@@ -29,6 +29,7 @@ extension WorkoutManager {
 		session?.delegate = self
 		builder?.delegate = self
 		builder?.dataSource = HKLiveWorkoutDataSource(healthStore: healthStore, workoutConfiguration: workoutConfiguration)
+		routeBuilder = HKWorkoutRouteBuilder(healthStore: healthStore, device: nil)
 
 //	--------------------
 //		if isMirroring {
@@ -40,8 +41,8 @@ extension WorkoutManager {
 		//	Start the workout session activity
 		let startDate = Date()
 		session?.startActivity(with: startDate)
-//		sessionState = .paused
-//		session?.pause()
+		sessionState = .paused
+		session?.pause()
 		try await builder?.beginCollection(at: startDate)
 	}
 

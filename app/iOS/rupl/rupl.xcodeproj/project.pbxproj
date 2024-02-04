@@ -15,6 +15,7 @@
 		AF2DBABC2B601F5B00E50B47 /* WorkoutRunFasterSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AF2DBAB92B601F5B00E50B47 /* WorkoutRunFasterSound.aif */; };
 		AF2DBABD2B601F5B00E50B47 /* WorkoutRunFasterSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AF2DBAB92B601F5B00E50B47 /* WorkoutRunFasterSound.aif */; };
 		AF3F35512B66ACD8007399F9 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF3F35502B66ACD8007399F9 /* SettingsView.swift */; };
+		AF40FDC02B6E66BD00C8CFA8 /* LoadingIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF06CC442B69132200943CEB /* LoadingIndicatorView.swift */; };
 		AF41FA872B6825B5004FC0AB /* OAuth2.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF41FA852B6825B5004FC0AB /* OAuth2.swift */; };
 		AF43BF3C2B4C9EE800E5A89C /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF43BF3B2B4C9EE800E5A89C /* AppSettings.swift */; };
 		AF43BF3D2B4C9EE900E5A89C /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF43BF3B2B4C9EE800E5A89C /* AppSettings.swift */; };
@@ -65,7 +66,6 @@
 		AFA6755B2B48494C00AD5A69 /* ElapsedTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA6755A2B48494C00AD5A69 /* ElapsedTimeView.swift */; };
 		AFA6755C2B48494C00AD5A69 /* ElapsedTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA6755A2B48494C00AD5A69 /* ElapsedTimeView.swift */; };
 		AFA6755E2B49A50200AD5A69 /* ActivityRingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA6755D2B49A50200AD5A69 /* ActivityRingsView.swift */; };
-		AFCBC3702B5D82FF000E2D41 /* LoadingIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFCBC36F2B5D82FF000E2D41 /* LoadingIndicatorView.swift */; };
 		AFD0B1982B5C74B90027001F /* WorkoutSegmentSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AFD0B1972B5C74B90027001F /* WorkoutSegmentSound.aif */; };
 		AFD0B1992B5C74B90027001F /* WorkoutSegmentSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AFD0B1972B5C74B90027001F /* WorkoutSegmentSound.aif */; };
 		AFEEDE442B5EB69700B2C27A /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEEDE432B5EB69700B2C27A /* StartView.swift */; };
@@ -179,7 +179,6 @@
 		AFA675572B4848B600AD5A69 /* MetricsTimelineSchedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricsTimelineSchedule.swift; sourceTree = "<group>"; };
 		AFA6755A2B48494C00AD5A69 /* ElapsedTimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElapsedTimeView.swift; sourceTree = "<group>"; };
 		AFA6755D2B49A50200AD5A69 /* ActivityRingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityRingsView.swift; sourceTree = "<group>"; };
-		AFCBC36F2B5D82FF000E2D41 /* LoadingIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingIndicatorView.swift; sourceTree = "<group>"; };
 		AFD0B1972B5C74B90027001F /* WorkoutSegmentSound.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = WorkoutSegmentSound.aif; sourceTree = "<group>"; };
 		AFEEDE432B5EB69700B2C27A /* StartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartView.swift; sourceTree = "<group>"; };
 		AFEEDE452B5EB78000B2C27A /* MirroringWorkoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MirroringWorkoutView.swift; sourceTree = "<group>"; };
@@ -244,7 +243,6 @@
 				AF5ACB242B4733270010C316 /* MetricsView.swift */,
 				AF3F35502B66ACD8007399F9 /* SettingsView.swift */,
 				AF5ACB262B4733510010C316 /* SummaryView.swift */,
-				AF06CC442B69132200943CEB /* LoadingIndicatorView.swift */,
 				AFA0ECE92B6D5E5B009AC138 /* OAuthInstructionView.swift */,
 			);
 			path = Views;
@@ -268,7 +266,6 @@
 				AFEEDE432B5EB69700B2C27A /* StartView.swift */,
 				AFEEDE4B2B5EBAF800B2C27A /* SummaryView.swift */,
 				AFEEDE472B5EB8DE00B2C27A /* WorkoutListView.swift */,
-				AFCBC36F2B5D82FF000E2D41 /* LoadingIndicatorView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -285,6 +282,7 @@
 			isa = PBXGroup;
 			children = (
 				AFA6755A2B48494C00AD5A69 /* ElapsedTimeView.swift */,
+				AF06CC442B69132200943CEB /* LoadingIndicatorView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -670,7 +668,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				AFEEDE462B5EB78000B2C27A /* MirroringWorkoutView.swift in Sources */,
-				AFCBC3702B5D82FF000E2D41 /* LoadingIndicatorView.swift in Sources */,
 				AFEEDE482B5EB8DE00B2C27A /* WorkoutListView.swift in Sources */,
 				AFA6755B2B48494C00AD5A69 /* ElapsedTimeView.swift in Sources */,
 				AF45FD772B59BDF0009E7B4B /* TimerActions.swift in Sources */,
@@ -680,6 +677,7 @@
 				AF5ACB1E2B4713FE0010C316 /* Logger.swift in Sources */,
 				AFA1960A2B5FBD95002EB704 /* MeasurementsConverters.swift in Sources */,
 				AF56CDEE2B644C47009E8CB8 /* MotionManager.swift in Sources */,
+				AF40FDC02B6E66BD00C8CFA8 /* LoadingIndicatorView.swift in Sources */,
 				AF43BF3C2B4C9EE800E5A89C /* AppSettings.swift in Sources */,
 				AFEEDE4A2B5EBACA00B2C27A /* ChartView.swift in Sources */,
 				AF5ACB212B472FAA0010C316 /* WorkoutManager+iOS.swift in Sources */,
@@ -1002,7 +1000,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Your workout related data will be used to display your saved workouts in rupl app and rupl.org.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Workouts tracked by rupl app will be saved to HealthKit";
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "We need your location for continuous updates workout route";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location for continuous updates workout route";
 				INFOPLIST_KEY_NSMotionUsageDescription = "We need your motion data to pause and resume your workout";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -1046,7 +1044,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Your workout related data will be used to display your saved workouts in rupl app and rupl.org.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Workouts tracked by rupl app will be saved to HealthKit";
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "We need your location for continuous updates workout route";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location for continuous updates workout route";
 				INFOPLIST_KEY_NSMotionUsageDescription = "We need your motion data to pause and resume your workout";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

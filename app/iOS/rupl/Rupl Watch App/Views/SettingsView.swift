@@ -9,15 +9,17 @@
 import SwiftUI
 
 struct SettingsView: View {
-	@Environment(\.dismiss) var dismiss
+//	@Environment(\.dismiss) var dismiss
 
 	@AppStorage(AppSettings.useAutoPauseKey) var useAutoPauseIsOn = AppSettings.shared.useAutoPause
-	@AppStorage(AppSettings.connectedToRuplKey) var isConnectedToRupl = !AppSettings.shared.connectedToRupl
+	@AppStorage(AppSettings.connectedToRuplKey) var isConnectedToRupl = AppSettings.shared.connectedToRupl
 
 
 	@State private var deviceAuthorization = false
+	@State private var polling: Bool = false
 	@State private var userCode: String = ""
 	@State private var verificationUri: String = ""
+
 	//	@State private var anotherThingIsOn = false
 
 	//	@State private var howMuch = 0.0
@@ -80,16 +82,14 @@ struct SettingsView: View {
 		} else if userCode.isEmpty || verificationUri.isEmpty {
 			LoadingIndicatorView()
 		} else {
-//			ScrollView {
-				OAuthInstructionView(url: verificationUri, code: userCode)
-//
-//				Button {
-//					deviceAuthorization = false
-//				} label: {
-//					Text("Canel")
-//				}
-//				.padding(.vertical)
-//			}
+			OAuthInstructionView(url: verificationUri, code: userCode)
+				.onAppear() {
+					polling = true
+					pollingResponse()
+				}
+				.onDisappear() {
+					polling = false
+				}
 		}
 	}
 
@@ -100,8 +100,20 @@ struct SettingsView: View {
 			verificationUri = OAuth2.verificationUri
 		}
 	}
-}
 
-#Preview {
-	SettingsView()
+	func pollingResponse() {
+		DispatchQueue.global().async {
+			var counter: Int = 0
+
+			while self.polling {
+				print("[\(counter)] polling")
+				counter += 1
+				sleep(3)
+			}
+		}
+	}
 }
+//
+//#Preview {
+//	SettingsView()
+//}

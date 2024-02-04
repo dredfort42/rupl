@@ -9,16 +9,17 @@ import SwiftUI
 
 @main
 struct ruplApp: App {
-	private let workoutManager = WorkoutManager.shared
+//	private let workoutManager = WorkoutManager.shared
 
 	var body: some Scene {
 		WindowGroup {
-			if UIDevice.current.userInterfaceIdiom == .phone {
-				StartView()
-					.environmentObject(workoutManager)
-			} else {
-				WorkoutListView()
-			}
+			LoadingIndicatorView()
+//			if UIDevice.current.userInterfaceIdiom == .phone {
+//				StartView()
+//					.environmentObject(workoutManager)
+//			} else {
+//				WorkoutListView()
+//			}
 		}
 	}
 }

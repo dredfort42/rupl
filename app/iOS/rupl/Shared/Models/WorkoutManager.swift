@@ -96,7 +96,7 @@ class WorkoutManager: NSObject, ObservableObject {
 
 	var heartRateNotificationTimer: Int = 0
 
-	lazy var routeBuilder = HKWorkoutRouteBuilder(healthStore: healthStore, device: nil)
+	var routeBuilder: HKWorkoutRouteBuilder?
 
 #if os(watchOS)
 	var builder: HKLiveWorkoutBuilder?
@@ -156,7 +156,7 @@ class WorkoutManager: NSObject, ObservableObject {
 				}
 
 				do {
-					try await routeBuilder.finishRoute(with: finishedWorkout!, metadata: nil)
+					try await routeBuilder?.finishRoute(with: finishedWorkout!, metadata: nil)
 				} catch {
 					Logger.shared.log("Failed to associate the route with the workout: \(error)")
 					return
@@ -201,6 +201,7 @@ extension WorkoutManager {
 		lastSegmentHeartRatesCount = 0
 		lastSegmentViewPresentTime = 0
 		heartRateNotificationTimer = 0
+		routeBuilder = nil
 #if os(watchOS)
 		builder = nil
 #endif
