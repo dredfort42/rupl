@@ -34,7 +34,6 @@ class WorkoutManager: NSObject, ObservableObject {
 //	@Published var cadence: Double = 0
 //	@Published var elapsedTimeInterval: TimeInterval = 0
 
-	@Published var workout: HKWorkout?
 
 	//	HealthKit data types to share
 	let typesToShare: Set = [
@@ -76,7 +75,14 @@ class WorkoutManager: NSObject, ObservableObject {
 	let locationManager = LocationManager()
 	let motionManager = MotionManager()
 	let healthStore = HKHealthStore()
+	var workout: HKWorkout?
 	var session: HKWorkoutSession?
+	var routeBuilder: HKWorkoutRouteBuilder?
+#if os(watchOS)
+	var builder: HKLiveWorkoutBuilder?
+#else
+	var contextDate: Date?
+#endif
 	var isSessionEnded: Bool = false
 	var isPauseSetWithButton: Bool = false
 	var pauseStartTime: Date = Date()
@@ -87,6 +93,8 @@ class WorkoutManager: NSObject, ObservableObject {
 	var last10SpeedMeasurementsSum: Double = 0
 	var last10SpeedAverage: Double = 0
 
+	var averageSpeedMetersPerSecond: Double = 0
+
 	var lastSegment: Int = 0
 	var lastSegmentStartTime: Date = Date()
 	var lastSegmentStopTime: Date = Date()
@@ -94,15 +102,10 @@ class WorkoutManager: NSObject, ObservableObject {
 	var lastSegmentHeartRatesCount: Int = 0
 	var lastSegmentViewPresentTime: Int = 0
 
+	private var heartRateSum: UInt64 = 0
+	private var heartRateCount: UInt = 0
+	var averageHeartRate: Int = 0
 	var heartRateNotificationTimer: Int = 0
-
-	var routeBuilder: HKWorkoutRouteBuilder?
-
-#if os(watchOS)
-	var builder: HKLiveWorkoutBuilder?
-#else
-	var contextDate: Date?
-#endif
 
 	let asynStreamTuple = AsyncStream.makeStream(of: SessionSateChange.self, bufferingPolicy: .bufferingNewest(1))
 
@@ -138,6 +141,11 @@ class WorkoutManager: NSObject, ObservableObject {
 			case .stopped:
 				timer.cancel()
 				locationManager.locationManager.stopUpdatingLocation()
+
+				averageSpeedMetersPerSecond = distance / (builder?.elapsedTime(at: Date()) ?? 1)
+				if heartRateCount > 0 {
+					averageHeartRate = Int(Double(heartRateSum / UInt64(heartRateCount)) + 0.5)
+				}
 
 				let finishedWorkout: HKWorkout?
 				stopTime = Date()
@@ -194,12 +202,16 @@ extension WorkoutManager {
 		last10SpeedMeasurements = []
 		last10SpeedMeasurementsSum = 0
 		last10SpeedAverage = 0
+		averageSpeedMetersPerSecond = 0
 		lastSegment = 0
 		lastSegmentStartTime = Date()
-		lastSegmentStopTime = lastSegmentStartTime
+		lastSegmentStopTime = Date()
 		lastSegmentHeartRatesSum = 0
 		lastSegmentHeartRatesCount = 0
 		lastSegmentViewPresentTime = 0
+		heartRateSum = 0
+		heartRateCount = 0
+		averageHeartRate = 0
 		heartRateNotificationTimer = 0
 		routeBuilder = nil
 #if os(watchOS)
@@ -216,6 +228,8 @@ extension WorkoutManager {
 			case HKQuantityType.quantityType(forIdentifier: .heartRate):
 				let heartRateUnit = HKUnit.count().unitDivided(by: .minute())
 				heartRate = statistics.mostRecentQuantity()?.doubleValue(for: heartRateUnit) ?? 0
+				heartRateSum += UInt64(heartRate + 0.5)
+				heartRateCount += 1
 				checkHeartRate()
 
 //			case HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned):
@@ -307,3 +321,4 @@ extension HKWorkoutSessionState {
 		self != .notStarted && self != .ended
 	}
 }
+

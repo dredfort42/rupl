@@ -15,34 +15,27 @@ struct SummaryView: View {
 	@Environment(\.dismiss) var dismiss
 
 	var body: some View {
-		if let workout = workoutManager.workout {
-			ScrollView {
-				summaryListView(workout: workout)
-					.scenePadding()
-			}
-			.navigationTitle("Summary")
-			.navigationBarTitleDisplayMode(.inline)
-		} else {
-			LoadingIndicatorView()
-				.navigationBarHidden(true)
+		ScrollView {
+			summaryListView()
+				.scenePadding()
 		}
+		.navigationTitle("Summary")
+		.navigationBarTitleDisplayMode(.inline)
 	}
 
 	@ViewBuilder
-	private func summaryListView(workout: HKWorkout) -> some View {
+	private func summaryListView() -> some View {
 		let totalWorkoutTime: TimeInterval = workoutManager.stopTime.timeIntervalSince(workoutManager.session?.startDate ?? Date())
-		let runDuration: TimeInterval = workout.duration
-		let distance: Double = workout.statistics(for: HKQuantityType(.distanceWalkingRunning))?.sumQuantity()?.doubleValue(for: HKUnit.meterUnit(with: .kilo)) ?? 0
-		let speedMetersPerSecond: Double = distance * 1000 / runDuration
-		let averagePower: Double = workout.statistics(for: HKQuantityType(.runningPower))?.averageQuantity()?.doubleValue(for: HKUnit.watt()) ?? 0
-		let calories: Double = workout.statistics(for: HKQuantityType(.activeEnergyBurned))?.sumQuantity()?.doubleValue(for: HKUnit.largeCalorie()) ?? 0
-		let averageHeartRate: Double = workout.statistics(for: HKQuantityType(.heartRate))?.averageQuantity()?.doubleValue(for: HKUnit.count().unitDivided(by: .minute())) ?? 0
+		let runDuration: TimeInterval = workoutManager.builder?.elapsedTime(at: Date()) ?? 0
+		let distance: Double = workoutManager.distance / 1000
+		let averageSpeedMetersPerSecond: Double = workoutManager.averageSpeedMetersPerSecond
+		let averageHeartRate: Int = workoutManager.averageHeartRate
 
 		VStack(alignment: .leading) {
 			SummaryMetricView(title: "Total workout time",
 							  value: workoutManager.formatDuration(seconds: totalWorkoutTime)
 			)
-			
+
 			SummaryMetricView(title: "Run duration",
 							  value: workoutManager.formatDuration(seconds: runDuration)
 			).foregroundStyle(.ruplYellow)
@@ -52,30 +45,17 @@ struct SummaryView: View {
 			)
 
 			SummaryMetricView(title: "Average pace",
-							  value: workoutManager.convertToMinutesPerKilometer(metersPerSecond: speedMetersPerSecond)
+							  value: workoutManager.convertToMinutesPerKilometer(metersPerSecond: averageSpeedMetersPerSecond)
 			).foregroundColor(.ruplBlue)
-
-			SummaryMetricView(title: "Average power",
-							  value: averagePower.formatted(.number.precision(.fractionLength(0)))
-			)
-
-			SummaryMetricView(title: "Calories",
-							  value: calories.formatted(.number.precision(.fractionLength(0)))
-			)
-
+	
 			SummaryMetricView(title: "Average heart rate",
 							  value: averageHeartRate.formatted(.number.precision(.fractionLength(0)))
 			).foregroundStyle(.ruplRed)
 
-			Group {
-				Text("Activity rings")
-				ActivityRingsView(healthStore: workoutManager.healthStore)
-					.frame(width: 100, height: 100)
-				Button {
-					dismiss()
-				} label: {
-					Text("Done")
-				}
+			Button {
+				dismiss()
+			} label: {
+				Text("Done")
 			}
 		}
 	}
@@ -93,9 +73,7 @@ struct SummaryMetricView: View {
 		Divider()
 	}
 }
-
+//
 //#Preview {
-//	SummaryMetricView(title: "Average heart rate",
-//					  value: "5:04 /km")
-//	.foregroundStyle(.ruplYellow)
+//	SummaryView()
 //}
