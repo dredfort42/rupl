@@ -35,7 +35,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 
 	// MARK: - CLLocationManagerDelegate
 	//
-	@MainActor func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+	func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
 
 		accuracy = locations.max(by: { $0.horizontalAccuracy < $1.horizontalAccuracy })?.horizontalAccuracy ?? 1000
 

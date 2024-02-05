@@ -69,11 +69,11 @@ extension WorkoutManager {
 extension WorkoutManager {
 	func addLocationsToRoute() {
 		DispatchQueue.main.async {
-			guard !self.locationManager.filteredLocations.isEmpty else { return }
-			
-			self.routeBuilder?.insertRouteData(self.locationManager.filteredLocations) { (success, error) in
-				if !success {
-					Logger.shared.log("Failed to add locations to the route: \(error))")
+			if !self.locationManager.filteredLocations.isEmpty {
+				self.routeBuilder?.insertRouteData(self.locationManager.filteredLocations) { (success, error) in
+					if !success {
+						Logger.shared.log("Failed to add locations to the route: \(error))")
+					}
 				}
 			}
 		}

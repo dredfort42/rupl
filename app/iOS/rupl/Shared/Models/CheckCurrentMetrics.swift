@@ -34,7 +34,7 @@ extension WorkoutManager {
 
 			// 	MARK: - TMP Checking the puls zone
 			if self.session?.state != .paused && self.heartRateNotificationTimer == 0 {
-				if pulse > self.pz3FatBurning {
+				if pulse > self.pz2Easy {
 					self.heartRateNotificationTimer = 10
 #if targetEnvironment(simulator)
 					print("* Run slower sound")
