@@ -83,7 +83,7 @@ struct ControlsView: View {
 
 							ZStack {
 								Circle()
-									.frame(width: 100, height: 100)
+									.frame(width: 110, height: 110)
 									.foregroundColor(.ruplYellow)
 									.opacity(0.1)
 								VStack {
@@ -100,11 +100,13 @@ struct ControlsView: View {
 							Circle().stroke(.ruplYellow.opacity(0.8), lineWidth: 2)
 						}
 						.buttonStyle(.bordered)
-						.frame(width: 100, height: 100)
+						.frame(width: 110, height: 110)
 						.padding(.leading)
 
 						Spacer()
 					}
+
+					Spacer()
 
 					HStack {
 						Spacer()

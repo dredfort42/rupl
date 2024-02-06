@@ -85,7 +85,7 @@ extension WorkoutManager {
 extension WorkoutManager {
 	func heartRateTimer() {
 		DispatchQueue.main.async {
-			if self.heartRateNotificationTimer != 0 {
+			if self.heartRateNotificationTimer > 0 {
 				self.heartRateNotificationTimer -= 1
 			}
 		}
@@ -97,7 +97,7 @@ extension WorkoutManager {
 extension WorkoutManager {
 	func lastSegmentViewPresentTimer() {
 		DispatchQueue.main.async {
-			if self.lastSegmentViewPresentTime != 0 {
+			if self.lastSegmentViewPresentTime > 0 {
 				self.lastSegmentViewPresentTime -= 1
 			}
 		}
