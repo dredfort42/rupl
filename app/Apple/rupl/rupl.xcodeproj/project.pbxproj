@@ -926,7 +926,7 @@
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to create workout route";
 				INFOPLIST_KEY_NSMotionUsageDescription = "We need your motion data to pause and resume your workout";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = dredfort.42.org.rupl;
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = org.rupl.app;
 				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -964,7 +964,7 @@
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to create workout route";
 				INFOPLIST_KEY_NSMotionUsageDescription = "We need your motion data to pause and resume your workout";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = dredfort.42.org.rupl;
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = org.rupl.app;
 				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
