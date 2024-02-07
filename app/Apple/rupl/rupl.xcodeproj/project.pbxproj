@@ -73,7 +73,6 @@
 		AFEEDE482B5EB8DE00B2C27A /* WorkoutListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEEDE472B5EB8DE00B2C27A /* WorkoutListView.swift */; };
 		AFEEDE4A2B5EBACA00B2C27A /* ChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEEDE492B5EBACA00B2C27A /* ChartView.swift */; };
 		AFEEDE4C2B5EBAF800B2C27A /* SummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEEDE4B2B5EBAF800B2C27A /* SummaryView.swift */; };
-		AFF4DE672B739C2000EA311B /* rupl.app in Resources */ = {isa = PBXBuildFile; fileRef = AF5ACAB32B46D0710010C316 /* rupl.app */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -91,6 +90,13 @@
 			remoteGlobalIDString = AF5ACAB22B46D0700010C316;
 			remoteInfo = rupl;
 		};
+		AF5ACADB2B46D07A0010C316 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AF5ACAAB2B46D0700010C316 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AF5ACAD82B46D07A0010C316;
+			remoteInfo = "rupl Watch App";
+		};
 		AF5ACAEC2B46D07E0010C316 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = AF5ACAAB2B46D0700010C316 /* Project object */;
@@ -104,20 +110,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = AF5ACAD82B46D07A0010C316;
 			remoteInfo = "rupl Watch App";
-		};
-		AFF4DE652B739B8100EA311B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = AF5ACAAB2B46D0700010C316 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = AF5ACAD82B46D07A0010C316;
-			remoteInfo = "rupl Watch App";
-		};
-		AFF4DE682B739C2000EA311B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = AF5ACAAB2B46D0700010C316 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = AF5ACAB22B46D0700010C316;
-			remoteInfo = rupl;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -324,7 +316,6 @@
 				AF5ACAF82B46D07E0010C316 /* Rupl Watch AppUITests */,
 				AF5ACB162B4710580010C316 /* Shared */,
 				AF7B30342B5ABBC9002FEDC9 /* Sounds */,
-				AFF4DE622B739AF200EA311B /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -441,13 +432,6 @@
 			path = Sounds;
 			sourceTree = "<group>";
 		};
-		AFF4DE622B739AF200EA311B /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -463,7 +447,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				AFF4DE662B739B8100EA311B /* PBXTargetDependency */,
+				AF5ACADC2B46D07A0010C316 /* PBXTargetDependency */,
 			);
 			name = rupl;
 			productName = rupl;
@@ -517,7 +501,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				AFF4DE692B739C2000EA311B /* PBXTargetDependency */,
 			);
 			name = "rupl Watch App";
 			productName = "rupl Watch App";
@@ -656,7 +639,6 @@
 				AF7B30382B5ABC10002FEDC9 /* WorkoutStopSound.aif in Resources */,
 				AF7B303A2B5ABC10002FEDC9 /* WorkoutStartSound.aif in Resources */,
 				AF5ACAE62B46D07D0010C316 /* Preview Assets.xcassets in Resources */,
-				AFF4DE672B739C2000EA311B /* rupl.app in Resources */,
 				AF2DBABB2B601F5B00E50B47 /* WorkoutRunSlowerSound.aif in Resources */,
 				AF2DBABD2B601F5B00E50B47 /* WorkoutRunFasterSound.aif in Resources */,
 				AFD0B1992B5C74B90027001F /* WorkoutSegmentSound.aif in Resources */,
@@ -785,6 +767,11 @@
 			target = AF5ACAB22B46D0700010C316 /* rupl */;
 			targetProxy = AF5ACACE2B46D07A0010C316 /* PBXContainerItemProxy */;
 		};
+		AF5ACADC2B46D07A0010C316 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AF5ACAD82B46D07A0010C316 /* rupl Watch App */;
+			targetProxy = AF5ACADB2B46D07A0010C316 /* PBXContainerItemProxy */;
+		};
 		AF5ACAED2B46D07E0010C316 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = AF5ACAD82B46D07A0010C316 /* rupl Watch App */;
@@ -794,16 +781,6 @@
 			isa = PBXTargetDependency;
 			target = AF5ACAD82B46D07A0010C316 /* rupl Watch App */;
 			targetProxy = AF5ACAF62B46D07E0010C316 /* PBXContainerItemProxy */;
-		};
-		AFF4DE662B739B8100EA311B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = AF5ACAD82B46D07A0010C316 /* rupl Watch App */;
-			targetProxy = AFF4DE652B739B8100EA311B /* PBXContainerItemProxy */;
-		};
-		AFF4DE692B739C2000EA311B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = AF5ACAB22B46D0700010C316 /* rupl */;
-			targetProxy = AFF4DE682B739C2000EA311B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -949,7 +926,7 @@
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to create workout route";
 				INFOPLIST_KEY_NSMotionUsageDescription = "We need your motion data to pause and resume your workout";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = org.rupl.app;
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = dredfort.42.org.rupl;
 				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -987,7 +964,7 @@
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to create workout route";
 				INFOPLIST_KEY_NSMotionUsageDescription = "We need your motion data to pause and resume your workout";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = org.rupl.app;
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = dredfort.42.org.rupl;
 				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
