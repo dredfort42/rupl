@@ -60,7 +60,7 @@ services:
       - 80:80
     volumes:
       - ./global.cfg:/app/global.cfg
-      - ./web/html:/html
+      - ./html:/html
       - /etc/letsencrypt/live/rupl.org/fullchain.pem:/app/fullchain.pem
       - /etc/letsencrypt/live/rupl.org/privkey.pem:/app/privkey.pem
 

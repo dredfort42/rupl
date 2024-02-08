@@ -25,22 +25,42 @@ func readFile(path string) string {
 	return string(fileContent)
 }
 
-func showContent(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path[1:] == "" {
-		fmt.Fprintln(w, readFile("/html/index.html"))
-	} else {
-		path := "/html" + r.URL.Path
+func sendData(w http.ResponseWriter, r *http.Request) {
+	path := "/html/index.html"
 
-		if _, err := os.Stat(path); err == nil {
-			fmt.Fprintln(w, readFile(path))
-		} else if os.IsNotExist(err) {
-			w.WriteHeader(http.StatusNotFound)
-			fmt.Fprintln(w, readFile("/html/index.html"))
-		} else {
-			logprinter.PrintError("Error checking file existence: %v\n", err)
-		}
-
+	if r.URL.Path[1:] != "" {
+		path = "/html" + r.URL.Path
 	}
+
+    file, err := os.Open(path)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+    defer file.Close()
+
+    fileInfo, err := file.Stat()
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+	if fileInfo.IsDir() {
+		http.Error(w, "Directory access is forbidden", http.StatusForbidden)
+		return
+	}
+
+	if strings.Contains(r.URL.Path, "/download/") {
+		w.Header().Set("Content-Type", http.DetectContentType(make([]byte, 512))) // Detect content type
+    	w.Header().Set("Content-Disposition", "attachment; filename="+fileInfo.Name())
+		w.Header().Set("Content-Length", fmt.Sprintf("%d", fileInfo.Size()))
+	}
+
+    _, err = io.Copy(w, file)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
 }
 
 func proxyRequest(w http.ResponseWriter, r *http.Request) {
@@ -95,8 +115,8 @@ func main() {
 
 	authURL = fmt.Sprintf("%s:%s", config["auth.host"], config["auth.port"])
 
+	http.HandleFunc("/", sendData)
 	http.HandleFunc("/api/v1/auth/", proxyRequest)
-	http.HandleFunc("/", showContent)
 
 	port := fmt.Sprintf(":%s", config["entrypoint.port.ssl"])
 	url := fmt.Sprintf("%s://%s%s", config["entrypoint.protocol.ssl"], config["entrypoint.address"], port)

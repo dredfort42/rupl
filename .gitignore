@@ -4,6 +4,7 @@
 local.cfg
 go.sum
 main
+*.zip
 
 # MacOS
 ## General

@@ -1,6 +1,6 @@
 FROM golang:latest AS build
 
-COPY . /app
+COPY ./ /app
 WORKDIR /app
 
 RUN go mod tidy
