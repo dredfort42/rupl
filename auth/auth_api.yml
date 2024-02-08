@@ -8,8 +8,8 @@ info:
     email: i@rupl.org
     url: "https://rupl.org/contact"
   license:
-    name: GNU Affero General Public License v3.0
-    url: "https://www.gnu.org/licenses/agpl-3.0.en.html"
+    name: GNU General Public License v3.0
+    url: "https://www.gnu.org/licenses/gpl-3.0.html"
   x-logo:
     url: "https://rupl.org/rupl-logo.png"
   description: |
@@ -123,15 +123,7 @@ paths:
           required: true
           schema:
             type: string
-      requestBody:
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: "#/components/schemas/DeviceAuthorizationRequest"
-        description: |
-          A device authorization request to the device
-          authorization endpoint
-        required: true
+            example: C8FF9127-5C0C-43D2-A08B-382E4D64AF20
       responses:
         "200":
           description: OK
@@ -291,19 +283,19 @@ components:
     #         email:
     #           $ref: "#/components/schemas/Email"
 
-    DeviceAuthorizationRequest:
-      type: object
-      title: Device Authorization Request
-      description: |
-        The client initiates the authorization flow by requesting a set of
-        verification codes from the authorization server by making an HTTP "POST"
-        request to the device authorization endpoint.
-      properties:
-        client_id:
-          description: |
-            REQUIRED. The client identifier.
-          type: string
-          example: C8FF9127-5C0C-43D2-A08B-382E4D64AF20
+    # DeviceAuthorizationRequest:
+    #   type: object
+    #   title: Device Authorization Request
+    #   description: |
+    #     The client initiates the authorization flow by requesting a set of
+    #     verification codes from the authorization server by making an HTTP "POST"
+    #     request to the device authorization endpoint.
+    #   properties:
+    #     client_id:
+    #       description: |
+    #         REQUIRED. The client identifier.
+    #       type: string
+    #       example: C8FF9127-5C0C-43D2-A08B-382E4D64AF20
 
     DeviceAuthorizationResponse:
       type: object
@@ -352,6 +344,13 @@ components:
             provided, clients MUST use 5 as the default.
           type: integer
           example: 5
+      additionalProperties: false
+      required:
+        - device_code
+        - user_code
+        - verification_uri
+        - expires_in
+
     DeviceAuthorizationErrorResponse:
       type: object
       title: Device Authorization Error Response
