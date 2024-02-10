@@ -22,18 +22,8 @@ class WorkoutManager: NSObject, ObservableObject {
 	//	The workout session live states that the UI observes.
 	@Published var sessionState: HKWorkoutSessionState = .notStarted
 	@Published var heartRate: Double = 0
-//	@Published var activeEnergy: Double = 0
 	@Published var distance: Double = 0
-//	@Published var power: Double = 0
 	@Published var speed: Double = 0
-//	@Published var strideLength: Double = 0
-//	@Published var verticalOscillation: Double = 0
-//	@Published var groundContactTime: Double = 0
-//	@Published var vo2Max: Double = 0
-//	@Published var stepCount: Double = 0
-//	@Published var cadence: Double = 0
-//	@Published var elapsedTimeInterval: TimeInterval = 0
-
 
 	//	HealthKit data types to share
 	let typesToShare: Set = [
@@ -44,21 +34,13 @@ class WorkoutManager: NSObject, ObservableObject {
 	//	HealthKit data types to read
 	let typesToRead: Set = [
 		HKQuantityType(.heartRate), //	count/s, Discrete (Temporally Weighted)
-		HKQuantityType(.activeEnergyBurned), //	kcal, Cumulative
 		HKQuantityType(.distanceWalkingRunning), //	m, Cumulative
-		HKQuantityType(.runningPower), //	W, Discrete (Arithmetic)
 		HKQuantityType(.runningSpeed), //	m/s, Discrete (Arithmetic)
-		HKQuantityType(.runningStrideLength), //	m, Discrete (Arithmetic)
-		HKQuantityType(.runningVerticalOscillation), //	cm, Discrete (Arithmetic)
-		HKQuantityType(.runningGroundContactTime), //	ms, Discrete (Arithmetic)
-		HKQuantityType(.vo2Max), //	ml/(kg*min), Discrete (Arithmetic)
-		HKQuantityType(.stepCount), //	count, Cumulative
 		HKQuantityType.workoutType(),
-		HKObjectType.activitySummaryType(),
 		HKSeriesType.workoutRoute()
 	]
 
-//	let parameters = WorkoutParameters()
+	
 	let permissibleHorizontalAccuracy: Double = AppSettings.shared.permissibleHorizontalAccuracy
 	var useAutoPause: Bool = AppSettings.shared.useAutoPause
 	var paceForAutoPause: Double = AppSettings.shared.paceForAutoPause
@@ -75,7 +57,6 @@ class WorkoutManager: NSObject, ObservableObject {
 	let locationManager = LocationManager()
 	let motionManager = MotionManager()
 	let healthStore = HKHealthStore()
-	var workout: HKWorkout?
 	var session: HKWorkoutSession?
 	var routeBuilder: HKWorkoutRouteBuilder?
 #if os(watchOS)
@@ -121,7 +102,7 @@ class WorkoutManager: NSObject, ObservableObject {
 				Logger.shared.log("Failed to request authorization: \(error)")
 			}
 		}
-		
+
 		Task {
 			for await value in asynStreamTuple.stream {
 				await consumeSessionStateChange(value)
@@ -132,68 +113,40 @@ class WorkoutManager: NSObject, ObservableObject {
 	private func consumeSessionStateChange(_ change: SessionSateChange) async {
 		sessionState = change.newState
 
-#if os(watchOS)
 		switch change.newState {
 			case .paused:
 				pauseStartTime = Date()
 			case .running:
-					lastSegmentStartTime -= pauseStartTime.timeIntervalSinceNow
+				lastSegmentStartTime -= pauseStartTime.timeIntervalSinceNow
 			case .stopped:
+				stopTime = Date()
 				timer.cancel()
 				locationManager.locationManager.stopUpdatingLocation()
 
-				averageSpeedMetersPerSecond = distance / (builder?.elapsedTime(at: Date()) ?? 1)
 				if heartRateCount > 0 {
 					averageHeartRate = Int(Double(heartRateSum / UInt64(heartRateCount)) + 0.5)
 				}
 
-				let finishedWorkout: HKWorkout?
-				stopTime = Date()
-				do {
-					try await builder?.endCollection(at: change.date)
-					finishedWorkout = try await builder?.finishWorkout()
-					session?.end()
-				} catch {
-					Logger.shared.log("Failed to end workout: \(error))")
-					return
-				}
-				workout = finishedWorkout
-
-				guard finishedWorkout != nil else {
-					return
+				let time: Double = stopTime.timeIntervalSince(session?.startDate ?? Date())
+				if  time > 0 {
+					averageSpeedMetersPerSecond = distance / time
 				}
 
-				do {
-					try await routeBuilder?.finishRoute(with: finishedWorkout!, metadata: nil)
-				} catch {
-					Logger.shared.log("Failed to associate the route with the workout: \(error)")
-					return
-				}
+				await finishWorkout()
 			default:
 				return
 		}
-#endif
 	}
 }
 
-//	MARK: - Workout session management
+//	MARK: - Workout session reset workout
 //
 extension WorkoutManager {
 	func resetWorkout() {
 		sessionState = .notStarted
 		heartRate = 0
-//		activeEnergy = 0
 		distance = 0
-//		power = 0
 		speed = 0
-//		strideLength = 0
-//		verticalOscillation = 0
-//		groundContactTime = 0
-//		vo2Max = 0
-//		stepCount = 0
-//		cadence = 0
-//		elapsedTimeInterval = 0
-		workout = nil
 		session = nil
 		isSessionEnded = false
 		isPauseSetWithButton = false
@@ -230,43 +183,15 @@ extension WorkoutManager {
 				heartRate = statistics.mostRecentQuantity()?.doubleValue(for: heartRateUnit) ?? 0
 				checkHeartRate()
 
-//			case HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned):
-//				let energyUnit = HKUnit.kilocalorie()
-//				activeEnergy = statistics.sumQuantity()?.doubleValue(for: energyUnit) ?? 0
-
 			case HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning):
 				let distanceUnit = HKUnit.meter()
 				distance = statistics.sumQuantity()?.doubleValue(for: distanceUnit) ?? 0
 				checkLastSegment()
 
-//			case HKQuantityType.quantityType(forIdentifier: .runningPower):
-//				let powerUnit = HKUnit.watt()
-//				power = statistics.mostRecentQuantity()?.doubleValue(for: powerUnit) ?? 0
-
 			case HKQuantityType.quantityType(forIdentifier: .runningSpeed):
 				let speedUnit = HKUnit.meter().unitDivided(by: HKUnit.second())
 				speed = statistics.mostRecentQuantity()?.doubleValue(for: speedUnit) ?? 0
 				checkSpeed()
-//				Logger.shared.log("speed: \(self.speed) | avgSpeed: \(self.last10SpeedAverage) | clSpeed: \(self.locationManager.speed)")
-
-//			case HKQuantityType.quantityType(forIdentifier: .runningStrideLength):
-//				let lengthUnit = HKUnit.meter()
-//				strideLength = statistics.averageQuantity()?.doubleValue(for: lengthUnit) ?? 0
-//
-//			case HKQuantityType.quantityType(forIdentifier: .runningVerticalOscillation):
-//				let verticalOscillationhUnit = HKUnit.meter()
-//				verticalOscillation = statistics.sumQuantity()?.doubleValue(for: verticalOscillationhUnit) ?? 0
-//
-//			case HKQuantityType.quantityType(forIdentifier: .runningGroundContactTime):
-//				let contactTimeUnit = HKUnit.secondUnit(with: .milli)
-//				groundContactTime = statistics.averageQuantity()?.doubleValue(for: contactTimeUnit) ?? 0
-//
-//			case HKQuantityType.quantityType(forIdentifier: .vo2Max):
-//				let vo2MaxUnit = HKUnit.literUnit(with: .milli).unitDivided(by: HKUnit.gramUnit(with: .kilo).unitDivided(by: HKUnit.minute()))
-//				vo2Max = statistics.averageQuantity()?.doubleValue(for: vo2MaxUnit) ?? 0
-//
-//			case HKQuantityType.quantityType(forIdentifier: .stepCount):
-//				stepCount = statistics.mostRecentQuantity()?.doubleValue(for: HKUnit.count()) ?? 0
 
 			default:
 				return

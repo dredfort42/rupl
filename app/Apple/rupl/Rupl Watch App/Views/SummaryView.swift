@@ -49,7 +49,7 @@ struct SummaryView: View {
 			).foregroundColor(.ruplBlue)
 	
 			SummaryMetricView(title: "Average heart rate",
-							  value: averageHeartRate.formatted(.number.precision(.fractionLength(0)))
+							  value: String(averageHeartRate)
 			).foregroundStyle(.ruplRed)
 
 			Button {

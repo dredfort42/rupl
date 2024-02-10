@@ -15,8 +15,6 @@ import HealthKit
 extension WorkoutManager {
 
 	func startWorkout(workoutConfiguration: HKWorkoutConfiguration) async throws {
-		locationManager.locationManager.startUpdatingLocation()
-
 		if !isTimerStarted {
 			isTimerStarted = true
 			timer.schedule(deadline: .now(), repeating: .seconds(1))
@@ -24,6 +22,7 @@ extension WorkoutManager {
 			timer.resume()
 		}
 
+		locationManager.locationManager.startUpdatingLocation()
 		session = try HKWorkoutSession(healthStore: healthStore, configuration: workoutConfiguration)
 		builder = session?.associatedWorkoutBuilder()
 		session?.delegate = self
@@ -31,14 +30,6 @@ extension WorkoutManager {
 		builder?.dataSource = HKLiveWorkoutDataSource(healthStore: healthStore, workoutConfiguration: workoutConfiguration)
 		routeBuilder = HKWorkoutRouteBuilder(healthStore: healthStore, device: nil)
 
-//	--------------------
-//		if isMirroring {
-//			//	Start mirroring the session to the companion device
-//			try await session?.startMirroringToCompanionDevice()
-//		}
-//	--------------------
-
-		//	Start the workout session activity
 		let startDate = Date()
 		session?.startActivity(with: startDate)
 		sessionState = .paused
@@ -46,20 +37,27 @@ extension WorkoutManager {
 		try await builder?.beginCollection(at: startDate)
 	}
 
-//	--------------------
-//	func handleReceivedData(_ data: Data) throws {
-//		guard let decodedQuantity = try NSKeyedUnarchiver.unarchivedObject(ofClass: HKQuantity.self, from: data) else {
-//			return
-//		}
-//
-//		let sampleDate = Date()
-//		Task {
-//			let waterSample = [HKQuantitySample(type: HKQuantityType(.dietaryWater), quantity: decodedQuantity, start: sampleDate, end: sampleDate)]
-//			try await builder?.addSamples(waterSample)
-//		}
-//	}
-//	--------------------
+	func finishWorkout() async {
+		let finishedWorkout: HKWorkout?
 
+		do {
+			try await builder?.endCollection(at: stopTime)
+			finishedWorkout = try await builder?.finishWorkout()
+			session?.end()
+		} catch {
+			Logger.shared.log("Failed to end workout: \(error))")
+			return
+		}
+
+		if (finishedWorkout != nil) {
+			do {
+				try await routeBuilder?.finishRoute(with: finishedWorkout!, metadata: nil)
+			} catch {
+				Logger.shared.log("Failed to associate the route with the workout: \(error)")
+				return
+			}
+		}
+	}
 }
 
 //	MARK: - HKLiveWorkoutBuilderDelegate
@@ -69,9 +67,6 @@ extension WorkoutManager {
 extension WorkoutManager: HKLiveWorkoutBuilderDelegate {
 
 	nonisolated func workoutBuilder(_ workoutBuilder: HKLiveWorkoutBuilder, didCollectDataOf collectedTypes: Set<HKSampleType>) {
-
-		//	HealthKit calls this method on an anonymous serial background queue.
-		//	Use Task to provide an asynchronous context so MainActor can come to play.
 		Task { @MainActor in
 			var allStatistics: [HKStatistics] = []
 
@@ -81,20 +76,6 @@ extension WorkoutManager: HKLiveWorkoutBuilderDelegate {
 					allStatistics.append(statistics)
 				}
 			}
-
-//	--------------------
-//			if isMirroring {
-//				let archivedData = try? NSKeyedArchiver.archivedData(withRootObject: allStatistics, requiringSecureCoding: true)
-//				guard let archivedData = archivedData, !archivedData.isEmpty else {
-//					Logger.shared.log("Encoded running data is empty")
-//					return
-//				}
-//
-//				//	Send a Data object to the connected remote workout session.
-//				await sendData(archivedData)
-//			}
-//	--------------------
-			
 		}
 	}
 

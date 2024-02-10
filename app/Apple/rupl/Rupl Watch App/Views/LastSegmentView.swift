@@ -16,10 +16,8 @@ struct LastSegmentView: View {
 	
 	@State var lastSegmentStartTime: Date = Date()
 	@State var lastSegmentStopTime: Date = Date()
-	@State var lastSegmentHeartRatesSum: UInt64 = 0
-	@State var lastSegmentHeartRatesCount: UInt = 0
+	@State var lastSegmentAverageHeartRates: Int = 0
 
-	
 	var body: some View {
 		ScrollView {
 			LastSegmentSummaryView()
@@ -28,8 +26,9 @@ struct LastSegmentView: View {
 		.onAppear() {
 			lastSegmentStartTime = workoutManager.lastSegmentStartTime
 			lastSegmentStopTime = workoutManager.lastSegmentStopTime
-			lastSegmentHeartRatesSum = workoutManager.lastSegmentHeartRatesSum
-			lastSegmentHeartRatesCount = workoutManager.lastSegmentHeartRatesCount
+			if workoutManager.lastSegmentHeartRatesCount > 0 {
+				lastSegmentAverageHeartRates = Int(Double(workoutManager.lastSegmentHeartRatesSum / UInt64(workoutManager.lastSegmentHeartRatesCount)) + 0.5)
+			}
 			
 			workoutManager.lastSegmentStartTime = workoutManager.lastSegmentStopTime
 			workoutManager.lastSegmentHeartRatesSum = 0
@@ -45,7 +44,6 @@ struct LastSegmentView: View {
 	@ViewBuilder
 	private func LastSegmentSummaryView() -> some View {
 		let pace: TimeInterval = lastSegmentStopTime.timeIntervalSince(lastSegmentStartTime)
-		let averageHeartRate: Double = Double(lastSegmentHeartRatesSum / UInt64(lastSegmentHeartRatesCount))
 
 		VStack(alignment: .leading) {
 			HStack(alignment: .lastTextBaseline) {
@@ -73,7 +71,7 @@ struct LastSegmentView: View {
 			
 			HStack(alignment: .lastTextBaseline) {
 				Spacer()
-				Text(averageHeartRate.formatted(.number.precision(.fractionLength(0))))
+				Text(String(lastSegmentAverageHeartRates))
 					.font(.system(.title, design: .rounded).monospacedDigit().lowercaseSmallCaps())
 				Text(" bpm")
 					.font(.system(size: 20, weight: .medium, design: .rounded).monospacedDigit().lowercaseSmallCaps())
