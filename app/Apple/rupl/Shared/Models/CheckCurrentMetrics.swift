@@ -13,9 +13,11 @@ import Foundation
 extension WorkoutManager {
 	func checkHeartRate() {
 		DispatchQueue.global().async {
-			if self.heartRate != 0 {
-				self.lastSegmentHeartRatesSum += self.heartRate
+			if self.heartRate != 0 && self.sessionState == .running {
+				self.lastSegmentHeartRatesSum += UInt64(self.heartRate + 0.5)
 				self.lastSegmentHeartRatesCount += 1
+				self.heartRateSum += UInt64(self.heartRate + 0.5)
+				self.heartRateCount += 1
 			}
 
 			let pulse: Int = Int(self.heartRate)
@@ -34,7 +36,7 @@ extension WorkoutManager {
 
 			// 	MARK: - TMP Checking the puls zone
 			if self.session?.state != .paused && self.heartRateNotificationTimer == 0 {
-				if pulse > self.pz4Aerobic {
+				if pulse > self.pz3FatBurning {
 					self.heartRateNotificationTimer = 10
 #if targetEnvironment(simulator)
 					print("* Run slower sound")
@@ -44,7 +46,7 @@ extension WorkoutManager {
 					Vibration.vibrate(type: .directionDown)
 #endif
 #endif
-				} else if pulse < self.pz3FatBurning && (-(self.session?.startDate?.timeIntervalSinceNow ?? 0) > 600) {
+				} else if pulse < self.pz2Easy && (-(self.session?.startDate?.timeIntervalSinceNow ?? 0) > 600) {
 					self.heartRateNotificationTimer = 10
 #if targetEnvironment(simulator)
 					print("* Run faster sound")

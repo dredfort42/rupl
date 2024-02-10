@@ -98,12 +98,12 @@ class WorkoutManager: NSObject, ObservableObject {
 	var lastSegment: Int = 0
 	var lastSegmentStartTime: Date = Date()
 	var lastSegmentStopTime: Date = Date()
-	var lastSegmentHeartRatesSum: Double = 0
-	var lastSegmentHeartRatesCount: Int = 0
+	var lastSegmentHeartRatesSum: UInt64 = 0
+	var lastSegmentHeartRatesCount: UInt = 0
 	var lastSegmentViewPresentTime: Int = 0
 
-	private var heartRateSum: UInt64 = 0
-	private var heartRateCount: UInt = 0
+	var heartRateSum: UInt64 = 0
+	var heartRateCount: UInt = 0
 	var averageHeartRate: Int = 0
 	var heartRateNotificationTimer: Int = 0
 
@@ -228,8 +228,6 @@ extension WorkoutManager {
 			case HKQuantityType.quantityType(forIdentifier: .heartRate):
 				let heartRateUnit = HKUnit.count().unitDivided(by: .minute())
 				heartRate = statistics.mostRecentQuantity()?.doubleValue(for: heartRateUnit) ?? 0
-				heartRateSum += UInt64(heartRate + 0.5)
-				heartRateCount += 1
 				checkHeartRate()
 
 //			case HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned):
