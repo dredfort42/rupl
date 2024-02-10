@@ -14,6 +14,8 @@ struct SettingsView: View {
 	@AppStorage(AppSettings.useAutoPauseKey) var useAutoPauseIsOn = AppSettings.shared.useAutoPause
 	@AppStorage(AppSettings.connectedToRuplKey) var isConnectedToRupl = AppSettings.shared.connectedToRupl
 
+	let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "N/A"
+	let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "N/A"
 
 	@State private var deviceAuthorization = false
 	@State private var polling: Bool = false
@@ -76,6 +78,12 @@ struct SettingsView: View {
 						} else {
 							Text("Connect to rupl.org and get training tasks to your watch")
 						}
+					}
+
+					Section {
+					} footer: {
+						Text("Version: " + appVersion + "." + buildNumber)
+							.foregroundColor(.ruplBlue)
 					}
 				}
 			}
