@@ -16,9 +16,9 @@ struct LastSegmentView: View {
 	
 	@State var lastSegmentStartTime: Date = Date()
 	@State var lastSegmentStopTime: Date = Date()
-	@State var lastSegmentHeartRatesSum: Double = 0
-	@State var lastSegmentHeartRatesCount: Int = 0
-	
+	@State var lastSegmentHeartRatesSum: UInt64 = 0
+	@State var lastSegmentHeartRatesCount: UInt = 0
+
 	
 	var body: some View {
 		ScrollView {
@@ -45,8 +45,8 @@ struct LastSegmentView: View {
 	@ViewBuilder
 	private func LastSegmentSummaryView() -> some View {
 		let pace: TimeInterval = lastSegmentStopTime.timeIntervalSince(lastSegmentStartTime)
-		let averageHeartRate: Double = lastSegmentHeartRatesSum / Double(lastSegmentHeartRatesCount)
-		
+		let averageHeartRate: Double = Double(lastSegmentHeartRatesSum / UInt64(lastSegmentHeartRatesCount))
+
 		VStack(alignment: .leading) {
 			HStack(alignment: .lastTextBaseline) {
 				Spacer()

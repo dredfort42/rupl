@@ -50,6 +50,7 @@ extension WorkoutManager {
 				if !isPaused {
 					self.sessionState = .running
 					self.session?.resume()
+					heartRateNotificationTimer = 10
 #if targetEnvironment(simulator)
 					print("* Start sound")
 #else
