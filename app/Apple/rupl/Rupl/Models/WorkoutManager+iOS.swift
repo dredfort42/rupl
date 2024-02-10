@@ -21,7 +21,7 @@ extension WorkoutManager {
 //		try await healthStore.startWatchApp(toHandle: configuration)
 //	}
 
-	func finishWorkout() {
+	func finishWorkout() async {
 	}
 //	func retrieveRemoteSession() {
 //		/**
