@@ -22,20 +22,6 @@ struct SettingsView: View {
 	@State private var userCode: String = ""
 	@State private var verificationUri: String = ""
 
-	//	@State private var anotherThingIsOn = false
-
-	//	@State private var howMuch = 0.0
-	//	@State private var amount = 0.0
-	//	@State private var quantity = 0.0
-
-	//	let pulsZones = [
-	//		AppSettings.shared.pz1NotInZone,
-	//		AppSettings.shared.pz2Easy,
-	//		AppSettings.shared.pz3FatBurning,
-	//		AppSettings.shared.pz4Aerobic,
-	//		AppSettings.shared.pz5Anaerobic
-	//	]
-
 	var body: some View {
 		if !deviceAuthorization {
 			VStack {
@@ -121,7 +107,7 @@ struct SettingsView: View {
 		}
 	}
 }
-//
+
 //#Preview {
 //	SettingsView()
 //}
