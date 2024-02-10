@@ -12,14 +12,17 @@ import HealthKit
 
 // MARK: - Workout session management
 //
-//extension WorkoutManager {
+extension WorkoutManager {
+	
 //	func startWatchWorkout(workoutType: HKWorkoutActivityType) async throws {
 //		let configuration = HKWorkoutConfiguration()
 //		configuration.activityType = workoutType
 //		configuration.locationType = .outdoor
 //		try await healthStore.startWatchApp(toHandle: configuration)
 //	}
-//
+
+	func finishWorkout() {
+	}
 //	func retrieveRemoteSession() {
 //		/**
 //		 HealthKit calls this handler when a session starts mirroring.
@@ -49,7 +52,7 @@ import HealthKit
 //			}
 //		}
 //	}
-//}
+}
 
 // MARK: - Fetching workouts and workout quantity collections.
 //

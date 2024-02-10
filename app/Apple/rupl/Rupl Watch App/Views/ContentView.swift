@@ -30,7 +30,7 @@ struct ContentView: View {
 			displayMetricsView()
 		}
 		.onChange(of: workoutManager.sessionState) { _, newValue in
-			if newValue == .ended {
+			if newValue == .stopped {
 				isSheetActive = true
 			} else if newValue == .running || newValue == .paused {
 				displayMetricsView()
