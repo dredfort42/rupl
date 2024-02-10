@@ -44,8 +44,7 @@ struct LastSegmentView: View {
 	@ViewBuilder
 	private func LastSegmentSummaryView() -> some View {
 		let pace: TimeInterval = lastSegmentStopTime.timeIntervalSince(lastSegmentStartTime)
-		let averageHeartRate: Double = lastSegmentHeartRatesSum / Double(lastSegmentHeartRatesCount)
-		
+
 		VStack(alignment: .leading) {
 			HStack(alignment: .lastTextBaseline) {
 				Spacer()
