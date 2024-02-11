@@ -16,13 +16,13 @@ class MotionManager {
 
 	init() {
 		if CMMotionActivityManager.isActivityAvailable() {
-			startMotionUpdates()
+			start()
 		} else {
 			Logger.shared.log("Motion activity tracking is not available on this device")
 		}
 	}
 
-	func startMotionUpdates() {
+	func start() {
 		motionActivityManager.startActivityUpdates(to: OperationQueue.main) { (activity: CMMotionActivity?) in
 			if let activity = activity {
 				if activity.running {
@@ -32,5 +32,9 @@ class MotionManager {
 				}
 			}
 		}
+	}
+
+	func stop() {
+		motionActivityManager.stopActivityUpdates()
 	}
 }

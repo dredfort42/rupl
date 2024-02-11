@@ -14,25 +14,13 @@ struct SettingsView: View {
 	@AppStorage(AppSettings.useAutoPauseKey) var useAutoPauseIsOn = AppSettings.shared.useAutoPause
 	@AppStorage(AppSettings.connectedToRuplKey) var isConnectedToRupl = AppSettings.shared.connectedToRupl
 
+	let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "N/A"
+	let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "N/A"
 
 	@State private var deviceAuthorization = false
 	@State private var polling: Bool = false
 	@State private var userCode: String = ""
 	@State private var verificationUri: String = ""
-
-	//	@State private var anotherThingIsOn = false
-
-	//	@State private var howMuch = 0.0
-	//	@State private var amount = 0.0
-	//	@State private var quantity = 0.0
-
-	//	let pulsZones = [
-	//		AppSettings.shared.pz1NotInZone,
-	//		AppSettings.shared.pz2Easy,
-	//		AppSettings.shared.pz3FatBurning,
-	//		AppSettings.shared.pz4Aerobic,
-	//		AppSettings.shared.pz5Anaerobic
-	//	]
 
 	var body: some View {
 		if !deviceAuthorization {
@@ -77,6 +65,12 @@ struct SettingsView: View {
 							Text("Connect to rupl.org and get training tasks to your watch")
 						}
 					}
+
+					Section {
+					} footer: {
+						Text("Version: " + appVersion + "." + buildNumber)
+							.foregroundColor(.ruplBlue)
+					}
 				}
 			}
 		} else if userCode.isEmpty || verificationUri.isEmpty {
@@ -113,7 +107,7 @@ struct SettingsView: View {
 		}
 	}
 }
-//
+
 //#Preview {
 //	SettingsView()
 //}

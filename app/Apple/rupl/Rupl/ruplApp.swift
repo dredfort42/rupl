@@ -13,7 +13,7 @@ struct ruplApp: App {
 
 	var body: some Scene {
 		WindowGroup {
-			LoadingIndicatorView()
+			StartView()
 //			if UIDevice.current.userInterfaceIdiom == .phone {
 //				StartView()
 //					.environmentObject(workoutManager)

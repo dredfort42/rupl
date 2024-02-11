@@ -14,23 +14,30 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 	private let permissibleHorizontalAccuracy: Double = AppSettings.shared.permissibleHorizontalAccuracy
 	private let paceForAutoPause: Double = AppSettings.shared.paceForAutoPause
 	private let paceForAutoResume: Double = AppSettings.shared.paceForAutoResume
+	private let locationManager = CLLocationManager()
+	private var autoPauseIndicator: Int = 0
 
-	let locationManager = CLLocationManager()
 	var speed: CLLocationSpeed = 0
 	var accuracy: CLLocationAccuracy = 1000
 	var filteredLocations: [CLLocation] = []
-	var autoPauseIndicator: Int = 0
 	var autoPauseState: Bool = true
 
 	override init() {
 		super.init()
 
-		// Set up CLLocationManager
 		locationManager.delegate = self
 		locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
 		locationManager.allowsBackgroundLocationUpdates = true
 		locationManager.requestWhenInUseAuthorization()
+		start()
+	}
+
+	func start() {
 		locationManager.startUpdatingLocation()
+	}
+
+	func stop() {
+		locationManager.stopUpdatingLocation()
 	}
 
 	// MARK: - CLLocationManagerDelegate
