@@ -15,8 +15,8 @@ extension WorkoutManager {
 	func timerActions() {
 		autoPause()
 		addLocationsToRoute()
-		heartRateTimer()
-		lastSegmentViewPresentTimer()
+		soundNotificationTimer()
+		viewPresentTimer()
 	}
 }
 
@@ -27,10 +27,12 @@ extension WorkoutManager {
 		if self.useAutoPause && self.sessionState.isActive && !self.isPauseSetWithButton {
 			var isPaused: Bool = false
 
-			if self.locationManager.accuracy > self.permissibleHorizontalAccuracy {
-				isPaused = self.motionManager.autoPauseState
-			} else {
-				isPaused = self.locationManager.autoPauseState
+#if targetEnvironment(simulator)
+			self.motionManager.autoPauseState = false
+#endif
+
+			if	self.locationManager.autoPauseState || self.motionManager.autoPauseState {
+				isPaused = true
 			}
 
 			if self.sessionState == .running {
@@ -84,7 +86,7 @@ extension WorkoutManager {
 //	MARK: - Check heart rate zone
 //
 extension WorkoutManager {
-	func heartRateTimer() {
+	func soundNotificationTimer() {
 		DispatchQueue.main.async {
 			if self.heartRateNotificationTimer > 0 {
 				self.heartRateNotificationTimer -= 1
@@ -96,10 +98,10 @@ extension WorkoutManager {
 //	MARK: - LastSegmentView present timer
 //
 extension WorkoutManager {
-	func lastSegmentViewPresentTimer() {
+	func viewPresentTimer() {
 		DispatchQueue.main.async {
-			if self.lastSegmentViewPresentTime > 0 {
-				self.lastSegmentViewPresentTime -= 1
+			if self.lastSegmentViewPresentTimer > 0 {
+				self.lastSegmentViewPresentTimer -= 1
 			}
 		}
 	}

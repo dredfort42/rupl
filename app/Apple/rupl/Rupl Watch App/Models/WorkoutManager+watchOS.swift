@@ -15,14 +15,6 @@ import HealthKit
 extension WorkoutManager {
 
 	func startWorkout(workoutConfiguration: HKWorkoutConfiguration) async throws {
-		if !isTimerStarted {
-			isTimerStarted = true
-			timer.schedule(deadline: .now(), repeating: .seconds(1))
-			timer.setEventHandler {self.timerActions()}
-			timer.resume()
-		}
-
-		locationManager.locationManager.startUpdatingLocation()
 		session = try HKWorkoutSession(healthStore: healthStore, configuration: workoutConfiguration)
 		builder = session?.associatedWorkoutBuilder()
 		session?.delegate = self
@@ -32,8 +24,6 @@ extension WorkoutManager {
 
 		let startDate = Date()
 		session?.startActivity(with: startDate)
-		sessionState = .paused
-		session?.pause()
 		try await builder?.beginCollection(at: startDate)
 	}
 

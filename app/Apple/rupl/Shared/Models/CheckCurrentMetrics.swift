@@ -70,7 +70,7 @@ extension WorkoutManager {
 			let segment = Int(self.distance / 1000)
 			if self.lastSegment != segment {
 				self.lastSegmentStopTime = Date()
-				self.lastSegmentViewPresentTime = self.timeForShowLastSegmentView
+				self.lastSegmentViewPresentTimer = self.timeForShowLastSegmentView
 				self.lastSegment = segment
 #if targetEnvironment(simulator)
 					print("* Segment sound")

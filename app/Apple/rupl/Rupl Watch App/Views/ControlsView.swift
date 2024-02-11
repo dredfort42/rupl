@@ -18,7 +18,7 @@ struct ControlsView: View {
 
 	var body: some View {
 		VStack {
-			if (!workoutManager.isSessionEnded) {
+			if (workoutManager.session?.state != .ended) {
 
 				if !workoutManager.sessionState.isActive {
 					Button {
@@ -112,7 +112,7 @@ struct ControlsView: View {
 						Spacer()
 
 						Button {
-							workoutManager.isSessionEnded = true
+//							workoutManager.isSessionEnded = true
 							workoutManager.session?.stopActivity(with: .now)
 						} label: {
 							ZStack {

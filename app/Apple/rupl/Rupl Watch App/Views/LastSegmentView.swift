@@ -34,7 +34,7 @@ struct LastSegmentView: View {
 			workoutManager.lastSegmentHeartRatesSum = 0
 			workoutManager.lastSegmentHeartRatesCount = 0
 		}
-		.onChange(of: workoutManager.lastSegmentViewPresentTime) {_, time in
+		.onChange(of: workoutManager.lastSegmentViewPresentTimer) {_, time in
 			if time == 0 {
 				dismiss()
 			}
