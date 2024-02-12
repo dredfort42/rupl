@@ -14,16 +14,16 @@ extension WorkoutManager {
 	func checkHeartRate() {
 		DispatchQueue.global().async {
 			if self.heartRate != 0 && self.sessionState == .running {
-				self.lastSegmentHeartRatesSum += UInt64(self.heartRate + 0.5)
-				self.lastSegmentHeartRatesCount += 1
-				self.heartRateSum += UInt64(self.heartRate + 0.5)
-				self.heartRateCount += 1
+				self.segmentHeartRatesSum += UInt64(self.heartRate + 0.5)
+				self.segmentHeartRatesCount += 1
+				self.summaryHeartRateSum += UInt64(self.heartRate + 0.5)
+				self.summaryHeartRateCount += 1
 			}
 
 			let pulse: Int = Int(self.heartRate)
 
 			//	Checking the critical heart rate level
-			if pulse > self.pz5Anaerobic {
+			if pulse > AppSettings.shared.pz5Anaerobic{
 #if targetEnvironment(simulator)
 				print("* Alarm sound")
 #else
@@ -35,9 +35,8 @@ extension WorkoutManager {
 			}
 
 			// 	MARK: - TMP Checking the puls zone
-			if self.session?.state != .paused && self.heartRateNotificationTimer == 0 {
-				if pulse > self.pz3FatBurning {
-					self.heartRateNotificationTimer = 10
+			if self.session?.state != .paused {
+				if pulse > AppSettings.shared.pz4Aerobic {
 #if targetEnvironment(simulator)
 					print("* Run slower sound")
 #else
@@ -46,8 +45,7 @@ extension WorkoutManager {
 					Vibration.vibrate(type: .directionDown)
 #endif
 #endif
-				} else if pulse < self.pz2Easy && (-(self.session?.startDate?.timeIntervalSinceNow ?? 0) > 600) {
-					self.heartRateNotificationTimer = 10
+				} else if pulse < AppSettings.shared.pz3FatBurning && (-(self.session?.startDate?.timeIntervalSinceNow ?? 0) > 600) {
 #if targetEnvironment(simulator)
 					print("* Run faster sound")
 #else
@@ -68,10 +66,9 @@ extension WorkoutManager {
 	func checkLastSegment() {
 		DispatchQueue.global().async {
 			let segment = Int(self.distance / 1000)
-			if self.lastSegment != segment {
-				self.lastSegmentStopTime = Date()
-				self.lastSegmentViewPresentTimer = self.timeForShowLastSegmentView
-				self.lastSegment = segment
+			if self.segmentNumber != segment {
+				self.segmentFinishTime = Date()
+				self.segmentNumber = segment
 #if targetEnvironment(simulator)
 					print("* Segment sound")
 #else
@@ -91,7 +88,7 @@ extension WorkoutManager {
 	func checkSpeed() {
 		DispatchQueue.global().async {
 			//	Calculate average speed from last 10 measurements
-			if self.speed < self.paceForAutoPause {
+			if self.speed < AppSettings.shared.paceForAutoPause {
 				return
 			}
 

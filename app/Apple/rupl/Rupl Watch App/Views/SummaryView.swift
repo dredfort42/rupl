@@ -25,11 +25,11 @@ struct SummaryView: View {
 
 	@ViewBuilder
 	private func summaryListView() -> some View {
-		let totalWorkoutTime: TimeInterval = workoutManager.stopTime.timeIntervalSince(workoutManager.session?.startDate ?? Date())
+		let totalWorkoutTime: TimeInterval = workoutManager.workoutFinishTime.timeIntervalSince(workoutManager.workoutStartTime)
 		let runDuration: TimeInterval = workoutManager.builder?.elapsedTime(at: Date()) ?? 0
 		let distance: Double = workoutManager.distance / 1000
-		let averageSpeedMetersPerSecond: Double = workoutManager.averageSpeedMetersPerSecond
-		let averageHeartRate: Int = workoutManager.averageHeartRate
+		let averageSpeedMetersPerSecond: Double = totalWorkoutTime > 0 ? distance / totalWorkoutTime : 0
+		let averageHeartRate: Int = workoutManager.summaryHeartRateCount > 0 ? Int(Double(workoutManager.summaryHeartRateSum / UInt64(workoutManager.summaryHeartRateCount)) + 0.5) : 0
 
 		VStack(alignment: .leading) {
 			SummaryMetricView(title: "Total workout time",
@@ -57,6 +57,7 @@ struct SummaryView: View {
 			} label: {
 				Text("Done")
 			}
+			.padding(.vertical)
 		}
 	}
 }
@@ -73,7 +74,7 @@ struct SummaryMetricView: View {
 		Divider()
 	}
 }
-//
+
 //#Preview {
 //	SummaryView()
 //}

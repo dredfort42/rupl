@@ -1,5 +1,5 @@
 //
-//  LastSegmentView.swift
+//  SegmentView.swift
 //  rupl Watch App
 //
 //  Created by Dmitry Novikov on 21/01/2024.
@@ -10,13 +10,13 @@ import Foundation
 import HealthKit
 import SwiftUI
 
-struct LastSegmentView: View {
+struct SegmentView: View {
 	@EnvironmentObject var workoutManager: WorkoutManager
 	@Environment(\.dismiss) var dismiss
-	
-	@State var lastSegmentStartTime: Date = Date()
-	@State var lastSegmentStopTime: Date = Date()
+
+	@State var pace: TimeInterval = 0
 	@State var lastSegmentAverageHeartRates: Int = 0
+	@State var timer: Timer?
 
 	var body: some View {
 		ScrollView {
@@ -24,31 +24,28 @@ struct LastSegmentView: View {
 				.scenePadding()
 		}
 		.onAppear() {
-			lastSegmentStartTime = workoutManager.lastSegmentStartTime
-			lastSegmentStopTime = workoutManager.lastSegmentStopTime
-			if workoutManager.lastSegmentHeartRatesCount > 0 {
-				lastSegmentAverageHeartRates = Int(Double(workoutManager.lastSegmentHeartRatesSum / UInt64(workoutManager.lastSegmentHeartRatesCount)) + 0.5)
-			}
-			
-			workoutManager.lastSegmentStartTime = workoutManager.lastSegmentStopTime
-			workoutManager.lastSegmentHeartRatesSum = 0
-			workoutManager.lastSegmentHeartRatesCount = 0
-		}
-		.onChange(of: workoutManager.lastSegmentViewPresentTimer) {_, time in
-			if time == 0 {
+			pace = workoutManager.segmentFinishTime.timeIntervalSince(workoutManager.segmentStartTime)
+			lastSegmentAverageHeartRates = workoutManager.segmentHeartRatesCount > 0 ? Int(Double(workoutManager.segmentHeartRatesSum / UInt64(workoutManager.segmentHeartRatesCount)) + 0.5) : 0
+			timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(AppSettings.shared.viewNotificationTimeOut), repeats: false) { _ in
 				dismiss()
 			}
+			workoutManager.segmentStartTime = workoutManager.segmentFinishTime
+			workoutManager.segmentHeartRatesSum = 0
+			workoutManager.segmentHeartRatesCount = 0
+		}
+		.onDisappear() {
+			timer?.invalidate()
 		}
 	}
 	
 	@ViewBuilder
 	private func LastSegmentSummaryView() -> some View {
-		let pace: TimeInterval = lastSegmentStopTime.timeIntervalSince(lastSegmentStartTime)
+
 
 		VStack(alignment: .leading) {
 			HStack(alignment: .lastTextBaseline) {
 				Spacer()
-				Text("\(workoutManager.lastSegment)")
+				Text("\(workoutManager.segmentNumber)")
 					.font(.system(size: 40, weight: .regular, design: .rounded).monospacedDigit().lowercaseSmallCaps())
 				Text(" km")
 					.font(.system(size: 25, weight: .medium, design: .rounded).monospacedDigit().lowercaseSmallCaps())

@@ -55,7 +55,7 @@
 		AF7B30382B5ABC10002FEDC9 /* WorkoutStopSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AF7B30352B5ABC10002FEDC9 /* WorkoutStopSound.aif */; };
 		AF7B30392B5ABC10002FEDC9 /* WorkoutStartSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AF7B30362B5ABC10002FEDC9 /* WorkoutStartSound.aif */; };
 		AF7B303A2B5ABC10002FEDC9 /* WorkoutStartSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AF7B30362B5ABC10002FEDC9 /* WorkoutStartSound.aif */; };
-		AF7F52932B5D265700856DEA /* LastSegmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF7F52922B5D265700856DEA /* LastSegmentView.swift */; };
+		AF7F52932B5D265700856DEA /* SegmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF7F52922B5D265700856DEA /* SegmentView.swift */; };
 		AF8312952B79415300F1C790 /* TimerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF8312942B79415300F1C790 /* TimerManager.swift */; };
 		AF8312962B79415400F1C790 /* TimerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF8312942B79415300F1C790 /* TimerManager.swift */; };
 		AFA0ECEA2B6D5E5B009AC138 /* OAuthInstructionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA0ECE92B6D5E5B009AC138 /* OAuthInstructionView.swift */; };
@@ -174,7 +174,7 @@
 		AF720D422B504326008423D6 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		AF7B30352B5ABC10002FEDC9 /* WorkoutStopSound.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = WorkoutStopSound.aif; sourceTree = "<group>"; };
 		AF7B30362B5ABC10002FEDC9 /* WorkoutStartSound.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = WorkoutStartSound.aif; sourceTree = "<group>"; };
-		AF7F52922B5D265700856DEA /* LastSegmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastSegmentView.swift; sourceTree = "<group>"; };
+		AF7F52922B5D265700856DEA /* SegmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentView.swift; sourceTree = "<group>"; };
 		AF8312942B79415300F1C790 /* TimerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerManager.swift; sourceTree = "<group>"; };
 		AFA0ECE92B6D5E5B009AC138 /* OAuthInstructionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthInstructionView.swift; sourceTree = "<group>"; };
 		AFA196062B5FAF62002EB704 /* CheckCurrentMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckCurrentMetrics.swift; sourceTree = "<group>"; };
@@ -242,7 +242,7 @@
 				AFA6755D2B49A50200AD5A69 /* ActivityRingsView.swift */,
 				AF5ACAE02B46D07A0010C316 /* ContentView.swift */,
 				AF5ACB222B4732ED0010C316 /* ControlsView.swift */,
-				AF7F52922B5D265700856DEA /* LastSegmentView.swift */,
+				AF7F52922B5D265700856DEA /* SegmentView.swift */,
 				AF5ACB242B4733270010C316 /* MetricsView.swift */,
 				AF3F35502B66ACD8007399F9 /* SettingsView.swift */,
 				AF5ACB262B4733510010C316 /* SummaryView.swift */,
@@ -738,7 +738,7 @@
 				AF53FF062B5AE4D5005DE76D /* SoundEffects.swift in Sources */,
 				AF5ACB272B4733510010C316 /* SummaryView.swift in Sources */,
 				AF45FD782B59BDF0009E7B4B /* TimerActions.swift in Sources */,
-				AF7F52932B5D265700856DEA /* LastSegmentView.swift in Sources */,
+				AF7F52932B5D265700856DEA /* SegmentView.swift in Sources */,
 				AF3F35512B66ACD8007399F9 /* SettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -920,7 +920,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = RuplBlueColor;
 				CODE_SIGN_ENTITLEMENTS = "rupl Watch App/rupl Watch App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_ASSET_PATHS = "Rupl\\ Watch\\ App/Preview\\ Content";
 				DEVELOPMENT_TEAM = JQ2STKM674;
 				ENABLE_PREVIEWS = YES;
@@ -958,7 +958,7 @@
 				CODE_SIGN_ENTITLEMENTS = "rupl Watch App/rupl Watch App.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_ASSET_PATHS = "Rupl\\ Watch\\ App/Preview\\ Content";
 				DEVELOPMENT_TEAM = JQ2STKM674;
 				ENABLE_PREVIEWS = YES;
@@ -998,7 +998,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = RuplBlueColor;
 				CODE_SIGN_ENTITLEMENTS = rupl/rupl.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_ASSET_PATHS = "Rupl/Preview\\ Content";
 				DEVELOPMENT_TEAM = JQ2STKM674;
 				ENABLE_PREVIEWS = YES;
@@ -1043,7 +1043,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = RuplBlueColor;
 				CODE_SIGN_ENTITLEMENTS = rupl/rupl.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_ASSET_PATHS = "Rupl/Preview\\ Content";
 				DEVELOPMENT_TEAM = JQ2STKM674;
 				ENABLE_PREVIEWS = YES;
