@@ -9,22 +9,11 @@
 import Foundation
 import os
 
-// MARK: - Timer actions
-//
-extension WorkoutManager {
-	func timerActions() {
-		autoPause()
-		addLocationsToRoute()
-		soundNotificationTimer()
-		viewPresentTimer()
-	}
-}
-
 //	MARK: - Auto pause logic
 //
 extension WorkoutManager {
 	func autoPause() {
-		if self.useAutoPause && self.sessionState.isActive && !self.isPauseSetWithButton {
+		if AppSettings.shared.useAutoPause && self.sessionState.isActive && !self.isPauseSetWithButton {
 			var isPaused: Bool = false
 
 #if targetEnvironment(simulator)
@@ -52,7 +41,6 @@ extension WorkoutManager {
 				if !isPaused {
 					self.sessionState = .running
 					self.session?.resume()
-					heartRateNotificationTimer = 10
 #if targetEnvironment(simulator)
 					print("* Start sound")
 #else
@@ -78,30 +66,6 @@ extension WorkoutManager {
 						Logger.shared.log("Failed to add locations to the route: \(error))")
 					}
 				}
-			}
-		}
-	}
-}
-
-//	MARK: - Check heart rate zone
-//
-extension WorkoutManager {
-	func soundNotificationTimer() {
-		DispatchQueue.main.async {
-			if self.heartRateNotificationTimer > 0 {
-				self.heartRateNotificationTimer -= 1
-			}
-		}
-	}
-}
-
-//	MARK: - LastSegmentView present timer
-//
-extension WorkoutManager {
-	func viewPresentTimer() {
-		DispatchQueue.main.async {
-			if self.lastSegmentViewPresentTimer > 0 {
-				self.lastSegmentViewPresentTimer -= 1
 			}
 		}
 	}

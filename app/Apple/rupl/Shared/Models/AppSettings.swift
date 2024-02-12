@@ -25,6 +25,8 @@ class AppSettings {
 	private let pz3FatBurningKey = "pz3FatBurning"
 	private let pz4AerobicKey = "pz4Aerobic"
 	private let pz5AnaerobicKey = "pz5Anaerobic"
+	private let soundNotificationTimeOutKey = "soundNotificationTimeOut"
+	private let viewNotificationTimeOutKey = "viewNotificationTimeOut"
 
 	var clientID: String {
 		get {
@@ -131,13 +133,31 @@ class AppSettings {
 		}
 	}
 
+	var soundNotificationTimeOut: Int {
+		get {
+			return UserDefaults.standard.integer(forKey: soundNotificationTimeOutKey)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: soundNotificationTimeOutKey)
+		}
+	}
+
+	var viewNotificationTimeOut: Int {
+		get {
+			return UserDefaults.standard.integer(forKey: viewNotificationTimeOutKey)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: viewNotificationTimeOutKey)
+		}
+	}
+
 	private init() {
 		if clientID == "" {
 			UserDefaults.standard.set(UUID().uuidString, forKey: clientIDKey)
 		}
 
 //		if permissibleHorizontalAccuracy == 0.0 {
-			permissibleHorizontalAccuracy = 16.0
+		permissibleHorizontalAccuracy = 8.0
 //		}
 
 		if paceForAutoPause == 0.0 || paceForAutoResume == 0.0 {
@@ -147,7 +167,7 @@ class AppSettings {
 		}
 
 //		if timeForShowLastSegmentView == 0 {
-			timeForShowLastSegmentView = 20
+		timeForShowLastSegmentView = 20
 //		}
 
 		if pz1NotInZone == 0 || pz2Easy == 0 || pz3FatBurning == 0 || pz4Aerobic == 0 || pz5Anaerobic == 0 {
@@ -157,5 +177,8 @@ class AppSettings {
 			pz4Aerobic = 158
 			pz5Anaerobic = 168
 		}
+
+		soundNotificationTimeOut = 10
+		viewNotificationTimeOut = 20
 	}
 }

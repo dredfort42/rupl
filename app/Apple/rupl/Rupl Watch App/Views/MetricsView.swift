@@ -30,15 +30,15 @@ struct MetricsView: View {
 			.ignoresSafeArea(edges: .bottom)
 			.scenePadding()
 			.padding([.top], 30)
-			.onChange(of: workoutManager.lastSegment) {
-				if workoutManager.lastSegment > 0 {
+			.onChange(of: workoutManager.segmentNumber) {
+				if workoutManager.segmentNumber > 0 {
 					isSegmentSheetActive = true
 				}
 			}
 			.sheet(isPresented: $isSegmentSheetActive) {
 //				print("last segment view closed")
 			} content: {
-				LastSegmentView()
+				SegmentView()
 			}
 		}
 

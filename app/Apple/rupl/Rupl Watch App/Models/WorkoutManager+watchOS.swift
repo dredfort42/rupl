@@ -22,16 +22,17 @@ extension WorkoutManager {
 		builder?.dataSource = HKLiveWorkoutDataSource(healthStore: healthStore, workoutConfiguration: workoutConfiguration)
 		routeBuilder = HKWorkoutRouteBuilder(healthStore: healthStore, device: nil)
 
-		let startDate = Date()
-		session?.startActivity(with: startDate)
-		try await builder?.beginCollection(at: startDate)
+		workoutStartTime = Date()
+		session?.startActivity(with: workoutStartTime)
+		try await builder?.beginCollection(at: workoutStartTime)
 	}
 
 	func finishWorkout() async {
-		let finishedWorkout: HKWorkout?
+		workoutFinishTime = Date()
+		var finishedWorkout: HKWorkout?
 
 		do {
-			try await builder?.endCollection(at: stopTime)
+			try await builder?.endCollection(at: workoutFinishTime)
 			finishedWorkout = try await builder?.finishWorkout()
 			session?.end()
 		} catch {

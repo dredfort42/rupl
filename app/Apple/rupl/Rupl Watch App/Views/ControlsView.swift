@@ -50,7 +50,7 @@ struct ControlsView: View {
 					HStack {
 						Button {
 							isSettingsActive = true
-							print("show settings screen ->")
+							print("Show settings screen")
 						} label: {
 							ZStack {
 								Circle()
@@ -109,10 +109,10 @@ struct ControlsView: View {
 					Spacer()
 
 					HStack {
-						Spacer()
 
+						Spacer()
+						
 						Button {
-//							workoutManager.isSessionEnded = true
 							workoutManager.session?.stopActivity(with: .now)
 						} label: {
 							ZStack {
@@ -144,7 +144,7 @@ struct ControlsView: View {
 			}
 		}
 		.sheet(isPresented: $isSettingsActive) {
-			print("show settings screen Go Go Go")
+			print("Close settings screen")
 		} content: {
 			SettingsView()
 		}

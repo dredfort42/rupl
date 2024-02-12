@@ -50,6 +50,6 @@ struct OAuthInstructionView: View {
 	}
 }
 
-#Preview {
-	OAuthInstructionView(url: "https://rupl.org/device", code: "WDJB-MJHT")
-}
+//#Preview {
+//	OAuthInstructionView(url: "https://rupl.org/device", code: "WDJB-MJHT")
+//}

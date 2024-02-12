@@ -38,25 +38,12 @@ class WorkoutManager: NSObject, ObservableObject {
 		HKQuantityType(.runningSpeed), //	m/s, Discrete (Arithmetic)
 	]
 
-	//	Settings
-	let permissibleHorizontalAccuracy: Double = AppSettings.shared.permissibleHorizontalAccuracy
-	var useAutoPause: Bool = AppSettings.shared.useAutoPause
-	var paceForAutoPause: Double = AppSettings.shared.paceForAutoPause
-	var paceForAutoResume: Double = AppSettings.shared.paceForAutoResume
-	var pz1NotInZone: Int = AppSettings.shared.pz1NotInZone
-	var pz2Easy: Int = AppSettings.shared.pz2Easy
-	var pz3FatBurning: Int = AppSettings.shared.pz3FatBurning
-	var pz4Aerobic: Int = AppSettings.shared.pz4Aerobic
-	var pz5Anaerobic: Int = AppSettings.shared.pz5Anaerobic
-	var timeForShowLastSegmentView: Int = AppSettings.shared.timeForShowLastSegmentView
-
 	//	Environment
 	let sounds = SoundEffects()
-	let timerManager = TimerManager()
 	let locationManager = LocationManager()
 	let motionManager = MotionManager()
+	let timerManager = TimerManager()
 	let healthStore = HKHealthStore()
-
 	var session: HKWorkoutSession?
 	var routeBuilder: HKWorkoutRouteBuilder?
 #if os(watchOS)
@@ -65,31 +52,27 @@ class WorkoutManager: NSObject, ObservableObject {
 	var contextDate: Date?
 #endif
 
-	//	Timer
-	var heartRateNotificationTimer: Int = 0
-	var lastSegmentViewPresentTimer: Int = 0
-
-	var isPauseSetWithButton: Bool = false
-	var pauseStartTime: Date = Date()
-	var stopTime: Date = Date()
-
 	//	Array for store last 10 speed measurements to colculate average speed
 	var last10SpeedMeasurements: [Double] = []
 	var last10SpeedMeasurementsSum: Double = 0
 	var last10SpeedAverage: Double = 0
 
-	//	Segment data
-	var lastSegment: Int = 0
-	var lastSegmentStartTime: Date = Date()
-	var lastSegmentStopTime: Date = Date()
-	var lastSegmentHeartRatesSum: UInt64 = 0
-	var lastSegmentHeartRatesCount: UInt = 0
-
 	//	Summary data
-	var heartRateSum: UInt64 = 0
-	var heartRateCount: UInt = 0
-	var averageHeartRate: Int = 0
-	var averageSpeedMetersPerSecond: Double = 0
+	var workoutStartTime: Date = Date()
+	var workoutFinishTime: Date = Date()
+	var summaryHeartRateSum: UInt64 = 0
+	var summaryHeartRateCount: UInt = 0
+
+	//	Segment data
+	var segmentStartTime: Date = Date()
+	var segmentFinishTime: Date = Date()
+	var segmentNumber: Int = 0
+	var segmentHeartRatesSum: UInt64 = 0
+	var segmentHeartRatesCount: UInt = 0
+
+	//	Pause data
+	var isPauseSetWithButton: Bool = false
+	var pauseStartTime: Date = Date()
 
 	let asynStreamTuple = AsyncStream.makeStream(of: SessionSateChange.self, bufferingPolicy: .bufferingNewest(1))
 
@@ -120,22 +103,11 @@ class WorkoutManager: NSObject, ObservableObject {
 			case .paused:
 				pauseStartTime = Date()
 			case .running:
-				lastSegmentStartTime -= pauseStartTime.timeIntervalSinceNow
+				segmentStartTime -= pauseStartTime.timeIntervalSinceNow
 			case .stopped:
-				stopTime = Date()
 				timerManager.stop()
 				locationManager.stop()
 				motionManager.stop()
-
-				if heartRateCount > 0 {
-					averageHeartRate = Int(Double(heartRateSum / UInt64(heartRateCount)) + 0.5)
-				}
-
-				let time: Double = stopTime.timeIntervalSince(session?.startDate ?? Date())
-				if  time > 0 {
-					averageSpeedMetersPerSecond = distance / time
-				}
-
 				await finishWorkout()
 			default:
 				return
@@ -152,9 +124,11 @@ extension WorkoutManager {
 		distance = 0
 		speed = 0
 
-		timerManager.start(timeInterval: 1, repeats: true, action: timerActions)
 		locationManager.start()
 		motionManager.start()
+		timerManager.start(timeInterval: 1, repeats: true, action: autoPause)
+		timerManager.start(timeInterval: 1, repeats: true, action: addLocationsToRoute)
+		timerManager.start(timeInterval: TimeInterval(AppSettings.shared.soundNotificationTimeOut), repeats: true, action: checkHeartRate)
 
 		session = nil
 		routeBuilder = nil
@@ -162,32 +136,27 @@ extension WorkoutManager {
 		builder = nil
 #endif
 
-		//	Timer
-		heartRateNotificationTimer = 0
-		lastSegmentViewPresentTimer = 0
-
-//		isSessionEnded = false
-		isPauseSetWithButton = false
-		pauseStartTime = Date()
-		stopTime = Date()
-
 		//	Array for store last 10 speed measurements to colculate average speed
 		last10SpeedMeasurements = []
 		last10SpeedMeasurementsSum = 0
 		last10SpeedAverage = 0
 
-		//	Segment data
-		lastSegment = 0
-		lastSegmentStartTime = Date()
-		lastSegmentStopTime = Date()
-		lastSegmentHeartRatesSum = 0
-		lastSegmentHeartRatesCount = 0
-
 		//	Summary data
-		heartRateSum = 0
-		heartRateCount = 0
-		averageHeartRate = 0
-		averageSpeedMetersPerSecond = 0
+		workoutStartTime = Date()
+		workoutFinishTime = workoutStartTime
+		summaryHeartRateSum = 0
+		summaryHeartRateCount = 0
+
+		//	Segment data
+		segmentStartTime = workoutStartTime
+		segmentFinishTime = workoutStartTime
+		segmentNumber = 0
+		segmentHeartRatesSum = 0
+		segmentHeartRatesCount = 0
+
+		//	Pause data
+		isPauseSetWithButton = false
+		pauseStartTime = workoutStartTime
 	}
 }
 
@@ -235,16 +204,6 @@ extension WorkoutManager: HKWorkoutSessionDelegate {
 	nonisolated func workoutSession(_ workoutSession: HKWorkoutSession,
 									didFailWithError error: Error) {
 		Logger.shared.log("\(#function): \(error)")
-	}
-
-	nonisolated func workoutSession(_ workoutSession: HKWorkoutSession,
-									didDisconnectFromRemoteDeviceWithError error: Error?) {
-		Logger.shared.log("\(#function): \(error)")
-	}
-
-	nonisolated func workoutSession(_ workoutSession: HKWorkoutSession,
-									didReceiveDataFromRemoteWorkoutSession data: [Data]) {
-		Logger.shared.log("\(#function): \(data.debugDescription)")
 	}
 }
 

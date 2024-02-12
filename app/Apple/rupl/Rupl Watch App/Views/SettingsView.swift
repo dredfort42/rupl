@@ -9,13 +9,11 @@
 import SwiftUI
 
 struct SettingsView: View {
-//	@Environment(\.dismiss) var dismiss
-
+	private let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "N/A"
+	private let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "N/A"
+	
 	@AppStorage(AppSettings.useAutoPauseKey) var useAutoPauseIsOn = AppSettings.shared.useAutoPause
 	@AppStorage(AppSettings.connectedToRuplKey) var isConnectedToRupl = AppSettings.shared.connectedToRupl
-
-	let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "N/A"
-	let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "N/A"
 
 	@State private var deviceAuthorization = false
 	@State private var polling: Bool = false
