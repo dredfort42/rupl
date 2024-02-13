@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		AF06CC452B69132200943CEB /* LoadingIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF06CC442B69132200943CEB /* LoadingIndicatorView.swift */; };
+		AF0FA3D72B7B8B67005572CF /* TaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0FA3D62B7B8B67005572CF /* TaskManager.swift */; };
+		AF0FA3D82B7B8B67005572CF /* TaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0FA3D62B7B8B67005572CF /* TaskManager.swift */; };
 		AF1C0C5B2B5EE5C800E1F9E4 /* WorkoutAlarmSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AF1C0C5A2B5EE5C800E1F9E4 /* WorkoutAlarmSound.aif */; };
 		AF1C0C5C2B5EE5C800E1F9E4 /* WorkoutAlarmSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AF1C0C5A2B5EE5C800E1F9E4 /* WorkoutAlarmSound.aif */; };
 		AF2DBABA2B601F5B00E50B47 /* WorkoutRunSlowerSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AF2DBAB82B601F5B00E50B47 /* WorkoutRunSlowerSound.aif */; };
@@ -131,6 +133,7 @@
 
 /* Begin PBXFileReference section */
 		AF06CC442B69132200943CEB /* LoadingIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingIndicatorView.swift; sourceTree = "<group>"; };
+		AF0FA3D62B7B8B67005572CF /* TaskManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskManager.swift; sourceTree = "<group>"; };
 		AF1C0C592B5ECDA500E1F9E4 /* rupl.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = rupl.entitlements; sourceTree = "<group>"; };
 		AF1C0C5A2B5EE5C800E1F9E4 /* WorkoutAlarmSound.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = WorkoutAlarmSound.aif; sourceTree = "<group>"; };
 		AF2DBAB82B601F5B00E50B47 /* WorkoutRunSlowerSound.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = WorkoutRunSlowerSound.aif; sourceTree = "<group>"; };
@@ -304,6 +307,7 @@
 				AF45FD762B59BDF0009E7B4B /* TimerActions.swift */,
 				AF8312942B79415300F1C790 /* TimerManager.swift */,
 				AF5ACB172B47107F0010C316 /* WorkoutManager.swift */,
+				AF0FA3D62B7B8B67005572CF /* TaskManager.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -683,6 +687,7 @@
 				AFA1960A2B5FBD95002EB704 /* MeasurementsConverters.swift in Sources */,
 				AF56CDEE2B644C47009E8CB8 /* MotionManager.swift in Sources */,
 				AF40FDC02B6E66BD00C8CFA8 /* LoadingIndicatorView.swift in Sources */,
+				AF0FA3D72B7B8B67005572CF /* TaskManager.swift in Sources */,
 				AF43BF3C2B4C9EE800E5A89C /* AppSettings.swift in Sources */,
 				AFEEDE4A2B5EBACA00B2C27A /* ChartView.swift in Sources */,
 				AF5ACB212B472FAA0010C316 /* WorkoutManager+iOS.swift in Sources */,
@@ -731,6 +736,7 @@
 				AFA196082B5FAF62002EB704 /* CheckCurrentMetrics.swift in Sources */,
 				AF5ACB192B47107F0010C316 /* WorkoutManager.swift in Sources */,
 				AFA6755E2B49A50200AD5A69 /* ActivityRingsView.swift in Sources */,
+				AF0FA3D82B7B8B67005572CF /* TaskManager.swift in Sources */,
 				AF8312962B79415400F1C790 /* TimerManager.swift in Sources */,
 				AF5ACADF2B46D07A0010C316 /* ruplApp.swift in Sources */,
 				AF5ACB252B4733270010C316 /* MetricsView.swift in Sources */,
@@ -920,7 +926,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = RuplBlueColor;
 				CODE_SIGN_ENTITLEMENTS = "rupl Watch App/rupl Watch App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_ASSET_PATHS = "Rupl\\ Watch\\ App/Preview\\ Content";
 				DEVELOPMENT_TEAM = JQ2STKM674;
 				ENABLE_PREVIEWS = YES;
@@ -958,7 +964,7 @@
 				CODE_SIGN_ENTITLEMENTS = "rupl Watch App/rupl Watch App.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_ASSET_PATHS = "Rupl\\ Watch\\ App/Preview\\ Content";
 				DEVELOPMENT_TEAM = JQ2STKM674;
 				ENABLE_PREVIEWS = YES;
@@ -998,7 +1004,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = RuplBlueColor;
 				CODE_SIGN_ENTITLEMENTS = rupl/rupl.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_ASSET_PATHS = "Rupl/Preview\\ Content";
 				DEVELOPMENT_TEAM = JQ2STKM674;
 				ENABLE_PREVIEWS = YES;
@@ -1043,7 +1049,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = RuplBlueColor;
 				CODE_SIGN_ENTITLEMENTS = rupl/rupl.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_ASSET_PATHS = "Rupl/Preview\\ Content";
 				DEVELOPMENT_TEAM = JQ2STKM674;
 				ENABLE_PREVIEWS = YES;

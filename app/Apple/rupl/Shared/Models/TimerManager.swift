@@ -11,7 +11,6 @@ import Foundation
 class TimerManager {
 	private var timers = [Timer]()
 
-	// Start a new timer
 	func start(timeInterval: TimeInterval, repeats: Bool, action: @escaping () -> Void) {
 		let timer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: repeats) { _ in
 			action()
@@ -19,7 +18,6 @@ class TimerManager {
 		timers.append(timer)
 	}
 
-	// Stop all timers
 	func stop() {
 		for timer in timers {
 			timer.invalidate()
