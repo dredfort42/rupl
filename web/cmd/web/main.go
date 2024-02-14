@@ -32,35 +32,43 @@ func sendData(w http.ResponseWriter, r *http.Request) {
 		path = "/html" + r.URL.Path
 	}
 
-    file, err := os.Open(path)
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
-    }
-    defer file.Close()
+	file, err := os.Open(path)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer file.Close()
 
-    fileInfo, err := file.Stat()
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
-    }
+	fileInfo, err := file.Stat()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	if fileInfo.IsDir() {
-		http.Error(w, "Directory access is forbidden", http.StatusForbidden)
-		return
+		indexFile, err := os.Open(path + "/index.html")
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer indexFile.Close()
+		if _, err := io.Copy(w, indexFile); err != nil {
+			http.Error(w, "Directory access is forbidden", http.StatusForbidden)
+			return
+		}
 	}
 
 	if strings.Contains(r.URL.Path, "/download/") {
 		w.Header().Set("Content-Type", http.DetectContentType(make([]byte, 512))) // Detect content type
-    	w.Header().Set("Content-Disposition", "attachment; filename="+fileInfo.Name())
+		w.Header().Set("Content-Disposition", "attachment; filename="+fileInfo.Name())
 		w.Header().Set("Content-Length", fmt.Sprintf("%d", fileInfo.Size()))
 	}
 
-    _, err = io.Copy(w, file)
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
-    }
+	_, err = io.Copy(w, file)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 func proxyRequest(w http.ResponseWriter, r *http.Request) {
