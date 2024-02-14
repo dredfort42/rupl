@@ -21,8 +21,6 @@ extension WorkoutManager {
 //		try await healthStore.startWatchApp(toHandle: configuration)
 //	}
 
-	func finishWorkout() async {
-	}
 //	func retrieveRemoteSession() {
 //		/**
 //		 HealthKit calls this handler when a session starts mirroring.

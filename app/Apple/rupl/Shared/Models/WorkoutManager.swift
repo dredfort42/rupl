@@ -108,7 +108,6 @@ class WorkoutManager: NSObject, ObservableObject {
 				timerManager.stop()
 				locationManager.stop()
 				motionManager.stop()
-				await finishWorkout()
 			default:
 				return
 		}
@@ -157,6 +156,49 @@ extension WorkoutManager {
 		//	Pause data
 		isPauseSetWithButton = false
 		pauseStartTime = workoutStartTime
+	}
+}
+
+//	MARK: - Start workout
+//
+extension WorkoutManager {
+	func startWorkout() {
+		resetWorkout()
+#if os(watchOS)
+		Task {
+			do {
+				let configuration = HKWorkoutConfiguration()
+				configuration.activityType = .running
+				configuration.locationType = .outdoor
+				try await startWorkout(workoutConfiguration: configuration)
+			} catch {
+				Logger.shared.log("Failed to start workout \(error))")
+			}
+		}
+#endif
+	}
+}
+
+//	MARK: - Stop workout
+//
+extension WorkoutManager {
+	func finishWorkout() async {
+		workoutFinishTime = Date()
+		session?.stopActivity(with: .now)
+#if os(watchOS)
+		Task {
+			do {
+				try await builder?.endCollection(at: workoutFinishTime)
+				if let finishedWorkout = try await builder?.finishWorkout() {
+					try await routeBuilder?.finishRoute(with: finishedWorkout, metadata: nil)
+				}
+				session?.end()
+			} catch {
+				Logger.shared.log("Failed to end workout: \(error))")
+				return
+			}
+		}
+#endif
 	}
 }
 
