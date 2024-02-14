@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -14,15 +13,21 @@ import (
 
 var (
 	authURL string
+	notFoundPath string = "/html/404.html"
 )
 
-func readFile(path string) string {
-	fileContent, err := os.ReadFile(path)
+func notFound(w http.ResponseWriter, r *http.Request) {
+	notFoundFile, err := os.Open(notFoundPath)
 	if err != nil {
-		log.Fatal(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
+	defer notFoundFile.Close()
 
-	return string(fileContent)
+	if _, err := io.Copy(w, notFoundFile); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 func sendData(w http.ResponseWriter, r *http.Request) {
@@ -34,28 +39,31 @@ func sendData(w http.ResponseWriter, r *http.Request) {
 
 	file, err := os.Open(path)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		notFound(w, r)
 		return
 	}
 	defer file.Close()
 
 	fileInfo, err := file.Stat()
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		notFound(w, r)
 		return
 	}
 
 	if fileInfo.IsDir() {
 		indexFile, err := os.Open(path + "/index.html")
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			notFound(w, r)
 			return
 		}
 		defer indexFile.Close()
+
 		if _, err := io.Copy(w, indexFile); err != nil {
-			http.Error(w, "Directory access is forbidden", http.StatusForbidden)
+			notFound(w, r)
 			return
 		}
+
+		return
 	}
 
 	if strings.Contains(r.URL.Path, "/download/") {
@@ -64,9 +72,8 @@ func sendData(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Length", fmt.Sprintf("%d", fileInfo.Size()))
 	}
 
-	_, err = io.Copy(w, file)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if _, err = io.Copy(w, file); err != nil {
+		notFound(w, r)
 		return
 	}
 }
