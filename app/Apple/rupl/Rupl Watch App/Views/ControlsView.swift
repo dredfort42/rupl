@@ -22,7 +22,7 @@ struct ControlsView: View {
 
 				if !workoutManager.sessionState.isActive {
 					Button {
-						startWorkout()
+						workoutManager.startWorkout()
 					} label: {
 						ZStack {
 							Circle()
@@ -113,7 +113,7 @@ struct ControlsView: View {
 						Spacer()
 						
 						Button {
-							workoutManager.session?.stopActivity(with: .now)
+//							workoutManager.session?.stopActivity(with: .now)
 						} label: {
 							ZStack {
 								Circle()
@@ -147,20 +147,6 @@ struct ControlsView: View {
 			print("Close settings screen")
 		} content: {
 			SettingsView()
-		}
-	}
-
-	private func startWorkout() {
-		workoutManager.resetWorkout()
-		Task {
-			do {
-				let configuration = HKWorkoutConfiguration()
-				configuration.activityType = .running
-				configuration.locationType = .outdoor
-				try await workoutManager.startWorkout(workoutConfiguration: configuration)
-			} catch {
-				Logger.shared.log("Failed to start workout \(error))")
-			}
 		}
 	}
 }

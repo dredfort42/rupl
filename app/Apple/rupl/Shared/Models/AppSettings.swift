@@ -25,6 +25,7 @@ class AppSettings {
 	private let pz3FatBurningKey = "pz3FatBurning"
 	private let pz4AerobicKey = "pz4Aerobic"
 	private let pz5AnaerobicKey = "pz5Anaerobic"
+	private let criticalHeartRateKey = "criticalHeartRate"
 	private let soundNotificationTimeOutKey = "soundNotificationTimeOut"
 	private let viewNotificationTimeOutKey = "viewNotificationTimeOut"
 
@@ -133,6 +134,15 @@ class AppSettings {
 		}
 	}
 
+	var criticalHeartRate: Int {
+		get {
+			return UserDefaults.standard.integer(forKey: criticalHeartRateKey)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: criticalHeartRateKey)
+		}
+	}
+
 	var soundNotificationTimeOut: Int {
 		get {
 			return UserDefaults.standard.integer(forKey: soundNotificationTimeOutKey)
@@ -176,6 +186,7 @@ class AppSettings {
 			pz3FatBurning = 147
 			pz4Aerobic = 158
 			pz5Anaerobic = 168
+			criticalHeartRate = 200
 		}
 
 		soundNotificationTimeOut = 10

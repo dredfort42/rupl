@@ -26,29 +26,6 @@ extension WorkoutManager {
 		session?.startActivity(with: workoutStartTime)
 		try await builder?.beginCollection(at: workoutStartTime)
 	}
-
-	func finishWorkout() async {
-		workoutFinishTime = Date()
-		var finishedWorkout: HKWorkout?
-
-		do {
-			try await builder?.endCollection(at: workoutFinishTime)
-			finishedWorkout = try await builder?.finishWorkout()
-			session?.end()
-		} catch {
-			Logger.shared.log("Failed to end workout: \(error))")
-			return
-		}
-
-		if (finishedWorkout != nil) {
-			do {
-				try await routeBuilder?.finishRoute(with: finishedWorkout!, metadata: nil)
-			} catch {
-				Logger.shared.log("Failed to associate the route with the workout: \(error)")
-				return
-			}
-		}
-	}
 }
 
 //	MARK: - HKLiveWorkoutBuilderDelegate

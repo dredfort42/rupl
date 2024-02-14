@@ -13,49 +13,56 @@ import Foundation
 extension WorkoutManager {
 	func checkHeartRate() {
 		DispatchQueue.global().async {
-			if self.heartRate != 0 && self.sessionState == .running {
+			if self.heartRate != 0 && self.session?.state == .running {
 				self.segmentHeartRatesSum += UInt64(self.heartRate + 0.5)
 				self.segmentHeartRatesCount += 1
 				self.summaryHeartRateSum += UInt64(self.heartRate + 0.5)
 				self.summaryHeartRateCount += 1
 			}
 
-			let pulse: Int = Int(self.heartRate)
-
-			//	Checking the critical heart rate level
-			if pulse > AppSettings.shared.pz5Anaerobic{
-#if targetEnvironment(simulator)
-				print("* Alarm sound")
-#else
-				self.sounds.alarmSound?.play()
-#if os(watchOS)
-				Vibration.vibrate(type: .underwaterDepthCriticalPrompt)
-#endif
-#endif
-			}
-
-			// 	MARK: - TMP Checking the puls zone
-			if self.session?.state != .paused {
-				if pulse > AppSettings.shared.pz4Aerobic {
-#if targetEnvironment(simulator)
-					print("* Run slower sound")
-#else
-					self.sounds.runSlower?.play()
-#if os(watchOS)
-					Vibration.vibrate(type: .directionDown)
-#endif
-#endif
-				} else if pulse < AppSettings.shared.pz3FatBurning && (-(self.session?.startDate?.timeIntervalSinceNow ?? 0) > 600) {
-#if targetEnvironment(simulator)
-					print("* Run faster sound")
-#else
-					self.sounds.runFaster?.play()
-#if os(watchOS)
-					Vibration.vibrate(type: .directionUp)
-#endif
-#endif
+			if self.session?.state == .running && (-self.workoutStartTime.timeIntervalSinceNow > 300){
+				if !self.checkCriticalHeartRate() {
+					self.checkHeartRateZone()
 				}
 			}
+		}
+	}
+
+	private func checkCriticalHeartRate() -> Bool {
+		if Int(self.heartRate) > AppSettings.shared.criticalHeartRate {
+#if targetEnvironment(simulator)
+			print("* Alarm sound")
+#else
+			self.sounds.alarmSound?.play()
+#if os(watchOS)
+			Vibration.vibrate(type: .underwaterDepthCriticalPrompt)
+#endif
+#endif
+			return true
+		}
+
+		return false
+	}
+
+	private func checkHeartRateZone() {
+		if Int(self.heartRate) > TaskManager.shared.intervalHeartRateZone.maxHeartRate {
+#if targetEnvironment(simulator)
+			print("* Run slower sound")
+#else
+			self.sounds.runSlower?.play()
+#if os(watchOS)
+			Vibration.vibrate(type: .directionDown)
+#endif
+#endif
+		} else if Int(self.heartRate) < TaskManager.shared.intervalHeartRateZone.minHeartRate {
+#if targetEnvironment(simulator)
+			print("* Run faster sound")
+#else
+			self.sounds.runFaster?.play()
+#if os(watchOS)
+			Vibration.vibrate(type: .directionUp)
+#endif
+#endif
 		}
 	}
 }
@@ -70,7 +77,7 @@ extension WorkoutManager {
 				self.segmentFinishTime = Date()
 				self.segmentNumber = segment
 #if targetEnvironment(simulator)
-					print("* Segment sound")
+				print("* Segment sound")
 #else
 				self.sounds.segmentSound?.play()
 #if os(watchOS)
