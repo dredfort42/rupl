@@ -11,8 +11,9 @@ import SwiftUI
 struct SettingsView: View {
 	private let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "N/A"
 	private let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "N/A"
-	
+
 	@AppStorage(AppSettings.useAutoPauseKey) var useAutoPauseIsOn = AppSettings.shared.useAutoPause
+	@AppStorage(AppSettings.criticalHeartRateKey) var criticalHeartRate = AppSettings.shared.criticalHeartRate
 	@AppStorage(AppSettings.connectedToRuplKey) var isConnectedToRupl = AppSettings.shared.connectedToRupl
 
 	@State private var deviceAuthorization = false
@@ -24,11 +25,33 @@ struct SettingsView: View {
 		if !deviceAuthorization {
 			VStack {
 				Form {
-					Section {
+					Section(footer: Text("Automatically pauses workout when you have paused your activity")) {
 						Toggle("Auto pause", isOn: $useAutoPauseIsOn)
 							.toggleStyle(SwitchToggleStyle(tint: .ruplBlue))
+					}
+
+					//					Section {
+					//						Slider(value: $criticalHeartRate, label: Text("Critical Heart Rate"))
+					//						Slider(value: $criticalHeartRate, in: 180...210, step: 1.0, label: Text("Critical Heart Rate"))
+					//					{
+					//							Text("Critical Heart Rate")
+					//						}
+					//						Text("\(Int(criticalHeartRate)) BPM")
+					//					}
+					//				header: {
+					//						Text("Critical heart rate")
+					//					}
+
+
+					Section {
+						Stepper(value: $criticalHeartRate, in: 180...210) {
+							Text("\(criticalHeartRate)")
+								.font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
+						}
+					} header: {
+						Text("Critical heart rate")
 					} footer: {
-						Text("Automatically pauses workout when you have paused your activity")
+						Text("If heart rate exceeds this value, an alarm will sound")
 					}
 
 					Section {
@@ -106,6 +129,6 @@ struct SettingsView: View {
 	}
 }
 
-//#Preview {
-//	SettingsView()
-//}
+#Preview {
+	SettingsView()
+}

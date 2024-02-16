@@ -14,6 +14,7 @@ class AppSettings {
 	static let shared = AppSettings()
 
 	static let useAutoPauseKey = "useAutoPause"
+	static let criticalHeartRateKey = "criticalHeartRate"
 	static let connectedToRuplKey = "connectedToRupl"
 	private let clientIDKey = "clientID"
 	private let permissibleHorizontalAccuracyKey = "permissibleHorizontalAccuracy"
@@ -25,7 +26,6 @@ class AppSettings {
 	private let pz3FatBurningKey = "pz3FatBurning"
 	private let pz4AerobicKey = "pz4Aerobic"
 	private let pz5AnaerobicKey = "pz5Anaerobic"
-	private let criticalHeartRateKey = "criticalHeartRate"
 	private let soundNotificationTimeOutKey = "soundNotificationTimeOut"
 	private let viewNotificationTimeOutKey = "viewNotificationTimeOut"
 
@@ -41,6 +41,15 @@ class AppSettings {
 		}
 		set {
 			UserDefaults.standard.set(newValue, forKey: AppSettings.useAutoPauseKey)
+		}
+	}
+
+	var criticalHeartRate: Int {
+		get {
+			return UserDefaults.standard.integer(forKey: AppSettings.criticalHeartRateKey)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: AppSettings.criticalHeartRateKey)
 		}
 	}
 
@@ -134,15 +143,6 @@ class AppSettings {
 		}
 	}
 
-	var criticalHeartRate: Int {
-		get {
-			return UserDefaults.standard.integer(forKey: criticalHeartRateKey)
-		}
-		set {
-			UserDefaults.standard.set(newValue, forKey: criticalHeartRateKey)
-		}
-	}
-
 	var soundNotificationTimeOut: Int {
 		get {
 			return UserDefaults.standard.integer(forKey: soundNotificationTimeOutKey)
@@ -162,13 +162,12 @@ class AppSettings {
 	}
 
 	private init() {
+		let age: Int = 42
+		let maximumHeartRate: Double = 208 - Double(age) * 0.7
+
 		if clientID == "" {
 			UserDefaults.standard.set(UUID().uuidString, forKey: clientIDKey)
 		}
-
-//		if permissibleHorizontalAccuracy == 0.0 {
-		permissibleHorizontalAccuracy = 8.0
-//		}
 
 		if paceForAutoPause == 0.0 || paceForAutoResume == 0.0 {
 			useAutoPause = true
@@ -176,19 +175,20 @@ class AppSettings {
 			paceForAutoResume = 2.25
 		}
 
-//		if timeForShowLastSegmentView == 0 {
-		timeForShowLastSegmentView = 20
-//		}
-
-		if pz1NotInZone == 0 || pz2Easy == 0 || pz3FatBurning == 0 || pz4Aerobic == 0 || pz5Anaerobic == 0 {
-			pz1NotInZone = 126
-			pz2Easy = 137
-			pz3FatBurning = 147
-			pz4Aerobic = 158
-			pz5Anaerobic = 168
+		if criticalHeartRate == 0 {
 			criticalHeartRate = 200
 		}
 
+		if pz1NotInZone == 0 || pz2Easy == 0 || pz3FatBurning == 0 || pz4Aerobic == 0 || pz5Anaerobic == 0 {
+			pz1NotInZone = Int(maximumHeartRate * 0.6)
+			pz2Easy = Int(maximumHeartRate * 0.7)
+			pz3FatBurning = Int(maximumHeartRate * 0.8)
+			pz4Aerobic = Int(maximumHeartRate * 0.9)
+			pz5Anaerobic = Int(maximumHeartRate)
+		}
+
+		permissibleHorizontalAccuracy = 8.0
+		timeForShowLastSegmentView = 20
 		soundNotificationTimeOut = 10
 		viewNotificationTimeOut = 20
 	}

@@ -104,10 +104,6 @@ class WorkoutManager: NSObject, ObservableObject {
 				pauseStartTime = Date()
 			case .running:
 				segmentStartTime -= pauseStartTime.timeIntervalSinceNow
-			case .stopped:
-				timerManager.stop()
-				locationManager.stop()
-				motionManager.stop()
 			default:
 				return
 		}
@@ -182,20 +178,22 @@ extension WorkoutManager {
 //	MARK: - Stop workout
 //
 extension WorkoutManager {
-	func finishWorkout() async {
+	func finishWorkout() {
 		workoutFinishTime = Date()
+		timerManager.stop()
+		locationManager.stop()
+		motionManager.stop()
 		session?.stopActivity(with: .now)
 #if os(watchOS)
 		Task {
 			do {
 				try await builder?.endCollection(at: workoutFinishTime)
 				if let finishedWorkout = try await builder?.finishWorkout() {
+					session?.end()
 					try await routeBuilder?.finishRoute(with: finishedWorkout, metadata: nil)
 				}
-				session?.end()
 			} catch {
 				Logger.shared.log("Failed to end workout: \(error))")
-				return
 			}
 		}
 #endif
