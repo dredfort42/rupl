@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -14,15 +13,21 @@ import (
 
 var (
 	authURL string
+	notFoundPath string = "/html/404.html"
 )
 
-func readFile(path string) string {
-	fileContent, err := os.ReadFile(path)
+func notFound(w http.ResponseWriter, r *http.Request) {
+	notFoundFile, err := os.Open(notFoundPath)
 	if err != nil {
-		log.Fatal(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
+	defer notFoundFile.Close()
 
-	return string(fileContent)
+	if _, err := io.Copy(w, notFoundFile); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 func sendData(w http.ResponseWriter, r *http.Request) {
@@ -32,35 +37,45 @@ func sendData(w http.ResponseWriter, r *http.Request) {
 		path = "/html" + r.URL.Path
 	}
 
-    file, err := os.Open(path)
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
-    }
-    defer file.Close()
+	file, err := os.Open(path)
+	if err != nil {
+		notFound(w, r)
+		return
+	}
+	defer file.Close()
 
-    fileInfo, err := file.Stat()
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
-    }
+	fileInfo, err := file.Stat()
+	if err != nil {
+		notFound(w, r)
+		return
+	}
 
 	if fileInfo.IsDir() {
-		http.Error(w, "Directory access is forbidden", http.StatusForbidden)
+		indexFile, err := os.Open(path + "/index.html")
+		if err != nil {
+			notFound(w, r)
+			return
+		}
+		defer indexFile.Close()
+
+		if _, err := io.Copy(w, indexFile); err != nil {
+			notFound(w, r)
+			return
+		}
+
 		return
 	}
 
 	if strings.Contains(r.URL.Path, "/download/") {
 		w.Header().Set("Content-Type", http.DetectContentType(make([]byte, 512))) // Detect content type
-    	w.Header().Set("Content-Disposition", "attachment; filename="+fileInfo.Name())
+		w.Header().Set("Content-Disposition", "attachment; filename="+fileInfo.Name())
 		w.Header().Set("Content-Length", fmt.Sprintf("%d", fileInfo.Size()))
 	}
 
-    _, err = io.Copy(w, file)
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
-    }
+	if _, err = io.Copy(w, file); err != nil {
+		notFound(w, r)
+		return
+	}
 }
 
 func proxyRequest(w http.ResponseWriter, r *http.Request) {

@@ -113,7 +113,7 @@ struct ControlsView: View {
 						Spacer()
 						
 						Button {
-//							workoutManager.session?.stopActivity(with: .now)
+							workoutManager.finishWorkout()
 						} label: {
 							ZStack {
 								Circle()

@@ -1,6 +1,2 @@
-github.com/dredfort42/tools v0.0.0-20240102131453-38d4fb849b20 h1:aTFnbPRPX+vxDjyHPn4DlpECO+FXkdoRrXastBvyySY=
-github.com/dredfort42/tools v0.0.0-20240102131453-38d4fb849b20/go.mod h1:0WykwDVmDuYms4t9SMalMHQ2EzZJDiYb+4a6E0azMIg=
-github.com/dredfort42/tools v0.0.0-20240202082503-9751077ded50 h1:AMu7LYwg+MwESXymjdIs7BNgmHs+bWXL2+ROLEUMYnw=
-github.com/dredfort42/tools v0.0.0-20240202082503-9751077ded50/go.mod h1:0WykwDVmDuYms4t9SMalMHQ2EzZJDiYb+4a6E0azMIg=
-github.com/dredfort42/tools v0.0.2 h1:C2ipxj+Le8aVuf37/qQ+rqWR5NWcFEbyzt7AlJ1l8JI=
-github.com/dredfort42/tools v0.0.2/go.mod h1:0WykwDVmDuYms4t9SMalMHQ2EzZJDiYb+4a6E0azMIg=
+github.com/dredfort42/tools v0.0.5 h1:j0g6h3IIlUCzukweWm36JcqR6EF4utTvipebxmZ3Tt8=
+github.com/dredfort42/tools v0.0.5/go.mod h1:0WykwDVmDuYms4t9SMalMHQ2EzZJDiYb+4a6E0azMIg=
