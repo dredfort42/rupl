@@ -20,7 +20,9 @@ class MotionManager {
 
 	private func requestAuthorization() {
 		if !isAvailable {
-			print("Motion manager request authorization")
+#if DEBUG
+			print("MotionManager.requestAuthorization()")
+#endif
 			if CMMotionActivityManager.isActivityAvailable() {
 				isAvailable = true
 			} else {
@@ -33,6 +35,9 @@ class MotionManager {
 		requestAuthorization()
 		motionManager.startActivityUpdates(to: OperationQueue.main) { (activity: CMMotionActivity?) in
 			if let activity = activity {
+#if DEBUG
+				print("motionManager.activity: ", activity)
+#endif
 				if activity.running {
 					self.autoPauseState = false
 				} else {
