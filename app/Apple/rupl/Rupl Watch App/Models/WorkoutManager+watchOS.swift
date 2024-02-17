@@ -22,9 +22,8 @@ extension WorkoutManager {
 		builder?.dataSource = HKLiveWorkoutDataSource(healthStore: healthStore, workoutConfiguration: workoutConfiguration)
 		routeBuilder = HKWorkoutRouteBuilder(healthStore: healthStore, device: nil)
 
-		workoutStartTime = Date()
-		session?.startActivity(with: workoutStartTime)
-		try await builder?.beginCollection(at: workoutStartTime)
+		session?.startActivity(with: .now)
+		try await builder?.beginCollection(at: session?.startDate ?? Date())
 	}
 }
 

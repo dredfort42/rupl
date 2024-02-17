@@ -12,13 +12,8 @@ struct LoadingIndicatorView: View {
 	var wheelSize: CGFloat = 100.0
 	
 	@State private var wheelRotating: Double = 0.0
-	var circleColor: Color = .ruplBlue
-	var indicatorColor: Color = .ruplBlue
-	
-	init() {
-		circleColor = getColor()
-		indicatorColor = getColor()
-	}
+	@State var circleColor: Color = .ruplBlue
+	@State var indicatorColor: Color = .ruplBlue
 	
 	var body: some View {
 		
@@ -33,6 +28,9 @@ struct LoadingIndicatorView: View {
 		.frame(width: wheelSize, height: wheelSize , alignment: .center)
 		
 		.onAppear {
+			circleColor = getColor()
+			indicatorColor = getColor()
+
 			withAnimation(
 				.linear(duration: 1)
 				.speed(0.25)

@@ -40,7 +40,9 @@ struct ContentView: View {
 			selection = .controls
 		}
 		.sheet(isPresented: $isSheetActive) {
-			workoutManager.resetWorkout()
+			if workoutManager.sessionState != .ended {
+				workoutManager.saveWorkout()
+			}
 		} content: {
 			SummaryView()
 		}

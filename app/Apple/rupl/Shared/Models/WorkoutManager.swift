@@ -40,8 +40,6 @@ class WorkoutManager: NSObject, ObservableObject {
 
 	//	Environment
 	let sounds = SoundEffects()
-	let locationManager = LocationManager()
-	let motionManager = MotionManager()
 	let timerManager = TimerManager()
 	let healthStore = HKHealthStore()
 	var session: HKWorkoutSession?
@@ -57,9 +55,7 @@ class WorkoutManager: NSObject, ObservableObject {
 	var last10SpeedMeasurementsSum: Double = 0
 	var last10SpeedAverage: Double = 0
 
-	//	Summary data
-	var workoutStartTime: Date = Date()
-	var workoutFinishTime: Date = Date()
+	//	Summary dataSession state changed
 	var summaryHeartRateSum: UInt64 = 0
 	var summaryHeartRateCount: UInt = 0
 
@@ -80,6 +76,9 @@ class WorkoutManager: NSObject, ObservableObject {
 
 	private override init() {
 		super.init()
+
+		LocationManager.shared.start()
+		MotionManager.shared.start()
 
 		Task {
 			do {
@@ -114,13 +113,16 @@ class WorkoutManager: NSObject, ObservableObject {
 //
 extension WorkoutManager {
 	func resetWorkout() {
+#if DEBUG
+		print("resetWorkout()")
+#endif
 		sessionState = .notStarted
 		heartRate = 0
 		distance = 0
 		speed = 0
 
-		locationManager.start()
-		motionManager.start()
+		LocationManager.shared.start()
+		MotionManager.shared.start()
 		timerManager.start(timeInterval: 1, repeats: true, action: autoPause)
 		timerManager.start(timeInterval: 1, repeats: true, action: addLocationsToRoute)
 		timerManager.start(timeInterval: TimeInterval(AppSettings.shared.soundNotificationTimeOut), repeats: true, action: checkHeartRate)
@@ -137,21 +139,19 @@ extension WorkoutManager {
 		last10SpeedAverage = 0
 
 		//	Summary data
-		workoutStartTime = Date()
-		workoutFinishTime = workoutStartTime
 		summaryHeartRateSum = 0
 		summaryHeartRateCount = 0
 
 		//	Segment data
-		segmentStartTime = workoutStartTime
-		segmentFinishTime = workoutStartTime
+		segmentStartTime = session?.startDate ?? Date()
+		segmentFinishTime = session?.startDate ?? Date()
 		segmentNumber = 0
 		segmentHeartRatesSum = 0
 		segmentHeartRatesCount = 0
 
 		//	Pause data
 		isPauseSetWithButton = false
-		pauseStartTime = workoutStartTime
+		pauseStartTime = session?.startDate ?? Date()
 	}
 }
 
@@ -159,6 +159,9 @@ extension WorkoutManager {
 //
 extension WorkoutManager {
 	func startWorkout() {
+#if DEBUG
+		print("startWorkout()")
+#endif
 		resetWorkout()
 #if os(watchOS)
 		Task {
@@ -179,17 +182,31 @@ extension WorkoutManager {
 //
 extension WorkoutManager {
 	func finishWorkout() {
-		workoutFinishTime = Date()
-		timerManager.stop()
-		locationManager.stop()
-		motionManager.stop()
+#if DEBUG
+		print("finishWorkout()")
+#endif
+		sessionState = .stopped
 		session?.stopActivity(with: .now)
+	}
+}
+
+//	MARK: - Save workout
+//
+extension WorkoutManager{
+	func saveWorkout() {
+#if DEBUG
+		print("saveWorkout()")
+#endif
+		timerManager.stop()
+		LocationManager.shared.stop()
+		MotionManager.shared.stop()
+		session?.end()
+
 #if os(watchOS)
 		Task {
 			do {
-				try await builder?.endCollection(at: workoutFinishTime)
+				try await builder?.endCollection(at: session?.endDate ?? Date())
 				if let finishedWorkout = try await builder?.finishWorkout() {
-					session?.end()
 					try await routeBuilder?.finishRoute(with: finishedWorkout, metadata: nil)
 				}
 			} catch {
@@ -197,6 +214,9 @@ extension WorkoutManager {
 			}
 		}
 #endif
+		 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+			 self.sessionState = .notStarted
+		 }
 	}
 }
 
@@ -234,7 +254,9 @@ extension WorkoutManager: HKWorkoutSessionDelegate {
 									didChangeTo toState: HKWorkoutSessionState,
 									from fromState: HKWorkoutSessionState,
 									date: Date) {
-		Logger.shared.log("Session state changed from \(fromState.rawValue) to \(toState.rawValue)")
+#if DEBUG
+		print("Session state changed from \(fromState.rawValue) to \(toState.rawValue)")
+#endif
 
 		let sessionSateChange = SessionSateChange(newState: toState, date: date)
 		asynStreamTuple.continuation.yield(sessionSateChange)
@@ -252,12 +274,3 @@ struct WorkoutElapsedTime: Codable {
 	var timeInterval: TimeInterval
 	var date: Date
 }
-
-//	MARK: - Convenient workout state
-//
-extension HKWorkoutSessionState {
-	var isActive: Bool {
-		self != .notStarted && self != .ended
-	}
-}
-

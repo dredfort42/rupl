@@ -20,7 +20,7 @@ extension WorkoutManager {
 				self.summaryHeartRateCount += 1
 			}
 
-			if self.session?.state == .running && (-self.workoutStartTime.timeIntervalSinceNow > 300){
+			if self.session?.state == .running && (-(self.session?.startDate ?? Date()).timeIntervalSinceNow > 300){
 				if !self.checkCriticalHeartRate() {
 					self.checkHeartRateZone()
 				}
