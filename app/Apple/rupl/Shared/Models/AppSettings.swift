@@ -175,6 +175,10 @@ class AppSettings {
 			paceForAutoResume = 2.25
 		}
 
+//		// to auto pause test
+//		paceForAutoPause = 3.3
+//		paceForAutoResume = 3.60
+
 		if criticalHeartRate == 0 {
 			criticalHeartRate = 200
 		}
@@ -187,7 +191,7 @@ class AppSettings {
 			pz5Anaerobic = Int(maximumHeartRate)
 		}
 
-		permissibleHorizontalAccuracy = 8.0
+		permissibleHorizontalAccuracy = 16.0
 		timeForShowLastSegmentView = 20
 		soundNotificationTimeOut = 10
 		viewNotificationTimeOut = 20

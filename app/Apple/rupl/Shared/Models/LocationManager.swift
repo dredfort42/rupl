@@ -15,7 +15,6 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 	private let paceForAutoPause: Double = AppSettings.shared.paceForAutoPause
 	private let paceForAutoResume: Double = AppSettings.shared.paceForAutoResume
 	private let locationManager = CLLocationManager()
-	private var autoPauseIndicator: Int = 0
 
 	var isAvailable: Bool = false
 	var speed: CLLocationSpeed = 0
@@ -27,8 +26,9 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 
 	private func requestAuthorization() {
 		if !isAvailable {
-			print("Location manager request authorization")
-
+#if DEBUG
+			print("LocationManager.requestAuthorization()")
+#endif
 			locationManager.delegate = self
 			locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
 			locationManager.allowsBackgroundLocationUpdates = true
@@ -62,17 +62,16 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 			location.horizontalAccuracy <= permissibleHorizontalAccuracy
 		}
 
-		guard !filteredLocations.isEmpty else {
-			if autoPauseIndicator > 0 {
-				autoPauseIndicator -= 1
-			}
+		guard let location = filteredLocations.last else {
 			return
 		}
 
-		guard let location = filteredLocations.last else { return }
-
 		// Access the speed property from the location object
 		speed = location.speed
+
+#if DEBUG
+		print("LocationManager.speed: ", speed, "LocationManager.accuracy: ", accuracy)
+#endif
 
 		checkAutoPause()
 	}
@@ -88,16 +87,9 @@ extension LocationManager {
 	func checkAutoPause() {
 		DispatchQueue.main.async {
 			if self.speed < self.paceForAutoPause {
-				self.autoPauseIndicator += 1
-			} else if self.autoPauseIndicator > 0 {
-				self.autoPauseIndicator -= 1
-			}
-
-			if self.speed > self.paceForAutoResume {
-				self.autoPauseIndicator = 0
-				self.autoPauseState = false
-			} else if self.autoPauseIndicator == 5 {
 				self.autoPauseState = true
+			} else if self.speed > self.paceForAutoResume {
+				self.autoPauseState = false
 			}
 		}
 	}
