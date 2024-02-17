@@ -17,22 +17,33 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 	private let locationManager = CLLocationManager()
 	private var autoPauseIndicator: Int = 0
 
+	var isAvailable: Bool = false
 	var speed: CLLocationSpeed = 0
 	var accuracy: CLLocationAccuracy = 1000
 	var filteredLocations: [CLLocation] = []
 	var autoPauseState: Bool = true
 
-	override init() {
-		super.init()
+	static let shared = LocationManager()
 
-		locationManager.delegate = self
-		locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
-		locationManager.allowsBackgroundLocationUpdates = true
-		locationManager.requestWhenInUseAuthorization()
-		start()
+	private func requestAuthorization() {
+		if !isAvailable {
+			print("Location manager request authorization")
+
+			locationManager.delegate = self
+			locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
+			locationManager.allowsBackgroundLocationUpdates = true
+
+			switch locationManager.authorizationStatus {
+				case .authorizedWhenInUse, .authorizedAlways:
+					isAvailable = true
+				default:
+					locationManager.requestWhenInUseAuthorization()
+			}
+		}
 	}
 
 	func start() {
+		requestAuthorization()
 		locationManager.startUpdatingLocation()
 	}
 
@@ -57,7 +68,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 			}
 			return
 		}
-		
+
 		guard let location = filteredLocations.last else { return }
 
 		// Access the speed property from the location object

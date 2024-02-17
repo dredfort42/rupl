@@ -25,8 +25,8 @@ struct SummaryView: View {
 
 	@ViewBuilder
 	private func summaryListView() -> some View {
-		let totalWorkoutTime: TimeInterval = workoutManager.workoutFinishTime.timeIntervalSince(workoutManager.workoutStartTime)
-		let runDuration: TimeInterval = workoutManager.builder?.elapsedTime(at: Date()) ?? 0
+		let totalWorkoutTime: TimeInterval = (workoutManager.session?.endDate ?? Date()).timeIntervalSince(workoutManager.session?.startDate ?? Date())
+		let runDuration: TimeInterval = workoutManager.builder?.elapsedTime(at: workoutManager.session?.endDate ?? Date()) ?? 0
 		let distance: Double = workoutManager.distance / 1000
 		let averageSpeedMetersPerSecond: Double = totalWorkoutTime > 0 ? distance / totalWorkoutTime : 0
 		let averageHeartRate: Int = workoutManager.summaryHeartRateCount > 0 ? Int(Double(workoutManager.summaryHeartRateSum / UInt64(workoutManager.summaryHeartRateCount)) + 0.5) : 0
@@ -47,15 +47,16 @@ struct SummaryView: View {
 			SummaryMetricView(title: "Average pace",
 							  value: workoutManager.convertToMinutesPerKilometer(metersPerSecond: averageSpeedMetersPerSecond)
 			).foregroundColor(.ruplBlue)
-	
+			
 			SummaryMetricView(title: "Average heart rate",
 							  value: String(averageHeartRate)
 			).foregroundStyle(.ruplRed)
 
 			Button {
+				workoutManager.saveWorkout()
 				dismiss()
 			} label: {
-				Text("Done")
+				Text("Save")
 			}
 			.padding(.vertical)
 		}

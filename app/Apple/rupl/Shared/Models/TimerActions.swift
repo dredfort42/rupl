@@ -13,20 +13,19 @@ import os
 //
 extension WorkoutManager {
 	func autoPause() {
-		if AppSettings.shared.useAutoPause && self.sessionState.isActive && !self.isPauseSetWithButton {
+		if AppSettings.shared.useAutoPause && self.sessionState == .running && !self.isPauseSetWithButton {
 			var isPaused: Bool = false
 
 #if targetEnvironment(simulator)
-			self.motionManager.autoPauseState = false
+			MotionManager.shared.autoPauseState = false
 #endif
 
-			if	self.locationManager.autoPauseState || self.motionManager.autoPauseState {
+			if	LocationManager.shared.autoPauseState || MotionManager.shared.autoPauseState {
 				isPaused = true
 			}
 
 			if self.sessionState == .running {
 				if isPaused {
-					self.sessionState = .paused
 					self.session?.pause()
 #if targetEnvironment(simulator)
 					print("* Stop sound")
@@ -39,7 +38,6 @@ extension WorkoutManager {
 				}
 			} else {
 				if !isPaused {
-					self.sessionState = .running
 					self.session?.resume()
 #if targetEnvironment(simulator)
 					print("* Start sound")
@@ -60,8 +58,8 @@ extension WorkoutManager {
 extension WorkoutManager {
 	func addLocationsToRoute() {
 		DispatchQueue.main.async {
-			if !self.locationManager.filteredLocations.isEmpty {
-				self.routeBuilder?.insertRouteData(self.locationManager.filteredLocations) { (success, error) in
+			if !LocationManager.shared.filteredLocations.isEmpty {
+				self.routeBuilder?.insertRouteData(LocationManager.shared.filteredLocations) { (success, error) in
 					if !success {
 						Logger.shared.log("Failed to add locations to the route: \(error))")
 					}

@@ -37,10 +37,9 @@ struct SegmentView: View {
 			timer?.invalidate()
 		}
 	}
-	
+
 	@ViewBuilder
 	private func LastSegmentSummaryView() -> some View {
-
 
 		VStack(alignment: .leading) {
 			HStack(alignment: .lastTextBaseline) {
@@ -52,20 +51,20 @@ struct SegmentView: View {
 			}
 			.padding([.top], -18)
 			.padding([.bottom], -2)
-			
+
 			Divider()
-			
+
 			HStack(alignment: .lastTextBaseline) {
 				Spacer()
 				Text(workoutManager.formatDuration(seconds: pace))
 					.font(.system(.title, design: .rounded).monospacedDigit().lowercaseSmallCaps())
-				
+
 				Text(" /km")
 					.font(.system(size: 20, weight: .medium, design: .rounded).monospacedDigit().lowercaseSmallCaps())
 			}
 			.foregroundColor(.ruplBlue)
 			.padding([.top], -2)
-			
+
 			HStack(alignment: .lastTextBaseline) {
 				Spacer()
 				Text(String(lastSegmentAverageHeartRates))

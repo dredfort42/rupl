@@ -96,7 +96,7 @@ extension MirroringWorkoutView {
 //					let systemImage = workoutManager.sessionState == .running ? "pause" : "play"
 //					ButtonLabel(title: title, systemImage: systemImage)
 				}
-				.disabled(!workoutManager.sessionState.isActive)
+//				.disabled(!workoutManager.sessionState.isActive)
 
 				Button {
 					workoutManager.session?.stopActivity(with: .now )
@@ -104,7 +104,7 @@ extension MirroringWorkoutView {
 //					ButtonLabel(title: "End", systemImage: "xmark")
 				}
 				.tint(.green)
-				.disabled(!workoutManager.sessionState.isActive)
+//				.disabled(!workoutManager.sessionState.isActive)
 			}
 			.buttonStyle(.bordered)
 		}
