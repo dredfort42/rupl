@@ -8,14 +8,17 @@
 
 import AVFoundation
 import os
+#if os(watchOS)
+import WatchKit
+#endif
 
 struct SoundEffects {
-	var startSound: AVAudioPlayer?
-	var stopSound: AVAudioPlayer?
-	var segmentSound: AVAudioPlayer?
-	var alarmSound: AVAudioPlayer?
-	var runFaster: AVAudioPlayer?
-	var runSlower: AVAudioPlayer?
+	private var startSound: AVAudioPlayer?
+	private var stopSound: AVAudioPlayer?
+	private var segmentSound: AVAudioPlayer?
+	private var alarmSound: AVAudioPlayer?
+	private var runFaster: AVAudioPlayer?
+	private var runSlower: AVAudioPlayer?
 
 	private let workoutStartSound: URL? = Bundle.main.url(
 		forResource: "WorkoutStartSound",
@@ -46,6 +49,8 @@ struct SoundEffects {
 		forResource: "WorkoutRunSlowerSound",
 		withExtension: "aif"
 	)
+
+	static let shared = SoundEffects()
 
 	init() {
 		do {
@@ -78,4 +83,94 @@ struct SoundEffects {
 			Logger.shared.log("Error preparing sounds: \(error.localizedDescription)")
 		}
 	}
+
+	func playStartSound() {
+#if targetEnvironment(simulator)
+		print("))*(( Start sound")
+#else
+		startSound?.play()
+#endif
+		Vibration.vibrate(type: .notification)
+	}
+
+	func playStopSound() {
+#if targetEnvironment(simulator)
+		print("))*(( Stop sound")
+#else
+		stopSound?.play()
+#endif
+		Vibration.vibrate(type: .notification)
+	}
+
+	func playSegmentSound() {
+#if targetEnvironment(simulator)
+		print("))*(( Segment sound")
+#else
+		segmentSound?.play()
+#endif
+		Vibration.vibrate(type: .info)
+	}
+
+	func playAlarmSound() {
+#if targetEnvironment(simulator)
+		print("))*(( Alarm sound")
+#else
+		alarmSound?.play()
+#endif
+		Vibration.vibrate(type: .alarm)
+	}
+
+	func playRunFasterSound() {
+#if targetEnvironment(simulator)
+		print("))*(( Run faster sound")
+#else
+		runFaster?.play()
+#endif
+		Vibration.vibrate(type: .up)
+	}
+
+	func playRunSlowerSound() {
+#if targetEnvironment(simulator)
+		print("))*(( Run slower sound")
+#else
+		runSlower?.play()
+#endif
+		Vibration.vibrate(type: .down)
+	}
+
 }
+
+class Vibration {
+	enum VibrationType {
+		case notification
+		case info
+		case alarm
+		case click
+		case up
+		case down
+	}
+
+	static func vibrate(type: VibrationType) {
+#if targetEnvironment(simulator)
+		print("Zz. Vibration \(type)")
+#elseif os(watchOS)
+		var hapticType: WKHapticType
+		switch type {
+			case .notification:
+				hapticType = .notification
+			case .info:
+				hapticType = .success
+			case .alarm:
+				hapticType = .underwaterDepthCriticalPrompt
+			case .click:
+				hapticType = .click
+			case .up:
+				hapticType = .directionUp
+			case .down:
+				hapticType = .directionDown
+		}
+		WKInterfaceDevice.current().play(hapticType)
+#endif
+	}
+}
+

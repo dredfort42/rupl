@@ -13,9 +13,9 @@ import AVFoundation
 
 struct ControlsView: View {
 	@EnvironmentObject var workoutManager: WorkoutManager
-	
+
 	@State private var isSettingsActive = false
-	
+
 	var body: some View {
 		VStack {
 			if (workoutManager.sessionState != .ended && workoutManager.sessionState != .stopped) {
@@ -29,66 +29,55 @@ struct ControlsView: View {
 			}
 		}
 		.sheet(isPresented: $isSettingsActive) {
-			print("Close settings screen")
+//			print("Close settings screen")
 		} content: {
 			SettingsView()
 		}
 	}
-	
+
 	@ViewBuilder
 	private func StartView() -> some View {
-		Button {
-			workoutManager.startWorkout()
-		} label: {
-			ZStack {
-				Circle()
-					.frame(width: 140, height: 140)
-					.foregroundColor(.ruplBlue)
-					.opacity(0.1)
-				VStack {
-					Image(systemName: "figure.run")
-					Text("Start")
-						.padding(.horizontal)
-						.fontWeight(.medium)
-				}
-				.foregroundColor(.ruplBlue)
-			}
-		}
-		.clipShape(Circle())
-		.overlay {
-			Circle().stroke(.ruplBlue.opacity(0.8), lineWidth: 2)
-		}
-		.buttonStyle(.bordered)
-		.frame(width: 140, height: 140)
-		
-		Spacer()
-		
 		HStack {
+			Spacer()
+
 			Button {
-				isSettingsActive = true
-				print("Show settings screen")
+				workoutManager.startWorkout()
 			} label: {
 				ZStack {
 					Circle()
-						.frame(width: 30, height: 30)
-						.foregroundColor(.ruplGray)
+						.frame(width: 140, height: 140)
+						.foregroundColor(.ruplBlue)
 						.opacity(0.1)
-					Image(systemName: "gear")
-						.foregroundColor(.ruplGray)
+					VStack {
+						Image(systemName: "figure.run")
+						Text("Start")
+							.padding(.horizontal)
+							.fontWeight(.medium)
+					}
+					.foregroundColor(.ruplBlue)
 				}
 			}
 			.clipShape(Circle())
 			.overlay {
-				Circle().stroke(.ruplGray.opacity(0.8), lineWidth: 2)
+				Circle().stroke(.ruplBlue.opacity(0.8), lineWidth: 2)
 			}
 			.buttonStyle(.bordered)
-			.frame(width: 30, height: 30)
-			.padding(.leading)
+			.frame(width: 140, height: 140)
+
 			Spacer()
 		}
+		.padding(.horizontal)
+
+		Spacer()
+
+		HStack {
+			SettingsButtonView()
+			Spacer()
+		}
+		.padding(.horizontal)
 		.padding(.top, -10)
 	}
-	
+
 	@ViewBuilder
 	private func StopView() -> some View {
 		HStack {
@@ -96,10 +85,11 @@ struct ControlsView: View {
 				workoutManager.isPauseSetWithButton = workoutManager.sessionState == .running
 				workoutManager.sessionState = workoutManager.sessionState == .running ? .paused : .running
 				workoutManager.session?.state == .running ? workoutManager.session?.pause() : workoutManager.session?.resume()
+				workoutManager.session?.state == .running ? SoundEffects.shared.playStopSound() : SoundEffects.shared.playStartSound()
 			} label: {
 				let title = workoutManager.sessionState == .running ? "Pause" : "Resume"
 				let systemImage = workoutManager.sessionState == .running ? "pause" : "play"
-				
+
 				ZStack {
 					Circle()
 						.frame(width: 110, height: 110)
@@ -120,17 +110,18 @@ struct ControlsView: View {
 			}
 			.buttonStyle(.bordered)
 			.frame(width: 110, height: 110)
-			.padding(.leading)
-			
+
 			Spacer()
 		}
-		
+		.padding(.horizontal)
+
 		Spacer()
-		
+
 		HStack {
-			
+			SettingsButtonView()
+				.padding(.top, 30)
 			Spacer()
-			
+
 			Button {
 				workoutManager.finishWorkout()
 			} label: {
@@ -154,8 +145,30 @@ struct ControlsView: View {
 			}
 			.buttonStyle(.bordered)
 			.frame(width: 60, height: 60)
-			.padding(.leading)
 		}
+		.padding(.horizontal)
 		.padding(.top, -20)
+	}
+
+	@ViewBuilder
+	private func SettingsButtonView() -> some View {
+		Button {
+			isSettingsActive = true
+		} label: {
+			ZStack {
+				Circle()
+					.frame(width: 30, height: 30)
+					.foregroundColor(.ruplGray)
+					.opacity(0.1)
+				Image(systemName: "gear")
+					.foregroundColor(.ruplGray)
+			}
+		}
+		.clipShape(Circle())
+		.overlay {
+			Circle().stroke(.ruplGray.opacity(0.8), lineWidth: 2)
+		}
+		.buttonStyle(.bordered)
+		.frame(width: 30, height: 30)
 	}
 }

@@ -21,11 +21,8 @@
 		AF41FA872B6825B5004FC0AB /* OAuth2.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF41FA852B6825B5004FC0AB /* OAuth2.swift */; };
 		AF43BF3C2B4C9EE800E5A89C /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF43BF3B2B4C9EE800E5A89C /* AppSettings.swift */; };
 		AF43BF3D2B4C9EE900E5A89C /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF43BF3B2B4C9EE800E5A89C /* AppSettings.swift */; };
-		AF45FD772B59BDF0009E7B4B /* TimerActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF45FD762B59BDF0009E7B4B /* TimerActions.swift */; };
-		AF45FD782B59BDF0009E7B4B /* TimerActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF45FD762B59BDF0009E7B4B /* TimerActions.swift */; };
 		AF53FF052B5AE4D5005DE76D /* SoundEffects.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF53FF042B5AE4D5005DE76D /* SoundEffects.swift */; };
 		AF53FF062B5AE4D5005DE76D /* SoundEffects.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF53FF042B5AE4D5005DE76D /* SoundEffects.swift */; };
-		AF53FF092B5B40BA005DE76D /* Vibration.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF53FF072B5B40BA005DE76D /* Vibration.swift */; };
 		AF56CDEE2B644C47009E8CB8 /* MotionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF56CDED2B644C47009E8CB8 /* MotionManager.swift */; };
 		AF56CDEF2B644C47009E8CB8 /* MotionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF56CDED2B644C47009E8CB8 /* MotionManager.swift */; };
 		AF5ACAB72B46D0710010C316 /* ruplApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF5ACAB62B46D0710010C316 /* ruplApp.swift */; };
@@ -61,10 +58,10 @@
 		AF8312952B79415300F1C790 /* TimerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF8312942B79415300F1C790 /* TimerManager.swift */; };
 		AF8312962B79415400F1C790 /* TimerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF8312942B79415300F1C790 /* TimerManager.swift */; };
 		AFA0ECEA2B6D5E5B009AC138 /* OAuthInstructionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA0ECE92B6D5E5B009AC138 /* OAuthInstructionView.swift */; };
-		AFA196072B5FAF62002EB704 /* CheckCurrentMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA196062B5FAF62002EB704 /* CheckCurrentMetrics.swift */; };
-		AFA196082B5FAF62002EB704 /* CheckCurrentMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA196062B5FAF62002EB704 /* CheckCurrentMetrics.swift */; };
-		AFA1960A2B5FBD95002EB704 /* MeasurementsConverters.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA196092B5FBD95002EB704 /* MeasurementsConverters.swift */; };
-		AFA1960B2B5FBD95002EB704 /* MeasurementsConverters.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA196092B5FBD95002EB704 /* MeasurementsConverters.swift */; };
+		AFA196072B5FAF62002EB704 /* CheckMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA196062B5FAF62002EB704 /* CheckMetrics.swift */; };
+		AFA196082B5FAF62002EB704 /* CheckMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA196062B5FAF62002EB704 /* CheckMetrics.swift */; };
+		AFA1960A2B5FBD95002EB704 /* Converters.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA196092B5FBD95002EB704 /* Converters.swift */; };
+		AFA1960B2B5FBD95002EB704 /* Converters.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA196092B5FBD95002EB704 /* Converters.swift */; };
 		AFA675582B4848B700AD5A69 /* MetricsTimelineSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA675572B4848B600AD5A69 /* MetricsTimelineSchedule.swift */; };
 		AFA675592B4848B700AD5A69 /* MetricsTimelineSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA675572B4848B600AD5A69 /* MetricsTimelineSchedule.swift */; };
 		AFA6755B2B48494C00AD5A69 /* ElapsedTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA6755A2B48494C00AD5A69 /* ElapsedTimeView.swift */; };
@@ -141,9 +138,7 @@
 		AF3F35502B66ACD8007399F9 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		AF41FA852B6825B5004FC0AB /* OAuth2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuth2.swift; sourceTree = "<group>"; };
 		AF43BF3B2B4C9EE800E5A89C /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
-		AF45FD762B59BDF0009E7B4B /* TimerActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerActions.swift; sourceTree = "<group>"; };
 		AF53FF042B5AE4D5005DE76D /* SoundEffects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundEffects.swift; sourceTree = "<group>"; };
-		AF53FF072B5B40BA005DE76D /* Vibration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vibration.swift; sourceTree = "<group>"; };
 		AF56CDED2B644C47009E8CB8 /* MotionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionManager.swift; sourceTree = "<group>"; };
 		AF5ACAB32B46D0710010C316 /* rupl.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = rupl.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF5ACAB62B46D0710010C316 /* ruplApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ruplApp.swift; sourceTree = "<group>"; };
@@ -180,8 +175,8 @@
 		AF7F52922B5D265700856DEA /* SegmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentView.swift; sourceTree = "<group>"; };
 		AF8312942B79415300F1C790 /* TimerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerManager.swift; sourceTree = "<group>"; };
 		AFA0ECE92B6D5E5B009AC138 /* OAuthInstructionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthInstructionView.swift; sourceTree = "<group>"; };
-		AFA196062B5FAF62002EB704 /* CheckCurrentMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckCurrentMetrics.swift; sourceTree = "<group>"; };
-		AFA196092B5FBD95002EB704 /* MeasurementsConverters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasurementsConverters.swift; sourceTree = "<group>"; };
+		AFA196062B5FAF62002EB704 /* CheckMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckMetrics.swift; sourceTree = "<group>"; };
+		AFA196092B5FBD95002EB704 /* Converters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Converters.swift; sourceTree = "<group>"; };
 		AFA675572B4848B600AD5A69 /* MetricsTimelineSchedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricsTimelineSchedule.swift; sourceTree = "<group>"; };
 		AFA6755A2B48494C00AD5A69 /* ElapsedTimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElapsedTimeView.swift; sourceTree = "<group>"; };
 		AFA6755D2B49A50200AD5A69 /* ActivityRingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityRingsView.swift; sourceTree = "<group>"; };
@@ -258,7 +253,6 @@
 			isa = PBXGroup;
 			children = (
 				AF41FA852B6825B5004FC0AB /* OAuth2.swift */,
-				AF53FF072B5B40BA005DE76D /* Vibration.swift */,
 				AF5ACB1A2B4712550010C316 /* WorkoutManager+watchOS.swift */,
 			);
 			path = Models;
@@ -296,15 +290,14 @@
 		AF3F354F2B66AC4D007399F9 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				AF43BF3B2B4C9EE800E5A89C /* AppSettings.swift */,
-				AFA196062B5FAF62002EB704 /* CheckCurrentMetrics.swift */,
-				AF720D422B504326008423D6 /* LocationManager.swift */,
 				AF5ACB1D2B4713FE0010C316 /* Logger.swift */,
-				AFA196092B5FBD95002EB704 /* MeasurementsConverters.swift */,
+				AF43BF3B2B4C9EE800E5A89C /* AppSettings.swift */,
+				AFA196062B5FAF62002EB704 /* CheckMetrics.swift */,
+				AF720D422B504326008423D6 /* LocationManager.swift */,
+				AFA196092B5FBD95002EB704 /* Converters.swift */,
 				AFA675572B4848B600AD5A69 /* MetricsTimelineSchedule.swift */,
 				AF56CDED2B644C47009E8CB8 /* MotionManager.swift */,
 				AF53FF042B5AE4D5005DE76D /* SoundEffects.swift */,
-				AF45FD762B59BDF0009E7B4B /* TimerActions.swift */,
 				AF8312942B79415300F1C790 /* TimerManager.swift */,
 				AF5ACB172B47107F0010C316 /* WorkoutManager.swift */,
 				AF0FA3D62B7B8B67005572CF /* TaskManager.swift */,
@@ -679,12 +672,11 @@
 				AF8312952B79415300F1C790 /* TimerManager.swift in Sources */,
 				AFEEDE482B5EB8DE00B2C27A /* WorkoutListView.swift in Sources */,
 				AFA6755B2B48494C00AD5A69 /* ElapsedTimeView.swift in Sources */,
-				AF45FD772B59BDF0009E7B4B /* TimerActions.swift in Sources */,
 				AF53FF052B5AE4D5005DE76D /* SoundEffects.swift in Sources */,
-				AFA196072B5FAF62002EB704 /* CheckCurrentMetrics.swift in Sources */,
+				AFA196072B5FAF62002EB704 /* CheckMetrics.swift in Sources */,
 				AF720D432B504326008423D6 /* LocationManager.swift in Sources */,
 				AF5ACB1E2B4713FE0010C316 /* Logger.swift in Sources */,
-				AFA1960A2B5FBD95002EB704 /* MeasurementsConverters.swift in Sources */,
+				AFA1960A2B5FBD95002EB704 /* Converters.swift in Sources */,
 				AF56CDEE2B644C47009E8CB8 /* MotionManager.swift in Sources */,
 				AF40FDC02B6E66BD00C8CFA8 /* LoadingIndicatorView.swift in Sources */,
 				AF0FA3D72B7B8B67005572CF /* TaskManager.swift in Sources */,
@@ -722,18 +714,17 @@
 			files = (
 				AF5ACB232B4732ED0010C316 /* ControlsView.swift in Sources */,
 				AF5ACAE12B46D07A0010C316 /* ContentView.swift in Sources */,
-				AFA1960B2B5FBD95002EB704 /* MeasurementsConverters.swift in Sources */,
+				AFA1960B2B5FBD95002EB704 /* Converters.swift in Sources */,
 				AF720D442B504326008423D6 /* LocationManager.swift in Sources */,
 				AFA675592B4848B700AD5A69 /* MetricsTimelineSchedule.swift in Sources */,
 				AF43BF3D2B4C9EE900E5A89C /* AppSettings.swift in Sources */,
 				AF41FA872B6825B5004FC0AB /* OAuth2.swift in Sources */,
 				AF5ACB1F2B4713FE0010C316 /* Logger.swift in Sources */,
 				AF56CDEF2B644C47009E8CB8 /* MotionManager.swift in Sources */,
-				AF53FF092B5B40BA005DE76D /* Vibration.swift in Sources */,
 				AFA6755C2B48494C00AD5A69 /* ElapsedTimeView.swift in Sources */,
 				AFA0ECEA2B6D5E5B009AC138 /* OAuthInstructionView.swift in Sources */,
 				AF5ACB1C2B4712550010C316 /* WorkoutManager+watchOS.swift in Sources */,
-				AFA196082B5FAF62002EB704 /* CheckCurrentMetrics.swift in Sources */,
+				AFA196082B5FAF62002EB704 /* CheckMetrics.swift in Sources */,
 				AF5ACB192B47107F0010C316 /* WorkoutManager.swift in Sources */,
 				AFA6755E2B49A50200AD5A69 /* ActivityRingsView.swift in Sources */,
 				AF0FA3D82B7B8B67005572CF /* TaskManager.swift in Sources */,
@@ -743,7 +734,6 @@
 				AF06CC452B69132200943CEB /* LoadingIndicatorView.swift in Sources */,
 				AF53FF062B5AE4D5005DE76D /* SoundEffects.swift in Sources */,
 				AF5ACB272B4733510010C316 /* SummaryView.swift in Sources */,
-				AF45FD782B59BDF0009E7B4B /* TimerActions.swift in Sources */,
 				AF7F52932B5D265700856DEA /* SegmentView.swift in Sources */,
 				AF3F35512B66ACD8007399F9 /* SettingsView.swift in Sources */,
 			);

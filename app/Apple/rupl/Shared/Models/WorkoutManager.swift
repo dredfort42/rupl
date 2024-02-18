@@ -39,7 +39,6 @@ class WorkoutManager: NSObject, ObservableObject {
 	]
 
 	//	Environment
-	let sounds = SoundEffects()
 	let timerManager = TimerManager()
 	let healthStore = HKHealthStore()
 	var session: HKWorkoutSession?

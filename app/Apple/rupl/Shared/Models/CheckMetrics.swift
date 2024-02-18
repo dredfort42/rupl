@@ -1,5 +1,5 @@
 //
-//  CheckCurrentMetrics.swift
+//  CheckMetrics.swift
 //  rupl
 //
 //  Created by Dmitry Novikov on 23/01/2024.
@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import os
 
 // MARK: - Check heart rate
 //
@@ -30,14 +31,7 @@ extension WorkoutManager {
 
 	private func checkCriticalHeartRate() -> Bool {
 		if Int(self.heartRate) > AppSettings.shared.criticalHeartRate {
-#if targetEnvironment(simulator)
-			print("* Alarm sound")
-#else
-			self.sounds.alarmSound?.play()
-#if os(watchOS)
-			Vibration.vibrate(type: .underwaterDepthCriticalPrompt)
-#endif
-#endif
+			SoundEffects.shared.playAlarmSound()
 			return true
 		}
 
@@ -46,23 +40,9 @@ extension WorkoutManager {
 
 	private func checkHeartRateZone() {
 		if Int(self.heartRate) > TaskManager.shared.intervalHeartRateZone.maxHeartRate {
-#if targetEnvironment(simulator)
-			print("* Run slower sound")
-#else
-			self.sounds.runSlower?.play()
-#if os(watchOS)
-			Vibration.vibrate(type: .directionDown)
-#endif
-#endif
+			SoundEffects.shared.playRunSlowerSound()
 		} else if Int(self.heartRate) < TaskManager.shared.intervalHeartRateZone.minHeartRate {
-#if targetEnvironment(simulator)
-			print("* Run faster sound")
-#else
-			self.sounds.runFaster?.play()
-#if os(watchOS)
-			Vibration.vibrate(type: .directionUp)
-#endif
-#endif
+			SoundEffects.shared.playRunFasterSound()
 		}
 	}
 }
@@ -76,14 +56,7 @@ extension WorkoutManager {
 			if self.segmentNumber != segment {
 				self.segmentFinishTime = Date()
 				self.segmentNumber = segment
-#if targetEnvironment(simulator)
-				print("* Segment sound")
-#else
-				self.sounds.segmentSound?.play()
-#if os(watchOS)
-				Vibration.vibrate(type: .success)
-#endif
-#endif
+				SoundEffects.shared.playSegmentSound()
 			}
 		}
 	}
@@ -112,3 +85,47 @@ extension WorkoutManager {
 	}
 }
 
+//	MARK: - Auto pause logic
+//
+extension WorkoutManager {
+	func autoPause() {
+		if AppSettings.shared.useAutoPause && !isPauseSetWithButton && (sessionState == .running || sessionState == .paused) {
+#if targetEnvironment(simulator)
+			MotionManager.shared.autoPauseState = true
+#endif
+			var isPaused: Bool = MotionManager.shared.autoPauseState
+
+			if !LocationManager.shared.autoPauseState {
+				isPaused = false
+			}
+
+			if self.sessionState == .running {
+				if isPaused {
+					self.session?.pause()
+					SoundEffects.shared.playStopSound()
+				}
+			} else {
+				if !isPaused {
+					self.session?.resume()
+					SoundEffects.shared.playStartSound()
+				}
+			}
+		}
+	}
+}
+
+//	MARK: - Add locations to the route
+//
+extension WorkoutManager {
+	func addLocationsToRoute() {
+		DispatchQueue.main.async {
+			if !LocationManager.shared.filteredLocations.isEmpty {
+				self.routeBuilder?.insertRouteData(LocationManager.shared.filteredLocations) { (success, error) in
+					if !success {
+						Logger.shared.log("Failed to add locations to the route: \(error))")
+					}
+				}
+			}
+		}
+	}
+}
