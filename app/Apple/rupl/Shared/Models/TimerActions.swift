@@ -14,13 +14,12 @@ import os
 extension WorkoutManager {
 	func autoPause() {
 		if AppSettings.shared.useAutoPause && !isPauseSetWithButton && (sessionState == .running || sessionState == .paused) {
-			var isPaused: Bool = true
-
 #if targetEnvironment(simulator)
 			MotionManager.shared.autoPauseState = true
 #endif
+			var isPaused: Bool = MotionManager.shared.autoPauseState
 
-			if !LocationManager.shared.autoPauseState || !MotionManager.shared.autoPauseState {
+			if !LocationManager.shared.autoPauseState {
 				isPaused = false
 			}
 
