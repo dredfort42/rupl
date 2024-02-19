@@ -12,15 +12,16 @@ import CoreLocation
 
 class LocationManager: NSObject, CLLocationManagerDelegate {
 	private let permissibleHorizontalAccuracy: Double = AppSettings.shared.permissibleHorizontalAccuracy
+	private let permissibleHorizontalAccuracyForAutoPause: Double = AppSettings.shared.permissibleHorizontalAccuracy * 0.7
 	private let paceForAutoPause: Double = AppSettings.shared.paceForAutoPause
 	private let paceForAutoResume: Double = AppSettings.shared.paceForAutoResume
 	private let locationManager = CLLocationManager()
+	private var accuracy: CLLocationAccuracy = 1000
 
 	var isAvailable: Bool = false
 	var speed: CLLocationSpeed = 0
-	var accuracy: CLLocationAccuracy = 1000
 	var filteredLocations: [CLLocation] = []
-	var autoPauseState: Bool = true
+	var autoPauseState: Bool?
 
 	static let shared = LocationManager()
 
@@ -86,10 +87,14 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 extension LocationManager {
 	func checkAutoPause() {
 		DispatchQueue.main.async {
-			if self.speed < self.paceForAutoPause {
-				self.autoPauseState = true
-			} else if self.speed > self.paceForAutoResume {
-				self.autoPauseState = false
+			if self.accuracy > self.permissibleHorizontalAccuracyForAutoPause {
+				self.autoPauseState = nil
+			} else {
+				if self.speed < self.paceForAutoPause {
+					self.autoPauseState = true
+				} else if self.speed > self.paceForAutoResume {
+					self.autoPauseState = false
+				}
 			}
 		}
 	}

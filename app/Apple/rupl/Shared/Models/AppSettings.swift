@@ -14,6 +14,7 @@ class AppSettings {
 	static let shared = AppSettings()
 
 	static let useAutoPauseKey = "useAutoPause"
+	static let userYearOfBirthKey = "userYearOfBirth"
 	static let criticalHeartRateKey = "criticalHeartRate"
 	static let connectedToRuplKey = "connectedToRupl"
 	private let clientIDKey = "clientID"
@@ -41,6 +42,15 @@ class AppSettings {
 		}
 		set {
 			UserDefaults.standard.set(newValue, forKey: AppSettings.useAutoPauseKey)
+		}
+	}
+
+	var userYearOfBirth: Int {
+		get {
+			return UserDefaults.standard.integer(forKey: AppSettings.userYearOfBirthKey)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: AppSettings.userYearOfBirthKey)
 		}
 	}
 
@@ -162,7 +172,7 @@ class AppSettings {
 	}
 
 	private init() {
-		let age: Int = 42
+		let age: Int = userYearOfBirth != 0 ? getCurrentYear() - userYearOfBirth : 21
 		let maximumHeartRate: Double = 208 - Double(age) * 0.7
 
 		if clientID == "" {
@@ -175,25 +185,32 @@ class AppSettings {
 			paceForAutoResume = 2.25
 		}
 
-//		// to auto pause test
-//		paceForAutoPause = 3.3
-//		paceForAutoResume = 3.60
+		if userYearOfBirth == 0 {
+			userYearOfBirth = getCurrentYear() - 21
+		}
+
+		//		// to auto pause test
+		//		paceForAutoPause = 3.3
+		//		paceForAutoResume = 3.60
 
 		if criticalHeartRate == 0 {
 			criticalHeartRate = 200
 		}
 
-		if pz1NotInZone == 0 || pz2Easy == 0 || pz3FatBurning == 0 || pz4Aerobic == 0 || pz5Anaerobic == 0 {
-			pz1NotInZone = Int(maximumHeartRate * 0.6)
-			pz2Easy = Int(maximumHeartRate * 0.7)
-			pz3FatBurning = Int(maximumHeartRate * 0.8)
-			pz4Aerobic = Int(maximumHeartRate * 0.9)
-			pz5Anaerobic = Int(maximumHeartRate)
-		}
-
+		pz1NotInZone = Int(maximumHeartRate * 0.6 + 0.5)
+		pz2Easy = Int(maximumHeartRate * 0.7 + 0.5)
+		pz3FatBurning = Int(maximumHeartRate * 0.8 + 0.5)
+		pz4Aerobic = Int(maximumHeartRate * 0.9 + 0.5)
+		pz5Anaerobic = Int(maximumHeartRate + 0.5)
 		permissibleHorizontalAccuracy = 16.0
 		timeForShowLastSegmentView = 20
 		soundNotificationTimeOut = 10
 		viewNotificationTimeOut = 20
+	}
+
+	func getCurrentYear() -> Int {
+		let calendar = Calendar.current
+		let year = calendar.component(.year, from: .now)
+		return year
 	}
 }
