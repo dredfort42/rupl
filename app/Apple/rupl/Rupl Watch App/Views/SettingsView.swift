@@ -11,10 +11,14 @@ import SwiftUI
 struct SettingsView: View {
 	private let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "N/A"
 	private let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "N/A"
+	private let maxUserBirthYear: Int = AppSettings.shared.getCurrentYear() - 14
+	private let minUserBirthYear: Int = AppSettings.shared.getCurrentYear() - 100
 
 	@AppStorage(AppSettings.useAutoPauseKey) var useAutoPauseIsOn = AppSettings.shared.useAutoPause
+	@AppStorage(AppSettings.userYearOfBirthKey) var userYearOfBirth = AppSettings.shared.userYearOfBirth
 	@AppStorage(AppSettings.criticalHeartRateKey) var criticalHeartRate = AppSettings.shared.criticalHeartRate
 	@AppStorage(AppSettings.connectedToRuplKey) var isConnectedToRupl = AppSettings.shared.connectedToRupl
+
 
 	@State private var deviceAuthorization = false
 	@State private var polling: Bool = false
@@ -30,28 +34,26 @@ struct SettingsView: View {
 							.toggleStyle(SwitchToggleStyle(tint: .ruplBlue))
 					}
 
-					//					Section {
-					//						Slider(value: $criticalHeartRate, label: Text("Critical Heart Rate"))
-					//						Slider(value: $criticalHeartRate, in: 180...210, step: 1.0, label: Text("Critical Heart Rate"))
-					//					{
-					//							Text("Critical Heart Rate")
-					//						}
-					//						Text("\(Int(criticalHeartRate)) BPM")
-					//					}
-					//				header: {
-					//						Text("Critical heart rate")
-					//					}
-
-
 					Section {
 						Stepper(value: $criticalHeartRate, in: 180...210) {
 							Text("\(criticalHeartRate)")
-								.font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
+								.font(/*@START_MENU_TOKEN@*/.title2/*@END_MENU_TOKEN@*/)
 						}
 					} header: {
 						Text("Critical heart rate")
 					} footer: {
 						Text("If heart rate exceeds this value, an alarm will sound")
+					}
+
+					Section {
+						Stepper(value: $userYearOfBirth, in: minUserBirthYear...maxUserBirthYear) {
+							Text(String(userYearOfBirth))
+								.font(/*@START_MENU_TOKEN@*/.title2/*@END_MENU_TOKEN@*/)
+						}
+					} header: {
+						Text("Year of birth")
+					} footer: {
+						Text("Year of birth is required to calculate individual heart rate intervals")
 					}
 
 					Section {

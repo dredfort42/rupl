@@ -213,7 +213,7 @@ extension WorkoutManager{
 			}
 		}
 #endif
-		 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+		 DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
 			 self.sessionState = .notStarted
 		 }
 	}

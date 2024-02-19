@@ -93,11 +93,8 @@ extension WorkoutManager {
 #if targetEnvironment(simulator)
 			MotionManager.shared.autoPauseState = true
 #endif
-			var isPaused: Bool = MotionManager.shared.autoPauseState
 
-			if !LocationManager.shared.autoPauseState {
-				isPaused = false
-			}
+			let isPaused: Bool = LocationManager.shared.autoPauseState != nil ? LocationManager.shared.autoPauseState! : MotionManager.shared.autoPauseState
 
 			if self.sessionState == .running {
 				if isPaused {

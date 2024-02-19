@@ -66,7 +66,6 @@
 		AFA675592B4848B700AD5A69 /* MetricsTimelineSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA675572B4848B600AD5A69 /* MetricsTimelineSchedule.swift */; };
 		AFA6755B2B48494C00AD5A69 /* ElapsedTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA6755A2B48494C00AD5A69 /* ElapsedTimeView.swift */; };
 		AFA6755C2B48494C00AD5A69 /* ElapsedTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA6755A2B48494C00AD5A69 /* ElapsedTimeView.swift */; };
-		AFA6755E2B49A50200AD5A69 /* ActivityRingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA6755D2B49A50200AD5A69 /* ActivityRingsView.swift */; };
 		AFD0B1982B5C74B90027001F /* WorkoutSegmentSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AFD0B1972B5C74B90027001F /* WorkoutSegmentSound.aif */; };
 		AFD0B1992B5C74B90027001F /* WorkoutSegmentSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AFD0B1972B5C74B90027001F /* WorkoutSegmentSound.aif */; };
 		AFEEDE442B5EB69700B2C27A /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEEDE432B5EB69700B2C27A /* StartView.swift */; };
@@ -179,7 +178,6 @@
 		AFA196092B5FBD95002EB704 /* Converters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Converters.swift; sourceTree = "<group>"; };
 		AFA675572B4848B600AD5A69 /* MetricsTimelineSchedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricsTimelineSchedule.swift; sourceTree = "<group>"; };
 		AFA6755A2B48494C00AD5A69 /* ElapsedTimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElapsedTimeView.swift; sourceTree = "<group>"; };
-		AFA6755D2B49A50200AD5A69 /* ActivityRingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityRingsView.swift; sourceTree = "<group>"; };
 		AFD0B1972B5C74B90027001F /* WorkoutSegmentSound.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = WorkoutSegmentSound.aif; sourceTree = "<group>"; };
 		AFEEDE432B5EB69700B2C27A /* StartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartView.swift; sourceTree = "<group>"; };
 		AFEEDE452B5EB78000B2C27A /* MirroringWorkoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MirroringWorkoutView.swift; sourceTree = "<group>"; };
@@ -237,7 +235,6 @@
 		AF3F354A2B66A9E8007399F9 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				AFA6755D2B49A50200AD5A69 /* ActivityRingsView.swift */,
 				AF5ACAE02B46D07A0010C316 /* ContentView.swift */,
 				AF5ACB222B4732ED0010C316 /* ControlsView.swift */,
 				AF7F52922B5D265700856DEA /* SegmentView.swift */,
@@ -726,7 +723,6 @@
 				AF5ACB1C2B4712550010C316 /* WorkoutManager+watchOS.swift in Sources */,
 				AFA196082B5FAF62002EB704 /* CheckMetrics.swift in Sources */,
 				AF5ACB192B47107F0010C316 /* WorkoutManager.swift in Sources */,
-				AFA6755E2B49A50200AD5A69 /* ActivityRingsView.swift in Sources */,
 				AF0FA3D82B7B8B67005572CF /* TaskManager.swift in Sources */,
 				AF8312962B79415400F1C790 /* TimerManager.swift in Sources */,
 				AF5ACADF2B46D07A0010C316 /* ruplApp.swift in Sources */,
