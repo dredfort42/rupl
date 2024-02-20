@@ -19,7 +19,6 @@ struct SettingsView: View {
 	@AppStorage(AppSettings.criticalHeartRateKey) var criticalHeartRate = AppSettings.shared.criticalHeartRate
 	@AppStorage(AppSettings.connectedToRuplKey) var isConnectedToRupl = AppSettings.shared.connectedToRupl
 
-
 	@State private var deviceAuthorization = false
 	@State private var polling: Bool = false
 	@State private var userCode: String = ""
@@ -35,10 +34,12 @@ struct SettingsView: View {
 					}
 
 					Section {
-						Stepper(value: $criticalHeartRate, in: 180...210) {
+						Stepper(value: $criticalHeartRate,
+								in: 180...210,
+								step: 1) {
 							Text("\(criticalHeartRate)")
-								.font(/*@START_MENU_TOKEN@*/.title2/*@END_MENU_TOKEN@*/)
-						}
+								.font(.title2)
+						}.focusable(false)
 					} header: {
 						Text("Critical heart rate")
 					} footer: {
@@ -46,10 +47,12 @@ struct SettingsView: View {
 					}
 
 					Section {
-						Stepper(value: $userYearOfBirth, in: minUserBirthYear...maxUserBirthYear) {
+						Stepper(value: $userYearOfBirth,
+								in: minUserBirthYear...maxUserBirthYear,
+								step: 1) {
 							Text(String(userYearOfBirth))
-								.font(/*@START_MENU_TOKEN@*/.title2/*@END_MENU_TOKEN@*/)
-						}
+								.font(.title2)
+						}.focusable(false)
 					} header: {
 						Text("Year of birth")
 					} footer: {
@@ -131,6 +134,6 @@ struct SettingsView: View {
 	}
 }
 
-#Preview {
-	SettingsView()
-}
+//#Preview {
+//	SettingsView()
+//}
