@@ -11,7 +11,8 @@ import os
 import CoreMotion
 
 class MotionManager {
-	let motionManager = CMMotionActivityManager()
+
+	let motionActivityManager = CMMotionActivityManager()
 	var autoPauseState: Bool = true
 
 	var isAvailable: Bool = false
@@ -23,9 +24,10 @@ class MotionManager {
 #if DEBUG
 			print("MotionManager.requestAuthorization()")
 #endif
-			if CMMotionActivityManager.isActivityAvailable() {
-				isAvailable = true
-			} else {
+			isAvailable = true
+			
+			if !CMMotionActivityManager.isActivityAvailable() {
+				isAvailable = false
 				Logger.shared.log("Motion activity tracking is not available on this device")
 			}
 		}
@@ -33,10 +35,18 @@ class MotionManager {
 
 	func start() {
 		requestAuthorization()
-		motionManager.startActivityUpdates(to: OperationQueue.main) { (activity: CMMotionActivity?) in
+		startActivityUpdates()
+	}
+
+	func stop() {
+		motionActivityManager.stopActivityUpdates()
+	}
+
+	func startActivityUpdates() {
+		motionActivityManager.startActivityUpdates(to: OperationQueue.main) { (activity: CMMotionActivity?) in
 			if let activity = activity {
 #if DEBUG
-				print("motionManager.activity: ", activity)
+				print("motionActivityManager.activity: ", activity)
 #endif
 				if activity.running {
 					self.autoPauseState = false
@@ -45,9 +55,5 @@ class MotionManager {
 				}
 			}
 		}
-	}
-
-	func stop() {
-		motionManager.stopActivityUpdates()
 	}
 }

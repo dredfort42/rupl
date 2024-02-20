@@ -27,7 +27,7 @@ struct SummaryView: View {
 	private func summaryListView() -> some View {
 		let totalWorkoutTime: TimeInterval = (workoutManager.session?.endDate ?? Date()).timeIntervalSince(workoutManager.session?.startDate ?? Date())
 		let runDuration: TimeInterval = workoutManager.builder?.elapsedTime(at: workoutManager.session?.endDate ?? Date()) ?? 0
-		let distance: Double = workoutManager.distance / 1000
+		let distance: Double = workoutManager.distance
 		let averageSpeedMetersPerSecond: Double = totalWorkoutTime > 0 ? distance / totalWorkoutTime : 0
 		let averageHeartRate: Int = workoutManager.summaryHeartRateCount > 0 ? Int(Double(workoutManager.summaryHeartRateSum / UInt64(workoutManager.summaryHeartRateCount)) + 0.5) : 0
 
@@ -41,7 +41,7 @@ struct SummaryView: View {
 			).foregroundStyle(.ruplYellow)
 
 			SummaryMetricView(title: "Distance",
-							  value: distance.formatted(.number.precision(.fractionLength(2)))
+							  value: (distance / 1000).formatted(.number.precision(.fractionLength(2)))
 			)
 
 			SummaryMetricView(title: "Average pace",

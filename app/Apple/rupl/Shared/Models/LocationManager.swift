@@ -17,6 +17,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 	private let paceForAutoResume: Double = AppSettings.shared.paceForAutoResume
 	private let locationManager = CLLocationManager()
 	private var accuracy: CLLocationAccuracy = 1000
+	private var autoPauseSignalCounter: UInt8 = 0
 
 	var isAvailable: Bool = false
 	var speed: CLLocationSpeed = 0
@@ -91,9 +92,14 @@ extension LocationManager {
 				self.autoPauseState = nil
 			} else {
 				if self.speed < self.paceForAutoPause {
-					self.autoPauseState = true
+					if self.autoPauseSignalCounter >= 3 {
+						self.autoPauseState = true
+					} else {
+						self.autoPauseSignalCounter += 1
+					}
 				} else if self.speed > self.paceForAutoResume {
 					self.autoPauseState = false
+					self.autoPauseSignalCounter = 0
 				}
 			}
 		}
