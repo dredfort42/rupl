@@ -15,6 +15,7 @@ struct ControlsView: View {
 	@EnvironmentObject var workoutManager: WorkoutManager
 
 	@State private var isSettingsActive = false
+	@State private var isTaskActive = false
 
 	var body: some View {
 		VStack {
@@ -33,19 +34,22 @@ struct ControlsView: View {
 		} content: {
 			SettingsView()
 		}
+		.sheet(isPresented: $isTaskActive) {
+//			print("Close settings screen")
+		} content: {
+			TaskView()
+		}
 	}
 
 	@ViewBuilder
 	private func StartView() -> some View {
 		HStack {
-			Spacer()
-
 			Button {
 				workoutManager.startWorkout()
 			} label: {
 				ZStack {
 					Circle()
-						.frame(width: 140, height: 140)
+						.frame(width: 130, height: 130)
 						.foregroundColor(.ruplBlue)
 						.opacity(0.1)
 					VStack {
@@ -62,7 +66,7 @@ struct ControlsView: View {
 				Circle().stroke(.ruplBlue.opacity(0.8), lineWidth: 2)
 			}
 			.buttonStyle(.bordered)
-			.frame(width: 140, height: 140)
+			.frame(width: 130, height: 130)
 
 			Spacer()
 		}
@@ -72,10 +76,12 @@ struct ControlsView: View {
 
 		HStack {
 			SettingsButtonView()
+				.padding(.top, 10)
 			Spacer()
+			TaskButtonView()
 		}
 		.padding(.horizontal)
-		.padding(.top, -10)
+		.padding(.top, -20)
 	}
 
 	@ViewBuilder
@@ -170,5 +176,27 @@ struct ControlsView: View {
 		}
 		.buttonStyle(.bordered)
 		.frame(width: 30, height: 30)
+	}
+
+	@ViewBuilder
+	private func TaskButtonView() -> some View {
+		Button {
+			isTaskActive = true
+		} label: {
+			ZStack {
+				Circle()
+					.frame(width: 40, height: 40)
+					.foregroundColor(.ruplGreen)
+					.opacity(0.1)
+				Image(systemName: "list.clipboard")
+					.foregroundColor(.ruplGreen)
+			}
+		}
+		.clipShape(Circle())
+		.overlay {
+			Circle().stroke(.ruplGreen.opacity(0.8), lineWidth: 2)
+		}
+		.buttonStyle(.bordered)
+		.frame(width: 40, height: 40)
 	}
 }

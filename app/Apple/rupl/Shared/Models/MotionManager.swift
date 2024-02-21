@@ -24,10 +24,9 @@ class MotionManager {
 #if DEBUG
 			print("MotionManager.requestAuthorization()")
 #endif
-			isAvailable = true
-			
-			if !CMMotionActivityManager.isActivityAvailable() {
-				isAvailable = false
+			if CMMotionActivityManager.isActivityAvailable() {
+				isAvailable = true
+			} else {
 				Logger.shared.log("Motion activity tracking is not available on this device")
 			}
 		}

@@ -16,8 +16,8 @@ extension WorkoutManager {
 
 	func startWorkout(workoutConfiguration: HKWorkoutConfiguration) async throws {
 		session = try HKWorkoutSession(healthStore: healthStore, configuration: workoutConfiguration)
-		builder = session?.associatedWorkoutBuilder()
 		session?.delegate = self
+		builder = session?.associatedWorkoutBuilder()
 		builder?.delegate = self
 		builder?.dataSource = HKLiveWorkoutDataSource(healthStore: healthStore, workoutConfiguration: workoutConfiguration)
 		routeBuilder = HKWorkoutRouteBuilder(healthStore: healthStore, device: nil)

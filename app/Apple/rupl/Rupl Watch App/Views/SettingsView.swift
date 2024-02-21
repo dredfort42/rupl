@@ -14,7 +14,7 @@ struct SettingsView: View {
 	private let maxUserBirthYear: Int = AppSettings.shared.getCurrentYear() - 14
 	private let minUserBirthYear: Int = AppSettings.shared.getCurrentYear() - 100
 
-	@AppStorage(AppSettings.useAutoPauseKey) var useAutoPauseIsOn = AppSettings.shared.useAutoPause
+	@AppStorage(AppSettings.useAutoPauseKey) var useAutoPause = AppSettings.shared.useAutoPause
 	@AppStorage(AppSettings.userYearOfBirthKey) var userYearOfBirth = AppSettings.shared.userYearOfBirth
 	@AppStorage(AppSettings.criticalHeartRateKey) var criticalHeartRate = AppSettings.shared.criticalHeartRate
 	@AppStorage(AppSettings.connectedToRuplKey) var isConnectedToRupl = AppSettings.shared.connectedToRupl
@@ -29,7 +29,7 @@ struct SettingsView: View {
 			VStack {
 				Form {
 					Section(footer: Text("Automatically pauses workout when you have paused your activity")) {
-						Toggle("Auto pause", isOn: $useAutoPauseIsOn)
+						Toggle("Auto pause", isOn: $useAutoPause)
 							.toggleStyle(SwitchToggleStyle(tint: .ruplBlue))
 					}
 

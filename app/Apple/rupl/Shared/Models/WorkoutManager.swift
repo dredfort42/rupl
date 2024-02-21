@@ -13,69 +13,69 @@ import SwiftUI
 
 @MainActor
 class WorkoutManager: NSObject, ObservableObject {
-
+	
 	struct SessionSateChange {
 		let newState: HKWorkoutSessionState
 		let date: Date
 	}
-
+	
 	//	The workout session live states that the UI observes.
 	@Published var sessionState: HKWorkoutSessionState = .notStarted
 	@Published var heartRate: Double = 0
 	@Published var distance: Double = 0
 	@Published var speed: Double = 0
-
+	
 	//	HealthKit data types to share
 	let typesToShare: Set = [
 		HKQuantityType.workoutType(),
 		HKSeriesType.workoutRoute()
 	]
-
+	
 	//	HealthKit data types to read
 	let typesToRead: Set = [
 		HKQuantityType(.heartRate), //	count/s, Discrete (Temporally Weighted)
 		HKQuantityType(.distanceWalkingRunning), //	m, Cumulative
 		HKQuantityType(.runningSpeed), //	m/s, Discrete (Arithmetic)
 	]
-
+	
 	//	Environment
 	let timerManager = TimerManager()
 	let healthStore = HKHealthStore()
 	var session: HKWorkoutSession?
-	var routeBuilder: HKWorkoutRouteBuilder?
 #if os(watchOS)
 	var builder: HKLiveWorkoutBuilder?
 #else
 	var contextDate: Date?
 #endif
-
+	var routeBuilder: HKWorkoutRouteBuilder?
+	
 	//	Array for store last 10 speed measurements to colculate average speed
 	var last10SpeedMeasurements: [Double] = []
 	var last10SpeedMeasurementsSum: Double = 0
 	var last10SpeedAverage: Double = 0
-
+	
 	//	Summary dataSession state changed
 	var summaryHeartRateSum: UInt64 = 0
 	var summaryHeartRateCount: UInt = 0
-
+	
 	//	Segment data
 	var segmentStartTime: Date = Date()
 	var segmentFinishTime: Date = Date()
 	var segmentNumber: Int = 0
 	var segmentHeartRatesSum: UInt64 = 0
 	var segmentHeartRatesCount: UInt = 0
-
+	
 	//	Pause data
 	var isPauseSetWithButton: Bool = false
 	var pauseStartTime: Date = Date()
-
+	
 	let asynStreamTuple = AsyncStream.makeStream(of: SessionSateChange.self, bufferingPolicy: .bufferingNewest(1))
-
+	
 	static let shared = WorkoutManager()
-
+	
 	private override init() {
 		super.init()
-
+		
 		LocationManager.shared.start()
 		MotionManager.shared.start()
 
@@ -86,17 +86,17 @@ class WorkoutManager: NSObject, ObservableObject {
 				Logger.shared.log("Failed to request authorization: \(error)")
 			}
 		}
-
+		
 		Task {
 			for await value in asynStreamTuple.stream {
 				await consumeSessionStateChange(value)
 			}
 		}
 	}
-
+	
 	private func consumeSessionStateChange(_ change: SessionSateChange) async {
 		sessionState = change.newState
-
+		
 		switch change.newState {
 			case .paused:
 				pauseStartTime = Date()
@@ -119,35 +119,35 @@ extension WorkoutManager {
 		heartRate = 0
 		distance = 0
 		speed = 0
-
+		
 		LocationManager.shared.start()
 		MotionManager.shared.start()
 		timerManager.start(timeInterval: 1, repeats: true, action: autoPause)
 		timerManager.start(timeInterval: 1, repeats: true, action: addLocationsToRoute)
 		timerManager.start(timeInterval: TimeInterval(AppSettings.shared.soundNotificationTimeOut), repeats: true, action: checkHeartRate)
-
+		
 		session = nil
-		routeBuilder = nil
 #if os(watchOS)
 		builder = nil
 #endif
-
+		routeBuilder = nil
+		
 		//	Array for store last 10 speed measurements to colculate average speed
 		last10SpeedMeasurements = []
 		last10SpeedMeasurementsSum = 0
 		last10SpeedAverage = 0
-
+		
 		//	Summary data
 		summaryHeartRateSum = 0
 		summaryHeartRateCount = 0
-
+		
 		//	Segment data
 		segmentStartTime = session?.startDate ?? Date()
 		segmentFinishTime = session?.startDate ?? Date()
 		segmentNumber = 0
 		segmentHeartRatesSum = 0
 		segmentHeartRatesCount = 0
-
+		
 		//	Pause data
 		isPauseSetWithButton = false
 		pauseStartTime = session?.startDate ?? Date()
@@ -201,21 +201,28 @@ extension WorkoutManager{
 		MotionManager.shared.stop()
 		session?.end()
 
+		guard let endDate = session?.endDate else {
+			Logger.shared.log("End date for the workout session is nil")
+			return
+		}
+
 #if os(watchOS)
 		Task {
 			do {
-				try await builder?.endCollection(at: session?.endDate ?? Date())
+				try await builder?.endCollection(at: endDate)
+				
 				if let finishedWorkout = try await builder?.finishWorkout() {
 					try await routeBuilder?.finishRoute(with: finishedWorkout, metadata: nil)
 				}
 			} catch {
-				Logger.shared.log("Failed to end workout: \(error))")
+				Logger.shared.log("Failed to end workout: \(error)")
 			}
 		}
 #endif
-		 DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-			 self.sessionState = .notStarted
-		 }
+		
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+			self.sessionState = .notStarted
+		}
 	}
 }
 
@@ -227,17 +234,17 @@ extension WorkoutManager {
 			case HKQuantityType.quantityType(forIdentifier: .heartRate):
 				let heartRateUnit = HKUnit.count().unitDivided(by: .minute())
 				heartRate = statistics.mostRecentQuantity()?.doubleValue(for: heartRateUnit) ?? 0
-
+				
 			case HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning):
 				let distanceUnit = HKUnit.meter()
 				distance = statistics.sumQuantity()?.doubleValue(for: distanceUnit) ?? 0
 				checkLastSegment()
-
+				
 			case HKQuantityType.quantityType(forIdentifier: .runningSpeed):
 				let speedUnit = HKUnit.meter().unitDivided(by: HKUnit.second())
 				speed = statistics.mostRecentQuantity()?.doubleValue(for: speedUnit) ?? 0
 				checkSpeed()
-
+				
 			default:
 				return
 		}
@@ -256,11 +263,11 @@ extension WorkoutManager: HKWorkoutSessionDelegate {
 #if DEBUG
 		print("Session state changed from \(fromState.rawValue) to \(toState.rawValue)")
 #endif
-
+		
 		let sessionSateChange = SessionSateChange(newState: toState, date: date)
 		asynStreamTuple.continuation.yield(sessionSateChange)
 	}
-
+	
 	nonisolated func workoutSession(_ workoutSession: HKWorkoutSession,
 									didFailWithError error: Error) {
 		Logger.shared.log("\(#function): \(error)")

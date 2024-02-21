@@ -53,7 +53,6 @@ struct SummaryView: View {
 			).foregroundStyle(.ruplRed)
 
 			Button {
-				workoutManager.saveWorkout()
 				dismiss()
 			} label: {
 				Text("Save")
