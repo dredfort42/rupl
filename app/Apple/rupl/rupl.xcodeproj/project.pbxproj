@@ -54,6 +54,7 @@
 		AF7B30382B5ABC10002FEDC9 /* WorkoutStopSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AF7B30352B5ABC10002FEDC9 /* WorkoutStopSound.aif */; };
 		AF7B30392B5ABC10002FEDC9 /* WorkoutStartSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AF7B30362B5ABC10002FEDC9 /* WorkoutStartSound.aif */; };
 		AF7B303A2B5ABC10002FEDC9 /* WorkoutStartSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AF7B30362B5ABC10002FEDC9 /* WorkoutStartSound.aif */; };
+		AF7F28682B861051005C0B6B /* TaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF7F28672B861051005C0B6B /* TaskView.swift */; };
 		AF7F52932B5D265700856DEA /* SegmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF7F52922B5D265700856DEA /* SegmentView.swift */; };
 		AF8312952B79415300F1C790 /* TimerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF8312942B79415300F1C790 /* TimerManager.swift */; };
 		AF8312962B79415400F1C790 /* TimerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF8312942B79415300F1C790 /* TimerManager.swift */; };
@@ -171,6 +172,7 @@
 		AF720D422B504326008423D6 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		AF7B30352B5ABC10002FEDC9 /* WorkoutStopSound.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = WorkoutStopSound.aif; sourceTree = "<group>"; };
 		AF7B30362B5ABC10002FEDC9 /* WorkoutStartSound.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = WorkoutStartSound.aif; sourceTree = "<group>"; };
+		AF7F28672B861051005C0B6B /* TaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskView.swift; sourceTree = "<group>"; };
 		AF7F52922B5D265700856DEA /* SegmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentView.swift; sourceTree = "<group>"; };
 		AF8312942B79415300F1C790 /* TimerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerManager.swift; sourceTree = "<group>"; };
 		AFA0ECE92B6D5E5B009AC138 /* OAuthInstructionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthInstructionView.swift; sourceTree = "<group>"; };
@@ -237,11 +239,12 @@
 			children = (
 				AF5ACAE02B46D07A0010C316 /* ContentView.swift */,
 				AF5ACB222B4732ED0010C316 /* ControlsView.swift */,
-				AF7F52922B5D265700856DEA /* SegmentView.swift */,
 				AF5ACB242B4733270010C316 /* MetricsView.swift */,
+				AFA0ECE92B6D5E5B009AC138 /* OAuthInstructionView.swift */,
+				AF7F52922B5D265700856DEA /* SegmentView.swift */,
 				AF3F35502B66ACD8007399F9 /* SettingsView.swift */,
 				AF5ACB262B4733510010C316 /* SummaryView.swift */,
-				AFA0ECE92B6D5E5B009AC138 /* OAuthInstructionView.swift */,
+				AF7F28672B861051005C0B6B /* TaskView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -724,6 +727,7 @@
 				AFA196082B5FAF62002EB704 /* CheckMetrics.swift in Sources */,
 				AF5ACB192B47107F0010C316 /* WorkoutManager.swift in Sources */,
 				AF0FA3D82B7B8B67005572CF /* TaskManager.swift in Sources */,
+				AF7F28682B861051005C0B6B /* TaskView.swift in Sources */,
 				AF8312962B79415400F1C790 /* TimerManager.swift in Sources */,
 				AF5ACADF2B46D07A0010C316 /* ruplApp.swift in Sources */,
 				AF5ACB252B4733270010C316 /* MetricsView.swift in Sources */,

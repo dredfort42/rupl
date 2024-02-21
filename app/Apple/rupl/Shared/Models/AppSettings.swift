@@ -17,6 +17,7 @@ class AppSettings {
 	static let userYearOfBirthKey = "userYearOfBirth"
 	static let criticalHeartRateKey = "criticalHeartRate"
 	static let connectedToRuplKey = "connectedToRupl"
+	static let runningTaskHeartRateKey = "runningTaskHeartRate"
 	private let clientIDKey = "clientID"
 	private let permissibleHorizontalAccuracyKey = "permissibleHorizontalAccuracy"
 	private let paceForAutoPauseKey = "paceForAutoPause"
@@ -60,6 +61,15 @@ class AppSettings {
 		}
 		set {
 			UserDefaults.standard.set(newValue, forKey: AppSettings.criticalHeartRateKey)
+		}
+	}
+
+	var runningTaskHeartRate: String {
+		get {
+			return UserDefaults.standard.string(forKey: AppSettings.runningTaskHeartRateKey) ?? ""
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: AppSettings.runningTaskHeartRateKey)
 		}
 	}
 

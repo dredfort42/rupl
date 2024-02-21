@@ -94,7 +94,7 @@ extension WorkoutManager {
 			MotionManager.shared.autoPauseState = true
 #endif
 
-			let isPaused: Bool = LocationManager.shared.autoPauseState != nil ? LocationManager.shared.autoPauseState! : MotionManager.shared.autoPauseState
+			let isPaused: Bool = LocationManager.shared.autoPauseState != nil ? (LocationManager.shared.autoPauseState! && MotionManager.shared.autoPauseState) : MotionManager.shared.autoPauseState
 
 			if self.sessionState == .running {
 				if isPaused {
@@ -115,12 +115,10 @@ extension WorkoutManager {
 //
 extension WorkoutManager {
 	func addLocationsToRoute() {
-		DispatchQueue.main.async {
-			if !LocationManager.shared.filteredLocations.isEmpty {
-				self.routeBuilder?.insertRouteData(LocationManager.shared.filteredLocations) { (success, error) in
-					if !success {
-						Logger.shared.log("Failed to add locations to the route: \(error))")
-					}
+		if !LocationManager.shared.filteredLocations.isEmpty {
+			self.routeBuilder?.insertRouteData(LocationManager.shared.filteredLocations) { (success, error) in
+				if !success {
+					Logger.shared.log("Failed to add locations to the route: \(error))")
 				}
 			}
 		}

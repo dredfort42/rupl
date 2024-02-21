@@ -16,7 +16,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 	private let paceForAutoPause: Double = AppSettings.shared.paceForAutoPause
 	private let paceForAutoResume: Double = AppSettings.shared.paceForAutoResume
 	private let locationManager = CLLocationManager()
-	private var accuracy: CLLocationAccuracy = 1000
+	private var accuracy: CLLocationAccuracy = 100
 	private var autoPauseSignalCounter: UInt8 = 0
 
 	var isAvailable: Bool = false
@@ -57,9 +57,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 	//
 	func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
 
-		accuracy = locations.max(by: { $0.horizontalAccuracy < $1.horizontalAccuracy })?.horizontalAccuracy ?? 1000
-
-		// Filter the raw data.
+		accuracy = locations.max(by: { $0.horizontalAccuracy < $1.horizontalAccuracy })?.horizontalAccuracy ?? 100
 		filteredLocations = locations.filter { (location: CLLocation) -> Bool in
 			location.horizontalAccuracy <= permissibleHorizontalAccuracy
 		}
@@ -68,13 +66,8 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 			return
 		}
 
-		// Access the speed property from the location object
 		speed = location.speed
-
-#if DEBUG
-		print("LocationManager.speed: ", speed, "LocationManager.accuracy: ", accuracy)
-#endif
-
+		
 		checkAutoPause()
 	}
 

@@ -9,25 +9,47 @@
 import Foundation
 
 class TaskManager {
-	struct PaceZone {
-		//	seconds per segment
-		var maxPace: Int = 0
-		var minPace: Int = 0
-	}
-	
-	struct HeartRateZone {
-		//	bpm
-		var maxHeartRate: Int = 0
-		var minHeartRate: Int = 0
+//	struct PaceZone {
+//		//	seconds per segment
+//		var maxPace: Int = 0
+//		var minPace: Int = 0
+//	}
+
+//	struct HeartRateZone {
+//		//	bpm
+//		var maxHeartRate: Int = 0
+//		var minHeartRate: Int = 0
+//	}
+
+	enum HeartRateZones: String, CaseIterable, Identifiable {
+		case any, pz1, pz2, pz3, pz4, pz5
+		var id: Self { self }
 	}
 
-	var intervalHeartRateZone = HeartRateZone()
-	
+	lazy var intervalHeartRateZone: (maxHeartRate: Int, minHeartRate: Int) = getHeartRateInterval(pz: AppSettings.shared.runningTaskHeartRate) {
+		didSet {
+			print(self.intervalHeartRateZone)
+		}
+	}
+
 	static let shared = TaskManager()
 
-	init() {
-		intervalHeartRateZone.maxHeartRate = AppSettings.shared.pz3FatBurning
-		intervalHeartRateZone.minHeartRate = AppSettings.shared.pz2Easy
+	func getHeartRateInterval(pz: String) -> (maxHeartRate: Int, minHeartRate: Int) {
+		switch pz {
+			case HeartRateZones.pz1.rawValue:
+				return (AppSettings.shared.pz1NotInZone, 0)
+			case HeartRateZones.pz2.rawValue:
+				return (AppSettings.shared.pz2Easy, AppSettings.shared.pz1NotInZone)
+			case HeartRateZones.pz3.rawValue:
+				return (AppSettings.shared.pz3FatBurning, AppSettings.shared.pz2Easy)
+			case HeartRateZones.pz4.rawValue:
+				return (AppSettings.shared.pz4Aerobic, AppSettings.shared.pz3FatBurning)
+			case HeartRateZones.pz5.rawValue:
+				return (AppSettings.shared.pz5Anaerobic, AppSettings.shared.pz4Aerobic)
+			default:
+				return (AppSettings.shared.criticalHeartRate, 0)
+		}
+
 	}
 
 }
