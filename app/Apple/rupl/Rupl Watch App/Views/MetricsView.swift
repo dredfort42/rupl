@@ -10,12 +10,38 @@ import SwiftUI
 import HealthKit
 
 struct MetricsView: View {
+	@AppStorage(AppSettings.isSoundNotificationOnKey) var isSoundNotificationOn = AppSettings.shared.isSoundNotificationOn
+
 	@EnvironmentObject var workoutManager: WorkoutManager
+
 	@State private var isSegmentSheetActive = false
 
 	var body: some View {
 		TimelineView(MetricsTimelineSchedule(from: workoutManager.session?.startDate ?? Date(),
 											 isPaused: workoutManager.sessionState == .paused)) { context in
+			HStack {
+				Button {
+					isSoundNotificationOn = !isSoundNotificationOn
+				} label: {
+					HStack {
+						Image(systemName: isSoundNotificationOn ? "speaker.wave.2" : "speaker.slash")
+						Text(isSoundNotificationOn ? "On" : "Off")
+							.padding(.horizontal, 2)
+							.fontWeight(.light)
+							.font(.footnote)
+					}
+					.foregroundColor(isSoundNotificationOn ? .ruplGreen : .ruplRed)
+				}
+				.controlSize(.mini)
+				.frame(width: 70)
+
+				Spacer()
+			}
+			.padding(.horizontal)
+			.padding(.bottom, -20)
+
+			Spacer()
+
 			VStack(alignment: .leading) {
 				ElapsedTimeView(elapsedTime: elapsedTime(with: context.date), showSubseconds: context.cadence == .live)
 					.foregroundColor(.ruplYellow)
@@ -40,6 +66,8 @@ struct MetricsView: View {
 			} content: {
 				SegmentView()
 			}
+
+			Spacer()
 		}
 
 	}

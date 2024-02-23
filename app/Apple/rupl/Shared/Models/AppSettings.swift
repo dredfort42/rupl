@@ -14,6 +14,7 @@ class AppSettings {
 	static let shared = AppSettings()
 
 	static let useAutoPauseKey = "useAutoPause"
+	static let isSoundNotificationOnKey = "isSoundNotificationOn"
 	static let userYearOfBirthKey = "userYearOfBirth"
 	static let criticalHeartRateKey = "criticalHeartRate"
 	static let connectedToRuplKey = "connectedToRupl"
@@ -43,6 +44,15 @@ class AppSettings {
 		}
 		set {
 			UserDefaults.standard.set(newValue, forKey: AppSettings.useAutoPauseKey)
+		}
+	}
+
+	var isSoundNotificationOn: Bool {
+		get {
+			return UserDefaults.standard.bool(forKey: AppSettings.isSoundNotificationOnKey)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: AppSettings.isSoundNotificationOnKey)
 		}
 	}
 
@@ -191,20 +201,15 @@ class AppSettings {
 
 		if paceForAutoPause == 0.0 || paceForAutoResume == 0.0 {
 			useAutoPause = true
-			paceForAutoPause = 1.85
-			paceForAutoResume = 2.25
+			isSoundNotificationOn = true
 		}
 
 		if userYearOfBirth == 0 {
 			userYearOfBirth = getCurrentYear() - 21
 		}
 
-		//		// to auto pause test
-		//		paceForAutoPause = 3.3
-		//		paceForAutoResume = 3.60
-
 		if criticalHeartRate == 0 {
-			criticalHeartRate = 200
+			criticalHeartRate = 190
 		}
 
 		pz1NotInZone = Int(maximumHeartRate * 0.6 + 0.5)
@@ -213,9 +218,15 @@ class AppSettings {
 		pz4Aerobic = Int(maximumHeartRate * 0.9 + 0.5)
 		pz5Anaerobic = Int(maximumHeartRate + 0.5)
 		permissibleHorizontalAccuracy = 16.0
+		paceForAutoPause = 1.75
+		paceForAutoResume = 1.95
 		timeForShowLastSegmentView = 20
 		soundNotificationTimeOut = 10
 		viewNotificationTimeOut = 20
+
+		//		// to auto pause test
+		//		paceForAutoPause = 3.3
+		//		paceForAutoResume = 3.60
 	}
 
 	func getCurrentYear() -> Int {

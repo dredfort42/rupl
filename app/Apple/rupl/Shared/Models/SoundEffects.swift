@@ -85,29 +85,35 @@ struct SoundEffects {
 	}
 
 	func playStartSound() {
+		if AppSettings.shared.isSoundNotificationOn {
 #if targetEnvironment(simulator)
-		print("))*(( Start sound")
+			print("))*(( Start sound")
 #else
-		startSound?.play()
+			startSound?.play()
 #endif
+		}
 		Vibration.vibrate(type: .notification)
 	}
 
 	func playStopSound() {
+		if AppSettings.shared.isSoundNotificationOn {
 #if targetEnvironment(simulator)
-		print("))*(( Stop sound")
+			print("))*(( Stop sound")
 #else
-		stopSound?.play()
+			stopSound?.play()
 #endif
+		}
 		Vibration.vibrate(type: .notification)
 	}
 
 	func playSegmentSound() {
+		if AppSettings.shared.isSoundNotificationOn {
 #if targetEnvironment(simulator)
-		print("))*(( Segment sound")
+			print("))*(( Segment sound")
 #else
-		segmentSound?.play()
+			segmentSound?.play()
 #endif
+		}
 		Vibration.vibrate(type: .info)
 	}
 
@@ -121,20 +127,24 @@ struct SoundEffects {
 	}
 
 	func playRunFasterSound() {
+		if AppSettings.shared.isSoundNotificationOn {
 #if targetEnvironment(simulator)
-		print("))*(( Run faster sound")
+			print("))*(( Run faster sound")
 #else
-		runFaster?.play()
+			runFaster?.play()
 #endif
+		}
 		Vibration.vibrate(type: .up)
 	}
 
 	func playRunSlowerSound() {
+		if AppSettings.shared.isSoundNotificationOn {
 #if targetEnvironment(simulator)
-		print("))*(( Run slower sound")
+			print("))*(( Run slower sound")
 #else
-		runSlower?.play()
+			runSlower?.play()
 #endif
+		}
 		Vibration.vibrate(type: .down)
 	}
 
