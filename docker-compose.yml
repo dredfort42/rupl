@@ -10,7 +10,7 @@ services:
     restart: unless-stopped
     network_mode: host
     volumes:
-      - ./.pv_prometheus:/opt/bitnami/prometheus/data
+      - ./persistent_volumes/prometheus:/opt/bitnami/prometheus/data
       - ./monitoring/prometheus.yml:/opt/bitnami/prometheus/conf/prometheus.yml
 
   grafana:
@@ -21,7 +21,7 @@ services:
     ports:
       - '3000:3000'
     volumes:
-      - ./.pv_grafana:/var/lib/grafana
+      - ./persistent_volumes/grafana:/var/lib/grafana
 
   node_exporter:
     image: quay.io/prometheus/node-exporter:latest
