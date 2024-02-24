@@ -34,6 +34,35 @@ services:
     volumes:
       - '/:/host:ro,rslave'
 
+  # Database
+  db:
+    image: postgres:alpine
+    hostname: db
+    container_name: db
+    restart: always
+    networks:
+      - net21
+    ports:
+      - 42424:5432
+    volumes:
+      - ./persistent_volumes/db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+
+  adminer:
+    image: adminer
+    hostname: adminer
+    container_name: adminer
+    restart: always
+    networks:
+      - net21
+    ports:
+      - 21212:8080
+    depends_on:
+      - db
+
   # Project services
   ## Auth service
   auth:

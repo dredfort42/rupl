@@ -1,10 +1,12 @@
 #global
-.pv_*
+.vscode/
 .build/
+persistent_volumes/
 local.cfg
 go.sum
 main
 *.zip
+.env
 
 # MacOS
 ## General
