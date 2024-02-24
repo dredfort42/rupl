@@ -41,7 +41,7 @@ services:
     container_name: db
     restart: always
     networks:
-      - net21
+      - rupl_net
     ports:
       - 42424:5432
     volumes:
@@ -57,7 +57,7 @@ services:
     container_name: adminer
     restart: always
     networks:
-      - net21
+      - rupl_net
     ports:
       - 21212:8080
     depends_on:
