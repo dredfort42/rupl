@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"auth/internal/api"
+	"auth/internal/db"
 	"github.com/dredfort42/tools/configreader"
 )
 
@@ -14,5 +15,6 @@ func main() {
 		os.Exit(1)
 	}
 
+	db.Start(config)
 	api.Start(config)
 }

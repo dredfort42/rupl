@@ -2,10 +2,10 @@
 .vscode/
 .build/
 persistent_volumes/
-local.cfg
 go.sum
 main
 *.zip
+*.cfg
 .env
 
 # MacOS
