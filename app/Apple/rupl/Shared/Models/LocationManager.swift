@@ -83,9 +83,10 @@ extension LocationManager {
 		DispatchQueue.main.async {
 			if self.accuracy > self.permissibleHorizontalAccuracyForAutoPause {
 				self.autoPauseState = nil
+				self.autoPauseSignalCounter = 0
 			} else {
 				if self.speed < self.paceForAutoPause {
-					if self.autoPauseSignalCounter >= 3 {
+					if self.autoPauseSignalCounter >= 2 {
 						self.autoPauseState = true
 					} else {
 						self.autoPauseSignalCounter += 1
