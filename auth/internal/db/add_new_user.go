@@ -8,8 +8,8 @@ import (
 func AddNewUser(email string, password string) {
 	query := `INSERT INTO ` + db.tableUsers + ` (
 		username, 
-		password_hash, 
 		email, 
+		password_hash, 
 		email_verified, 
 		device_uuid, 
 		access_token, 
@@ -18,8 +18,8 @@ func AddNewUser(email string, password string) {
 		updated_at
 	) VALUES (
 		NULL,
-		crypt($1, gen_salt('bf')), 
-		$2,
+		$1,
+		crypt($2, gen_salt('bf')), 
 		FALSE,
 		NULL,
 		NULL,
@@ -28,19 +28,7 @@ func AddNewUser(email string, password string) {
 		CURRENT_TIMESTAMP
 		)`
 
-	// username VARCHAR(100) NOT NULL,
-	// 				password_hash VARCHAR(255) NOT NULL,
-	// 				email VARCHAR(255) NOT NULL,
-	// 				email_verified BOOLEAN DEFAULT FALSE,
-	// 				device_uuid UUID NOT NULL,
-	// 				access_token VARCHAR(255),
-	// 				refresh_token VARCHAR(255),
-	// 				created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	// 				updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-
-	_, db.err = db.database.Exec(query, password, email)
-
-	if db.err != nil {
+	if _, db.err = db.database.Exec(query, email, password); db.err != nil {
 		logprinter.PrintError("Failed to add new user to the database", db.err)
 	} else {
 		logprinter.PrintSuccess("New user successfully aded to the database", "")
