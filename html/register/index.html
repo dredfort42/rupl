@@ -112,35 +112,27 @@
         return emailPattern.test(email);
     }
 
-    // Create user object
-    var userData = {
-        email: email,
-        password: password
-    };
-
     // User registration function
     async function registerUser(email, password) {
-        fetch('/api/v1/auth/register', {
+        // Create user object
+        var userData = {
+            email: email,
+            password: password
+        };
+
+        var response = await fetch('/api/v1/auth/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(userData)
-        })
-            .then(response => {
-                if (response.ok) {
-                    alert('Registration successful!');
-                    window.location.href = '/index.html';
-                } else {
-                    alert('Registration failed!');
-                }
-            });
+        });
 
-        // if (response.ok) {
-        //     alert('Registration successful!');
-        //     window.location.href = 'https://rupl.org';
-        // } else {
-        //     alert('Registration failed!');
-        // }
+        if (response.ok) {
+            alert('Registration successful!');
+            window.location.href = 'https://rupl.org';
+        } else {
+            alert('Registration failed!');
+        }
     }
 </script>

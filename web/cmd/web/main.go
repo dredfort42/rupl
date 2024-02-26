@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	authURL string
+	authURL      string
 	notFoundPath string = "/html/404.html"
 )
 
@@ -114,6 +114,7 @@ func proxyRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.WriteHeader(response.StatusCode)
 	w.Header().Set("Content-Type", response.Header.Get("Content-Type"))
 
 	if _, err := w.Write(body); err != nil {
