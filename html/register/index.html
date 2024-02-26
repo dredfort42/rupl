@@ -31,8 +31,9 @@
                 rupl
             </h1>
         </div>
+
         <div class="row justify-content-center">
-            <div class="col">
+            <div>
                 <p class="fw-light fs-3 text-light text-center">
                     Create your Rupl account
                 <p>
@@ -45,9 +46,10 @@
                         </label>
                         <input type="email" class="form-control bg-info border-info text-white"
                             style="--bs-bg-opacity: .1;" id="email" name="email" aria-describedby="emailHelp" required>
-                        <div id="emailHelp" class="form-text text-secondary">
-                            Rest assured, your email address is safe with us! We'll only use it for notifications and
-                            account recovery purposes, and we promise not to share it with anyone else.
+                        <div id="emailHelp" class="form-text text-secondary ">
+                            Rest assured, your email address is safe with us!<br>
+                            We'll only use it for notifications and account recovery<br>
+                            purposes, and we promise not to share it with anyone else.
                         </div>
                     </div>
                     <div class="mb-3">
@@ -110,24 +112,35 @@
         return emailPattern.test(email);
     }
 
+    // Create user object
+    var userData = {
+        email: email,
+        password: password
+    };
+
     // User registration function
     async function registerUser(email, password) {
-        var response = await fetch('/api/v1/auth/register', {
+        fetch('/api/v1/auth/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                email: email,
-                password: password
-            })
-        });
+            body: JSON.stringify(userData)
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('Registration successful!');
+                    window.location.href = '/index.html';
+                } else {
+                    alert('Registration failed!');
+                }
+            });
 
-        if (response.ok) {
-            alert('Registration successful!');
-            window.location.href = '/login';
-        } else {
-            alert('Registration failed!');
-        }
+        // if (response.ok) {
+        //     alert('Registration successful!');
+        //     window.location.href = 'https://rupl.org';
+        // } else {
+        //     alert('Registration failed!');
+        // }
     }
 </script>

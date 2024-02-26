@@ -21,13 +21,8 @@ func RegisterUser(c *gin.Context) {
 		return
 	}
 
-	// TMP
-	fmt.Println("email:", newUser.Email)
-	fmt.Println("password:", newUser.Password)
-	//
-
 	if newUser.Email == "" || newUser.Password == "" {
-		c.IndentedJSON(http.StatusBadRequest, "Missing required parameter: email or password")
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": "Missing required parameter email or password"})
 		return
 	}
 
