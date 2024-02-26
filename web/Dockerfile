@@ -1,9 +1,15 @@
-FROM golang:latest AS build
+FROM golang:latest AS env
 
-COPY ./ /app
+COPY ./go.mod /app/go.mod
+COPY ./go.sum /app/go.sum
+WORKDIR /app
+RUN go mod tidy
+
+FROM env AS build
+
+COPY . /app
 WORKDIR /app
 
-RUN go mod tidy
 RUN CGO_ENABLED=0 go build -o ./web /app/cmd/web
 RUN if [ ! -e "/app/local.cfg" ]; then \
     touch "/app/local.cfg"; \

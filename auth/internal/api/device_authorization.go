@@ -14,10 +14,12 @@ func DeviceAuthorization(c *gin.Context) {
 	var response DeviceAuthorizationResponse
 
 	clientID := c.Request.URL.Query().Get("client_id")
+	// TMP
 	fmt.Println("client_id:", clientID)
+	//
 
 	if clientID == "" || len(clientID) < 32 || len(clientID) > 36 {
-		var errorResponse DeviceAuthorizationError
+		var errorResponse ResponseError
 
 		errorResponse.Error = "invalid_request"
 		errorResponse.ErrorDescription = "Missing required parameter: client_id"

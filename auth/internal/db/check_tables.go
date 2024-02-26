@@ -33,6 +33,7 @@ func CheckUsersTable() {
 					id SERIAL PRIMARY KEY,
 					username VARCHAR(100) NOT NULL,
 					password_hash VARCHAR(255) NOT NULL,
+					email VARCHAR(255) NOT NULL,
 					device_uuid UUID NOT NULL,
 					access_token VARCHAR(255),
 					refresh_token VARCHAR(255),

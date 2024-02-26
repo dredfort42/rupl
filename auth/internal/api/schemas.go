@@ -15,8 +15,14 @@ type DeviceAuthorizationResponse struct {
 	Interval                int    `json:"interval"`
 }
 
-// DeviceAuthorizationError is a struct for JSON
-type DeviceAuthorizationError struct {
+// RegisterUserRequest is a struct for JSON
+type RegisterUserRequest struct {
+	Email string `json:"email"`
+	Password string `json:"password"`
+}
+
+// ResponseError is a struct for JSON error
+type ResponseError struct {
 	Error            string `json:"error"`
 	ErrorDescription string `json:"error_description"`
 }
