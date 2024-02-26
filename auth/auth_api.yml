@@ -26,6 +26,61 @@ servers:
   - url: "https://staging.rupl.org/api/v1"
     description: "Staging server"
 paths:
+  /auth/register:
+    post:
+      security:
+        - basic_auth: []
+      tags:
+        - User
+      summary: Register a new user
+      description: |
+        Register a new user with the rupl.org authorization service.
+      operationId: register_user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewUser"
+      responses:
+        "200":
+          description: OK
+          headers:
+            Content-Type:
+              description: |
+                The authorization server MUST include the "Content-Type: application/json" HTTP response header field.
+              schema:
+                type: string
+                example: application/json
+            Cache-Control:
+              description: |
+                The authorization server MUST include the "Cache-Control: no-store" HTTP response header field.
+              schema:
+                type: string
+                example: no-store
+          content:
+            application/json:
+              example:
+                message: "User successfully registered"
+        "400":
+          description: Bad Request
+          headers:
+            Content-Type:
+              description: |
+                The authorization server MUST include the "Content-Type: application/json" HTTP response header field.
+              schema:
+                type: string
+                example: application/json
+            Cache-Control:
+              description: |
+                The authorization server MUST include the "Cache-Control: no-store" HTTP response header field.
+              schema:
+                type: string
+                example: no-store
+          content:
+            application/json:
+              example:
+                error: "User already exists"
+
   # "/users/{username}":
   #   parameters:
   #     - name: pretty_print
@@ -257,31 +312,24 @@ components:
   #       in: header
   #       name: api_key
   schemas:
-    #     Email:
-    #       description: User email address
-    #       type: string
-    #       format: test
-    #       example: john.smith@example.com
-    #     User:
-    #       type: object
-    #       properties:
-    #         username:
-    #           description: User supplied username
-    #           type: string
-    #           minLength: 4
-    #           example: John78
-    #         firstName:
-    #           description: User first name
-    #           type: string
-    #           minLength: 1
-    #           example: John
-    #         lastName:
-    #           description: User last name
-    #           type: string
-    #           minLength: 1
-    #           example: Smith
-    #         email:
-    #           $ref: "#/components/schemas/Email"
+    Email:
+      description: |
+        User email address
+      type: string
+      format: email
+      example: john.smith@example.com
+
+    NewUser:
+      description: |
+        New user registration
+      type: object
+      properties:
+        email:
+          $ref: "#/components/schemas/Email"
+        password:
+          type: string
+          format: password
+          example: P@ssw0rd
 
     # DeviceAuthorizationRequest:
     #   type: object

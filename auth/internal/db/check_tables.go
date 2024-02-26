@@ -31,10 +31,11 @@ func CheckUsersTable() {
 			query = `
 				CREATE TABLE IF NOT EXISTS ` + db.tableUsers + ` (
 					id SERIAL PRIMARY KEY,
-					username VARCHAR(100) NOT NULL,
+					username VARCHAR(100),
 					password_hash VARCHAR(255) NOT NULL,
 					email VARCHAR(255) NOT NULL,
-					device_uuid UUID NOT NULL,
+					email_verified BOOLEAN DEFAULT FALSE,
+					device_uuid UUID,
 					access_token VARCHAR(255),
 					refresh_token VARCHAR(255),
 					created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

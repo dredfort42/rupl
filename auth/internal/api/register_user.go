@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"auth/internal/db"
 	"github.com/gin-gonic/gin"
-
 )
 
 // RegisterUser adds new user
@@ -21,16 +21,16 @@ func RegisterUser(c *gin.Context) {
 		return
 	}
 
-
 	// TMP
 	fmt.Println("email:", newUser.Email)
 	fmt.Println("password:", newUser.Password)
 	//
 
 	if newUser.Email == "" || newUser.Password == "" {
-	// 	var errorResponse RegisterUserError
 		c.IndentedJSON(http.StatusBadRequest, "Missing required parameter: email or password")
-	} else {
-		c.IndentedJSON(http.StatusOK, "OK")
+		return
 	}
+
+	db.AddNewUser(newUser.Email, newUser.Password)
+	c.IndentedJSON(http.StatusOK, gin.H{"message": "User successfully registered"})
 }
