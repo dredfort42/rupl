@@ -88,6 +88,7 @@
     // JavaScript for form validation
     document.getElementById("registerBtn").addEventListener("click", async (event) => {
         const email = document.getElementById("email").value;
+
         if (!isValidEmail(email)) {
             alert('Invalid email address!');
             event.preventDefault();
@@ -140,5 +141,6 @@
                 alert(error.message);
             });
     }
+
 
 </script>
