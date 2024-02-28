@@ -139,6 +139,23 @@ func main() {
 	certFile := "/app/fullchain.pem"
 	keyFile := "/app/privkey.pem"
 
+	redirectPortHandler := func(w http.ResponseWriter, req *http.Request) {
+		http.Redirect(w, req, "https://"+req.Host+req.URL.String(), http.StatusMovedPermanently)
+	}
+
+	// Start HTTP server on port 80
+	go func() {
+		if err := http.ListenAndServe(":80", http.HandlerFunc(redirectPortHandler)); err != nil {
+			logprinter.PrintError("Error starting HTTP server", err)
+			panic(err)
+		}
+	}()
+
+	// Start HTTPS server on port 443
+	if err := http.ListenAndServeTLS(port, certFile, keyFile, nil); err != nil {
+		logprinter.PrintError("Error starting HTTPS server", err)
+		panic(err)
+	}
+
 	logprinter.PrintSuccess("Entry point", url)
-	logprinter.PrintError("Connection error:", http.ListenAndServeTLS(port, certFile, keyFile, nil))
 }
