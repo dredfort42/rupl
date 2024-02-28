@@ -46,7 +46,7 @@
                         </label>
                         <input type="email" class="form-control bg-info border-info text-white"
                             style="--bs-bg-opacity: .1;" id="email" name="email" aria-describedby="emailHelp" required>
-                        <div id="emailHelp" class="form-text text-secondary ">
+                        <div id="emailHelp" class="form-text text-secondary">
                             Rest assured, your email address is safe with us!<br>
                             We'll only use it for notifications and account recovery<br>
                             purposes, and we promise not to share it with anyone else.
@@ -74,9 +74,18 @@
                             Please re-enter your password to confirm it.
                         </div>
                     </div>
-                    <button id="registerBtn" type="button" class="btn btn-info">
-                        Register
-                    </button>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input bg-info border-info text-white"
+                            style="--bs-bg-opacity: .1;" id="check" name="check" required>
+                        <label class="form-check-label text-light" for="check">
+                            I agree to the Rupl Terms of Service.
+                        </label>
+                    </div>
+                    <div class="row p-2">
+                        <button id="registerBtn" type="button" class="btn btn-info">
+                            Register
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
