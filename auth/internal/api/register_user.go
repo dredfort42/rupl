@@ -1,6 +1,8 @@
 package api
 
 import (
+	"fmt"
+
 	"net/http"
 
 	"auth/internal/db"
@@ -10,18 +12,33 @@ import (
 // RegisterUser adds new user
 func RegisterUser(c *gin.Context) {
 	var newUser RegisterUserRequest
+	var errorResponse ResponseError
 
 	if err := c.BindJSON(&newUser); err != nil {
-		var errorResponse ResponseError
-
 		errorResponse.Error = "invalid_request"
-		errorResponse.ErrorDescription = "Invalid JSON"
+		errorResponse.ErrorDescription = "Invalid json"
 		c.IndentedJSON(http.StatusBadRequest, errorResponse)
 		return
 	}
 
-	if newUser.Email == "" || newUser.Password == "" {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": "Missing required parameter email or password"})
+	if newUser.Email == "" {
+		errorResponse.Error = "missing_required_parameter"
+		errorResponse.ErrorDescription = "email"
+		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
+		return
+	}
+
+	if newUser.Password == "" {
+		errorResponse.Error = "missing_required_parameter"
+		errorResponse.ErrorDescription = "password"
+		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
+		return
+	}
+
+	if len(newUser.Password) < 8 {
+		errorResponse.Error = "password_error"
+		errorResponse.ErrorDescription = "Password must be at least 8 characters long"
+		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
 		return
 	}
 

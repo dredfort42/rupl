@@ -71,24 +71,10 @@
                                 </svg>
                             </span>
                         </div>
-                        <!-- <input type="password" class="form-control bg-info border-info text-white"
-                            style="--bs-bg-opacity: .1;" id="password" name="password" minlength="8"
-                            aria-describedby="passwordHelp" required> -->
                         <div id="passwordHelp" class="form-text text-secondary">
                             Password must contain at least 8 characters.
                         </div>
                     </div>
-                    <!-- <div class="mb-3">
-                        <label for="confirmPassword" class="form-label text-light">
-                            Confirm Password
-                        </label>
-                        <input type="password" class="form-control bg-info border-info text-white"
-                            style="--bs-bg-opacity: .1;" id="confirmPassword" name="confirmPassword" minlength="8"
-                            aria-describedby="confirmPasswordHelp" required>
-                        <div id="confirmPasswordHelp" class="form-text text-secondary">
-                            Please re-enter your password to confirm it.
-                        </div>
-                    </div> -->
                     <div class="mb-3 form-check">
                         <input type="checkbox" class="form-check-input bg-info border-info text-white"
                             style="--bs-bg-opacity: .1;" id="check" name="check" required>
@@ -109,7 +95,6 @@
 </body>
 
 <script>
-
     // JavaScript for toggling password visibility
     function togglePasswordVisibility() {
         const passwordInput = document.getElementById("password");
@@ -176,10 +161,13 @@
             .then(response => {
                 console.log(response);
                 if (response.ok) {
-                    // alert('User registered successfully!');
+                    console.log('Access Token:', response.accessToken);
+                    console.log('Refresh Token:', response.refreshToken);
+
                     window.location.href = '/'; // Redirect to the personal dashboard
                 } else {
                     throw new Error('An error occurred while registering the user.');
+                    // throw new Error(response.statusText););
                 }
             })
             .catch(error => {
@@ -187,6 +175,4 @@
                 alert(error.message);
             });
     }
-
-
 </script>
