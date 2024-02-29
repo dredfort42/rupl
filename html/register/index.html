@@ -48,22 +48,37 @@
                             style="--bs-bg-opacity: .1;" id="email" name="email" aria-describedby="emailHelp" required>
                         <div id="emailHelp" class="form-text text-secondary">
                             Rest assured, your email address is safe with us!<br>
-                            We'll only use it for notifications and account recovery<br>
-                            purposes, and we promise not to share it with anyone else.
+                            We'll only use it for notifications and account recovery purposes.<br>
+                            We promise not to share it with anyone else.
                         </div>
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label text-light">
                             Password
                         </label>
-                        <input type="password" class="form-control bg-info border-info text-white"
+                        <div class="input-group">
+                            <input type="password" class="form-control bg-info border-info text-white"
+                                style="--bs-bg-opacity: .1;" id="password" name="password" minlength="8"
+                                aria-describedby="passwordHelp" required>
+                            <span id="showPassword"
+                                class="input-group-text bg-info border-info text-black show-password"
+                                onclick="togglePasswordVisibility()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                                    class="bi bi-eye-fill" viewBox="0 0 16 16">
+                                    <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
+                                    <path
+                                        d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7" />
+                                </svg>
+                            </span>
+                        </div>
+                        <!-- <input type="password" class="form-control bg-info border-info text-white"
                             style="--bs-bg-opacity: .1;" id="password" name="password" minlength="8"
-                            aria-describedby="passwordHelp" required>
+                            aria-describedby="passwordHelp" required> -->
                         <div id="passwordHelp" class="form-text text-secondary">
                             Password must contain at least 8 characters.
                         </div>
                     </div>
-                    <div class="mb-3">
+                    <!-- <div class="mb-3">
                         <label for="confirmPassword" class="form-label text-light">
                             Confirm Password
                         </label>
@@ -73,7 +88,7 @@
                         <div id="confirmPasswordHelp" class="form-text text-secondary">
                             Please re-enter your password to confirm it.
                         </div>
-                    </div>
+                    </div> -->
                     <div class="mb-3 form-check">
                         <input type="checkbox" class="form-check-input bg-info border-info text-white"
                             style="--bs-bg-opacity: .1;" id="check" name="check" required>
@@ -94,20 +109,42 @@
 </body>
 
 <script>
+
+    // JavaScript for toggling password visibility
+    function togglePasswordVisibility() {
+        const passwordInput = document.getElementById("password");
+        const showPasswordBtn = document.getElementById("showPassword");
+
+        if (passwordInput.value !== "" && passwordInput.type === "password") {
+            passwordInput.type = "text";
+            showPasswordBtn.innerHTML = "";
+            showPasswordBtn.insertAdjacentHTML("beforeend", `
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-eye-slash-fill" viewBox="0 0 16 16">
+                    <path d="m10.79 12.912-1.614-1.615a3.5 3.5 0 0 1-4.474-4.474l-2.06-2.06C.938 6.278 0 8 0 8s3 5.5 8 5.5a7 7 0 0 0 2.79-.588M5.21 3.088A7 7 0 0 1 8 2.5c5 0 8 5.5 8 5.5s-.939 1.721-2.641 3.238l-2.062-2.062a3.5 3.5 0 0 0-4.474-4.474z"/>
+                    <path d="M5.525 7.646a2.5 2.5 0 0 0 2.829 2.829zm4.95.708-2.829-2.83a2.5 2.5 0 0 1 2.829 2.829zm3.171 6-12-12 .708-.708 12 12z"/>
+                </svg>
+                `
+            )
+        } else {
+            passwordInput.type = "password";
+            showPasswordBtn.innerHTML = "";
+            showPasswordBtn.insertAdjacentHTML("beforeend", `
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+                    <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
+                    <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7" />
+                </svg>
+                `
+            )
+        }
+    }
+
     // JavaScript for form validation
     document.getElementById("registerBtn").addEventListener("click", async (event) => {
         const email = document.getElementById("email").value;
+        const password = document.getElementById('password').value;
 
         if (!isValidEmail(email)) {
             alert('Invalid email address!');
-            event.preventDefault();
-            return;
-        }
-
-        const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
-        if (password !== confirmPassword) {
-            alert('Passwords do not match!');
             event.preventDefault();
             return;
         }
