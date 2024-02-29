@@ -1,11 +1,10 @@
 package api
 
 import (
-	"fmt"
-
 	"net/http"
 
 	"auth/internal/db"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -42,6 +41,26 @@ func RegisterUser(c *gin.Context) {
 		return
 	}
 
-	db.AddNewUser(newUser.Email, newUser.Password)
-	c.IndentedJSON(http.StatusOK, gin.H{"message": "User successfully registered"})
+	accessToken, err := GenerateAccessToken(newUser.Email)
+	if err != nil {
+		errorResponse.Error = "token_error"
+		errorResponse.ErrorDescription = "Failed to generate access token"
+		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
+		return
+	}
+
+	refreshToken, err := GenerateRefreshToken(newUser.Email)
+	if err != nil {
+		errorResponse.Error = "token_error"
+		errorResponse.ErrorDescription = "Failed to generate refresh token"
+		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
+		return
+	}
+
+	db.AddNewUser(newUser.Email, newUser.Password, accessToken, refreshToken)
+	c.IndentedJSON(http.StatusOK, gin.H{
+		"email":         newUser.Email,
+		"access_token":  accessToken,
+		"refresh_token": refreshToken,
+	})
 }

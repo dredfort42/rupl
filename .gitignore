@@ -2,11 +2,12 @@
 .vscode/
 .build/
 persistent_volumes/
-go.sum
 main
 *.zip
 *.cfg
 .env
+*.crt
+*.key
 
 # MacOS
 ## General

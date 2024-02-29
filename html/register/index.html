@@ -161,10 +161,11 @@
             .then(response => {
                 console.log(response);
                 if (response.ok) {
+                    console.log('Email:', response.email);
                     console.log('Access Token:', response.accessToken);
                     console.log('Refresh Token:', response.refreshToken);
 
-                    window.location.href = '/'; // Redirect to the personal dashboard
+                    window.location.href = '/dashboard'; // Redirect to the personal dashboard
                 } else {
                     throw new Error('An error occurred while registering the user.');
                     // throw new Error(response.statusText););

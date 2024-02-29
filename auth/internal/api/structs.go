@@ -17,8 +17,15 @@ type DeviceAuthorizationResponse struct {
 
 // RegisterUserRequest is a struct for JSON
 type RegisterUserRequest struct {
-	Email string `json:"email"`
+	Email    string `json:"email"`
 	Password string `json:"password"`
+}
+
+// RegisterUserResponse is a struct for JSON
+type RegisterUserResponse struct {
+	Email        string `json:"email"`
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
 }
 
 // ResponseError is a struct for JSON error
