@@ -21,77 +21,91 @@
 </head>
 
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Rubik+Doodle+Triangles&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Anta&display=swap');
 </style>
 
 <body class="bg-black">
-    <div class="container">
-        <div class="text-center">
-            <h1 class="my-5 text-info" style="font-family: 'Rubik Doodle Triangles', system-ui; font-size: 100px;">
-                rupl
-            </h1>
-        </div>
-
-        <div class="row justify-content-center">
-            <div>
-                <p class="fw-light fs-3 text-light text-center">
-                    Create your Rupl account
-                <p>
+    <main>
+        <nav class="navbar navbar-expand-md navbar-dark bg-black">
+            <div class="container-fluid">
+                <a class="navbar-brand text-info"
+                    style="font-family: 'Anta', sans-serif; font-size: 50px; margin-top: -8px; padding: 0; line-height: 48px;"
+                    href="/">
+                    rupl
+                </a>
+                <div class="d-grid gap-1 d-flex">
+                    <a class="btn btn-outline-info mx-1" role="button" href="/login">Log in</a>
+                    <a class="btn btn-info mx-1" role="button" href="/register">Sign up</a>
+                </div>
             </div>
-            <div class="col-md-auto border border-1 border-info rounded-4">
-                <form id="registrationForm" class="p-4">
-                    <div class="mb-3">
-                        <label for="email" class="form-label text-light">
-                            Email address
-                        </label>
-                        <input type="email" class="form-control bg-info border-info text-white"
-                            style="--bs-bg-opacity: .1;" id="email" name="email" aria-describedby="emailHelp" required>
-                        <div id="emailHelp" class="form-text text-secondary">
-                            Rest assured, your email address is safe with us!<br>
-                            We'll only use it for notifications and account recovery purposes.<br>
-                            We promise not to share it with anyone else.
+        </nav>
+        <div class="container my-5">
+            <div class="row justify-content-center">
+                <div>
+                    <p class="fw-light fs-3 text-light text-center">
+                        Create your Rupl account
+                    <p>
+                </div>
+                <div class="col-md-auto border border-1 border-info rounded-4">
+                    <form id="registrationForm" class="p-4">
+                        <div class="mb-3">
+                            <label for="email" class="form-label text-light">
+                                Email address
+                            </label>
+                            <input type="email" class="form-control bg-info border-info text-white"
+                                style="--bs-bg-opacity: .1;" id="email" name="email" aria-describedby="emailHelp"
+                                required>
+                            <div id="emailHelp" class="form-text text-secondary">
+                                Rest assured, your email address is safe with us!<br>
+                                We'll only use it for notifications and account recovery purposes.<br>
+                                We promise not to share it with anyone else.
+                            </div>
                         </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label text-light">
-                            Password
-                        </label>
-                        <div class="input-group">
-                            <input type="password" class="form-control bg-info border-info text-white"
-                                style="--bs-bg-opacity: .1;" id="password" name="password" minlength="8"
-                                aria-describedby="passwordHelp" required>
-                            <span id="showPassword"
-                                class="input-group-text bg-info border-info text-black show-password"
-                                onclick="togglePasswordVisibility()">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
-                                    class="bi bi-eye-fill" viewBox="0 0 16 16">
-                                    <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
-                                    <path
-                                        d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7" />
-                                </svg>
-                            </span>
+                        <div class="mb-3">
+                            <label for="password" class="form-label text-light">
+                                Password
+                            </label>
+                            <div class="input-group">
+                                <input type="password" class="form-control bg-info border-info text-white"
+                                    style="--bs-bg-opacity: .1;" id="password" name="password" minlength="8"
+                                    aria-describedby="passwordHelp" required>
+                                <span id="showPassword"
+                                    class="input-group-text bg-info border-info text-black show-password"
+                                    onclick="togglePasswordVisibility()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                                        class="bi bi-eye-fill" viewBox="0 0 16 16">
+                                        <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
+                                        <path
+                                            d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7" />
+                                    </svg>
+                                </span>
+                            </div>
+                            <div id="passwordHelp" class="form-text text-secondary">
+                                Password must contain at least 8 characters.
+                            </div>
                         </div>
-                        <div id="passwordHelp" class="form-text text-secondary">
-                            Password must contain at least 8 characters.
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input bg-info border-info text-white"
+                                style="--bs-bg-opacity: .1;" id="check" name="check" required>
+                            <label class="form-check-label text-light" for="check">
+                                I agree to the Rupl
+                            </label>
+                            <a class="link-info" href="/ligal/terms">Terms of Service</a>
+                            <label class="form-check-label text-light" for="check">
+                                and
+                            </label>
+                            <a class="link-info" href="/ligal/privacy">Privacy Policy</a>
                         </div>
-                    </div>
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input bg-info border-info text-white"
-                            style="--bs-bg-opacity: .1;" id="check" name="check" required>
-                        <label class="form-check-label text-light" for="check">
-                            I agree to the Rupl Terms of Service.
-                        </label>
-                    </div>
-                    <div class="row p-2">
-                        <button id="registerBtn" type="button" class="btn btn-info">
-                            Register
-                        </button>
-                    </div>
-                </form>
+                        <div class="row p-2">
+                            <button id="registerBtn" type="button" class="btn btn-info">
+                                Register
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
-
+    </main>
 </body>
 
 <script>

@@ -11,7 +11,7 @@ info:
     name: GNU General Public License v3.0
     url: "https://www.gnu.org/licenses/gpl-3.0.html"
   x-logo:
-    url: "https://rupl.org/rupl-logo.png"
+    url: "https://rupl.org/images/rupl-logo.png"
   description: |
     This is a description of the rupl.org authorization service API and its operations.
 tags:
