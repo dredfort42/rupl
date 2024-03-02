@@ -46,18 +46,14 @@
                         Sign in to your Rupl account
                     <p>
                 </div>
-                <div class="col-md-auto border border-1 border-info rounded-4">
+                <div class="col-xl-4 col-lg-5 col-md-7 border border-1 border-info rounded-4">
                     <form class="p-4">
                         <div class="mb-3">
                             <label for="email" class="form-label text-light">
                                 Email address
                             </label>
                             <input type="email" class="form-control bg-info border-info text-white"
-                                style="--bs-bg-opacity: .1;" id="email" name="email" aria-describedby="emailHelp"
-                                required>
-                            <div id="emailHelp" class="form-text text-secondary text-wrap">
-                                We'll never share your email with anyone else.
-                            </div>
+                                style="--bs-bg-opacity: .1;" id="email" name="email" required>
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label text-light">
@@ -86,7 +82,7 @@
                             </label>
                         </div>
                         <div class="row px-2 mb-3">
-                            <button type="submit" class="col mx-1 btn btn-info">
+                            <button type="submit" id="logInBtn" class="col mx-1 btn btn-info">
                                 Log in
                             </button>
                             <a href="/register" class="col mx-1 btn btn-outline-info" role="button">
@@ -132,4 +128,73 @@
             )
         }
     }
+
+    // JavaScript for form validation
+    document.getElementById("logInBtn").addEventListener("click", async (event) => {
+        const email = document.getElementById("email").value;
+        const password = document.getElementById('password').value;
+
+        if (!isValidEmail(email) || password.length < 8) {
+            alert('Invalid email or password!');
+            event.preventDefault();
+            return;
+        }
+
+        console.log(email, password);
+        logInUser(email, password);
+    });
+
+    // Email validation function
+    function isValidEmail(email) {
+        var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailPattern.test(email);
+    }
+
+    async function logInUser(email, password) {
+        var userData = {
+            email: email.replace(/ /g, ''),
+            password: password.replace(/ /g, '')
+        };
+
+        try {
+            const response = await fetch('/api/v1/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData)
+            });
+
+            if (!response.ok) {
+                throw new Error('An error occurred while log in the user.');
+            }
+
+            const data = await response.json();
+            console.log(data.message);
+            console.log(data.email);
+            console.log(data.access_token);
+            console.log(data.refresh_token);
+
+            // Store tokens in cookies
+            setCookie('access_token', data.access_token, 1); // Expires in 1 hour
+            if (!document.getElementById("check").checked) {
+                setCookie('refresh_token', data.refresh_token, 1 * 24); // Expires in 1 day
+            } else {
+                setCookie('refresh_token', data.refresh_token, 7 * 24); // Expires in 7 days
+            }
+
+
+            window.location.href = '/dashboard'; // Redirect to the personal dashboard
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
+    }
+
+    function setCookie(name, value, daysToExpire) {
+        const expirationDate = new Date();
+        expirationDate.setTime(expirationDate.getTime() + (daysToExpire * 24 * 60 * 60 * 1000));
+        const expires = 'expires=' + expirationDate.toUTCString();
+        document.cookie = name + '=' + value + ';' + expires + ';path=/';
+    }
+
 </script>

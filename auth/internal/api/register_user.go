@@ -41,7 +41,7 @@ func RegisterUser(c *gin.Context) {
 		return
 	}
 
-	accessToken, err := GenerateAccessToken(newUser.Email)
+	accessToken, err := GenerateToken(newUser.Email, 15)
 	if err != nil {
 		errorResponse.Error = "token_error"
 		errorResponse.ErrorDescription = "Failed to generate access token"
@@ -49,7 +49,7 @@ func RegisterUser(c *gin.Context) {
 		return
 	}
 
-	refreshToken, err := GenerateRefreshToken(newUser.Email)
+	refreshToken, err := GenerateToken(newUser.Email, 24*60)
 	if err != nil {
 		errorResponse.Error = "token_error"
 		errorResponse.ErrorDescription = "Failed to generate refresh token"
@@ -58,9 +58,13 @@ func RegisterUser(c *gin.Context) {
 	}
 
 	db.AddNewUser(newUser.Email, newUser.Password, accessToken, refreshToken)
-	c.IndentedJSON(http.StatusOK, gin.H{
-		"email":         newUser.Email,
-		"access_token":  accessToken,
-		"refresh_token": refreshToken,
-	})
+
+	response := RegisterUserResponse{
+		Message:      "User registered successfully",
+		Email:        newUser.Email,
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+	}
+
+	c.JSON(http.StatusOK, response)
 }

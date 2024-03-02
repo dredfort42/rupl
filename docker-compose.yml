@@ -74,7 +74,6 @@ services:
       - rupl_net
     volumes:
       - ./global.cfg:/app/global.cfg
-      # - ./auth/data:/app/data
 
       ## Web interface
   web:
@@ -90,8 +89,8 @@ services:
     volumes:
       - ./global.cfg:/app/global.cfg
       - ./html:/html
-      - /etc/letsencrypt/live/rupl.org/fullchain.pem:/app/fullchain.pem
-      - /etc/letsencrypt/live/rupl.org/privkey.pem:/app/privkey.pem
+      - ./server.crt:/app/fullchain.pem
+      - ./server.key:/app/privkey.pem
 
 networks:
   rupl_net:

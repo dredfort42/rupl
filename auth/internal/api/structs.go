@@ -23,6 +23,7 @@ type RegisterUserRequest struct {
 
 // RegisterUserResponse is a struct for JSON
 type RegisterUserResponse struct {
+	Message      string `json:"message"`
 	Email        string `json:"email"`
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
