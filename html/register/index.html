@@ -196,7 +196,7 @@
 
             // Store tokens in cookies
             setCookie('access_token', data.access_token, 15); // Expires in 15 minutes
-            setCookie('refresh_token', data.refresh_token, 7 * 24); // Expires in 7 days
+            setCookie('refresh_token', data.refresh_token, 24 * 60); // Expires in 1 days
 
             window.location.href = '/dashboard'; // Redirect to the personal dashboard
         } catch (error) {

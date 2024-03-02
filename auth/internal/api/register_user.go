@@ -10,7 +10,7 @@ import (
 
 // RegisterUser adds new user
 func RegisterUser(c *gin.Context) {
-	var newUser RegisterUserRequest
+	var newUser UserCredentials
 	var errorResponse ResponseError
 
 	if err := c.BindJSON(&newUser); err != nil {
@@ -59,7 +59,7 @@ func RegisterUser(c *gin.Context) {
 
 	db.AddNewUser(newUser.Email, newUser.Password, accessToken, refreshToken)
 
-	response := RegisterUserResponse{
+	response := AuthUserResponse{
 		Message:      "User registered successfully",
 		Email:        newUser.Email,
 		AccessToken:  accessToken,

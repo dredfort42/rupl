@@ -43,7 +43,7 @@
             <div class="row justify-content-center">
                 <div>
                     <p class="fw-light fs-3 text-light text-center">
-                        Sign in to your Rupl account
+                        Log in to your Rupl account
                     <p>
                 </div>
                 <div class="col-xl-4 col-lg-5 col-md-7 border border-1 border-info rounded-4">
@@ -82,7 +82,7 @@
                             </label>
                         </div>
                         <div class="row px-2 mb-3">
-                            <button type="submit" id="logInBtn" class="col mx-1 btn btn-info">
+                            <button type="button" id="logInBtn" class="col mx-1 btn btn-info">
                                 Log in
                             </button>
                             <a href="/register" class="col mx-1 btn btn-outline-info" role="button">
@@ -133,6 +133,7 @@
     document.getElementById("logInBtn").addEventListener("click", async (event) => {
         const email = document.getElementById("email").value;
         const password = document.getElementById('password').value;
+        const remember = document.getElementById('check').checked;
 
         if (!isValidEmail(email) || password.length < 8) {
             alert('Invalid email or password!');
@@ -140,8 +141,8 @@
             return;
         }
 
-        console.log(email, password);
-        logInUser(email, password);
+        console.log(email, password, remember);
+        logInUser(email, password, remember);
     });
 
     // Email validation function
@@ -150,10 +151,11 @@
         return emailPattern.test(email);
     }
 
-    async function logInUser(email, password) {
-        var userData = {
+    async function logInUser(email, password, remember) {
+        var loginData = {
             email: email.replace(/ /g, ''),
-            password: password.replace(/ /g, '')
+            password: password.replace(/ /g, ''),
+            remember: remember
         };
 
         try {
@@ -162,7 +164,7 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(userData)
+                body: JSON.stringify(loginData)
             });
 
             if (!response.ok) {
@@ -175,13 +177,13 @@
             console.log(data.access_token);
             console.log(data.refresh_token);
 
-            // Store tokens in cookies
-            setCookie('access_token', data.access_token, 1); // Expires in 1 hour
-            if (!document.getElementById("check").checked) {
-                setCookie('refresh_token', data.refresh_token, 1 * 24); // Expires in 1 day
-            } else {
-                setCookie('refresh_token', data.refresh_token, 7 * 24); // Expires in 7 days
-            }
+            // // Store tokens in cookies
+            // setCookie('access_token', data.access_token, 1); // Expires in 1 hour
+            // if (!document.getElementById("check").checked) {
+            //     setCookie('refresh_token', data.refresh_token, 1 * 24); // Expires in 1 day
+            // } else {
+            //     setCookie('refresh_token', data.refresh_token, 7 * 24); // Expires in 7 days
+            // }
 
 
             window.location.href = '/dashboard'; // Redirect to the personal dashboard
@@ -190,11 +192,11 @@
         }
     }
 
-    function setCookie(name, value, daysToExpire) {
-        const expirationDate = new Date();
-        expirationDate.setTime(expirationDate.getTime() + (daysToExpire * 24 * 60 * 60 * 1000));
-        const expires = 'expires=' + expirationDate.toUTCString();
-        document.cookie = name + '=' + value + ';' + expires + ';path=/';
-    }
+    // function setCookie(name, value, daysToExpire) {
+    //     const expirationDate = new Date();
+    //     expirationDate.setTime(expirationDate.getTime() + (daysToExpire * 24 * 60 * 60 * 1000));
+    //     const expires = 'expires=' + expirationDate.toUTCString();
+    //     document.cookie = name + '=' + value + ';' + expires + ';path=/';
+    // }
 
 </script>

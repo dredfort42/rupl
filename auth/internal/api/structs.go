@@ -15,14 +15,20 @@ type DeviceAuthorizationResponse struct {
 	Interval                int    `json:"interval"`
 }
 
-// RegisterUserRequest is a struct for JSON
-type RegisterUserRequest struct {
+// UserCredentials is a struct for JSON
+type UserCredentials struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
-// RegisterUserResponse is a struct for JSON
-type RegisterUserResponse struct {
+// LoginUserRequest is a struct for JSON
+type LoginUserRequest struct {
+	UserCredentials
+	Remember bool `json:"remember"`
+}
+
+// AuthUserResponse is a struct for JSON
+type AuthUserResponse struct {
 	Message      string `json:"message"`
 	Email        string `json:"email"`
 	AccessToken  string `json:"access_token"`
