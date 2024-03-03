@@ -130,7 +130,9 @@
     }
 
     // JavaScript for form validation
-    document.getElementById("logInBtn").addEventListener("click", async (event) => {
+    document.getElementById("logInBtn").addEventListener("click", async function (event) {
+        event.preventDefault();
+
         const email = document.getElementById("email").value;
         const password = document.getElementById('password').value;
         const remember = document.getElementById('check').checked;
@@ -145,7 +147,6 @@
         logInUser(email, password, remember);
     });
 
-    // Email validation function
     function isValidEmail(email) {
         var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailPattern.test(email);
@@ -172,31 +173,19 @@
             }
 
             const data = await response.json();
-            console.log(data.message);
-            console.log(data.email);
-            console.log(data.access_token);
-            console.log(data.refresh_token);
-
-            // // Store tokens in cookies
-            // setCookie('access_token', data.access_token, 1); // Expires in 1 hour
-            // if (!document.getElementById("check").checked) {
-            //     setCookie('refresh_token', data.refresh_token, 1 * 24); // Expires in 1 day
-            // } else {
-            //     setCookie('refresh_token', data.refresh_token, 7 * 24); // Expires in 7 days
-            // }
-
+            if (data.message) {
+                console.log(data.message);
+            }
+            if (data.invalid_request) {
+                console.log(data.invalid_request);
+            }
+            if (data.token_error) {
+                console.log(data.token_error);
+            }
 
             window.location.href = '/dashboard'; // Redirect to the personal dashboard
         } catch (error) {
             console.error('Error:', error.message);
         }
     }
-
-    // function setCookie(name, value, daysToExpire) {
-    //     const expirationDate = new Date();
-    //     expirationDate.setTime(expirationDate.getTime() + (daysToExpire * 24 * 60 * 60 * 1000));
-    //     const expires = 'expires=' + expirationDate.toUTCString();
-    //     document.cookie = name + '=' + value + ';' + expires + ';path=/';
-    // }
-
 </script>

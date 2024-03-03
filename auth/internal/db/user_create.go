@@ -7,7 +7,6 @@ import (
 // AddNewUser adds a new user to the database
 func AddNewUser(email string, password string, accessToken string, refreshToken string) {
 	query := `INSERT INTO ` + db.tableUsers + ` (
-		username, 
 		email, 
 		password_hash, 
 		email_verified, 
@@ -17,7 +16,6 @@ func AddNewUser(email string, password string, accessToken string, refreshToken 
 		created_at, 
 		updated_at
 	) VALUES (
-		NULL,
 		$1,
 		crypt($2, gen_salt('bf')), 
 		FALSE,

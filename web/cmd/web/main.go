@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/http/httputil"
+	"net/url"
 	"os"
 	"strings"
 
@@ -16,7 +18,7 @@ var (
 	notFoundPath string = "/html/404.html"
 )
 
-func notFound(w http.ResponseWriter, r *http.Request) {
+func notFound(w http.ResponseWriter, _ *http.Request) {
 	notFoundFile, err := os.Open(notFoundPath)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -79,50 +81,55 @@ func sendData(w http.ResponseWriter, r *http.Request) {
 }
 
 func proxyRequest(w http.ResponseWriter, r *http.Request) {
-	// log.Printf("[in]\n\t method: %s\n\t scheme %s\n\t host: %s\n\t path: %s\n\t body: %s\n\t requestURI: %s\n\t rawQuery: %s\n\t fragment: %s\n\t opaque: %s\n\t user: %s\n\t rawPath: %s\n\t forceQuery: %t\n\t rawFragment: %s\n",
-	// 	r.Method, r.URL.Scheme, r.URL.Host, r.URL.Path, r.Body, r.RequestURI, r.URL.RawQuery, r.URL.Fragment, r.URL.Opaque, r.URL.User, r.URL.RawPath, r.URL.ForceQuery, r.URL.RawFragment)
-
-	request, err := http.NewRequest(r.Method, r.URL.Path, nil)
-	if err != nil {
-		logprinter.PrintError("Error creating request", err)
-		return
-	}
-
-	request.URL = r.URL
-	request.Body = r.Body
-	request.Header = r.Header
-	request.URL.Scheme = "http"
+	var targetURL *url.URL
+	var err error
 
 	if strings.HasPrefix(r.URL.Path, "/api/v1/auth/") {
-		request.URL.Host = authURL
+		targetURL, err = url.Parse("http://" + authURL)
+		if err != nil {
+			logprinter.PrintError("Error parsing target URL:", err)
+			return
+		}
 	}
 
-	client := &http.Client{}
+	proxy := httputil.NewSingleHostReverseProxy(targetURL)
+	r.Host = targetURL.Host
 
-	response, err := client.Do(request)
-	if err != nil {
-		logprinter.PrintError("Error sending request: %v\n", err)
-		return
-	}
-	defer response.Body.Close()
-
-	logprinter.PrintInfo(response.Status, request.URL.Host+request.URL.Path+request.URL.RawQuery)
-
-	body, err := io.ReadAll(response.Body)
-	if err != nil {
-		logprinter.PrintError("Error reading response body: %v\n", err)
-		return
+	if DEBUG {
+		logprinter.PrintInfo("Request Information:", "")
+		htmlLog(r)
 	}
 
-	w.WriteHeader(response.StatusCode)
-	w.Header().Set("Content-Type", response.Header.Get("Content-Type"))
+	proxy.ServeHTTP(w, r)
 
-	if _, err := w.Write(body); err != nil {
-		panic(err)
+	if DEBUG {
+		logprinter.PrintInfo("Response Information:", "")
+		htmlLog(r)
 	}
 }
 
+func htmlLog(r *http.Request) {
+	logprinter.PrintInfo("Method:", r.Method)
+	logprinter.PrintInfo("URL:", r.URL.String())
+	logprinter.PrintInfo("Proto:", r.Proto)
+	logprinter.PrintInfo("Host:", r.Host)
+	logprinter.PrintInfo("Headers:", "")
+	for key, value := range r.Header {
+		headerValue := strings.Join(value, ", ")
+		logprinter.PrintInfo("\t"+key+":", headerValue)
+	}
+	logprinter.PrintInfo("------------------------------------------", "")
+}
+
+var DEBUG bool = false
+
 func main() {
+
+	if debug := os.Getenv("DEBUG"); debug != "" {
+		logprinter.PrintWarning("Debugging is enabled.", "")
+		DEBUG = true
+	}
+
 	config, err := configreader.GetConfig()
 
 	if err != nil {

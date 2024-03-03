@@ -75,7 +75,7 @@ services:
     volumes:
       - ./global.cfg:/app/global.cfg
 
-      ## Web interface
+  ## Web interface
   web:
     build: ./web
     hostname: web
@@ -91,6 +91,8 @@ services:
       - ./html:/html
       - ./server.crt:/app/fullchain.pem
       - ./server.key:/app/privkey.pem
+    # environment:
+      # - DEBUG=true
 
 networks:
   rupl_net:
