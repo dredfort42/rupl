@@ -66,6 +66,7 @@ func LogInUser(c *gin.Context) {
 		return
 	}
 
+	db.UpdateUserRememberMe(logIn.Email, logIn.Remember)
 	db.UpdateUserTokens(logIn.Email, accessToken, refreshToken)
 
 	c.JSON(http.StatusOK, gin.H{"message": "User logged in successfully"})

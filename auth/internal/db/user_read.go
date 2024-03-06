@@ -25,6 +25,16 @@ func CheckUserPassword(email string, password string) bool {
 	return true
 }
 
+// CheckUserRememberMe checks if a user's remember_me status is true
+func CheckUserRememberMe(email string) bool {
+	query := `SELECT email FROM ` + db.tableUsers + ` WHERE email = $1 AND remember_me = TRUE`
+	if err := db.database.QueryRow(query, email).Scan(&email); err != nil {
+		logprinter.PrintError("Failed to check if user remember_me status is true", err)
+		return false
+	}
+	return true
+}
+
 // CheckUserEmailVerified checks if a user's email_verified status is true
 func CheckUserEmailVerified(email string) bool {
 	query := `SELECT email FROM ` + db.tableUsers + ` WHERE email = $1 AND email_verified = TRUE`

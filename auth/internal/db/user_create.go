@@ -9,7 +9,8 @@ func AddNewUser(email string, password string, accessToken string, refreshToken 
 	query := `INSERT INTO ` + db.tableUsers + ` (
 		email, 
 		password_hash, 
-		email_verified, 
+		email_verified,
+		remember_me,
 		device_uuid, 
 		access_token, 
 		refresh_token, 
@@ -17,7 +18,8 @@ func AddNewUser(email string, password string, accessToken string, refreshToken 
 		updated_at
 	) VALUES (
 		$1,
-		crypt($2, gen_salt('bf')), 
+		crypt($2, gen_salt('bf')),
+		FALSE, 
 		FALSE,
 		NULL,
 		$3,

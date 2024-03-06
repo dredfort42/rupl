@@ -32,6 +32,20 @@ func UpdateUserPassword(email string, password string) {
 	}
 }
 
+// UpdateUserRememberMe updates a user's remember_me status in the database
+func UpdateUserRememberMe(email string, rememberMe bool) {
+	query := `UPDATE ` + db.tableUsers + ` SET 
+		remember_me = $2, 
+		updated_at = CURRENT_TIMESTAMP 
+		WHERE email = $1`
+
+	if _, db.err = db.database.Exec(query, email, rememberMe); db.err != nil {
+		logprinter.PrintError("Failed to update user remember_me status in the database", db.err)
+	} else {
+		logprinter.PrintSuccess("User remember_me status successfully updated in the database", "")
+	}
+}
+
 // UpdateUserTokens updates a user's tokens in the database
 func UpdateUserTokens(email string, accessToken string, refreshToken string) {
 	query := `UPDATE ` + db.tableUsers + ` SET 

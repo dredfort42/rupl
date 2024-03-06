@@ -15,7 +15,6 @@ func VerifyUser(c *gin.Context) {
 	var errorResponse ResponseError
 	var err error
 
-	// Get token from cookie or header
 	if accessToken, err = c.Cookie("access_token"); err != nil {
 		errorResponse.Error = "token_error"
 		errorResponse.ErrorDescription = "Missing access token"
@@ -26,6 +25,19 @@ func VerifyUser(c *gin.Context) {
 	if email, err = ParseToken(accessToken); err != nil {
 		errorResponse.Error = "token_error"
 		errorResponse.ErrorDescription = "Failed to parse access token"
+		c.IndentedJSON(http.StatusUnauthorized, errorResponse)
+		return
+	}
+
+	tokenHasExpired, err := TokenHasExpired(accessToken)
+	if err != nil {
+		errorResponse.Error = "token_error"
+		errorResponse.ErrorDescription = "Failed to check access token"
+		c.IndentedJSON(http.StatusUnauthorized, errorResponse)
+		return
+	} else if tokenHasExpired {
+		errorResponse.Error = "token_error"
+		errorResponse.ErrorDescription = "Access token has expired"
 		c.IndentedJSON(http.StatusUnauthorized, errorResponse)
 		return
 	}

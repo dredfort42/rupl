@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -50,17 +51,37 @@ func ParseToken(tokenString string) (string, error) {
 	return userID, nil
 }
 
-// // RefreshToken refreshes token
-// func RefreshToken(tokenString string) (string, error) {
-// 	userID, err := ParseToken(tokenString)
-// 	if err != nil {
-// 		return "", err
-// 	}
+// TokenHasExpired checks if token has expired
+func TokenHasExpired(tokenString string) (bool, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return []byte("secret"), nil
+	})
+	if err != nil {
+		return false, err
+	}
 
-// 	accessToken, err := GenerateToken(userID, 60)
-// 	if err != nil {
-// 		return "", err
-// 	}
+	claims := token.Claims.(jwt.MapClaims)
+	exp := claims["exp"].(float64)
+	if time.Now().Unix() > int64(exp) {
+		return true, nil
+	}
 
-// 	return accessToken, nil
-// }
+	return false, nil
+}
+
+// RefreshTokens with new access and refresh tokens
+func RefreshTokens(refreshToken string, accessTokenMinitesToExpire int, refreshTokenMinitesToExpire int) (string, string, error) {
+	userID, err := ParseToken(refreshToken)
+	if err != nil {
+		return "", "", err
+	}
+
+	tokenHasExpired, err := TokenHasExpired(refreshToken)
+	if err != nil {
+		return "", "", err
+	} else if tokenHasExpired {
+		return "", "", errors.New("Refresh token has expired")
+	}
+
+	return GetAccessAndRefreshTokens(userID, accessTokenMinitesToExpire, refreshTokenMinitesToExpire)
+}

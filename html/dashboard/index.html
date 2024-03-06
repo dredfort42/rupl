@@ -81,15 +81,16 @@
     })
       .then(response => {
         if (response.ok) {
-          console.log('User is authenticated.');
+          // console.log('User is authenticated.');
           document.getElementsByClassName('background-image')[0].style.backgroundImage = "url('/images/start_your_way.jpg')";
           document.getElementById('header').innerText = 'Yes!';
           document.getElementById('status').innerText = 'You are already logged in!';
         } else {
-          console.log('User is not authenticated.');
+          // console.log('User is not authenticated.');
           document.getElementsByClassName('background-image')[0].style.backgroundImage = "url('/images/404.jpg')";
           document.getElementById('header').innerText = 'Oops!';
           document.getElementById('status').innerText = "You've problems with access token.";
+          refreshTokens();
         }
       })
       .catch(error => {
@@ -97,7 +98,26 @@
       });
   }
 
+  // Refresh tokens
+  function refreshTokens() {
+    fetch('/api/v1/auth/refresh', {
+      method: 'GET',
+      credentials: 'include' // Send cookies along with the request
+    })
+      .then(response => {
+        if (response.ok) {
+          console.log('Tokens refreshed successfully.');
+          window.location.href = '/dashboard';
+        } else {
+          console.log('Failed to refresh tokens.');
+          window.location.href = '/login';
+        }
+      })
+  }
+
+  // Check authentication status
   getAuthStatus();
+
 </script>
 
 </html>
