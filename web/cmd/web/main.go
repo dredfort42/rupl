@@ -96,25 +96,35 @@ func proxyRequest(w http.ResponseWriter, r *http.Request) {
 	r.Host = targetURL.Host
 
 	if DEBUG {
-		logprinter.PrintInfo("Request Information:", "")
-		htmlLog(r)
+		logRequest(r)
 	}
 
 	proxy.ServeHTTP(w, r)
 
 	if DEBUG {
-		logprinter.PrintInfo("Response Information:", "")
-		htmlLog(r)
+		logResponse(w)
 	}
+
 }
 
-func htmlLog(r *http.Request) {
+func logRequest(r *http.Request) {
+	logprinter.PrintInfo("Request Information:", "")
 	logprinter.PrintInfo("Method:", r.Method)
 	logprinter.PrintInfo("URL:", r.URL.String())
 	logprinter.PrintInfo("Proto:", r.Proto)
 	logprinter.PrintInfo("Host:", r.Host)
 	logprinter.PrintInfo("Headers:", "")
 	for key, value := range r.Header {
+		headerValue := strings.Join(value, ", ")
+		logprinter.PrintInfo("\t"+key+":", headerValue)
+	}
+	logprinter.PrintInfo("------------------------------------------", "")
+}
+
+func logResponse(w http.ResponseWriter) {
+	logprinter.PrintInfo("Response Information:", "")
+	logprinter.PrintInfo("Headers:", "")
+	for key, value := range w.Header() {
 		headerValue := strings.Join(value, ", ")
 		logprinter.PrintInfo("\t"+key+":", headerValue)
 	}

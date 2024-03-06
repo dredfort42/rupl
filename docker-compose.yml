@@ -91,8 +91,8 @@ services:
       - ./html:/html
       - ./server.crt:/app/fullchain.pem
       - ./server.key:/app/privkey.pem
-    # environment:
-      # - DEBUG=true
+    environment:
+      - DEBUG=true
 
 networks:
   rupl_net:

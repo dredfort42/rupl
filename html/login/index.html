@@ -47,7 +47,7 @@
                     <p>
                 </div>
                 <div class="col-xl-4 col-lg-5 col-md-7 border border-1 border-info rounded-4">
-                    <form class="p-4">
+                    <form class="p-4" id="login">
                         <div class="mb-3">
                             <label for="email" class="form-label text-light">
                                 Email address
@@ -139,7 +139,7 @@
 
         if (!isValidEmail(email) || password.length < 8) {
             alert('Invalid email or password!');
-            event.preventDefault();
+            document.getElementById("login").reset();
             return;
         }
 
@@ -168,24 +168,23 @@
                 body: JSON.stringify(loginData)
             });
 
-            if (!response.ok) {
-                throw new Error('An error occurred while log in the user.');
-            }
-
             const data = await response.json();
             if (data.message) {
                 console.log(data.message);
             }
-            if (data.invalid_request) {
-                console.log(data.invalid_request);
-            }
-            if (data.token_error) {
-                console.log(data.token_error);
+
+            if (!response.ok) {
+                throw new Error("An error occurred while log in the user.");
             }
 
             window.location.href = '/dashboard'; // Redirect to the personal dashboard
         } catch (error) {
+            alert('Invalid email or password!');
+            document.getElementById("login").reset();
             console.error('Error:', error.message);
         }
     }
 </script>
+
+</html>
+```

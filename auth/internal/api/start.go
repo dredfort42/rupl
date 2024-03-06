@@ -24,6 +24,7 @@ func Start(configMap configreader.ConfigMap) {
 	// router.POST("/api/v1/auth/refresh_token", RefreshToken)
 	router.POST("/api/v1/auth/logout", LogOutUser)
 
+	router.GET("/api/v1/auth/verify", VerifyUser)
 	// router.GET("/cameras", GetAllEntries)
 	// router.GET("/cameras/:uuid", GetEntryByUUID)
 	// router.POST("/cameras/update", UpdateEntry)
