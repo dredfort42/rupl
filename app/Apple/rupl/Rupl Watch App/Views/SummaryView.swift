@@ -14,6 +14,8 @@ struct SummaryView: View {
 	@EnvironmentObject var workoutManager: WorkoutManager
 	@Environment(\.dismiss) var dismiss
 
+	@State var timer: Timer?
+
 	var body: some View {
 		ScrollView {
 			summaryListView()
@@ -21,6 +23,11 @@ struct SummaryView: View {
 		}
 		.navigationTitle("Summary")
 		.navigationBarTitleDisplayMode(.inline)
+		.onAppear() {
+			timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(AppSettings.shared.viewNotificationTimeOut * 3), repeats: false) { _ in
+				dismiss()
+			}
+		}
 	}
 
 	@ViewBuilder
@@ -28,7 +35,7 @@ struct SummaryView: View {
 		let totalWorkoutTime: TimeInterval = (workoutManager.session?.endDate ?? Date()).timeIntervalSince(workoutManager.session?.startDate ?? Date())
 		let runDuration: TimeInterval = workoutManager.builder?.elapsedTime(at: workoutManager.session?.endDate ?? Date()) ?? 0
 		let distance: Double = workoutManager.distance
-		let averageSpeedMetersPerSecond: Double = totalWorkoutTime > 0 ? distance / totalWorkoutTime : 0
+		let averageSpeedMetersPerSecond: Double = runDuration > 0 ? distance / runDuration : 0
 		let averageHeartRate: Int = workoutManager.summaryHeartRateCount > 0 ? Int(Double(workoutManager.summaryHeartRateSum / UInt64(workoutManager.summaryHeartRateCount)) + 0.5) : 0
 
 		VStack(alignment: .leading) {
