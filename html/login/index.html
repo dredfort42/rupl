@@ -47,7 +47,7 @@
                     <p>
                 </div>
                 <div class="col-xl-4 col-lg-5 col-md-7 border border-1 border-info rounded-4">
-                    <form class="p-4">
+                    <form class="p-4" id="login">
                         <div class="mb-3">
                             <label for="email" class="form-label text-light">
                                 Email address
@@ -130,14 +130,16 @@
     }
 
     // JavaScript for form validation
-    document.getElementById("logInBtn").addEventListener("click", async (event) => {
+    document.getElementById("logInBtn").addEventListener("click", async function (event) {
+        event.preventDefault();
+
         const email = document.getElementById("email").value;
         const password = document.getElementById('password').value;
         const remember = document.getElementById('check').checked;
 
         if (!isValidEmail(email) || password.length < 8) {
             alert('Invalid email or password!');
-            event.preventDefault();
+            document.getElementById("login").reset();
             return;
         }
 
@@ -145,7 +147,6 @@
         logInUser(email, password, remember);
     });
 
-    // Email validation function
     function isValidEmail(email) {
         var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailPattern.test(email);
@@ -167,36 +168,23 @@
                 body: JSON.stringify(loginData)
             });
 
-            if (!response.ok) {
-                throw new Error('An error occurred while log in the user.');
+            const data = await response.json();
+            if (data.message) {
+                console.log(data.message);
             }
 
-            const data = await response.json();
-            console.log(data.message);
-            console.log(data.email);
-            console.log(data.access_token);
-            console.log(data.refresh_token);
-
-            // // Store tokens in cookies
-            // setCookie('access_token', data.access_token, 1); // Expires in 1 hour
-            // if (!document.getElementById("check").checked) {
-            //     setCookie('refresh_token', data.refresh_token, 1 * 24); // Expires in 1 day
-            // } else {
-            //     setCookie('refresh_token', data.refresh_token, 7 * 24); // Expires in 7 days
-            // }
-
+            if (!response.ok) {
+                throw new Error("An error occurred while log in the user.");
+            }
 
             window.location.href = '/dashboard'; // Redirect to the personal dashboard
         } catch (error) {
+            alert('Invalid email or password!');
+            document.getElementById("login").reset();
             console.error('Error:', error.message);
         }
     }
-
-    // function setCookie(name, value, daysToExpire) {
-    //     const expirationDate = new Date();
-    //     expirationDate.setTime(expirationDate.getTime() + (daysToExpire * 24 * 60 * 60 * 1000));
-    //     const expires = 'expires=' + expirationDate.toUTCString();
-    //     document.cookie = name + '=' + value + ';' + expires + ';path=/';
-    // }
-
 </script>
+
+</html>
+```

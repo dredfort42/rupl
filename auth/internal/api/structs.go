@@ -1,10 +1,5 @@
 package api
 
-// // DeviceAuthorizationRequest is a struct for JSON
-// type DeviceAuthorizationRequest struct {
-// 	ClientID string `json:"client_id"`
-// }
-
 // DeviceAuthorizationResponse is a struct for JSON
 type DeviceAuthorizationResponse struct {
 	DeviceCode              string `json:"device_code"`
@@ -25,14 +20,6 @@ type UserCredentials struct {
 type LoginUserRequest struct {
 	UserCredentials
 	Remember bool `json:"remember"`
-}
-
-// AuthUserResponse is a struct for JSON
-type AuthUserResponse struct {
-	Message      string `json:"message"`
-	Email        string `json:"email"`
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
 }
 
 // ResponseError is a struct for JSON error

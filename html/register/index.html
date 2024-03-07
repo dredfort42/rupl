@@ -56,7 +56,7 @@
                                 style="--bs-bg-opacity: .1;" id="email" name="email" aria-describedby="emailHelp"
                                 required>
                             <div id="emailHelp" class="form-text text-secondary">
-                                Rest assured, your email address is safe with us!<br>
+                                Rest assured, your email address is safe with us!
                                 We promise not to share it with anyone else.
                             </div>
                         </div>
@@ -96,7 +96,7 @@
                             <a class="link-info" href="/ligal/privacy">Privacy Policy</a>
                         </div>
                         <div class="row p-2">
-                            <button id="signUpBtn" type="button" class="btn btn-info">
+                            <button id="signUpBtn" type="submit" class="btn btn-info">
                                 Sign up
                             </button>
                         </div>
@@ -137,7 +137,9 @@
     }
 
     // JavaScript for form validation
-    document.getElementById("signUpBtn").addEventListener("click", async (event) => {
+    document.getElementById("signUpBtn").addEventListener("click", async function (event) {
+        event.preventDefault();
+
         const email = document.getElementById("email").value;
         const password = document.getElementById('password').value;
 
@@ -158,12 +160,9 @@
             event.preventDefault();
             return;
         }
-
-        console.log(email, password);
         registerUser(email, password);
     });
 
-    // Email validation function
     function isValidEmail(email) {
         var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailPattern.test(email);
@@ -189,26 +188,25 @@
             }
 
             const data = await response.json();
-            console.log(data.message);
-            console.log(data.email);
-            console.log(data.access_token);
-            console.log(data.refresh_token);
-
-            // Store tokens in cookies
-            setCookie('access_token', data.access_token, 15); // Expires in 15 minutes
-            setCookie('refresh_token', data.refresh_token, 24 * 60); // Expires in 1 days
+            if (data.message) {
+                console.log(data.message);
+            }
+            if (data.invalid_request) {
+                console.log(data.invalid_request);
+            }
+            if (data.missing_required_parameter) {
+                console.log(data.missing_required_parameter);
+            }
+            if (data.password_error) {
+                console.log(data.password_error);
+            }
+            if (data.token_error) {
+                console.log(data.token_error);
+            }
 
             window.location.href = '/dashboard'; // Redirect to the personal dashboard
         } catch (error) {
             console.error('Error:', error.message);
         }
     }
-
-    function setCookie(name, value, minutesToExpire) {
-        const expirationDate = new Date();
-        expirationDate.setTime(expirationDate.getTime() + (minutesToExpire * 60 * 1000));
-        const expires = 'expires=' + expirationDate.toUTCString();
-        document.cookie = name + '=' + value + ';' + expires + ';path=/';
-    }
-
 </script>

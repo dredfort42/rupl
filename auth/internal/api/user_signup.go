@@ -12,8 +12,11 @@ import (
 func RegisterUser(c *gin.Context) {
 	var newUser UserCredentials
 	var errorResponse ResponseError
+	var accessToken string
+	var refreshToken string
+	var err error
 
-	if err := c.BindJSON(&newUser); err != nil {
+	if err = c.BindJSON(&newUser); err != nil {
 		errorResponse.Error = "invalid_request"
 		errorResponse.ErrorDescription = "Invalid json"
 		c.IndentedJSON(http.StatusBadRequest, errorResponse)
@@ -41,30 +44,24 @@ func RegisterUser(c *gin.Context) {
 		return
 	}
 
-	accessToken, err := GenerateToken(newUser.Email, 15)
-	if err != nil {
-		errorResponse.Error = "token_error"
-		errorResponse.ErrorDescription = "Failed to generate access token"
+	if db.CheckUserExists(newUser.Email) {
+		errorResponse.Error = "invalid_request"
+		errorResponse.ErrorDescription = "User with this email already exists"
 		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
 		return
 	}
 
-	refreshToken, err := GenerateToken(newUser.Email, 24*60)
-	if err != nil {
+	if accessToken, refreshToken, err = GetAccessAndRefreshTokens(newUser.Email, 15, 24*60); err != nil {
 		errorResponse.Error = "token_error"
-		errorResponse.ErrorDescription = "Failed to generate refresh token"
+		errorResponse.ErrorDescription = "Failed to generate tokens"
 		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
 		return
 	}
+
+	c.SetCookie("access_token", accessToken, 15*60, "/", "", false, true)
+	c.SetCookie("refresh_token", refreshToken, 24*60*60, "/", "", false, true)
 
 	db.AddNewUser(newUser.Email, newUser.Password, accessToken, refreshToken)
 
-	response := AuthUserResponse{
-		Message:      "User registered successfully",
-		Email:        newUser.Email,
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-	}
-
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusOK, gin.H{"message": "User successfully registered"})
 }

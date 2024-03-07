@@ -47,7 +47,7 @@ class MotionManager {
 #if DEBUG
 				print("motionActivityManager.activity: ", activity)
 #endif
-				if activity.running {
+				if activity.running || activity.walking {
 					self.autoPauseState = false
 				} else {
 					self.autoPauseState = true
