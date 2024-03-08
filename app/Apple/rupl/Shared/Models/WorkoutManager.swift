@@ -33,9 +33,23 @@ class WorkoutManager: NSObject, ObservableObject {
 	
 	//	HealthKit data types to read
 	let typesToRead: Set = [
-		HKQuantityType(.heartRate), //	count/s, Discrete (Temporally Weighted)
-		HKQuantityType(.distanceWalkingRunning), //	m, Cumulative
-		HKQuantityType(.runningSpeed), //	m/s, Discrete (Arithmetic)
+		HKQuantityType(.heartRate),
+		HKQuantityType(.distanceWalkingRunning),
+		HKQuantityType(.runningSpeed),
+		HKQuantityType(.activeEnergyBurned),
+		HKQuantityType(.bodyMass),
+		HKQuantityType(.bodyFatPercentage),
+		HKQuantityType(.bodyMassIndex),
+		HKQuantityType(.bodyTemperature),
+		HKQuantityType(.height),
+		HKQuantityType(.oxygenSaturation),
+		HKQuantityType(.runningPower),
+		HKQuantityType(.runningGroundContactTime),
+		HKQuantityType(.runningStrideLength),
+		HKQuantityType(.runningVerticalOscillation),
+		HKQuantityType(.stepCount),
+		HKQuantityType(.vo2Max),
+		HKQuantityType(.flightsClimbed)
 	]
 	
 	//	Environment
@@ -214,15 +228,18 @@ extension WorkoutManager{
 				if let finishedWorkout = try await builder?.finishWorkout() {
 					try await routeBuilder?.finishRoute(with: finishedWorkout, metadata: nil)
 				}
+
+				// Change state after route saving is complete
+				self.sessionState = .notStarted
 			} catch {
 				Logger.shared.log("Failed to end workout: \(error)")
 			}
 		}
 #endif
 		
-		DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-			self.sessionState = .notStarted
-		}
+//		DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+//			self.sessionState = .notStarted
+//		}
 	}
 }
 

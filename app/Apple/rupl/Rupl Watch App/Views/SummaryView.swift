@@ -24,7 +24,7 @@ struct SummaryView: View {
 		.navigationTitle("Summary")
 		.navigationBarTitleDisplayMode(.inline)
 		.onAppear() {
-			timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(AppSettings.shared.viewNotificationTimeOut * 3), repeats: false) { _ in
+			timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(AppSettings.shared.viewNotificationTimeOut / 3), repeats: false) { _ in
 				dismiss()
 			}
 		}
