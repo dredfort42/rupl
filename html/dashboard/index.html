@@ -23,51 +23,41 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Anta&display=swap');
 
-  /* Custom CSS for setting background image */
   .background-image {
     background-image: url('/images/404.jpg');
     background-size: cover;
     background-position: center;
     height: 100vh;
-    /* Adjust height as needed */
   }
 
-  /* Dark blur mask */
   .background-image::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 100vh;
     background-color: rgba(0, 0, 0, 0.75);
-    /* Adjust opacity as needed */
     backdrop-filter: blur(5px);
-    /* Adjust blur radius as needed */
   }
 
-  /* Content styling */
   .content {
-    position: relative;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     z-index: 1;
     color: white;
-    /* Adjust text color as needed */
     text-align: center;
-    padding-top: 25vh;
-    /* Adjust padding-top as needed */
   }
 </style>
 
-<body class="background-image">
+<body class="background-image bg-black">
   <div class="container content">
     <div class="text-center">
-      <h1 class="my-5 text-info" id="header" style="font-family: 'Anta', sans-serif; font-size: 160px;">
-        Oops!
-      </h1>
+      <h1 class="my-5 text-info" id="header" style="font-family: 'Anta', sans-serif; font-size: 160px;">rupl</h1>
       <p class="mt-5 fw-medium fs-2 text-white" id="status"></p>
-      <!-- <p class="fw-light fs-6 text-light">
-        <a href="/login" class="text-info">Let's get log in!</a>
-      </p> -->
+      <p class="fw-light fs-6 text-light" id="login"></p>
     </div>
   </div>
 </body>
@@ -85,16 +75,36 @@
           document.getElementsByClassName('background-image')[0].style.backgroundImage = "url('/images/start_your_way.jpg')";
           document.getElementById('header').innerText = 'Yes!';
           document.getElementById('status').innerText = 'You are already logged in!';
+          document.getElementById('login').innerHTML = '<a href="#" class="text-info" onclick="logout()">Logout</a>';
         } else {
           // console.log('User is not authenticated.');
-          document.getElementsByClassName('background-image')[0].style.backgroundImage = "url('/images/404.jpg')";
-          document.getElementById('header').innerText = 'Oops!';
-          document.getElementById('status').innerText = "You've problems with access token.";
           refreshTokens();
         }
       })
       .catch(error => {
         console.error('Error checking authentication status:', error);
+      });
+  }
+
+  // Check profile
+  function getProfile() {
+    fetch('/api/v1/profile', {
+      method: 'GET',
+      credentials: 'include' // Send cookies along with the request
+    })
+      .then(response => {
+        if (response.ok) {
+          console.log('Profile fetched successfully.');
+          return response.json();
+        } else {
+          console.log('Failed to fetch profile.');
+        }
+      })
+      .then(data => {
+        console.log('Profile:', data);
+      })
+      .catch(error => {
+        console.error('Error fetching profile:', error);
       });
   }
 
@@ -107,16 +117,37 @@
       .then(response => {
         if (response.ok) {
           console.log('Tokens refreshed successfully.');
-          window.location.href = '/dashboard';
+          // window.location.href = '/dashboard';
         } else {
           console.log('Failed to refresh tokens.');
+          document.getElementsByClassName('background-image')[0].style.backgroundImage = "url('/images/404.jpg')";
+          document.getElementById('header').innerText = 'Oops!';
+          document.getElementById('status').innerText = "You've problems with access token.";
+          document.getElementById('login').innerHTML = '<a href="/login" class="text-info">Let\'s get back on track with rupl!</a>';
+        }
+      })
+  }
+
+  // Logout user
+  function logout() {
+    fetch('/api/v1/auth/logout', {
+      method: 'GET',
+      credentials: 'include' // Send cookies along with the request
+    })
+      .then(response => {
+        if (response.ok) {
+          console.log('User logged out successfully.');
           window.location.href = '/login';
+        } else {
+          console.log('Failed to log out user.');
         }
       })
   }
 
   // Check authentication status
-  getAuthStatus();
+  document.addEventListener('DOMContentLoaded', function () {
+    getAuthStatus();
+  });
 
 </script>
 

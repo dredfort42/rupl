@@ -22,24 +22,33 @@
 
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Anta&display=swap');
+
+    .content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1;
+        color: white;
+    }
 </style>
 
 <body class="bg-black">
-    <main>
-        <nav class="navbar navbar-expand-md navbar-dark bg-black">
-            <div class="container-fluid">
-                <a class="navbar-brand text-info"
-                    style="font-family: 'Anta', sans-serif; font-size: 50px; margin-top: -8px; padding: 0; line-height: 48px;"
-                    href="/">
-                    rupl
-                </a>
-                <div class="d-grid gap-1 d-flex">
-                    <a class="btn btn-outline-info mx-1" role="button" href="/login">Log in</a>
-                    <a class="btn btn-info mx-1" role="button" href="/register">Sign up</a>
-                </div>
+    <nav class="navbar navbar-expand-md navbar-dark bg-black">
+        <div class="container-fluid">
+            <a class="navbar-brand text-info"
+                style="font-family: 'Anta', sans-serif; font-size: 50px; margin-top: -8px; padding: 0; line-height: 48px;"
+                href="/">
+                rupl
+            </a>
+            <div class="d-grid gap-1 d-flex">
+                <a class="btn btn-outline-info mx-1" role="button" href="/login">Log in</a>
+                <a class="btn btn-info mx-1" role="button" href="/register">Sign up</a>
             </div>
-        </nav>
-        <div class="container my-5">
+        </div>
+    </nav>
+    <main>
+        <div class="container content">
             <div class="row justify-content-center">
                 <div>
                     <p class="fw-light fs-3 text-light text-center">
@@ -187,4 +196,3 @@
 </script>
 
 </html>
-```
