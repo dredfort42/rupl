@@ -23,6 +23,24 @@
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Anta&display=swap');
 
+    .background-image {
+        background-image: url('/images/home_run.jpg');
+        background-size: cover;
+        background-position: center;
+        height: 100vh;
+    }
+
+    .background-image::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(5px);
+    }
+
     .content {
         position: absolute;
         top: 50%;
@@ -34,9 +52,8 @@
     }
 </style>
 
-<body class="bg-black">
-
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-black">
+<body class="background-image bg-black">
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top">
         <div class="container-fluid justify-content-end">
             <div class="d-grid gap-1 d-flex">
                 <a class="btn btn-outline-info mx-1" role="button" href="/login">Log in</a>
