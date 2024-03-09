@@ -93,4 +93,43 @@
     </main>
 </body>
 
+<script>
+    // Check if the user is already authenticated
+    function getAuthStatus() {
+        fetch('/api/v1/auth/verify', {
+            method: 'GET',
+            credentials: 'include' // Send cookies along with the request
+        })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = '/dashboard';
+                } else {
+                    refreshTokens();
+                }
+            })
+            .catch(error => {
+                console.error('Error checking authentication status:', error);
+            });
+    }
+
+    // Refresh tokens
+    function refreshTokens() {
+        fetch('/api/v1/auth/refresh', {
+            method: 'GET',
+            credentials: 'include'
+        })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = '/dashboard';
+                }
+            })
+    }
+
+    // Check authentication status
+    document.addEventListener('DOMContentLoaded', function () {
+        getAuthStatus();
+    });
+
+</script>
+
 </html>

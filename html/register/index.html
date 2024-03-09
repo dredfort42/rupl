@@ -137,6 +137,42 @@
 </body>
 
 <script>
+    // Check if the user is already authenticated
+    function getAuthStatus() {
+        fetch('/api/v1/auth/verify', {
+            method: 'GET',
+            credentials: 'include' // Send cookies along with the request
+        })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = '/dashboard';
+                } else {
+                    refreshTokens();
+                }
+            })
+            .catch(error => {
+                console.error('Error checking authentication status:', error);
+            });
+    }
+
+    // Refresh tokens
+    function refreshTokens() {
+        fetch('/api/v1/auth/refresh', {
+            method: 'GET',
+            credentials: 'include'
+        })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = '/dashboard';
+                }
+            })
+    }
+
+    // Check authentication status
+    document.addEventListener('DOMContentLoaded', function () {
+        getAuthStatus();
+    });
+
     // JavaScript for toggling password visibility
     function togglePasswordVisibility() {
         const passwordInput = document.getElementById("password");
@@ -172,7 +208,7 @@
         const email = document.getElementById("email").value;
         const password = document.getElementById('password').value;
 
-        if (!isValidEmail(email)) {
+        if (!isEmailValid(email)) {
             alert('Invalid email address!');
             event.preventDefault();
             return;
@@ -192,7 +228,7 @@
         registerUser(email, password);
     });
 
-    function isValidEmail(email) {
+    function isEmailValid(email) {
         var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailPattern.test(email);
     }
@@ -233,7 +269,7 @@
                 console.log(data.token_error);
             }
 
-            window.location.href = '/dashboard'; // Redirect to the personal dashboard
+            window.location.href = '/dashboard';
         } catch (error) {
             console.error('Error:', error.message);
         }

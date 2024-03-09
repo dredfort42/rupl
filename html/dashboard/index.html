@@ -23,7 +23,7 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Anta&display=swap');
 
-  .background-image {
+  /* .background-image {
     background-image: url('/images/404.jpg');
     background-size: cover;
     background-position: center;
@@ -49,17 +49,32 @@
     z-index: 1;
     color: white;
     text-align: center;
-  }
+  } */
 </style>
 
 <body class="background-image bg-black">
-  <div class="container content">
-    <div class="text-center">
-      <h1 class="my-5 text-info" id="header" style="font-family: 'Anta', sans-serif; font-size: 160px;">rupl</h1>
-      <p class="mt-5 fw-medium fs-2 text-white" id="status"></p>
-      <p class="fw-light fs-6 text-light" id="login"></p>
+  <nav class="navbar navbar-expand-md navbar-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand text-info"
+        style="font-family: 'Anta', sans-serif; font-size: 50px; margin-top: -8px; padding: 0; line-height: 48px;"
+        href="/">
+        rupl
+      </a>
+      <div class="d-grid gap-1 d-flex">
+        <a href="#" class="btn btn-outline-info mx-1" role="button" onclick="logout()">Log out</a>'
+      </div>
     </div>
-  </div>
+  </nav>
+  <main>
+    <div class="container bg-info">
+
+      <!--   <div class="text-center">
+        <h1 class="my-5 text-info" id="header" style="font-family: 'Anta', sans-serif; font-size: 160px;">rupl</h1>
+        <p class="mt-5 fw-medium fs-2 text-white" id="status"></p>
+        <p class="fw-light fs-6 text-light" id="login"></p>
+      </div> -->
+    </div>
+  </main>
 </body>
 
 <script>
@@ -72,10 +87,7 @@
       .then(response => {
         if (response.ok) {
           // console.log('User is authenticated.');
-          document.getElementsByClassName('background-image')[0].style.backgroundImage = "url('/images/start_your_way.jpg')";
-          document.getElementById('header').innerText = 'Yes!';
-          document.getElementById('status').innerText = 'You are already logged in!';
-          document.getElementById('login').innerHTML = '<a href="#" class="text-info" onclick="logout()">Logout</a>';
+          getProfile();
         } else {
           // console.log('User is not authenticated.');
           refreshTokens();
@@ -90,7 +102,7 @@
   function getProfile() {
     fetch('/api/v1/profile', {
       method: 'GET',
-      credentials: 'include' // Send cookies along with the request
+      credentials: 'include'
     })
       .then(response => {
         if (response.ok) {
@@ -117,13 +129,9 @@
       .then(response => {
         if (response.ok) {
           console.log('Tokens refreshed successfully.');
-          // window.location.href = '/dashboard';
+          window.location.href = '/dashboard';
         } else {
-          console.log('Failed to refresh tokens.');
-          document.getElementsByClassName('background-image')[0].style.backgroundImage = "url('/images/404.jpg')";
-          document.getElementById('header').innerText = 'Oops!';
-          document.getElementById('status').innerText = "You've problems with access token.";
-          document.getElementById('login').innerHTML = '<a href="/login" class="text-info">Let\'s get back on track with rupl!</a>';
+          window.location.href = '/login';
         }
       })
   }
