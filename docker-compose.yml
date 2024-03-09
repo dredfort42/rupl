@@ -75,6 +75,17 @@ services:
     volumes:
       - ./global.cfg:/app/global.cfg
 
+  ## Profile management service
+  profile_manager:
+    build: ./profile_manager
+    hostname: profile_manager
+    container_name: profile_manager
+    restart: always
+    networks:
+      - rupl_net
+    volumes:
+      - ./global.cfg:/app/global.cfg
+
   ## Web interface
   web:
     build: ./web
