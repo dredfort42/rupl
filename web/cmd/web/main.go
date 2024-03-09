@@ -15,6 +15,7 @@ import (
 
 var (
 	authURL      string
+	profileURL   string
 	notFoundPath string = "/html/404.html"
 )
 
@@ -90,6 +91,15 @@ func proxyRequest(w http.ResponseWriter, r *http.Request) {
 			logprinter.PrintError("Error parsing target URL:", err)
 			return
 		}
+	} else if strings.HasPrefix(r.URL.Path, "/api/v1/profile") {
+		targetURL, err = url.Parse("http://" + profileURL)
+		if err != nil {
+			logprinter.PrintError("Error parsing target URL:", err)
+			return
+		}
+	} else {
+		notFound(w, r)
+		return
 	}
 
 	proxy := httputil.NewSingleHostReverseProxy(targetURL)
@@ -147,9 +157,10 @@ func main() {
 	}
 
 	authURL = fmt.Sprintf("%s:%s", config["auth.host"], config["auth.port"])
+	profileURL = fmt.Sprintf("%s:%s", config["profile.host"], config["profile.port"])
 
 	http.HandleFunc("/", sendData)
-	http.HandleFunc("/api/v1/auth/", proxyRequest)
+	http.HandleFunc("/api/v1/", proxyRequest)
 
 	port := fmt.Sprintf(":%s", config["entrypoint.port.ssl"])
 	url := fmt.Sprintf("%s://%s%s", config["entrypoint.protocol.ssl"], config["entrypoint.address"], port)

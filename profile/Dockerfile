@@ -10,14 +10,14 @@ FROM env AS build
 COPY . /app
 WORKDIR /app
 
-RUN CGO_ENABLED=0 go build -o ./profile_manager /app/cmd/profile_manager
+RUN CGO_ENABLED=0 go build -o ./profile /app/cmd/profile
 RUN if [ ! -e "/app/local.cfg" ]; then \
     touch "/app/local.cfg"; \
     fi
 
 FROM scratch
-COPY --from=build /app/profile_manager /app/profile_manager
+COPY --from=build /app/profile /app/profile
 COPY --from=build /app/local.cfg /app/local.cfg
 
 EXPOSE 4848
-CMD ["/app/profile_manager"]
+CMD ["/app/profile"]
