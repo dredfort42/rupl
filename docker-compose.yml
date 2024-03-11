@@ -44,8 +44,8 @@ services:
       - rupl_net
     ports:
       - 42424:5432
-    # volumes:
-    #   - ./persistent_volumes/db:/var/lib/postgresql/data
+    volumes:
+      - ./persistent_volumes/db:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -75,6 +75,17 @@ services:
     volumes:
       - ./global.cfg:/app/global.cfg
 
+  ## Profile management service
+  profile:
+    build: ./profile
+    hostname: profile
+    container_name: profile
+    restart: always
+    networks:
+      - rupl_net
+    volumes:
+      - ./global.cfg:/app/global.cfg
+
   ## Web interface
   web:
     build: ./web
@@ -86,13 +97,16 @@ services:
     ports:
       - 443:443
       - 80:80
+    depends_on:
+      - auth
+      - profile
     volumes:
       - ./global.cfg:/app/global.cfg
       - ./html:/html
       - ./server.crt:/app/fullchain.pem
       - ./server.key:/app/privkey.pem
-    environment:
-      - DEBUG=true
+    # environment:
+    #   - DEBUG=true
 
 networks:
   rupl_net:

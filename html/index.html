@@ -22,11 +22,38 @@
 
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Anta&display=swap');
+
+    .background-image {
+        background-image: url('/images/home_run.jpg');
+        background-size: cover;
+        background-position: center;
+        height: 100vh;
+    }
+
+    .background-image::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(5px);
+    }
+
+    .content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1;
+        color: white;
+        text-align: center;
+    }
 </style>
 
-<body class="bg-black">
-
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-black">
+<body class="background-image bg-black">
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top">
         <div class="container-fluid justify-content-end">
             <div class="d-grid gap-1 d-flex">
                 <a class="btn btn-outline-info mx-1" role="button" href="/login">Log in</a>
@@ -36,19 +63,19 @@
     </nav>
 
     <main>
-        <div class="container">
-            <div class="mt-5 text-center">
+        <div class="container content">
+            <div class="text-center">
                 <h1 class="py-5 text-info" style="font-family: 'Anta', sans-serif; font-size: 160px;">
                     rupl
                 </h1>
-                <p class="mt-5 fw-medium fs-2 text-white">
+                <p class="mt-3 fw-medium fs-2 text-white">
                     Your personal running coach
                 </p>
                 <p class="fw-light fs-5 text-light">
                     Track your runs, get insights and improve your performance
                 </p>
             </div>
-            <div class="mt-5 pt-5 text-center text-dark">
+            <div class="mt-5 text-center text-dark">
                 <div>
                     <svg width="32" height="32" viewBox="0 0 16 16" style="fill:#6c757d;">
                         <path
@@ -65,3 +92,44 @@
         </div>
     </main>
 </body>
+
+<script>
+    // Check if the user is already authenticated
+    function getAuthStatus() {
+        fetch('/api/v1/auth/verify', {
+            method: 'GET',
+            credentials: 'include' // Send cookies along with the request
+        })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = '/dashboard';
+                } else {
+                    refreshTokens();
+                }
+            })
+            .catch(error => {
+                console.error('Error checking authentication status:', error);
+            });
+    }
+
+    // Refresh tokens
+    function refreshTokens() {
+        fetch('/api/v1/auth/refresh', {
+            method: 'GET',
+            credentials: 'include'
+        })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = '/dashboard';
+                }
+            })
+    }
+
+    // Check authentication status
+    document.addEventListener('DOMContentLoaded', function () {
+        getAuthStatus();
+    });
+
+</script>
+
+</html>

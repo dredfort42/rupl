@@ -23,6 +23,8 @@ class AppSettings {
 	private let permissibleHorizontalAccuracyKey = "permissibleHorizontalAccuracy"
 	private let paceForAutoPauseKey = "paceForAutoPause"
 	private let paceForAutoResumeKey = "paceForAutoResume"
+	private let accelerationForAutoPauseKey = "accelerationForAutoPause"
+	private let accelerationForAutoResumeKey = "accelerationForAutoResume"
 	private let timeForShowLastSegmentViewKey = "timeForShowLastSegmentView"
 	private let pz1NotInZoneKey = "pz1NotInZone"
 	private let pz2EasyKey = "pz2Easy"
@@ -116,6 +118,24 @@ class AppSettings {
 		}
 		set {
 			UserDefaults.standard.set(newValue, forKey: paceForAutoResumeKey)
+		}
+	}
+
+	var accelerationForAutoPause: Double {
+		get {
+			return UserDefaults.standard.double(forKey: accelerationForAutoPauseKey)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: accelerationForAutoPauseKey)
+		}
+	}
+	
+	var accelerationForAutoResume: Double {
+		get {
+			return UserDefaults.standard.double(forKey: accelerationForAutoResumeKey)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: accelerationForAutoResumeKey)
 		}
 	}
 
@@ -217,9 +237,11 @@ class AppSettings {
 		pz3FatBurning = Int(maximumHeartRate * 0.8 + 0.5)
 		pz4Aerobic = Int(maximumHeartRate * 0.9 + 0.5)
 		pz5Anaerobic = Int(maximumHeartRate + 0.5)
-		permissibleHorizontalAccuracy = 16.0
+		permissibleHorizontalAccuracy = 12.0
 		paceForAutoPause = 1.75
 		paceForAutoResume = 1.95
+		accelerationForAutoPause = 0.4
+		accelerationForAutoResume = 0.8
 		timeForShowLastSegmentView = 20
 		soundNotificationTimeOut = 10
 		viewNotificationTimeOut = 20

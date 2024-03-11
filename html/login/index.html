@@ -22,31 +22,59 @@
 
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Anta&display=swap');
+
+    .background-image {
+        background-image: url('/images/start_your_way.jpg');
+        background-size: cover;
+        background-position: center;
+        height: 100vh;
+    }
+
+    .background-image::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(5px);
+    }
+
+    .content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1;
+        color: white;
+    }
 </style>
 
-<body class="bg-black">
-    <main>
-        <nav class="navbar navbar-expand-md navbar-dark bg-black">
-            <div class="container-fluid">
-                <a class="navbar-brand text-info"
-                    style="font-family: 'Anta', sans-serif; font-size: 50px; margin-top: -8px; padding: 0; line-height: 48px;"
-                    href="/">
-                    rupl
-                </a>
-                <div class="d-grid gap-1 d-flex">
-                    <a class="btn btn-outline-info mx-1" role="button" href="/login">Log in</a>
-                    <a class="btn btn-info mx-1" role="button" href="/register">Sign up</a>
-                </div>
+<body class="background-image bg-black">
+    <nav class="navbar navbar-expand-md navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand text-info"
+                style="font-family: 'Anta', sans-serif; font-size: 50px; margin-top: -8px; padding: 0; line-height: 48px;"
+                href="/">
+                rupl
+            </a>
+            <div class="d-grid gap-1 d-flex">
+                <a class="btn btn-outline-info mx-1" role="button" href="/login">Log in</a>
+                <a class="btn btn-info mx-1" role="button" href="/register">Sign up</a>
             </div>
-        </nav>
-        <div class="container my-5">
+        </div>
+    </nav>
+    <main>
+        <div class="container content">
             <div class="row justify-content-center">
                 <div>
                     <p class="fw-light fs-3 text-light text-center">
                         Log in to your Rupl account
                     <p>
                 </div>
-                <div class="col-xl-4 col-lg-5 col-md-7 border border-1 border-info rounded-4">
+                <div class="col-xl-4 col-lg-5 col-md-7 border border-1 border-info rounded-4 bg-black"
+                    style="--bs-bg-opacity: .75;">
                     <form class="p-4" id="login">
                         <div class="mb-3">
                             <label for="email" class="form-label text-light">
@@ -101,6 +129,42 @@
 </body>
 
 <script>
+    // Check if the user is already authenticated
+    function getAuthStatus() {
+        fetch('/api/v1/auth/verify', {
+            method: 'GET',
+            credentials: 'include' // Send cookies along with the request
+        })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = '/dashboard';
+                } else {
+                    refreshTokens();
+                }
+            })
+            .catch(error => {
+                console.error('Error checking authentication status:', error);
+            });
+    }
+
+    // Refresh tokens
+    function refreshTokens() {
+        fetch('/api/v1/auth/refresh', {
+            method: 'GET',
+            credentials: 'include'
+        })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = '/dashboard';
+                }
+            })
+    }
+
+    // Check authentication status
+    document.addEventListener('DOMContentLoaded', function () {
+        getAuthStatus();
+    });
+
     // JavaScript for toggling password visibility
     function togglePasswordVisibility() {
         const passwordInput = document.getElementById("password");
@@ -187,4 +251,3 @@
 </script>
 
 </html>
-```
