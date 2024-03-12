@@ -29,6 +29,8 @@ class MotionManager {
 		motionManager.stopDeviceMotionUpdates()
 	}
 
+	//	MARK: - Auto pause based on CoreMotion
+	//
 	private func startMotionUpdates() {
 		motionManager.startDeviceMotionUpdates(to: OperationQueue.main) { (motionData, error) in
 			guard let motionData = motionData else {
@@ -37,14 +39,18 @@ class MotionManager {
 
 			let acceleration = motionData.userAcceleration
 			let accelerationMagnitude = sqrt(pow(acceleration.x, 2) + pow(acceleration.y, 2) + pow(acceleration.z, 2))
+			
+			self.lastAccelerationsSum += accelerationMagnitude
+			self.lastAccelerations.append(accelerationMagnitude)
+
+			if self.lastAccelerations.count < self.acceletationsCount {
+				return
+			}
 
 			while self.lastAccelerations.count > self.acceletationsCount {
 				self.lastAccelerationsSum -= self.lastAccelerations[0]
 				self.lastAccelerations.remove(at: 0)
 			}
-			
-			self.lastAccelerationsSum += accelerationMagnitude
-			self.lastAccelerations.append(accelerationMagnitude)
 			
 			self.accelerationAverage = self.lastAccelerationsSum / Double(self.acceletationsCount)
 
@@ -53,8 +59,6 @@ class MotionManager {
 			} else if self.accelerationAverage > AppSettings.shared.accelerationForAutoResume {
 				self.autoPauseState = false
 			}
-
-			print(self.autoPauseState)
 		}
 	}
 }
