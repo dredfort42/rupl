@@ -237,11 +237,11 @@ class AppSettings {
 		pz3FatBurning = Int(maximumHeartRate * 0.8 + 0.5)
 		pz4Aerobic = Int(maximumHeartRate * 0.9 + 0.5)
 		pz5Anaerobic = Int(maximumHeartRate + 0.5)
-		permissibleHorizontalAccuracy = 12.0
+		permissibleHorizontalAccuracy = 8.0
 		paceForAutoPause = 1.75
 		paceForAutoResume = 1.95
-		accelerationForAutoPause = 0.4
-		accelerationForAutoResume = 0.8
+		accelerationForAutoPause = 0.35
+		accelerationForAutoResume = 0.85
 		timeForShowLastSegmentView = 20
 		soundNotificationTimeOut = 10
 		viewNotificationTimeOut = 20
