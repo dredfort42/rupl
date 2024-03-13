@@ -94,18 +94,29 @@ extension WorkoutManager {
 			MotionManager.shared.autoPauseState = true
 #endif
 
-			let isPaused: Bool = LocationManager.shared.autoPauseState != nil ? LocationManager.shared.autoPauseState! && MotionManager.shared.autoPauseState : MotionManager.shared.autoPauseState
+			guard let LMAutoPauseState = LocationManager.shared.autoPauseState else {
+				setPauseState(isPaused: MotionManager.shared.autoPauseState)
+				return
+			}
 
-			if self.sessionState == .running {
-				if isPaused {
-					self.session?.pause()
-					SoundEffects.shared.playStopSound()
-				}
-			} else {
-				if !isPaused {
-					self.session?.resume()
-					SoundEffects.shared.playStartSound()
-				}
+			if LMAutoPauseState && MotionManager.shared.autoPauseState {
+				setPauseState(isPaused: true)
+			} else if !LMAutoPauseState && !MotionManager.shared.autoPauseState {
+				setPauseState(isPaused: false)
+			}
+		}
+	}
+
+	func setPauseState(isPaused: Bool) {
+		if self.sessionState == .running {
+			if isPaused {
+				self.session?.pause()
+				SoundEffects.shared.playStopSound()
+			}
+		} else {
+			if !isPaused {
+				self.session?.resume()
+				SoundEffects.shared.playStartSound()
 			}
 		}
 	}
