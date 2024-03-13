@@ -57,7 +57,7 @@
     <div class="container-fluid">
       <a class="navbar-brand text-info"
         style="font-family: 'Anta', sans-serif; font-size: 50px; margin-top: -8px; padding: 0; line-height: 48px;"
-        href="/">
+        href="#">
         rupl
       </a>
       <div class="d-grid gap-1 d-flex">
@@ -78,25 +78,25 @@
 </body>
 
 <script>
-  // Check if the user is already authenticated
-  function getAuthStatus() {
-    fetch('/api/v1/auth/verify', {
-      method: 'GET',
-      credentials: 'include' // Send cookies along with the request
-    })
-      .then(response => {
-        if (response.ok) {
-          // console.log('User is authenticated.');
-          getProfile();
-        } else {
-          // console.log('User is not authenticated.');
-          refreshTokens();
-        }
-      })
-      .catch(error => {
-        console.error('Error checking authentication status:', error);
-      });
-  }
+  // // Check if the user is already authenticated
+  // function getAuthStatus() {
+  //   fetch('/api/v1/auth/verify', {
+  //     method: 'GET',
+  //     credentials: 'include' // Send cookies along with the request
+  //   })
+  //     .then(response => {
+  //       if (response.ok) {
+  //         // console.log('User is authenticated.');
+  //         getProfile();
+  //       } else {
+  //         // console.log('User is not authenticated.');
+  //         refreshTokens();
+  //       }
+  //     })
+  //     .catch(error => {
+  //       console.error('Error checking authentication status:', error);
+  //     });
+  // }
 
   // Check profile
   function getProfile() {
@@ -109,7 +109,8 @@
           console.log('Profile fetched successfully.');
           return response.json();
         } else {
-          console.log('Failed to fetch profile.');
+          // console.log('Failed to fetch profile.');
+          refreshTokens();
         }
       })
       .then(data => {
@@ -154,7 +155,7 @@
 
   // Check authentication status
   document.addEventListener('DOMContentLoaded', function () {
-    getAuthStatus();
+    getProfile();
   });
 
 </script>
