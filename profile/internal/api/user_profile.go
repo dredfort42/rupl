@@ -37,7 +37,9 @@ func GetUserProfile(c *gin.Context) {
 		return
 	}
 
-	logprinter.PrintSuccess("User ID: ", email)
+	if DEBUG {
+		logprinter.PrintInfo("Request a user profile for an ID: ", email)
+	}
 
 	// access_token, ok := c.")
 

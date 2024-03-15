@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/dredfort42/tools/configreader"
 	"github.com/dredfort42/tools/logprinter"
@@ -11,8 +12,14 @@ import (
 
 var config configreader.ConfigMap
 
+var DEBUG bool = false
+
 // Start starts the web service
 func Start(configMap configreader.ConfigMap) {
+	if debug := os.Getenv("DEBUG"); debug != "" {
+		DEBUG = true
+	}
+
 	config = configMap
 
 	router := gin.Default()

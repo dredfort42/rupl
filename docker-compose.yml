@@ -74,6 +74,8 @@ services:
       - rupl_net
     volumes:
       - ./global.cfg:/app/global.cfg
+    environment:
+      - DEBUG=true
 
   ## Profile management service
   profile:
@@ -85,6 +87,8 @@ services:
       - rupl_net
     volumes:
       - ./global.cfg:/app/global.cfg
+    environment:
+      - DEBUG=true
 
   ## Web interface
   web:
@@ -105,8 +109,8 @@ services:
       - ./html:/html
       - ./server.crt:/app/fullchain.pem
       - ./server.key:/app/privkey.pem
-    # environment:
-    #   - DEBUG=true
+    environment:
+      - DEBUG=true
 
 networks:
   rupl_net:
