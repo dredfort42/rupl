@@ -1,26 +1,12 @@
 package api
 
-// // DeviceAuthorizationResponse is a struct for JSON
-// type DeviceAuthorizationResponse struct {
-// 	DeviceCode              string `json:"device_code"`
-// 	UserCode                string `json:"user_code"`
-// 	VerificationURI         string `json:"verification_uri"`
-// 	VerificationURIComplete string `json:"verification_uri_complete"`
-// 	ExpiresIn               int    `json:"expires_in"`
-// 	Interval                int    `json:"interval"`
-// }
-
-// // UserCredentials is a struct for JSON
-// type UserCredentials struct {
-// 	Email    string `json:"email"`
-// 	Password string `json:"password"`
-// }
-
-// // LoginUserRequest is a struct for JSON
-// type LoginUserRequest struct {
-// 	UserCredentials
-// 	Remember bool `json:"remember"`
-// }
+// Profile is a struct for JSON
+type Profile struct {
+	FirstName   string `json:"first_name"`
+	LastName    string `json:"last_name"`
+	DateOfBirth string `json:"date_of_birth"`
+	Gender      string `json:"gender"`
+}
 
 // ResponseError is a struct for JSON error
 type ResponseError struct {
