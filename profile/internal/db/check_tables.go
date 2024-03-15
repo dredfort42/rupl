@@ -11,32 +11,17 @@ func CheckUsersTable() {
 	tabalExists := false
 
 	for !tabalExists {
-		query := "SELECT * FROM " + db.tableUsers + ";"
+		query := "SELECT * FROM " + db.tableProfiles + ";"
 
 		if _, db.err = db.database.Query(query); db.err != nil {
-			extensionExists := false
-
-			for !extensionExists {
-				query = "CREATE EXTENSION IF NOT EXISTS pgcrypto;"
-				if _, db.err = db.database.Exec(query); db.err != nil {
-					logprinter.PrintError("Failed to create extension", db.err)
-				} else {
-					extensionExists = true
-					logprinter.PrintSuccess("Extension successfully created", "pgcrypto")
-				}
-				time.Sleep(5 * time.Second)
-			}
-
-			logprinter.PrintWarning("Table does not exist", db.tableUsers)
+			logprinter.PrintWarning("Table does not exist", db.tableProfiles)
 			query = `
-				CREATE TABLE IF NOT EXISTS ` + db.tableUsers + ` (
+				CREATE TABLE IF NOT EXISTS ` + db.tableProfiles + ` (
 					email VARCHAR(255) PRIMARY KEY,
-					password_hash VARCHAR(255) NOT NULL,
-					remember_me BOOLEAN DEFAULT FALSE,
-					email_verified BOOLEAN DEFAULT FALSE,
-					device_uuid UUID,
-					access_token VARCHAR(255),
-					refresh_token VARCHAR(255),
+					first_name VARCHAR(255) NOT NULL,
+					last_name VARCHAR(255) NOT NULL,
+					date_of_birth DATE NOT NULL,
+					gender VARCHAR(255) NOT NULL,
 					created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 				);
@@ -45,11 +30,11 @@ func CheckUsersTable() {
 				logprinter.PrintError("Failed to create table", db.err)
 			} else {
 				tabalExists = true
-				logprinter.PrintSuccess("Table successfully created", db.tableUsers)
+				logprinter.PrintSuccess("Table successfully created", db.tableProfiles)
 			}
 		} else {
 			tabalExists = true
-			logprinter.PrintSuccess("Table found successfully", db.tableUsers)
+			logprinter.PrintSuccess("Table found successfully", db.tableProfiles)
 		}
 		time.Sleep(5 * time.Second)
 	}

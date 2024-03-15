@@ -3,14 +3,14 @@ package api
 import (
 	"net/http"
 
-	// "auth/internal/db"
+	// "profile/internal/db"
 
 	"github.com/dredfort42/tools/logprinter"
 	"github.com/gin-gonic/gin"
 )
 
 // Get user profile
-func GetUserProfile(c *gin.Context) {
+func GetProfile(c *gin.Context) {
 	var accessToken string
 	var errorResponse ResponseError
 	var err error
@@ -37,7 +37,9 @@ func GetUserProfile(c *gin.Context) {
 		return
 	}
 
-	logprinter.PrintSuccess("User ID: ", email)
+	if DEBUG {
+		logprinter.PrintInfo("Request a user profile for an ID: ", email)
+	}
 
 	// access_token, ok := c.")
 
@@ -48,7 +50,7 @@ func GetUserProfile(c *gin.Context) {
 	// 	return
 	// }
 
-	// userProfile, err := db.GetUserProfile(userID.(int))
+	// userProfile, err := db.GetProfile(userID.(int))
 	// if err != nil {
 	// 	errorResponse.Error = "server_error"
 	// 	errorResponse.ErrorDescription = "Error getting user profile"
@@ -56,5 +58,11 @@ func GetUserProfile(c *gin.Context) {
 	// 	return
 	// }
 
-	c.IndentedJSON(http.StatusOK, gin.H{"message": email})
+	// profile, err := db.GetProfile(email)
+	// if err != nil {
+	// 	c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "profile_error", "error_description": "Failed to get profile from the database"})
+	// 	return
+	// }
+
+	c.IndentedJSON(http.StatusOK, gin.H{"message": "Profile retrieved successfully", "profile": gin.H{"email": email}})
 }
