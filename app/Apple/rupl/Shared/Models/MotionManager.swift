@@ -32,6 +32,7 @@ class MotionManager {
 	//	MARK: - Auto pause based on CoreMotion
 	//
 	private func startMotionUpdates() {
+		motionManager.accelerometerUpdateInterval = 1.0 / 50.0
 		motionManager.startDeviceMotionUpdates(to: OperationQueue.main) { (motionData, error) in
 			guard let motionData = motionData else {
 				return
