@@ -240,8 +240,8 @@ class AppSettings {
 		permissibleHorizontalAccuracy = 16.0
 		paceForAutoPause = 1.75
 		paceForAutoResume = 1.95
-		accelerationForAutoPause = 0.4
-		accelerationForAutoResume = 0.9
+		accelerationForAutoPause = 0.3
+		accelerationForAutoResume = 0.8
 		timeForShowLastSegmentView = 20
 		soundNotificationTimeOut = 10
 		viewNotificationTimeOut = 20
