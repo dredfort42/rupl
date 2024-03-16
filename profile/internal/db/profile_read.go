@@ -1,7 +1,7 @@
 package db
 
 import (
-	// "errors"
+	"errors"
 
 	"github.com/dredfort42/tools/logprinter"
 )
@@ -21,14 +21,17 @@ func CheckProfileExists(email string) bool {
 
 // GetProfile returns a profile from the database
 func GetProfile(email string) (Profile, error) {
-	// if !CheckProfileExists(email) {
-	// 	return Profile{}, errors.New("Profile does not exist")
-	// }
+	if !CheckProfileExists(email) {
+		return Profile{}, errors.New("Profile does not exist")
+	}
 
 	query := `SELECT * FROM ` + db.tableProfiles + ` WHERE email = $1`
 
 	var profile Profile
-	if err := db.database.QueryRow(query, email).Scan(&profile.Email, &profile.FirstName, &profile.LastName, &profile.DateOfBirth, &profile.Gender); err != nil {
+	var created_at string
+	var updated_at string
+
+	if err := db.database.QueryRow(query, email).Scan(&profile.Email, &profile.FirstName, &profile.LastName, &profile.DateOfBirth, &profile.Gender, &created_at, &updated_at); err != nil {
 		if DEBUG {
 			logprinter.PrintError("Failed to get profile from the database", err)
 		}
