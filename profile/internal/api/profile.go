@@ -52,7 +52,7 @@ func GetProfile(c *gin.Context) {
 	logprinter.PrintInfo("User profile retrieved successfully for an ID: ", email)
 	logprinter.PrintInfo("User profile: ", userProfile.FirstName+" "+userProfile.LastName)
 
-	c.IndentedJSON(http.StatusOK, gin.H{"message": "Profile retrieved successfully", "profile": gin.H{"email": email}})
+	c.IndentedJSON(http.StatusOK, userProfile)
 }
 
 // CreateProfile creates a new user profile based on the access token provided in the request.

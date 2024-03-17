@@ -13,9 +13,9 @@ type Database struct {
 
 // Profile is a struct for JSON
 type Profile struct {
-	Email       string
-	FirstName   string
-	LastName    string
-	DateOfBirth string
-	Gender      string
+	Email       string `json:"email"`
+	FirstName   string `json:"first_name"`
+	LastName    string `json:"last_name"`
+	DateOfBirth string `json:"date_of_birth"`
+	Gender      string `json:"gender"`
 }

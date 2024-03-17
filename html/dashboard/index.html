@@ -22,34 +22,6 @@
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Anta&display=swap');
-
-  /* .background-image {
-    background-image: url('/images/404.jpg');
-    background-size: cover;
-    background-position: center;
-    height: 100vh;
-  }
-
-  .background-image::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.75);
-    backdrop-filter: blur(5px);
-  }
-
-  .content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1;
-    color: white;
-    text-align: center;
-  } */
 </style>
 
 <body class="background-image bg-black">
@@ -60,8 +32,17 @@
         href="#">
         rupl
       </a>
-      <div class="d-grid gap-1 d-flex">
-        <a href="#" class="btn btn-outline-info mx-1" role="button" onclick="logout()">Log out</a>'
+      <div class="d-grid gap-1 d-flex" id="profile">
+        <div class="dropdown">
+          <button class="btn btn-info dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+            id="profileName">---</button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#">Action</a></li>
+            <li><a class="dropdown-item" href="#">Another action</a></li>
+            <li><a class="dropdown-item" href="#">Something else here</a></li>
+          </ul>
+        </div>
+        <button class="btn btn-outline-info" onclick="logout()" id="logoutBtn" style="display: none;">Logout</button>
       </div>
     </div>
   </nav>
@@ -149,6 +130,11 @@
       })
       .then(data => {
         console.log('Profile:', data);
+        if (data) {
+          document.getElementById('profileName').style.display = 'block';
+          document.getElementById('profileName').innerText = data.first_name;
+          document.getElementById('logoutBtn').style.display = 'block';
+        }
       })
       .catch(error => {
         console.error('Error fetching profile:', error);
