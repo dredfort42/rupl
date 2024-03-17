@@ -241,7 +241,7 @@ class AppSettings {
 		paceForAutoPause = 1.75
 		paceForAutoResume = 1.95
 		accelerationForAutoPause = 0.3
-		accelerationForAutoResume = 0.8
+		accelerationForAutoResume = 0.75
 		timeForShowLastSegmentView = 20
 		soundNotificationTimeOut = 10
 		viewNotificationTimeOut = 20
