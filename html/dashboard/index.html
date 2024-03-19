@@ -22,11 +22,20 @@
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Anta&display=swap');
+
+  .dropdown-item {
+    color: rgb(248, 249, 250) !important;
+  }
+
+  .dropdown-item:hover {
+    background-color: #0dcaf0;
+    color: black !important;
+  }
 </style>
 
 <body class="background-image bg-black">
 
-  <nav class="navbar navbar-expand-md navbar-dark">
+  <nav class="navbar navbar-dark">
     <div class="container-fluid">
       <a class="navbar-brand text-info"
         style="font-family: 'Anta', sans-serif; font-size: 50px; margin-top: -8px; padding: 0; line-height: 48px;"
@@ -36,54 +45,25 @@
       <div class="d-grid gap-1 d-flex" id="profile">
         <div class="dropdown">
           <button class="btn btn-info dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"
-            id="profileName">---</button>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
-          </ul>
-        </div>
-        <button class="btn btn-outline-info" onclick="logout()" id="logoutBtn" style="display: none;">Logout</button>
-      </div>
-    </div>
-  </nav>
-
-
-
-
-
-  <!-- <nav class="navbar navbar-expand-md navbar-dark"> -->
-  <!-- <nav class="row">
-    <div class="container-fluid"> -->
-  <!-- <nav class="row m-3">
-    <a class="col-md-4 text-info"
-      style="font-family: 'Anta', sans-serif; font-size: 50px; margin-top: -8px; padding: 0; line-height: 48px;"
-      href="#">
-      rupl
-    </a>
-    <div class="col-md-4 offset-md-4" id="profile">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item dropdown justify-content-end">
-          <button class="btn btn-outline-info dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
-            id="profileName">
-            UserName
-          </button>
-          <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
-            <li><a class="dropdown-item" href="/device">Connected devices</a></li>
+            id="profileName"></button>
+          <ul class="dropdown-menu dropdown-menu-end border border-1 border-info bg-black">
+            <li>
+              <a class="dropdown-item link-light dropdown-item-hover-info" href="/device">
+                Connected devices
+              </a>
+            </li>
             <li><a class="dropdown-item" href="#">Another action</a></li>
             <li><a class="dropdown-item" href="#">Something else here</a></li>
             <li class="text-center">
-              <hr class="dropdown-divider">
-              <button class="btn btn-outline-info" onclick="logout()">Logout</button>
+              <button class="btn btn-outline-info mt-2" onclick="logout()">
+                Logout
+              </button>
             </li>
           </ul>
-        </li>
-      </ul>
+        </div>
+      </div>
     </div>
-    </div>
-  </nav> -->
-
-
+  </nav>
   <main>
     <div id="emailVerificationState" class="alert alert-warning alert-dismissible fade show m-3" role="alert"
       style="display: none;">
@@ -166,7 +146,6 @@
           console.log('Failed to fetch profile.');
           openModal();
         } else {
-          // console.log('Failed to fetch profile.');
           refreshTokens();
         }
       })
@@ -175,7 +154,6 @@
         if (data) {
           document.getElementById('profileName').style.display = 'block';
           document.getElementById('profileName').innerText = data.first_name;
-          // document.getElementById('logoutBtn').style.display = 'block';
           checkEmailVerification();
         }
       })
@@ -194,7 +172,7 @@
   function refreshTokens() {
     fetch('/api/v1/auth/refresh', {
       method: 'GET',
-      credentials: 'include' // Send cookies along with the request
+      credentials: 'include'
     })
       .then(response => {
         if (response.ok) {
@@ -281,6 +259,13 @@
     saveProfileData(firstName.trim(), lastName.trim(), gender, dob);
   });
 
+  /**
+   * Saves the profile data by sending a POST request to the server.
+   * @param {string} firstName - The first name of the user.
+   * @param {string} lastName - The last name of the user.
+   * @param {string} gender - The gender of the user.
+   * @param {string} dob - The date of birth of the user.
+   */
   async function saveProfileData(firstName, lastName, gender, dob) {
     var profileData = {
       first_name: firstName.replace(/ /g, ''),

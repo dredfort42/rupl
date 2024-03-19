@@ -51,17 +51,17 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
 
-  # adminer:
-  #   image: adminer
-  #   hostname: adminer
-  #   container_name: adminer
-  #   restart: always
-  #   networks:
-  #     - rupl_net
-  #   ports:
-  #     - 21212:8080
-  #   depends_on:
-  #     - db
+  adminer:
+    image: adminer
+    hostname: adminer
+    container_name: adminer
+    restart: always
+    networks:
+      - rupl_net
+    ports:
+      - 21212:8080
+    depends_on:
+      - db
 
   # Project services
   ## Auth service
@@ -107,8 +107,8 @@ services:
     volumes:
       - ./global.cfg:/app/global.cfg
       - ./html:/html
-      - /etc/letsencrypt/live/rupl.org/fullchain.pem:/app/fullchain.pem
-      - /etc/letsencrypt/live/rupl.org/privkey.pem:/app/privkey.pem
+      - ./server.crt:/app/fullchain.pem
+      - ./server.key:/app/privkey.pem
     environment:
       - DEBUG=true
 

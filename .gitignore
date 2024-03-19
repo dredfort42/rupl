@@ -2,11 +2,11 @@
 .vscode/
 .build/
 persistent_volumes/
-docker-compose.yml
 main
+docker-compose.yml
+.env
 *.zip
 *.cfg
-.env
 *.crt
 *.key
 
@@ -64,3 +64,4 @@ iOSInjectionProject/
 Packages/
 Package.pins
 Package.resolved
+
