@@ -2,6 +2,7 @@
 .vscode/
 .build/
 persistent_volumes/
+docker-compose.yml
 main
 *.zip
 *.cfg
