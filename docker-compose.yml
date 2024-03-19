@@ -42,8 +42,8 @@ services:
     restart: always
     networks:
       - rupl_net
-    ports:
-      - 42424:5432
+    # ports:
+    #   - 42424:5432
     volumes:
       - ./persistent_volumes/db:/var/lib/postgresql/data
     environment:

@@ -25,6 +25,7 @@
 </style>
 
 <body class="background-image bg-black">
+
   <nav class="navbar navbar-expand-md navbar-dark">
     <div class="container-fluid">
       <a class="navbar-brand text-info"
@@ -46,12 +47,53 @@
       </div>
     </div>
   </nav>
-  <main>
-    <div class="container">
 
+
+
+
+
+  <!-- <nav class="navbar navbar-expand-md navbar-dark"> -->
+  <!-- <nav class="row">
+    <div class="container-fluid"> -->
+  <!-- <nav class="row m-3">
+    <a class="col-md-4 text-info"
+      style="font-family: 'Anta', sans-serif; font-size: 50px; margin-top: -8px; padding: 0; line-height: 48px;"
+      href="#">
+      rupl
+    </a>
+    <div class="col-md-4 offset-md-4" id="profile">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item dropdown justify-content-end">
+          <button class="btn btn-outline-info dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
+            id="profileName">
+            UserName
+          </button>
+          <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
+            <li><a class="dropdown-item" href="/device">Connected devices</a></li>
+            <li><a class="dropdown-item" href="#">Another action</a></li>
+            <li><a class="dropdown-item" href="#">Something else here</a></li>
+            <li class="text-center">
+              <hr class="dropdown-divider">
+              <button class="btn btn-outline-info" onclick="logout()">Logout</button>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    </div>
+  </nav> -->
+
+
+  <main>
+    <div id="emailVerificationState" class="alert alert-warning alert-dismissible fade show m-3" role="alert"
+      style="display: none;">
+      <span id="emailVerificationStateText"></span>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div class="container">
       <div class="text-center">
         <h1 class="my-5 text-info" id="header" style="font-family: 'Anta', sans-serif; font-size: 160px;">rupl rupl rupl
-          rupl rupl rupl rupl rupl rupl</h1>
+          rupl rupl rupl</h1>
       </div>
     </div>
   </main>
@@ -133,7 +175,8 @@
         if (data) {
           document.getElementById('profileName').style.display = 'block';
           document.getElementById('profileName').innerText = data.first_name;
-          document.getElementById('logoutBtn').style.display = 'block';
+          // document.getElementById('logoutBtn').style.display = 'block';
+          checkEmailVerification();
         }
       })
       .catch(error => {
@@ -159,6 +202,22 @@
           window.location.href = '/dashboard';
         } else {
           window.location.href = '/login';
+        }
+      })
+  }
+
+  // Check email verification status
+  function checkEmailVerification() {
+    fetch('/api/v1/auth/verify_email', {
+      method: 'GET',
+      credentials: 'include'
+    })
+      .then(response => {
+        if (response.ok) {
+          console.log('Email verified.');
+        } else {
+          document.getElementById('emailVerificationState').style.display = 'block';
+          document.getElementById('emailVerificationStateText').innerHTML = 'Please verify your email address. <a href="/verify-email" class="alert-link">Resend verification email</a>';
         }
       })
   }
