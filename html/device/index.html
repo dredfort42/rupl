@@ -100,7 +100,7 @@
                             </div>
                         </div>
                         <div class="row px-2">
-                            <button type="button" id="continueBtn" class="col mx-1 btn btn-info">
+                            <button type="button" id="continueBtn" class="col mx-1 btn btn-info" disabled>
                                 Continue
                             </button>
                         </div>
@@ -151,6 +151,33 @@
         getAuthStatus();
     });
 
+    // Continue button click event
+    document.getElementById('continueBtn').addEventListener('click', function () {
+        const code = document.getElementById('code').value;
+        if (code.length === 11) {
+            fetch('/api/v1/device/connect', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    code: code
+                })
+            })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = '/dashboard';
+                    } else {
+                        console.error('Error connecting device:', response);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error connecting device:', error);
+                });
+        }
+    });
+
     // JavaScript for toggling password visibility
     function resetCode() {
         const codeInput = document.getElementById("code");
@@ -176,6 +203,12 @@
 
     document.getElementById('code').onkeyup = function (event) {
         code_check(this, event);
+
+        if (this.value.length === 11) {
+            document.getElementById('continueBtn').disabled = false;
+        } else {
+            document.getElementById('continueBtn').disabled = true;
+        }
     }
 </script>
 
