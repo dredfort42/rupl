@@ -43,7 +43,7 @@ func DeviceAuthorization(c *gin.Context) {
 	url := fmt.Sprintf("%s://%s", config["entrypoint.protocol.ssl"], config["entrypoint.address"])
 
 	response.DeviceCode = uuid.New().String()
-	response.UserCode = fmt.Sprintf("%04d - %04d", generateRandomDigits(4), generateRandomDigits(4))
+	response.UserCode = fmt.Sprintf("%04d-%04d", generateRandomDigits(4), generateRandomDigits(4))
 	response.VerificationURI = url + "/device"
 	response.VerificationURIComplete = url + "/device?user_code=" + response.UserCode
 	response.ExpiresIn = 1800

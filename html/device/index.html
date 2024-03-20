@@ -86,9 +86,8 @@
                                 Enter the code displayed on your device
                             </label>
                             <div class="input-group">
-                                <input type="text" class="form-control bg-info border-info text-white fs-2 ps-4"
-                                    style="--bs-bg-opacity: .1;" id="code" name="code" placeholder="XXXX - XXXX"
-                                    required>
+                                <input type="text" class="form-control bg-info border-info text-white fs-2 ps-5"
+                                    style="--bs-bg-opacity: .1;" id="code" name="code" placeholder="XXXX-XXXX" required>
                                 <span id="resetCode" class="input-group-text bg-info border-info text-black"
                                     onclick="resetCode()">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
@@ -154,7 +153,7 @@
     // Continue button click event
     document.getElementById('continueBtn').addEventListener('click', function () {
         const code = document.getElementById('code').value;
-        if (code.length === 11) {
+        if (code.length === 9) {
             fetch('/api/v1/device/connect', {
                 method: 'POST',
                 credentials: 'include',
@@ -190,21 +189,21 @@
             selection_end = field.selectionEnd,
             number = field.value.replace(/\D/g, '');
 
-        var min_length = (field.value.length < 6) ? 3 : 4;
+        var min_length = (field.value.length < 5) ? 3 : 4;
 
         if (number.length > min_length) {
-            new_number = number.substring(0, 4) + ' - ' + number.substring(4);
+            new_number = number.substring(0, 4) + '-' + number.substring(4);
         } else {
             new_number = number;
         }
 
-        field.value = (new_number.length > 11) ? new_number.substring(0, 11) : new_number;
+        field.value = (new_number.length > 9) ? new_number.substring(0, 9) : new_number;
     }
 
     document.getElementById('code').onkeyup = function (event) {
         code_check(this, event);
 
-        if (this.value.length === 11) {
+        if (this.value.length === 9) {
             document.getElementById('continueBtn').disabled = false;
         } else {
             document.getElementById('continueBtn').disabled = true;
