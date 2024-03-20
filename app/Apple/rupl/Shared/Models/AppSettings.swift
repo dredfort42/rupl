@@ -20,6 +20,7 @@ class AppSettings {
 	static let connectedToRuplKey = "connectedToRupl"
 	static let runningTaskHeartRateKey = "runningTaskHeartRate"
 	private let clientIDKey = "clientID"
+	private let deviceAuthURLKey = "deviceAuthURL"
 	private let permissibleHorizontalAccuracyKey = "permissibleHorizontalAccuracy"
 	private let paceForAutoPauseKey = "paceForAutoPause"
 	private let paceForAutoResumeKey = "paceForAutoResume"
@@ -37,6 +38,12 @@ class AppSettings {
 	var clientID: String {
 		get {
 			return UserDefaults.standard.string(forKey: clientIDKey) ?? ""
+		}
+	}
+
+	var deviceAuthURL: String {
+		get {
+			return UserDefaults.standard.string(forKey: deviceAuthURLKey) ?? ""
 		}
 	}
 
@@ -218,6 +225,8 @@ class AppSettings {
 		if clientID == "" {
 			UserDefaults.standard.set(UUID().uuidString, forKey: clientIDKey)
 		}
+
+		UserDefaults.standard.set("https://rupl.org/api/v1/auth/device_authorization", forKey: deviceAuthURLKey)
 
 		if paceForAutoPause == 0.0 || paceForAutoResume == 0.0 {
 			useAutoPause = true

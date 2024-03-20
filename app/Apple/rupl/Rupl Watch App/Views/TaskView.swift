@@ -60,9 +60,9 @@ struct TaskView: View {
 	}
 }
 
-#Preview {
-	TaskView()
-}
+//#Preview {
+//	TaskView()
+//}
 
 //Zone 1: Recovery/Easy (50-60% of MHR)
 //Lower limit: 0.50 x MHR

@@ -12,23 +12,23 @@ struct LoadingIndicatorView: View {
 	var wheelSize: CGFloat = 100.0
 	
 	@State private var wheelRotating: Double = 0.0
-	@State var circleColor: Color = .ruplBlue
+//	@State var circleColor: Color = .ruplBlue
 	@State var indicatorColor: Color = .ruplBlue
 	
 	var body: some View {
 		
 		ZStack {
+//			Circle()
+//				.stroke(circleColor.opacity(0.25), lineWidth: 2)
 			Circle()
-				.stroke(circleColor.opacity(0.25), lineWidth: 2)
-			Circle()
-				.trim(from: /*@START_MENU_TOKEN@*/0.0/*@END_MENU_TOKEN@*/, to: 0.33)
-				.stroke(indicatorColor, lineWidth: 2)
+				.trim(from: /*@START_MENU_TOKEN@*/0.0/*@END_MENU_TOKEN@*/, to: 0.75)
+				.stroke(indicatorColor, lineWidth: 4)
 				.rotationEffect(.degrees(wheelRotating))
 		}
 		.frame(width: wheelSize, height: wheelSize , alignment: .center)
 		
 		.onAppear {
-			circleColor = getColor()
+//			circleColor = getColor()
 			indicatorColor = getColor()
 
 			withAnimation(
@@ -46,6 +46,6 @@ struct LoadingIndicatorView: View {
 	}
 }
 
-//#Preview {
-//	LoadingIndicatorView()
-//}
+#Preview {
+	LoadingIndicatorView()
+}

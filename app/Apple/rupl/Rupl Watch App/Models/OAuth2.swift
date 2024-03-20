@@ -20,7 +20,7 @@ struct OAuth2 {
 //	}
 
 	static func sendRequest(completion: @escaping (String) -> Void) {
-		let apiUrl = URL(string: "https://rupl.org/api/v1/auth/device_authorization?client_id=\(AppSettings.shared.clientID)")!
+		let apiUrl = URL(string: "\(AppSettings.shared.deviceAuthURL)?client_id=\(AppSettings.shared.clientID)")!
 		var request = URLRequest(url: apiUrl)
 		
 		request.httpMethod = "POST"
