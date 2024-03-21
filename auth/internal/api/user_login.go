@@ -24,8 +24,6 @@ func LogInUser(c *gin.Context) {
 		return
 	}
 
-	// fmt.Println(logIn.Email, logIn.Password, logIn.Remember)
-
 	if logIn.Email == "" || logIn.Password == "" || len(logIn.Password) < 8 {
 		errorResponse.Error = "invalid_request"
 		errorResponse.ErrorDescription = "Invalid email or password"

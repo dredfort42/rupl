@@ -88,3 +88,17 @@ func UpdateUserDeviceUUID(email string, deviceUUID string) {
 		logprinter.PrintSuccess("User device_uuid successfully updated in the database", "")
 	}
 }
+
+// UpdateUserDeviceAccessToken updates a user's device_access_token in the database
+func UpdateUserDeviceAccessToken(email string, deviceAccessToken string) {
+	query := `UPDATE ` + db.tableUsers + ` SET 
+		device_access_token = $2, 
+		updated_at = CURRENT_TIMESTAMP 
+		WHERE email = $1`
+
+	if _, db.err = db.database.Exec(query, email, deviceAccessToken); db.err != nil {
+		logprinter.PrintError("Failed to update user device_access_token in the database", db.err)
+	} else {
+		logprinter.PrintSuccess("User device_access_token successfully updated in the database", "")
+	}
+}

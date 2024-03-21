@@ -35,6 +35,7 @@ func CheckUsersTable() {
 					remember_me BOOLEAN DEFAULT FALSE,
 					email_verified BOOLEAN DEFAULT FALSE,
 					device_uuid UUID,
+					device_access_token VARCHAR(255),
 					access_token VARCHAR(255),
 					refresh_token VARCHAR(255),
 					created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

@@ -177,7 +177,7 @@
         }
     });
 
-    // JavaScript for toggling password visibility
+    // JavaScript for resetting the code input
     function resetCode() {
         const codeInput = document.getElementById("code");
         codeInput.value = "";
@@ -209,6 +209,35 @@
             document.getElementById('continueBtn').disabled = true;
         }
     }
+
+    // JavaScript for device identification
+    document.getElementById("continueBtn").addEventListener("click", async function (event) {
+        event.preventDefault();
+
+        const code = document.getElementById("code").value.replace(/ /g, '');
+
+        try {
+            const response = await fetch('/api/v1/auth/device_identify?user_code=' + code, {
+                method: 'POST',
+            });
+
+            const data = await response.json();
+            if (data.message) {
+                console.log(data.message);
+            }
+
+            if (!response.ok) {
+                throw new Error("An error occurred while identifying the device!");
+            }
+
+            window.location.href = '/dashboard'; // Redirect to the personal dashboard
+        } catch (error) {
+            alert('Invalid user code!');
+            document.getElementById("code").reset();
+            console.error('Error:', error.message);
+        }
+    });
+
 </script>
 
 </html>

@@ -160,6 +160,7 @@ func main() {
 	profileURL = fmt.Sprintf("%s:%s", config["profile.host"], config["profile.port"])
 
 	http.HandleFunc("/", sendData)
+	http.HandleFunc("/download/", sendData)
 	http.HandleFunc("/api/v1/", proxyRequest)
 
 	port := fmt.Sprintf(":%s", config["entrypoint.port.ssl"])
