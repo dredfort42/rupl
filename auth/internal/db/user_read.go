@@ -64,3 +64,13 @@ func CheckUserRefreshToken(email string, refreshToken string) bool {
 	}
 	return true
 }
+
+// CheckDeviceAccessToken checks if a device's access token is correct
+func CheckDeviceAccessToken(clientID string, accessToken string) bool {
+	query := `SELECT device_uuid FROM ` + db.tableUsers + ` WHERE device_uuid = $1 AND device_access_token = $2`
+	if err := db.database.QueryRow(query, clientID, accessToken).Scan(&clientID); err != nil {
+		logprinter.PrintError("Failed to check if device access token is correct", err)
+		return false
+	}
+	return true
+}

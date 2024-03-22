@@ -8,8 +8,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// DeviceIdentify make the device identify and add it to the users devices
-func DeviceIdentify(c *gin.Context) {
+var DeviceAccessTokens = make(map[string]DeviceAccessTokenResponse)
+
+// DeviceIdentification make the device identify and add it to the users devices
+func DeviceIdentification(c *gin.Context) {
 	var email string
 	var accessToken string
 	var errorResponse ResponseError
@@ -76,6 +78,12 @@ func DeviceIdentify(c *gin.Context) {
 
 	db.UpdateUserDeviceUUID(email, clientID)
 	db.UpdateUserDeviceAccessToken(email, deviceAccessToken)
+
+	DeviceAccessTokens[clientID] = DeviceAccessTokenResponse{
+		AccessToken: deviceAccessToken,
+		TokenType:   "Bearer",
+		ExpiresIn:   60 * 24 * 365,
+	}
 
 	delete(UserCodes, userCode)
 
