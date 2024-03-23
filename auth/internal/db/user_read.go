@@ -74,3 +74,21 @@ func CheckDeviceAccessToken(clientID string, accessToken string) bool {
 	}
 	return true
 }
+
+// GetEmailByAccessToken returns the email based on the access token provided
+func GetEmailByAccessToken(accessToken string) string {
+	var email string
+
+	query := `SELECT email FROM ` + db.tableUsers + ` WHERE access_token = $1`
+
+	if err := db.database.QueryRow(query, accessToken).Scan(&email); err != nil {
+		query = `SELECT email FROM ` + db.tableUsers + ` WHERE device_access_token = $1`
+
+		if err := db.database.QueryRow(query, accessToken).Scan(&email); err != nil {
+			logprinter.PrintError("Failed to get email by access token from the database", err)
+			return ""
+		}
+	}
+
+	return email
+}

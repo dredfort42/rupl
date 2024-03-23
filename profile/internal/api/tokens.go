@@ -9,14 +9,14 @@ import (
 )
 
 // ValidateAccessToken validates access token
-func ValidateAccessToken(accesstToken string) bool {
+func ValidateAccessToken(accesstToken string) string {
 	authServerURL := fmt.Sprintf("http://%s:%s/api/v1/auth/verify", config["auth.host"], config["auth.port"])
 	client := &http.Client{}
 
 	request, err := http.NewRequest("GET", authServerURL, nil)
 	if err != nil {
 		logprinter.PrintError("Error creating request", err)
-		return false
+		return ""
 	}
 
 	request.Header.Set("Cookie", fmt.Sprintf("access_token=%s", accesstToken))
@@ -24,14 +24,14 @@ func ValidateAccessToken(accesstToken string) bool {
 	response, err := client.Do(request)
 	if err != nil {
 		logprinter.PrintError("Error sending request", err)
-		return false
+		return ""
 	}
 	defer response.Body.Close()
 
 	if response.StatusCode == http.StatusOK {
-		return true
+		return response.Header.Get("email")
 	} else {
-		return false
+		return ""
 	}
 }
 

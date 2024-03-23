@@ -10,7 +10,7 @@ import (
 
 // Verify user
 func VerifyUser(c *gin.Context) {
-	var email string
+	var userID string
 	var accessToken string
 	var errorResponse ResponseError
 	var err error
@@ -22,7 +22,7 @@ func VerifyUser(c *gin.Context) {
 		return
 	}
 
-	if email, err = ParseToken(accessToken); err != nil {
+	if userID, err = ParseToken(accessToken); err != nil {
 		errorResponse.Error = "token_error"
 		errorResponse.ErrorDescription = "Failed to parse access token"
 		c.IndentedJSON(http.StatusUnauthorized, errorResponse)
@@ -42,12 +42,15 @@ func VerifyUser(c *gin.Context) {
 		return
 	}
 
-	if !db.CheckUserAccessToken(email, accessToken) {
+	if !db.CheckUserAccessToken(userID, accessToken) &&
+		!db.CheckDeviceAccessToken(userID, accessToken) {
 		errorResponse.Error = "token_error"
 		errorResponse.ErrorDescription = "Invalid access token"
 		c.IndentedJSON(http.StatusUnauthorized, errorResponse)
 		return
 	}
+
+	c.Header("email", db.GetEmailByAccessToken(accessToken))
 
 	c.JSON(http.StatusOK, gin.H{"message": "User successfully verified"})
 }

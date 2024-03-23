@@ -1,12 +1,10 @@
 package db
 
 import (
-	"errors"
-
 	"github.com/dredfort42/tools/logprinter"
 )
 
-// CheckProfileExists checks if a profile exists in the database
+// CheckProfileExists checks if a profile exists in the database based on the email provided
 func CheckProfileExists(email string) bool {
 	query := `SELECT email FROM ` + db.tableProfiles + ` WHERE email = $1`
 
@@ -21,10 +19,6 @@ func CheckProfileExists(email string) bool {
 
 // GetProfile returns a profile from the database
 func GetProfile(email string) (Profile, error) {
-	if !CheckProfileExists(email) {
-		return Profile{}, errors.New("Profile does not exist")
-	}
-
 	query := `SELECT * FROM ` + db.tableProfiles + ` WHERE email = $1`
 
 	var profile Profile
