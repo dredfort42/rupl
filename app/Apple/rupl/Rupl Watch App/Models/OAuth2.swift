@@ -11,13 +11,13 @@ import os
 
 
 struct OAuth2 {
-
+	static var accessToken: String = ""
+	static var tokenType: String = ""
 	static var userCode: String = ""
+	static var deviceCode: String = ""
 	static var verificationUri: String = ""
-
-//	init() {
-//		sendRequest()
-//	}
+	static var expiresIn: Date = Date()
+	static var interval: UInt32 = 0
 
 	static func sendRequest(completion: @escaping (String) -> Void) {
 		let apiUrl = URL(string: "\(AppSettings.shared.deviceAuthURL)?client_id=\(AppSettings.shared.clientID)")!
@@ -35,24 +35,17 @@ struct OAuth2 {
 			if let data = data {
 				do {
 					if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-
 						if let userCode = json["user_code"] as? String,
-//						   let deviceCode = json["device_code"] as? String,
-//						   let verificationUriComplete = json["verification_uri_complete"] as? String,
-//						   let expiresIn = json["expires_in"] as? Int,
-//						   let interval = json["interval"] as? Int,
-						   let verificationUri = json["verification_uri"] as? String {
+						   let deviceCode = json["device_code"] as? String,
+						   let verificationUri = json["verification_uri"] as? String,
+						   let expiresIn = json["expires_in"] as? Int,
+						   let interval = json["interval"] as? Int {
 
 							self.userCode = userCode
+							self.deviceCode = deviceCode
 							self.verificationUri = verificationUri
-
-//							print("Device Code: \(deviceCode)")
-//							print("User Code: \(userCode)")
-//							print("Verification URI: \(verificationUri)")
-//							print("Verification URI Complete: \(verificationUriComplete)")
-//							print("Expires In: \(expiresIn)")
-//							print("Interval: \(interval)")
-							
+							self.expiresIn = Date() + TimeInterval(expiresIn)
+							self.interval = UInt32(interval)
 						}
 					}
 				} catch {
@@ -64,5 +57,43 @@ struct OAuth2 {
 		}
 
 		task.resume()
+	}
+
+	static func getDeviceAccessToken(completion: @escaping (String) -> Void) {
+		let apiUrl = URL(string: "\(AppSettings.shared.deviceTokenURL)?grant_type=\"urn:ietf:params:oauth:grant-type:device_code\"&device_code=\(deviceCode)&client_id=\(AppSettings.shared.clientID)")!
+		var request = URLRequest(url: apiUrl)
+
+		request.httpMethod = "POST"
+		request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+
+		let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+			if let error = error {
+				Logger.shared.log("Error: \(error)")
+				return
+			}
+
+			if let data = data {
+				do {
+					if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+						if let accessToken = json["access_token"] as? String,
+						   let tokenType = json["token_type"] as? String,
+						   let expiresIn = json["expires_in"] as? Int {
+
+							self.accessToken = accessToken
+							self.tokenType = tokenType
+							self.expiresIn = Date() + TimeInterval(expiresIn)
+						}
+					}
+				} catch {
+					Logger.shared.log("Error parsing JSON: \(error)")
+				}
+			}
+
+
+			completion("OK")
+		}
+
+		task.resume()
+
 	}
 }

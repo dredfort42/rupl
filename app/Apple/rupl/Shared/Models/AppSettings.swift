@@ -21,6 +21,10 @@ class AppSettings {
 	static let runningTaskHeartRateKey = "runningTaskHeartRate"
 	private let clientIDKey = "clientID"
 	private let deviceAuthURLKey = "deviceAuthURL"
+	private let deviceTokenURLKey = "deviceTokenURL"
+	private let deviceAccessTokenKey = "deviceAccessToken"
+	private let deviceAccessTokenTypeKey = "deviceAccessTokenType"
+	private let deviceAccessTokenExpiresInKey = "deviceAccessTokenExpiresIn"
 	private let permissibleHorizontalAccuracyKey = "permissibleHorizontalAccuracy"
 	private let paceForAutoPauseKey = "paceForAutoPause"
 	private let paceForAutoResumeKey = "paceForAutoResume"
@@ -44,6 +48,39 @@ class AppSettings {
 	var deviceAuthURL: String {
 		get {
 			return UserDefaults.standard.string(forKey: deviceAuthURLKey) ?? ""
+		}
+	}
+
+	var deviceTokenURL: String {
+		get {
+			return UserDefaults.standard.string(forKey: deviceTokenURLKey) ?? ""
+		}
+	}
+
+	var deviceAccessToken: String {
+		get {
+			return UserDefaults.standard.string(forKey: deviceAccessTokenKey) ?? ""
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: deviceAccessTokenKey)
+		}
+	}
+
+	var deviceAccessTokenType: String {
+		get {
+			return UserDefaults.standard.string(forKey: deviceAccessTokenTypeKey) ?? ""
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: deviceAccessTokenTypeKey)
+		}
+	}
+
+	var deviceAccessTokenExpiresIn: Double {
+		get {
+			return UserDefaults.standard.double(forKey: deviceAccessTokenExpiresInKey)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: deviceAccessTokenExpiresInKey)
 		}
 	}
 
@@ -227,6 +264,7 @@ class AppSettings {
 		}
 
 		UserDefaults.standard.set("https://rupl.org/api/v1/auth/device_authorization", forKey: deviceAuthURLKey)
+		UserDefaults.standard.set("https://rupl.org/api/v1/auth/device_token", forKey: deviceTokenURLKey)
 
 		if paceForAutoPause == 0.0 || paceForAutoResume == 0.0 {
 			useAutoPause = true

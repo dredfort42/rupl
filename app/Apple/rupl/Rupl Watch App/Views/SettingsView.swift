@@ -122,15 +122,36 @@ struct SettingsView: View {
 	}
 
 	func pollingResponse() {
-		DispatchQueue.global().async {
-			var counter: Int = 0
-
-			while self.polling {
-				print("[\(counter)] polling")
-				counter += 1
-				sleep(3)
-			}
-		}
+//		DispatchQueue.global().async {
+//			while self.polling {
+//				if OAuth2.expiresIn <= Date() {
+//					self.sendRequest()
+//				}
+//
+//				OAuth2.getDeviceAccessToken { result in
+//					AppSettings.shared.deviceAccessToken = OAuth2.accessToken
+//					AppSettings.shared.deviceAccessTokenType = OAuth2.tokenType
+//					AppSettings.shared.deviceAccessTokenExpiresIn = OAuth2.expiresIn.timeIntervalSince1970
+//				}
+//
+////				if !OAuth2.accessToken.isEmpty && !OAuth2.tokenType.isEmpty && OAuth2.expiresIn > Date() {
+////					self.polling = false
+////				}
+//
+//				print(OAuth2.accessToken)
+//				print(OAuth2.tokenType)
+//				print(OAuth2.expiresIn.timeIntervalSince1970)
+//
+//				print("--- polling ---")
+//				print(OAuth2.interval)
+//
+//				sleep(OAuth2.interval)
+//			}
+////
+////			print(OAuth2.accessToken)
+////			print(OAuth2.tokenType)
+////			print(OAuth2.expiresIn.timeIntervalSince1970)
+//		}
 	}
 }
 
