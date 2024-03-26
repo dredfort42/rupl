@@ -52,15 +52,13 @@ struct OAuth2 {
 					Logger.shared.log("Error parsing JSON: \(error)")
 				}
 			}
-
 			completion("OK")
 		}
-
 		task.resume()
 	}
 
 	static func getDeviceAccessToken(completion: @escaping (String) -> Void) {
-		let apiUrl = URL(string: "\(AppSettings.shared.deviceTokenURL)?grant_type=\"urn:ietf:params:oauth:grant-type:device_code\"&device_code=\(deviceCode)&client_id=\(AppSettings.shared.clientID)")!
+		let apiUrl = URL(string: "\(AppSettings.shared.deviceTokenURL)?grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Adevice_code&device_code=\(deviceCode)&client_id=\(AppSettings.shared.clientID)")!
 		var request = URLRequest(url: apiUrl)
 
 		request.httpMethod = "POST"
@@ -88,12 +86,25 @@ struct OAuth2 {
 					Logger.shared.log("Error parsing JSON: \(error)")
 				}
 			}
-
-
 			completion("OK")
+		}
+		task.resume()
+	}
+
+	static func deleteDeviceAccess(completion: @escaping (String) -> Void) {
+		let apiUrl = URL(string: "\(AppSettings.shared.deviceAuthURL)?client_id=\(AppSettings.shared.clientID)&access_token=\(AppSettings.shared.deviceAccessToken)")!
+		var request = URLRequest(url: apiUrl)
+
+		request.httpMethod = "DELETE"
+
+		let task = URLSession.shared.dataTask(with: request) { data, response, error in
+			guard let data = data else {
+				print(String(describing: error))
+				return
+			}
+			print(String(data: data, encoding: .utf8)!)
 		}
 
 		task.resume()
-
 	}
 }

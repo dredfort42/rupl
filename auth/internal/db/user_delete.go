@@ -14,3 +14,16 @@ func DeleteUserTokens(email string) {
 		logprinter.PrintSuccess(email+" user's access and refresh tokens successfully deleted from the database", "")
 	}
 }
+
+// Delete device access token from the database
+func DeleteDeviceAccessToken(clientID string, accessToken string) bool {
+	query := `DELETE FROM ` + db.tableUsers + ` WHERE client_id = $1 AND access_token = $2`
+
+	if _, db.err = db.database.Exec(query, clientID, accessToken); db.err != nil {
+		logprinter.PrintError("Failed to delete device access token from the database", db.err)
+		return false
+	}
+
+	logprinter.PrintSuccess("Device access token successfully deleted from the database", "")
+	return true
+}

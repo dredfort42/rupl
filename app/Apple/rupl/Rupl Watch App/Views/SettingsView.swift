@@ -63,6 +63,7 @@ struct SettingsView: View {
 						if isConnectedToRupl {
 							Button {
 								isConnectedToRupl = !isConnectedToRupl
+								resetDeviceAccess()
 							} label: {
 								HStack {
 									Image(systemName: "xmark")
@@ -83,7 +84,12 @@ struct SettingsView: View {
 							}
 						}
 					} header: {
-						Text("Connection to rupl.org")
+						if isConnectedToRupl {
+							Text("● Connected to rupl.org")
+								.foregroundColor(.ruplGreen)
+						} else {
+							Text("Connection to rupl.org")
+						}
 					} footer: {
 						if isConnectedToRupl {
 							Text("Disconnect from rupl.org and stop uploading running results")
@@ -122,36 +128,34 @@ struct SettingsView: View {
 	}
 
 	func pollingResponse() {
-//		DispatchQueue.global().async {
-//			while self.polling {
-//				if OAuth2.expiresIn <= Date() {
-//					self.sendRequest()
-//				}
-//
-//				OAuth2.getDeviceAccessToken { result in
-//					AppSettings.shared.deviceAccessToken = OAuth2.accessToken
-//					AppSettings.shared.deviceAccessTokenType = OAuth2.tokenType
-//					AppSettings.shared.deviceAccessTokenExpiresIn = OAuth2.expiresIn.timeIntervalSince1970
-//				}
-//
-////				if !OAuth2.accessToken.isEmpty && !OAuth2.tokenType.isEmpty && OAuth2.expiresIn > Date() {
-////					self.polling = false
-////				}
-//
-//				print(OAuth2.accessToken)
-//				print(OAuth2.tokenType)
-//				print(OAuth2.expiresIn.timeIntervalSince1970)
-//
-//				print("--- polling ---")
-//				print(OAuth2.interval)
-//
-//				sleep(OAuth2.interval)
-//			}
-////
-////			print(OAuth2.accessToken)
-////			print(OAuth2.tokenType)
-////			print(OAuth2.expiresIn.timeIntervalSince1970)
-//		}
+		DispatchQueue.global().async {
+			while self.polling {
+				if OAuth2.expiresIn <= Date() {
+					self.sendRequest()
+				}
+
+				OAuth2.getDeviceAccessToken { result in
+					AppSettings.shared.deviceAccessToken = OAuth2.accessToken
+					AppSettings.shared.deviceAccessTokenType = OAuth2.tokenType
+					AppSettings.shared.deviceAccessTokenExpiresIn = OAuth2.expiresIn.timeIntervalSince1970
+
+					if !OAuth2.accessToken.isEmpty && !OAuth2.tokenType.isEmpty && OAuth2.expiresIn > Date() {
+						self.polling = false
+						self.deviceAuthorization = false
+					}
+				}
+
+				sleep(OAuth2.interval)
+			}
+		}
+	}
+
+	func resetDeviceAccess() {
+		OAuth2.deleteDeviceAccess { result in
+			AppSettings.shared.deviceAccessToken = ""
+			AppSettings.shared.deviceAccessTokenType = ""
+			AppSettings.shared.deviceAccessTokenExpiresIn = 0
+		}
 	}
 }
 
