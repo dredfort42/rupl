@@ -47,9 +47,9 @@ func DeviceDeauthorization(c *gin.Context) {
 	}
 
 	if !db.DeleteDeviceAccessToken(db.GetEmailByAccessToken(accessToken)) {
-		errorResponse.Error = "token_error"
-		errorResponse.ErrorDescription = "Invalid client ID"
-		c.IndentedJSON(http.StatusUnauthorized, errorResponse)
+		errorResponse.Error = "internal_error"
+		errorResponse.ErrorDescription = "Failed to deauthorize device"
+		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
 		return
 	}
 
