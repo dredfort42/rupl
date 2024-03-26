@@ -17,7 +17,7 @@ func DeleteUserTokens(email string) {
 
 // Delete device access token from the database
 func DeleteDeviceAccessToken(clientID string, accessToken string) bool {
-	query := `DELETE FROM ` + db.tableUsers + ` WHERE client_id = $1 AND access_token = $2`
+	query := `DELETE FROM ` + db.tableUsers + ` WHERE device_uuid = $1 AND device_access_token = $2`
 
 	if _, db.err = db.database.Exec(query, clientID, accessToken); db.err != nil {
 		logprinter.PrintError("Failed to delete device access token from the database", db.err)
