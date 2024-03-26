@@ -15,6 +15,9 @@ func DeviceDeauthorization(c *gin.Context) {
 	var errorResponse ResponseError
 	var err error
 
+	clientID = c.Request.URL.Query().Get("client_id")
+	accessToken = c.Request.URL.Query().Get("access_token")
+
 	if clientID == "" || accessToken == "" {
 		errorResponse.Error = "invalid_request"
 		errorResponse.ErrorDescription = "Missing required parameter"
