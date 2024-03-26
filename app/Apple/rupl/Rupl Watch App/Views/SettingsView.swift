@@ -110,7 +110,6 @@ struct SettingsView: View {
 		} else {
 			OAuthInstructionView(url: verificationUri, code: userCode)
 				.onAppear() {
-					polling = true
 					pollingResponse()
 				}
 				.onDisappear() {
@@ -128,6 +127,8 @@ struct SettingsView: View {
 	}
 
 	func pollingResponse() {
+		polling = true
+
 		DispatchQueue.global().async {
 			while self.polling {
 				if OAuth2.expiresIn <= Date() {
@@ -147,6 +148,10 @@ struct SettingsView: View {
 
 				sleep(OAuth2.interval)
 			}
+
+			OAuth2.accessToken = ""
+			OAuth2.tokenType = ""
+			OAuth2.expiresIn = Date()
 		}
 	}
 
