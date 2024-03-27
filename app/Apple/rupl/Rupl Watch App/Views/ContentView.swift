@@ -38,6 +38,8 @@ struct ContentView: View {
 		}
 		.onAppear {
 			selection = .controls
+			// MARK: - get profile
+			Profile.shared.getProfile()
 		}
 		.sheet(isPresented: $isSheetActive) {
 			if workoutManager.sessionState != .ended {
