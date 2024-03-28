@@ -74,5 +74,5 @@ func CreateDevice(c *gin.Context) {
 		logprinter.PrintInfo("Device name: ", device.DeviceName)
 	}
 
-	c.IndentedJSON(http.StatusCreated, gin.H{"message": "Device created successfully", "profile": gin.H{"email": email}})
+	c.IndentedJSON(http.StatusCreated, gin.H{"message": "Device created successfully", "device": device})
 }

@@ -86,5 +86,5 @@ func CreateProfile(c *gin.Context) {
 	logprinter.PrintInfo("User profile created successfully for an ID: ", email)
 	logprinter.PrintInfo("User profile: ", profile.FirstName+" "+profile.LastName)
 
-	c.IndentedJSON(http.StatusCreated, gin.H{"message": "Profile created successfully", "profile": gin.H{"email": email}})
+	c.IndentedJSON(http.StatusCreated, gin.H{"message": "Profile created successfully", "profile": profileDB})
 }
