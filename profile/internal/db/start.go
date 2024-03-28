@@ -62,7 +62,7 @@ func Start(configMap configreader.ConfigMap) {
 		time.Sleep(5 * time.Second)
 	}
 
-	CheckUsersTable()
+	CheckTables()
 
 	if DEBUG {
 		logprinter.PrintSuccess("Database", "Started")
