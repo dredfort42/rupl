@@ -87,5 +87,5 @@ func DeviceIdentification(c *gin.Context) {
 
 	delete(UserCodes, userCode)
 
-	c.IndentedJSON(http.StatusOK, gin.H{"message": "Verification completed successfully"})
+	c.IndentedJSON(http.StatusOK, gin.H{"message": "Identification completed successfully"})
 }
