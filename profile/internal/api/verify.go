@@ -7,7 +7,6 @@ import (
 )
 
 // VerifyUser verifies the user based on the access token provided in the request.
-
 func VerifyUser(c *gin.Context) string {
 	var accessToken string
 	var errorResponse ResponseError
@@ -33,15 +32,13 @@ func VerifyUser(c *gin.Context) string {
 
 // VerifyDevice verifies the device based on the client ID and access token provided in the request.
 func VerifyDevice(c *gin.Context) string {
+	var accessToken string
 	var errorResponse ResponseError
 
-	clientID := c.Request.URL.Query().Get("client_id")
-	accessToken := c.Request.URL.Query().Get("access_token")
-
-	if clientID == "" || accessToken == "" {
-		errorResponse.Error = "invalid_request"
-		errorResponse.ErrorDescription = "Missing required parameter"
-		c.IndentedJSON(http.StatusBadRequest, errorResponse)
+	if accessToken = c.Request.URL.Query().Get("access_token"); accessToken == "" {
+		errorResponse.Error = "token_error"
+		errorResponse.ErrorDescription = "Missing access token"
+		c.IndentedJSON(http.StatusUnauthorized, errorResponse)
 		return ""
 	}
 
