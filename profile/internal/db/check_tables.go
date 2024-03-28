@@ -58,6 +58,7 @@ func CheckDevicesTable() {
 					system_name VARCHAR(255) NOT NULL,
 					system_version VARCHAR(255) NOT NULL,
 					device_id VARCHAR(255) NOT NULL,
+					app_version VARCHAR(255) NOT NULL,
 					created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 				);

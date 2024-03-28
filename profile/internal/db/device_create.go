@@ -12,8 +12,8 @@ func CreateDevice(email string, device Device) error {
 	// 	return errors.New("device already exists")
 	// }
 
-	query := `INSERT INTO ` + db.tableDevices + ` (email, device_model, device_name, system_name, system_version, device_id) VALUES ($1, $2, $3, $4, $5, $6);`
-	if _, err := db.database.Exec(query, email, device.DeviceModel, device.DeviceName, device.SystemName, device.SystemVersion, device.DeviceID); err != nil {
+	query := `INSERT INTO ` + db.tableDevices + ` (email, device_model, device_name, system_name, system_version, device_id, app_version) VALUES ($1, $2, $3, $4, $5, $6, $7);`
+	if _, err := db.database.Exec(query, email, device.DeviceModel, device.DeviceName, device.SystemName, device.SystemVersion, device.DeviceID, device.AppVersion); err != nil {
 		if DEBUG {
 			logprinter.PrintError("Failed to create device in the database", err)
 		}

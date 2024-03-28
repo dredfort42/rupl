@@ -28,4 +28,5 @@ type Device struct {
 	SystemName    string `json:"system_name"`
 	SystemVersion string `json:"system_version"`
 	DeviceID      string `json:"device_id"`
+	AppVersion    string `json:"app_version"`
 }
