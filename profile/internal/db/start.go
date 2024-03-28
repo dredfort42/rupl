@@ -56,6 +56,7 @@ func Start(configMap configreader.ConfigMap) {
 
 	db.database, db.err = nil, nil
 	db.tableProfiles = config["db.table.profiles"]
+	db.tableDevices = config["db.table.devices"]
 
 	for !ConnectToDatabase() {
 		time.Sleep(5 * time.Second)

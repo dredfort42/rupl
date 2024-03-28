@@ -39,6 +39,7 @@ struct ContentView: View {
 		.onAppear {
 			selection = .controls
 			// MARK: - get profile
+			DeviceInfo().printDeviceInfo()
 			Profile.shared.getProfile()
 		}
 		.sheet(isPresented: $isSheetActive) {

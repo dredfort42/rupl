@@ -25,11 +25,10 @@ func Start(configMap configreader.ConfigMap) {
 	router := gin.Default()
 	router.Use(cors.Default())
 	router.POST("/api/v1/profile", CreateProfile)
-	// router.POST("/api/v1/auth/login", LogInUser)
-	// router.POST("/api/v1/auth/device_authorization", DeviceAuthorization)
+	router.POST("/api/v1/devices", CreateDevice)
 	router.GET("/api/v1/profile", GetProfile)
-	// router.GET("/api/v1/auth/refresh", RefreshUserTokens)
-	// router.GET("/api/v1/auth/logout", LogOutUser)
+	// router.GET("/api/v1/devices", GetDevices)
+	// router.PUT("/api/v1/profile", UpdateProfile)
 
 	url := fmt.Sprintf("%s:%s", config["profile.host"], config["profile.port"])
 
