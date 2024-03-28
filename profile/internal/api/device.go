@@ -18,9 +18,6 @@ func CreateDevice(c *gin.Context) {
 
 	email = VerifyDevice(c)
 	if email == "" {
-		errorResponse.Error = "invalid_request"
-		errorResponse.ErrorDescription = "Device not authenticated"
-		c.IndentedJSON(http.StatusUnauthorized, errorResponse)
 		return
 	}
 
