@@ -62,12 +62,12 @@ func CreateDevice(c *gin.Context) {
 		return
 	}
 
-	// if err = db.CreateDevice(device); err != nil {
-	// 	errorResponse.Error = "server_error"
-	// 	errorResponse.ErrorDescription = "Error creating device"
-	// 	c.IndentedJSON(http.StatusInternalServerError, errorResponse)
-	// 	return
-	// }
+	if err = db.CreateDevice(email, device); err != nil {
+		errorResponse.Error = "server_error"
+		errorResponse.ErrorDescription = "Error creating device"
+		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
+		return
+	}
 
 	if DEBUG {
 		logprinter.PrintInfo("Device created successfully for an ID: ", device.DeviceID)
