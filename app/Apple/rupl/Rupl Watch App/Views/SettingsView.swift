@@ -9,8 +9,6 @@
 import SwiftUI
 
 struct SettingsView: View {
-	private let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "N/A"
-	private let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "N/A"
 	private let maxUserBirthYear: Int = AppSettings.shared.getCurrentYear() - 14
 	private let minUserBirthYear: Int = AppSettings.shared.getCurrentYear() - 100
 
@@ -100,7 +98,7 @@ struct SettingsView: View {
 
 					Section {
 					} footer: {
-						Text("Version: " + appVersion + "." + buildNumber)
+						Text("Version: " + AppSettings.shared.appVersion)
 							.foregroundColor(.ruplBlue)
 					}
 				}
@@ -114,6 +112,7 @@ struct SettingsView: View {
 				}
 				.onDisappear() {
 					polling = false
+					
 				}
 		}
 	}

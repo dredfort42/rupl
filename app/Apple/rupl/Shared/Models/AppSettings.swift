@@ -19,10 +19,12 @@ class AppSettings {
 	static let criticalHeartRateKey = "criticalHeartRate"
 	static let connectedToRuplKey = "connectedToRupl"
 	static let runningTaskHeartRateKey = "runningTaskHeartRate"
+	private let appVersionKey = "appVersion"
 	private let clientIDKey = "clientID"
 	private let deviceAuthURLKey = "deviceAuthURL"
 	private let deviceTokenURLKey = "deviceTokenURL"
 	private let profileURLKey = "profileURL"
+	private let deviceInfoURLKey = "deviceInfoURL"
 	private let deviceAccessTokenKey = "deviceAccessToken"
 	private let deviceAccessTokenTypeKey = "deviceAccessTokenType"
 	private let deviceAccessTokenExpiresInKey = "deviceAccessTokenExpiresIn"
@@ -39,6 +41,15 @@ class AppSettings {
 	private let pz5AnaerobicKey = "pz5Anaerobic"
 	private let soundNotificationTimeOutKey = "soundNotificationTimeOut"
 	private let viewNotificationTimeOutKey = "viewNotificationTimeOut"
+
+	var appVersion: String {
+		get {
+			return UserDefaults.standard.string(forKey: appVersionKey) ?? ""
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: appVersionKey)
+		}
+	}
 
 	var clientID: String {
 		get {
@@ -61,6 +72,12 @@ class AppSettings {
 	var profileURL: String {
 		get {
 			return UserDefaults.standard.string(forKey: profileURLKey) ?? ""
+		}
+	}
+
+	var deviceInfoURL: String {
+		get {
+			return UserDefaults.standard.string(forKey: deviceInfoURLKey) ?? ""
 		}
 	}
 
@@ -273,6 +290,8 @@ class AppSettings {
 		UserDefaults.standard.set("https://rupl.org/api/v1/auth/device_authorization", forKey: deviceAuthURLKey)
 		UserDefaults.standard.set("https://rupl.org/api/v1/auth/device_token", forKey: deviceTokenURLKey)
 		UserDefaults.standard.set("https://rupl.org/api/v1/profile", forKey: profileURLKey)
+		UserDefaults.standard.set("https://rupl.org/api/v1/profile/devices", forKey: deviceInfoURLKey)
+
 
 		if paceForAutoPause == 0.0 || paceForAutoResume == 0.0 {
 			useAutoPause = true

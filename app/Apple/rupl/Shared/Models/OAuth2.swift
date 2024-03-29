@@ -99,10 +99,12 @@ struct OAuth2 {
 
 		let task = URLSession.shared.dataTask(with: request) { data, response, error in
 			guard let data = data else {
-				print(String(describing: error))
+				Logger.shared.log("Error: \(error)")
 				return
 			}
+#if DEBUG
 			print(String(data: data, encoding: .utf8)!)
+#endif
 		}
 
 		task.resume()
