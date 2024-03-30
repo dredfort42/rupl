@@ -48,7 +48,7 @@
             aria-expanded="false" id="profileName"></button>
           <ul class="dropdown-menu dropdown-menu-end border border-1 border-info bg-black">
             <li>
-              <a class="dropdown-item icon-link" href="/device">
+              <a class="dropdown-item icon-link" onclick="openModal('connectDeviceModal')">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                   class="bi bi-smartwatch" viewBox="0 0 16 16">
                   <path d="M9 5a.5.5 0 0 0-1 0v3H6a.5.5 0 0 0 0 1h2.5a.5.5 0 0 0 .5-.5z" />
@@ -86,7 +86,7 @@
     </div>
   </main>
 
-  <!-- Modal -->
+  <!-- Create Profile Modal -->
   <div class="modal fade" id="createProfileModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content border border-1 border-info rounded-4 bg-black">
@@ -137,6 +137,42 @@
       </div>
     </div>
   </div>
+
+  <!-- Connect Device Modal -->
+  <div class="modal fade" id="connectDeviceModal" tabindex="-1">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+      <div class="modal-content border border-1 border-info rounded-4 bg-black">
+        <div class="container content p-4">
+          <h1 class="fw-light fs-3 text-light">Connect a device</h1>
+
+          <p class="fw-light fs-6 text-secondary">
+            Enter the code displayed on your device
+          </p>
+
+          <form id="login">
+            <div class="mb-3">
+              <div class="input-group">
+                <input type="text" class="form-control bg-info border-info text-white ps-5" style="--bs-bg-opacity: .1;"
+                  id="code" name="code" placeholder="XXXX-XXXX" required>
+                <span id="resetCode" class="input-group-text bg-info border-info text-black" onclick="resetCode()">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-x-lg"
+                    viewBox="0 0 16 16">
+                    <path
+                      d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                  </svg>
+                </span>
+              </div>
+            </div>
+            <div class="row px-2">
+              <button type="button" id="continueBtn" class="col mx-1 btn btn-info" disabled>
+                Continue
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 
 <script>
@@ -152,7 +188,7 @@
           return response.json();
         } else if (response.status === 500) {
           console.log('Failed to fetch profile.');
-          openModal();
+          openModal('createProfileModal');
         } else {
           refreshTokens();
         }
@@ -171,8 +207,8 @@
   }
 
   // Function to open modal
-  function openModal() {
-    var myModal = new bootstrap.Modal(document.getElementById('createProfileModal'));
+  function openModal(modalID) {
+    var myModal = new bootstrap.Modal(document.getElementById(modalID));
     myModal.show();
   }
 
