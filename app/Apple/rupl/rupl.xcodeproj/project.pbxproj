@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		AF06CC452B69132200943CEB /* LoadingIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF06CC442B69132200943CEB /* LoadingIndicatorView.swift */; };
+		AF0A94C52BB770CD00AE6ACC /* OAuth2.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF41FA852B6825B5004FC0AB /* OAuth2.swift */; };
 		AF0FA3D72B7B8B67005572CF /* TaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0FA3D62B7B8B67005572CF /* TaskManager.swift */; };
 		AF0FA3D82B7B8B67005572CF /* TaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0FA3D62B7B8B67005572CF /* TaskManager.swift */; };
 		AF1BCFC32BB4D3DE001EC2B9 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF1BCFC22BB4D3DE001EC2B9 /* Profile.swift */; };
@@ -261,7 +262,6 @@
 			isa = PBXGroup;
 			children = (
 				AF1DB30D2BB5F5B80089B159 /* DeviceInfo+watchOS.swift */,
-				AF41FA852B6825B5004FC0AB /* OAuth2.swift */,
 				AF5ACB1A2B4712550010C316 /* WorkoutManager+watchOS.swift */,
 			);
 			path = Models;
@@ -299,6 +299,7 @@
 		AF3F354F2B66AC4D007399F9 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				AF41FA852B6825B5004FC0AB /* OAuth2.swift */,
 				AF43BF3B2B4C9EE800E5A89C /* AppSettings.swift */,
 				AFA196062B5FAF62002EB704 /* CheckMetrics.swift */,
 				AFA196092B5FBD95002EB704 /* Converters.swift */,
@@ -686,6 +687,7 @@
 				AF53FF052B5AE4D5005DE76D /* SoundEffects.swift in Sources */,
 				AFA196072B5FAF62002EB704 /* CheckMetrics.swift in Sources */,
 				AF720D432B504326008423D6 /* LocationManager.swift in Sources */,
+				AF0A94C52BB770CD00AE6ACC /* OAuth2.swift in Sources */,
 				AF5ACB1E2B4713FE0010C316 /* Logger.swift in Sources */,
 				AFA1960A2B5FBD95002EB704 /* Converters.swift in Sources */,
 				AF56CDEE2B644C47009E8CB8 /* MotionManager.swift in Sources */,
