@@ -128,7 +128,7 @@
               </div>
             </div>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-              <button id="continueBtn" type="submit" class="btn btn-info">
+              <button id="createProfileContinueBtn" type="submit" class="btn btn-info">
                 Continue
               </button>
             </div>
@@ -143,28 +143,29 @@
     <div class="modal-dialog modal-sm modal-dialog-centered">
       <div class="modal-content border border-1 border-info rounded-4 bg-black">
         <div class="container content p-4">
-          <h1 class="fw-light fs-3 text-light">Connect a device</h1>
+          <h1 class="col fw-light fs-3 text-light">Connect a device</h1>
 
           <p class="fw-light fs-6 text-secondary">
-            Enter the code displayed on your device
+            Enter the code displayed on your device to connect it to your account.
           </p>
 
           <form id="login">
-            <div class="mb-3">
-              <div class="input-group">
-                <input type="text" class="form-control bg-info border-info text-white ps-5" style="--bs-bg-opacity: .1;"
-                  id="code" name="code" placeholder="XXXX-XXXX" required>
-                <span id="resetCode" class="input-group-text bg-info border-info text-black" onclick="resetCode()">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-x-lg"
-                    viewBox="0 0 16 16">
-                    <path
-                      d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
-                  </svg>
-                </span>
-              </div>
+            <div class="input-group mb-4">
+              <input type="text" class="form-control bg-info border-info text-white fs-3 ps-4"
+                style="--bs-bg-opacity: .1;" id="code" name="code" placeholder="XXXX-XXXX" required>
+              <span id="resetCode" class="input-group-text bg-info border-info text-black" onclick="resetCode()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-x-lg"
+                  viewBox="0 0 16 16">
+                  <path
+                    d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                </svg>
+              </span>
             </div>
             <div class="row px-2">
-              <button type="button" id="continueBtn" class="col mx-1 btn btn-info" disabled>
+              <button type="button" class="col mx-1 btn btn-outline-info" data-bs-dismiss="modal">
+                Close
+              </button>
+              <button type="button" id="connectDeviceContinueBtn" class="col mx-1 btn btn-info" disabled>
                 Continue
               </button>
             </div>
@@ -199,6 +200,7 @@
           document.getElementById('profileName').style.display = 'block';
           document.getElementById('profileName').innerText = data.first_name;
           checkEmailVerification();
+          getDevices();
         }
       })
       .catch(error => {
@@ -206,10 +208,33 @@
       });
   }
 
-  // Function to open modal
-  function openModal(modalID) {
-    var myModal = new bootstrap.Modal(document.getElementById(modalID));
-    myModal.show();
+  // Get connected devices
+  function getDevices() {
+    // fetch('/api/v1/device', {
+    //   method: 'GET',
+    //   credentials: 'include'
+    // })
+    //   .then(response => {
+    //     if (response.ok) {
+    //       console.log('Devices fetched successfully.');
+    //       return response.json();
+    //     } else {
+    //       console.error('Failed to fetch devices:', response);
+    //     }
+    //   })
+    //   .then(data => {
+    //     console.log('Devices:', data);
+    //     if (data) {
+    //       if (data.length > 0) {
+    //         document.getElementById('connectDeviceContinueBtn').disabled = true;
+    //       } else {
+    //         openModal('connectDeviceModal');
+    //       }
+    //     }
+    //   })
+    //   .catch(error => {
+    //     console.error('Error fetching devices:', error);
+    //   });
   }
 
   // Refresh tokens
@@ -260,8 +285,14 @@
       })
   }
 
+  // Function to open modal
+  function openModal(modalID) {
+    var myModal = new bootstrap.Modal(document.getElementById(modalID));
+    myModal.show();
+  }
+
   // Form validation
-  document.getElementById("continueBtn").addEventListener("click", async function (event) {
+  document.getElementById("createProfileContinueBtn").addEventListener("click", async function (event) {
     event.preventDefault();
 
     const firstName = document.getElementById("firstName").value;
@@ -345,6 +376,94 @@
   // Check authentication status
   document.addEventListener('DOMContentLoaded', function () {
     getProfile();
+  });
+
+  // Continue button click event
+  document.getElementById('connectDeviceContinueBtn').addEventListener('click', function () {
+    const code = document.getElementById('code').value;
+    if (code.length === 9) {
+      fetch('/api/v1/device/connect', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          code: code
+        })
+      })
+        .then(response => {
+          if (response.ok) {
+            window.location.href = '/dashboard';
+          } else {
+            console.error('Error connecting device:', response);
+          }
+        })
+        .catch(error => {
+          console.error('Error connecting device:', error);
+        });
+    }
+  });
+
+  // JavaScript for resetting the code input
+  function resetCode() {
+    const codeInput = document.getElementById("code");
+    codeInput.value = "";
+  }
+
+  function code_check(field, e) {
+    var new_number,
+      selection_start = field.selectionStart,
+      selection_end = field.selectionEnd,
+      number = field.value.replace(/\D/g, '');
+
+    var min_length = (field.value.length < 5) ? 3 : 4;
+
+    if (number.length > min_length) {
+      new_number = number.substring(0, 4) + '-' + number.substring(4);
+    } else {
+      new_number = number;
+    }
+
+    field.value = (new_number.length > 9) ? new_number.substring(0, 9) : new_number;
+  }
+
+  document.getElementById('code').onkeyup = function (event) {
+    code_check(this, event);
+
+    if (this.value.length === 9) {
+      document.getElementById('connectDeviceContinueBtn').disabled = false;
+    } else {
+      document.getElementById('connectDeviceContinueBtn').disabled = true;
+    }
+  }
+
+  // JavaScript for device identification
+  document.getElementById("connectDeviceContinueBtn").addEventListener("click", async function (event) {
+    event.preventDefault();
+
+    const code = document.getElementById("code").value.replace(/ /g, '');
+
+    try {
+      const response = await fetch('/api/v1/auth/device_identify?user_code=' + code, {
+        method: 'POST',
+      });
+
+      const data = await response.json();
+      if (data.message) {
+        console.log(data.message);
+      }
+
+      if (!response.ok) {
+        throw new Error("An error occurred while identifying the device!");
+      }
+
+      window.location.href = '/dashboard'; // Redirect to the personal dashboard
+    } catch (error) {
+      alert('Invalid user code!');
+      document.getElementById("code").reset();
+      console.error('Error:', error.message);
+    }
   });
 
 </script>
