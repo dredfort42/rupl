@@ -110,7 +110,13 @@ func DeleteDevice(c *gin.Context) {
 	var errorResponse ResponseError
 	var err error
 
-	if email = VerifyDevice(c); email == "" {
+	if clientID := c.Request.URL.Query().Get("client_id"); clientID != "" {
+		email = VerifyDevice(c)
+	} else {
+		email = VerifyUser(c)
+	}
+
+	if email == "" {
 		return
 	}
 
