@@ -27,6 +27,7 @@ func Start(configMap configreader.ConfigMap) {
 	router.POST("/api/v1/profile", CreateProfile)
 	router.POST("/api/v1/profile/devices", CreateDevice)
 	router.GET("/api/v1/profile", GetProfile)
+	router.GET("/api/v1/profile/devices", GetDevices)
 	// router.GET("/api/v1/devices", GetDevices)
 	// router.PUT("/api/v1/profile", UpdateProfile)
 
