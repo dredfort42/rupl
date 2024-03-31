@@ -1,23 +1,26 @@
 package db
 
 // GetDevices returns a device from the database
-func GetDevices(email string) ([]Device, error) {
-	var devices []Device
+func GetDevices(email string) (Devices, error) {
+	var devices Devices
+
+	devices.Email = email
 
 	query := `SELECT * FROM ` + db.tableDevices + ` WHERE email = $1;`
 
 	rows, err := db.database.Query(query, email)
 	if err != nil {
-		return nil, err
+		return Devices{}, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		var device Device
 		if err := rows.Scan(&device.DeviceModel, &device.DeviceName, &device.SystemName, &device.SystemVersion, &device.DeviceID, &device.AppVersion); err != nil {
-			return nil, err
+			return Devices{}, err
 		}
-		devices = append(devices, device)
+
+		devices.Devices = append(devices.Devices, device)
 	}
 	return devices, nil
 }

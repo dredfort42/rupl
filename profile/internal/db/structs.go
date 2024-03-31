@@ -30,3 +30,9 @@ type Device struct {
 	DeviceID      string `json:"device_id"`
 	AppVersion    string `json:"app_version"`
 }
+
+// Deveces is a struct for JSON
+type Devices struct {
+	Email   string   `json:"email"`
+	Devices []Device `json:"devices"`
+}
