@@ -102,3 +102,42 @@ func GetDevices(c *gin.Context) {
 
 	c.IndentedJSON(http.StatusOK, devices)
 }
+
+// DeleteDevice deletes a device based on the access token provided in the request.
+func DeleteDevice(c *gin.Context) {
+	var email string
+	var device db.Device
+	var errorResponse ResponseError
+	var err error
+
+	if email = VerifyDevice(c); email == "" {
+		return
+	}
+
+	if err = c.ShouldBindJSON(&device); err != nil {
+		errorResponse.Error = "invalid_request"
+		errorResponse.ErrorDescription = "Invalid request"
+		c.IndentedJSON(http.StatusBadRequest, errorResponse)
+		return
+	}
+
+	if device.DeviceID == "" {
+		errorResponse.Error = "invalid_request"
+		errorResponse.ErrorDescription = "Missing device ID"
+		c.IndentedJSON(http.StatusBadRequest, errorResponse)
+		return
+	}
+
+	if err = db.DeleteDevice(email, device); err != nil {
+		errorResponse.Error = "server_error"
+		errorResponse.ErrorDescription = "Error deleting device"
+		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
+		return
+	}
+
+	if DEBUG {
+		logprinter.PrintInfo("Device deleted successfully for an ID: ", device.DeviceID)
+	}
+
+	c.IndentedJSON(http.StatusOK, gin.H{"message": "Device deleted successfully", "device": device})
+}
