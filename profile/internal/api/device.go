@@ -79,30 +79,25 @@ func CreateDevice(c *gin.Context) {
 
 // GetDevices returns all devices associated with the user.
 func GetDevices(c *gin.Context) {
-	var email string
 	var devices db.UserDevices
 	var errorResponse ResponseError
 	var err error
 
-	if c.Request.URL.Query().Get("client_id") != "" {
-		email = VerifyDevice(c)
+	if clientID := c.Request.URL.Query().Get("client_id"); clientID != "" {
+		devices, err = db.GetDevices(VerifyDevice(c))
 	} else {
-		email = VerifyUser(c)
+		devices, err = db.GetDevices(VerifyUser(c))
 	}
 
-	if email == "" {
-		return
-	}
-
-	if devices, err = db.GetDevices(email); err != nil {
+	if err != nil {
 		errorResponse.Error = "server_error"
-		errorResponse.ErrorDescription = "Error getting devices"
+		errorResponse.ErrorDescription = "Error getting user devices"
 		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
 		return
 	}
 
 	if DEBUG {
-		logprinter.PrintInfo("Devices retrieved successfully for an email: ", email)
+		logprinter.PrintInfo("User devices retrieved successfully for an ID: ", devices.Email)
 	}
 
 	c.IndentedJSON(http.StatusOK, devices)

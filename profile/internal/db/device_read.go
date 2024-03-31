@@ -4,8 +4,6 @@ package db
 func GetDevices(email string) (UserDevices, error) {
 	var devices UserDevices
 
-	devices.Email = email
-
 	query := `SELECT * FROM ` + db.tableDevices + ` WHERE email = $1;`
 
 	rows, err := db.database.Query(query, email)
@@ -22,5 +20,8 @@ func GetDevices(email string) (UserDevices, error) {
 
 		devices.Devices = append(devices.Devices, device)
 	}
+
+	devices.Email = email
+
 	return devices, nil
 }
