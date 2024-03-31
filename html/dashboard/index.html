@@ -186,7 +186,8 @@
             <button type="button" class="col mx-1 btn btn-outline-info" data-bs-dismiss="modal">
               Close
             </button>
-            <button type="button" id="connectAnotherDeviceBtn" class="col mx-1 btn btn-info">
+            <button type="button" id="connectAnotherDeviceBtn" class="col mx-1 btn btn-info"
+              data-bs-target="#connectDeviceModal" data-bs-toggle="modal">
               Connect another device
             </button>
           </div>
@@ -268,7 +269,7 @@
                   </div>
                   <div class="d-flex w-100 justify-content-between mb-1">
                     <h6 class="mb-2 text-light">${device.device_name}</h5>
-                    <button type="button" class="btn btn-outline-danger" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;" onclick="openModal('')">Disconnect</button>
+                    <button type="button" class="btn btn-outline-danger" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;" onclick="deleteDevice('${device.device_id}')">Disconnect</button>
                   </div>
                 </div >
               `;
@@ -328,6 +329,33 @@
           console.log('Failed to log out user.');
         }
       })
+  }
+
+  // Function to delete device
+  async function deleteDevice(deviceID) {
+    try {
+      const response = await fetch('/api/v1/profile/devices', {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ device_id: deviceID })
+      });
+
+      if (!response.ok) {
+        throw new Error('An error occurred while disconnecting the device.');
+      }
+
+      const data = await response.json();
+      if (data.message) {
+        console.log(data.message);
+      }
+
+      window.location.href = '/dashboard';
+    } catch (error) {
+      console.error('Error:', error.message);
+    }
   }
 
   // Function to open modal
