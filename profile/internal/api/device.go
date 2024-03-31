@@ -80,7 +80,7 @@ func CreateDevice(c *gin.Context) {
 // GetDevices returns all devices associated with the user.
 func GetDevices(c *gin.Context) {
 	var email string
-	var devices db.Devices
+	var devices db.UserDevices
 	var errorResponse ResponseError
 	var err error
 

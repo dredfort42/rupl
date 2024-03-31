@@ -32,7 +32,7 @@ type Device struct {
 }
 
 // Deveces is a struct for JSON
-type Devices struct {
+type UserDevices struct {
 	Email   string   `json:"email"`
 	Devices []Device `json:"devices"`
 }

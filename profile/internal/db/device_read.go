@@ -1,8 +1,8 @@
 package db
 
 // GetDevices returns a device from the database
-func GetDevices(email string) (Devices, error) {
-	var devices Devices
+func GetDevices(email string) (UserDevices, error) {
+	var devices UserDevices
 
 	devices.Email = email
 
@@ -10,14 +10,14 @@ func GetDevices(email string) (Devices, error) {
 
 	rows, err := db.database.Query(query, email)
 	if err != nil {
-		return Devices{}, err
+		return UserDevices{}, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		var device Device
 		if err := rows.Scan(&device.DeviceModel, &device.DeviceName, &device.SystemName, &device.SystemVersion, &device.DeviceID, &device.AppVersion); err != nil {
-			return Devices{}, err
+			return UserDevices{}, err
 		}
 
 		devices.Devices = append(devices.Devices, device)
