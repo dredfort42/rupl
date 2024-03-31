@@ -11,8 +11,8 @@ import (
 
 // CreateDevice creates a new device based on the access token provided in the request.
 func CreateDevice(c *gin.Context) {
-	var device db.Device
 	var email string
+	var device db.Device
 	var errorResponse ResponseError
 	var err error
 
@@ -75,4 +75,29 @@ func CreateDevice(c *gin.Context) {
 	}
 
 	c.IndentedJSON(http.StatusCreated, gin.H{"message": "Device created successfully", "device": device})
+}
+
+// GetDevices returns all devices associated with the user.
+func GetDevices(c *gin.Context) {
+	var email string
+	var devices []db.Device
+	var errorResponse ResponseError
+	var err error
+
+	if email = VerifyDevice(c); email == "" {
+		return
+	}
+
+	if devices, err = db.GetDevices(email); err != nil {
+		errorResponse.Error = "server_error"
+		errorResponse.ErrorDescription = "Error getting devices"
+		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
+		return
+	}
+
+	if DEBUG {
+		logprinter.PrintInfo("Devices retrieved successfully for an email: ", email)
+	}
+
+	c.IndentedJSON(http.StatusOK, devices)
 }
