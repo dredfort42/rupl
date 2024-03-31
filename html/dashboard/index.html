@@ -210,32 +210,24 @@
 
   // Get connected devices
   function getDevices() {
-    fetch('/api/v1/device', {
+    fetch('/api/v1/profile/devices', {
       method: 'GET',
       credentials: 'include'
     })
       .then(response => {
         if (response.ok) {
           console.log('Devices fetched successfully.');
-          console.log(response);
-          // return response.json();
+          return response.json();
         } else {
           console.error('Failed to fetch devices:', response);
         }
       })
-    // .then(data => {
-    //   console.log('Devices:', data);
-    //   if (data) {
-    //     if (data.length > 0) {
-    //       document.getElementById('connectDeviceContinueBtn').disabled = true;
-    //     } else {
-    //       openModal('connectDeviceModal');
-    //     }
-    //   }
-    // })
-    // .catch(error => {
-    //   console.error('Error fetching devices:', error);
-    // });
+      .then(data => {
+        console.log('Devices:', data);
+      })
+      .catch(error => {
+        console.error('Error fetching devices:', error);
+      });
   }
 
   // Refresh tokens

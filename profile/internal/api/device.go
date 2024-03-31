@@ -84,7 +84,13 @@ func GetDevices(c *gin.Context) {
 	var errorResponse ResponseError
 	var err error
 
-	if email = VerifyDevice(c); email == "" {
+	if c.Request.URL.Query().Get("client_id") != "" {
+		email = VerifyDevice(c)
+	} else {
+		email = VerifyUser(c)
+	}
+
+	if email == "" {
 		return
 	}
 
