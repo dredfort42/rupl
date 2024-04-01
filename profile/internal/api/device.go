@@ -134,7 +134,7 @@ func DeleteDevice(c *gin.Context) {
 		return
 	}
 
-	if err = db.DeleteDevice(email, device.DeviceID); err != nil {
+	if err = db.DeleteDevice(device.DeviceID); err != nil {
 		errorResponse.Error = "server_error"
 		errorResponse.ErrorDescription = "Error deleting device"
 		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
