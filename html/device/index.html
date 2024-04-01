@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Device Integration: Connect your device to personal running coach account</title>
+    <meta name="Description" content="Rupl Project Description Page">
+</head>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Anta&display=swap');
+
+    .background-image {
+        background-image: url('/images/connect_device.jpg');
+        background-size: cover;
+        background-position: center;
+        height: 100vh;
+    }
+
+    .background-image::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(5px);
+    }
+
+    .content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1;
+        color: white;
+    }
+
+    ::placeholder {
+        color: #0dcaf0 !important;
+        opacity: 1;
+        /* Firefox */
+    }
+
+    ::-ms-input-placeholder {
+        /* Edge 12 -18 */
+        color: #0dcaf0 !important;
+    }
+</style>
+
+<body class="background-image bg-black">
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top m-3">
+        <div class="container-fluid">
+            <a class="navbar-brand text-info"
+                style="font-family: 'Anta', sans-serif; font-size: 50px; margin-top: -8px; padding: 0; line-height: 48px;"
+                href="/">
+                rupl
+            </a>
+        </div>
+    </nav>
+    <main>
+        <div class="container content">
+            <div class="row justify-content-center">
+                <div class="my-3 fw-light fs-3 text-light text-center">
+                    Connect a device
+                </div>
+                <div class="col-xl-4 col-lg-5 col-md-7 border border-1 border-info rounded-4 bg-black"
+                    style="--bs-bg-opacity: .75;">
+                    <form class="p-4" id="login">
+                        <div class="mb-3">
+                            <label for="code" class="form-label text-light">
+                                Enter the code displayed on your device
+                            </label>
+                            <div class="input-group">
+                                <input type="text" class="form-control bg-info border-info text-white fs-2 ps-5"
+                                    style="--bs-bg-opacity: .1;" id="code" name="code" placeholder="XXXX-XXXX" required>
+                                <span id="resetCode" class="input-group-text bg-info border-info text-black"
+                                    onclick="resetCode()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                                        class="bi bi-x-lg" viewBox="0 0 16 16">
+                                        <path
+                                            d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row px-2">
+                            <button type="button" id="continueBtn" class="col mx-1 btn btn-info" disabled>
+                                Continue
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+
+<script>
+    // Check if the user is already authenticated
+    function getAuthStatus() {
+        fetch('/api/v1/auth/verify', {
+            method: 'GET',
+            credentials: 'include' // Send cookies along with the request
+        })
+            .then(response => {
+                if (response.ok) {
+                    // window.location.href = '/dashboard';
+                } else {
+                    refreshTokens();
+                }
+            })
+            .catch(error => {
+                console.error('Error checking authentication status:', error);
+            });
+    }
+
+    // Refresh tokens
+    function refreshTokens() {
+        fetch('/api/v1/auth/refresh', {
+            method: 'GET',
+            credentials: 'include'
+        })
+            .then(response => {
+                if (response.ok) {
+                    // window.location.href = '/dashboard';
+                } else {
+                    console.error('Error refreshing tokens:', response);
+                    window.location.href = '/login';
+                }
+            })
+    }
+
+    // Check authentication status
+    document.addEventListener('DOMContentLoaded', function () {
+        getAuthStatus();
+    });
+
+    // Continue button click event
+    document.getElementById('continueBtn').addEventListener('click', function () {
+        const code = document.getElementById('code').value;
+        if (code.length === 9) {
+            fetch('/api/v1/device/connect', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    code: code
+                })
+            })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = '/dashboard';
+                    } else {
+                        console.error('Error connecting device:', response);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error connecting device:', error);
+                });
+        }
+    });
+
+    // JavaScript for resetting the code input
+    function resetCode() {
+        const codeInput = document.getElementById("code");
+        codeInput.value = "";
+    }
+
+    function code_check(field, e) {
+        var new_number,
+            selection_start = field.selectionStart,
+            selection_end = field.selectionEnd,
+            number = field.value.replace(/\D/g, '');
+
+        var min_length = (field.value.length < 5) ? 3 : 4;
+
+        if (number.length > min_length) {
+            new_number = number.substring(0, 4) + '-' + number.substring(4);
+        } else {
+            new_number = number;
+        }
+
+        field.value = (new_number.length > 9) ? new_number.substring(0, 9) : new_number;
+    }
+
+    document.getElementById('code').onkeyup = function (event) {
+        code_check(this, event);
+
+        if (this.value.length === 9) {
+            document.getElementById('continueBtn').disabled = false;
+        } else {
+            document.getElementById('continueBtn').disabled = true;
+        }
+    }
+
+    // JavaScript for device identification
+    document.getElementById("continueBtn").addEventListener("click", async function (event) {
+        event.preventDefault();
+
+        const code = document.getElementById("code").value.replace(/ /g, '');
+
+        try {
+            const response = await fetch('/api/v1/auth/device_identify?user_code=' + code, {
+                method: 'POST',
+            });
+
+            const data = await response.json();
+            if (data.message) {
+                console.log(data.message);
+            }
+
+            if (!response.ok) {
+                throw new Error("An error occurred while identifying the device!");
+            }
+
+            window.location.href = '/dashboard'; // Redirect to the personal dashboard
+        } catch (error) {
+            alert('Invalid user code!');
+            document.getElementById("code").reset();
+            console.error('Error:', error.message);
+        }
+    });
+
+</script>
+
+</html>

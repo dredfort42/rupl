@@ -9,13 +9,7 @@
 import SwiftUI
 
 struct SettingsView: View {
-	private let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "N/A"
-	private let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "N/A"
-	private let maxUserBirthYear: Int = AppSettings.shared.getCurrentYear() - 14
-	private let minUserBirthYear: Int = AppSettings.shared.getCurrentYear() - 100
-
 	@AppStorage(AppSettings.useAutoPauseKey) var useAutoPause = AppSettings.shared.useAutoPause
-	@AppStorage(AppSettings.userYearOfBirthKey) var userYearOfBirth = AppSettings.shared.userYearOfBirth
 	@AppStorage(AppSettings.criticalHeartRateKey) var criticalHeartRate = AppSettings.shared.criticalHeartRate
 	@AppStorage(AppSettings.connectedToRuplKey) var isConnectedToRupl = AppSettings.shared.connectedToRupl
 
@@ -46,23 +40,13 @@ struct SettingsView: View {
 						Text("If heart rate exceeds this value, an alarm will sound")
 					}
 
-					Section {
-						Stepper(value: $userYearOfBirth,
-								in: minUserBirthYear...maxUserBirthYear,
-								step: 1) {
-							Text(String(userYearOfBirth))
-								.font(.title2)
-						}.focusable(false)
-					} header: {
-						Text("Year of birth")
-					} footer: {
-						Text("Year of birth is required to calculate individual heart rate intervals")
-					}
+
 
 					Section {
 						if isConnectedToRupl {
 							Button {
 								isConnectedToRupl = !isConnectedToRupl
+								resetDeviceAccess()
 							} label: {
 								HStack {
 									Image(systemName: "xmark")
@@ -83,7 +67,12 @@ struct SettingsView: View {
 							}
 						}
 					} header: {
-						Text("Connection to rupl.org")
+						if isConnectedToRupl {
+							Text("● Connected to rupl.org")
+								.foregroundColor(.ruplGreen)
+						} else {
+							Text("Connection to rupl.org")
+						}
 					} footer: {
 						if isConnectedToRupl {
 							Text("Disconnect from rupl.org and stop uploading running results")
@@ -93,8 +82,15 @@ struct SettingsView: View {
 					}
 
 					Section {
+						if isConnectedToRupl && AppSettings.shared.userDateOfBirth != nil {
+							Text("\(AppSettings.shared.userFirstName) \(AppSettings.shared.userLastName)\nAge: \(AppSettings.shared.getUserAge(dateOfBirth: AppSettings.shared.userDateOfBirth!)) years")
+						}
+					} header: {
+						if isConnectedToRupl && AppSettings.shared.userDateOfBirth != nil {
+							Text("Profile")
+						}
 					} footer: {
-						Text("Version: " + appVersion + "." + buildNumber)
+						Text("Version: " + AppSettings.shared.appVersion)
 							.foregroundColor(.ruplBlue)
 					}
 				}
@@ -104,11 +100,11 @@ struct SettingsView: View {
 		} else {
 			OAuthInstructionView(url: verificationUri, code: userCode)
 				.onAppear() {
-					polling = true
 					pollingResponse()
 				}
 				.onDisappear() {
 					polling = false
+					
 				}
 		}
 	}
@@ -122,14 +118,45 @@ struct SettingsView: View {
 	}
 
 	func pollingResponse() {
-		DispatchQueue.global().async {
-			var counter: Int = 0
+		polling = true
 
+		DispatchQueue.global().async {
 			while self.polling {
-				print("[\(counter)] polling")
-				counter += 1
-				sleep(3)
+				if OAuth2.expiresIn <= Date() {
+					self.sendRequest()
+				}
+
+				OAuth2.getDeviceAccessToken { result in
+					AppSettings.shared.deviceAccessToken = OAuth2.accessToken
+					AppSettings.shared.deviceAccessTokenType = OAuth2.tokenType
+					AppSettings.shared.deviceAccessTokenExpiresIn = OAuth2.expiresIn.timeIntervalSince1970
+
+					if !OAuth2.accessToken.isEmpty && !OAuth2.tokenType.isEmpty && OAuth2.expiresIn > Date() {
+						self.polling = false
+						self.deviceAuthorization = false
+					}
+				}
+
+				sleep(OAuth2.interval)
 			}
+
+			OAuth2.accessToken = ""
+			OAuth2.tokenType = ""
+			OAuth2.expiresIn = Date()
+		}
+	}
+
+	func resetDeviceAccess() {
+		OAuth2.deleteDeviceAccess { result in
+			AppSettings.shared.deviceAccessToken = ""
+			AppSettings.shared.deviceAccessTokenType = ""
+			AppSettings.shared.deviceAccessTokenExpiresIn = 0
+			AppSettings.shared.userEmail = ""
+			AppSettings.shared.userFirstName = ""
+			AppSettings.shared.userLastName = ""
+			AppSettings.shared.userDateOfBirth = nil
+			AppSettings.shared.userGender = ""
+			DeviceInfo.shared.deleteDeviceInfo()
 		}
 	}
 }

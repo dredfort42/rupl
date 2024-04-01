@@ -64,3 +64,31 @@ func CheckUserRefreshToken(email string, refreshToken string) bool {
 	}
 	return true
 }
+
+// CheckDeviceAccessToken checks if a device's access token is correct
+func CheckDeviceAccessToken(clientID string, accessToken string) bool {
+	query := `SELECT device_uuid FROM ` + db.tableUsers + ` WHERE device_uuid = $1 AND device_access_token = $2`
+	if err := db.database.QueryRow(query, clientID, accessToken).Scan(&clientID); err != nil {
+		logprinter.PrintError("Failed to check if device access token is correct", err)
+		return false
+	}
+	return true
+}
+
+// GetEmailByAccessToken returns the email based on the access token provided
+func GetEmailByAccessToken(accessToken string) string {
+	var email string
+
+	query := `SELECT email FROM ` + db.tableUsers + ` WHERE access_token = $1`
+
+	if err := db.database.QueryRow(query, accessToken).Scan(&email); err != nil {
+		query = `SELECT email FROM ` + db.tableUsers + ` WHERE device_access_token = $1`
+
+		if err := db.database.QueryRow(query, accessToken).Scan(&email); err != nil {
+			logprinter.PrintError("Failed to get email by access token from the database", err)
+			return ""
+		}
+	}
+
+	return email
+}

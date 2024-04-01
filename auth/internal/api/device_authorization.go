@@ -4,19 +4,20 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
+
+var Devices = make(map[string]DeviceAuthorizationResponse)
+var UserCodes = make(map[string]string)
 
 // DeviceAuthorization adds new device
 func DeviceAuthorization(c *gin.Context) {
 	var response DeviceAuthorizationResponse
 
 	clientID := c.Request.URL.Query().Get("client_id")
-	// TMP
-	fmt.Println("client_id:", clientID)
-	//
 
 	if clientID == "" || len(clientID) < 32 || len(clientID) > 36 {
 		var errorResponse ResponseError
@@ -27,14 +28,29 @@ func DeviceAuthorization(c *gin.Context) {
 		return
 	}
 
+	if Devices != nil {
+		if response, ok := Devices[clientID]; ok {
+			c.IndentedJSON(http.StatusOK, response)
+			return
+		}
+		fmt.Println("Devices check not ok")
+	}
+
 	url := fmt.Sprintf("%s://%s", config["entrypoint.protocol.ssl"], config["entrypoint.address"])
 
 	response.DeviceCode = uuid.New().String()
-	response.UserCode =  fmt.Sprintf("%04d-%04d", generateRandomDigits(4), generateRandomDigits(4))
+	response.UserCode = fmt.Sprintf("%04d-%04d", generateRandomDigits(4), generateRandomDigits(4))
 	response.VerificationURI = url + "/device"
 	response.VerificationURIComplete = url + "/device?user_code=" + response.UserCode
-	response.ExpiresIn = 1800
+	response.ExpiresIn = 600
 	response.Interval = 5
+
+	UserCodes[response.UserCode] = clientID
+	Devices[clientID] = response
+
+	if len(Devices) == 1 {
+		go controlExpiration()
+	}
 
 	c.IndentedJSON(http.StatusOK, response)
 }
@@ -52,4 +68,19 @@ func pow(base, exponent int) int {
 		result *= base
 	}
 	return result
+}
+
+func controlExpiration() {
+	for len(Devices) > 0 {
+		time.Sleep(1 * time.Second)
+		for key, value := range Devices {
+			if value.ExpiresIn == 0 {
+				delete(UserCodes, value.UserCode)
+				delete(Devices, key)
+			} else {
+				value.ExpiresIn--
+				Devices[key] = value
+			}
+		}
+	}
 }

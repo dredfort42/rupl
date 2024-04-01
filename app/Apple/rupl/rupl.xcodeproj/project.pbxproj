@@ -8,10 +8,16 @@
 
 /* Begin PBXBuildFile section */
 		AF06CC452B69132200943CEB /* LoadingIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF06CC442B69132200943CEB /* LoadingIndicatorView.swift */; };
+		AF0A94C52BB770CD00AE6ACC /* OAuth2.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF41FA852B6825B5004FC0AB /* OAuth2.swift */; };
 		AF0FA3D72B7B8B67005572CF /* TaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0FA3D62B7B8B67005572CF /* TaskManager.swift */; };
 		AF0FA3D82B7B8B67005572CF /* TaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0FA3D62B7B8B67005572CF /* TaskManager.swift */; };
+		AF1BCFC32BB4D3DE001EC2B9 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF1BCFC22BB4D3DE001EC2B9 /* Profile.swift */; };
+		AF1BCFC42BB4D3DE001EC2B9 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF1BCFC22BB4D3DE001EC2B9 /* Profile.swift */; };
 		AF1C0C5B2B5EE5C800E1F9E4 /* WorkoutAlarmSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AF1C0C5A2B5EE5C800E1F9E4 /* WorkoutAlarmSound.aif */; };
 		AF1C0C5C2B5EE5C800E1F9E4 /* WorkoutAlarmSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AF1C0C5A2B5EE5C800E1F9E4 /* WorkoutAlarmSound.aif */; };
+		AF1DB30E2BB5F5B80089B159 /* DeviceInfo+watchOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF1DB30D2BB5F5B80089B159 /* DeviceInfo+watchOS.swift */; };
+		AF1DB3102BB5F61A0089B159 /* DeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF1DB30F2BB5F61A0089B159 /* DeviceInfo.swift */; };
+		AF1DB3112BB5F61A0089B159 /* DeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF1DB30F2BB5F61A0089B159 /* DeviceInfo.swift */; };
 		AF2DBABA2B601F5B00E50B47 /* WorkoutRunSlowerSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AF2DBAB82B601F5B00E50B47 /* WorkoutRunSlowerSound.aif */; };
 		AF2DBABB2B601F5B00E50B47 /* WorkoutRunSlowerSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AF2DBAB82B601F5B00E50B47 /* WorkoutRunSlowerSound.aif */; };
 		AF2DBABC2B601F5B00E50B47 /* WorkoutRunFasterSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AF2DBAB92B601F5B00E50B47 /* WorkoutRunFasterSound.aif */; };
@@ -131,8 +137,11 @@
 /* Begin PBXFileReference section */
 		AF06CC442B69132200943CEB /* LoadingIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingIndicatorView.swift; sourceTree = "<group>"; };
 		AF0FA3D62B7B8B67005572CF /* TaskManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskManager.swift; sourceTree = "<group>"; };
+		AF1BCFC22BB4D3DE001EC2B9 /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
 		AF1C0C592B5ECDA500E1F9E4 /* rupl.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = rupl.entitlements; sourceTree = "<group>"; };
 		AF1C0C5A2B5EE5C800E1F9E4 /* WorkoutAlarmSound.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = WorkoutAlarmSound.aif; sourceTree = "<group>"; };
+		AF1DB30D2BB5F5B80089B159 /* DeviceInfo+watchOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DeviceInfo+watchOS.swift"; sourceTree = "<group>"; };
+		AF1DB30F2BB5F61A0089B159 /* DeviceInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfo.swift; sourceTree = "<group>"; };
 		AF2DBAB82B601F5B00E50B47 /* WorkoutRunSlowerSound.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = WorkoutRunSlowerSound.aif; sourceTree = "<group>"; };
 		AF2DBAB92B601F5B00E50B47 /* WorkoutRunFasterSound.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = WorkoutRunFasterSound.aif; sourceTree = "<group>"; };
 		AF3F35502B66ACD8007399F9 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -252,7 +261,7 @@
 		AF3F354B2B66AB79007399F9 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				AF41FA852B6825B5004FC0AB /* OAuth2.swift */,
+				AF1DB30D2BB5F5B80089B159 /* DeviceInfo+watchOS.swift */,
 				AF5ACB1A2B4712550010C316 /* WorkoutManager+watchOS.swift */,
 			);
 			path = Models;
@@ -290,17 +299,20 @@
 		AF3F354F2B66AC4D007399F9 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				AF5ACB1D2B4713FE0010C316 /* Logger.swift */,
+				AF41FA852B6825B5004FC0AB /* OAuth2.swift */,
 				AF43BF3B2B4C9EE800E5A89C /* AppSettings.swift */,
 				AFA196062B5FAF62002EB704 /* CheckMetrics.swift */,
-				AF720D422B504326008423D6 /* LocationManager.swift */,
 				AFA196092B5FBD95002EB704 /* Converters.swift */,
+				AF1DB30F2BB5F61A0089B159 /* DeviceInfo.swift */,
+				AF720D422B504326008423D6 /* LocationManager.swift */,
+				AF5ACB1D2B4713FE0010C316 /* Logger.swift */,
 				AFA675572B4848B600AD5A69 /* MetricsTimelineSchedule.swift */,
 				AF56CDED2B644C47009E8CB8 /* MotionManager.swift */,
+				AF1BCFC22BB4D3DE001EC2B9 /* Profile.swift */,
 				AF53FF042B5AE4D5005DE76D /* SoundEffects.swift */,
+				AF0FA3D62B7B8B67005572CF /* TaskManager.swift */,
 				AF8312942B79415300F1C790 /* TimerManager.swift */,
 				AF5ACB172B47107F0010C316 /* WorkoutManager.swift */,
-				AF0FA3D62B7B8B67005572CF /* TaskManager.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -675,13 +687,16 @@
 				AF53FF052B5AE4D5005DE76D /* SoundEffects.swift in Sources */,
 				AFA196072B5FAF62002EB704 /* CheckMetrics.swift in Sources */,
 				AF720D432B504326008423D6 /* LocationManager.swift in Sources */,
+				AF0A94C52BB770CD00AE6ACC /* OAuth2.swift in Sources */,
 				AF5ACB1E2B4713FE0010C316 /* Logger.swift in Sources */,
 				AFA1960A2B5FBD95002EB704 /* Converters.swift in Sources */,
 				AF56CDEE2B644C47009E8CB8 /* MotionManager.swift in Sources */,
+				AF1BCFC32BB4D3DE001EC2B9 /* Profile.swift in Sources */,
 				AF40FDC02B6E66BD00C8CFA8 /* LoadingIndicatorView.swift in Sources */,
 				AF0FA3D72B7B8B67005572CF /* TaskManager.swift in Sources */,
 				AF43BF3C2B4C9EE800E5A89C /* AppSettings.swift in Sources */,
 				AFEEDE4A2B5EBACA00B2C27A /* ChartView.swift in Sources */,
+				AF1DB3102BB5F61A0089B159 /* DeviceInfo.swift in Sources */,
 				AF5ACB212B472FAA0010C316 /* WorkoutManager+iOS.swift in Sources */,
 				AFA675582B4848B700AD5A69 /* MetricsTimelineSchedule.swift in Sources */,
 				AF5ACAB72B46D0710010C316 /* ruplApp.swift in Sources */,
@@ -719,6 +734,7 @@
 				AFA675592B4848B700AD5A69 /* MetricsTimelineSchedule.swift in Sources */,
 				AF43BF3D2B4C9EE900E5A89C /* AppSettings.swift in Sources */,
 				AF41FA872B6825B5004FC0AB /* OAuth2.swift in Sources */,
+				AF1DB3112BB5F61A0089B159 /* DeviceInfo.swift in Sources */,
 				AF5ACB1F2B4713FE0010C316 /* Logger.swift in Sources */,
 				AF56CDEF2B644C47009E8CB8 /* MotionManager.swift in Sources */,
 				AFA6755C2B48494C00AD5A69 /* ElapsedTimeView.swift in Sources */,
@@ -728,12 +744,14 @@
 				AF5ACB192B47107F0010C316 /* WorkoutManager.swift in Sources */,
 				AF0FA3D82B7B8B67005572CF /* TaskManager.swift in Sources */,
 				AF7F28682B861051005C0B6B /* TaskView.swift in Sources */,
+				AF1BCFC42BB4D3DE001EC2B9 /* Profile.swift in Sources */,
 				AF8312962B79415400F1C790 /* TimerManager.swift in Sources */,
 				AF5ACADF2B46D07A0010C316 /* ruplApp.swift in Sources */,
 				AF5ACB252B4733270010C316 /* MetricsView.swift in Sources */,
 				AF06CC452B69132200943CEB /* LoadingIndicatorView.swift in Sources */,
 				AF53FF062B5AE4D5005DE76D /* SoundEffects.swift in Sources */,
 				AF5ACB272B4733510010C316 /* SummaryView.swift in Sources */,
+				AF1DB30E2BB5F5B80089B159 /* DeviceInfo+watchOS.swift in Sources */,
 				AF7F52932B5D265700856DEA /* SegmentView.swift in Sources */,
 				AF3F35512B66ACD8007399F9 /* SettingsView.swift in Sources */,
 			);

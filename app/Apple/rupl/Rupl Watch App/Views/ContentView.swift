@@ -8,11 +8,13 @@
 import SwiftUI
 
 struct ContentView: View {
-
 	@EnvironmentObject var workoutManager: WorkoutManager
 	@Environment(\.isLuminanceReduced) var isLuminanceReduced
 	@State private var selection: Tab = .metrics
 	@State private var isSheetActive = false
+
+	private let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "N/A"
+	private let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "N/A"
 
 	private enum Tab {
 		case controls, metrics
@@ -37,7 +39,10 @@ struct ContentView: View {
 			}
 		}
 		.onAppear {
+			AppSettings.shared.appVersion = appVersion + "." + buildNumber
 			selection = .controls
+			// MARK: - get profile
+			Profile.getProfile()
 		}
 		.sheet(isPresented: $isSheetActive) {
 			if workoutManager.sessionState != .ended {

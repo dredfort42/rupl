@@ -47,6 +47,11 @@ struct OAuthInstructionView: View {
 				.repeatForever(autoreverses: true)
 			) { opacityAnimation = 1.0 }
 		}
+		.onDisappear {
+			if AppSettings.shared.deviceAccessToken != "" {
+				DeviceInfo.shared.sendDeviceInformation()
+			}
+		}
 	}
 }
 

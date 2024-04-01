@@ -23,59 +23,70 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Anta&display=swap');
 
-  /* .background-image {
-    background-image: url('/images/404.jpg');
-    background-size: cover;
-    background-position: center;
-    height: 100vh;
+  .dropdown-item {
+    color: rgb(248, 249, 250) !important;
   }
 
-  .background-image::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.75);
-    backdrop-filter: blur(5px);
+  .dropdown-item:hover {
+    background-color: #0dcaf0;
+    color: black !important;
   }
-
-  .content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1;
-    color: white;
-    text-align: center;
-  } */
 </style>
 
 <body class="background-image bg-black">
-  <nav class="navbar navbar-expand-md navbar-dark">
+
+  <nav class="navbar navbar-dark m-3">
     <div class="container-fluid">
       <a class="navbar-brand text-info"
         style="font-family: 'Anta', sans-serif; font-size: 50px; margin-top: -8px; padding: 0; line-height: 48px;"
         href="#">
         rupl
       </a>
-      <div class="d-grid gap-1 d-flex">
-        <a href="#" class="btn btn-outline-info mx-1" role="button" onclick="logout()">Log out</a>'
+      <div class="d-grid gap-1 d-flex" id="profile">
+        <div class="dropdown">
+          <button class="btn btn-outline-info dropdown-toggle" type="button" data-bs-toggle="dropdown"
+            aria-expanded="false" id="profileName"></button>
+          <ul class="dropdown-menu dropdown-menu-end border border-1 border-info bg-black">
+            <li id="connectedDevicesLi">
+              <a class="dropdown-item icon-link" onclick="openModal('connectDeviceModal')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                  class="bi bi-smartwatch" viewBox="0 0 16 16">
+                  <path d="M9 5a.5.5 0 0 0-1 0v3H6a.5.5 0 0 0 0 1h2.5a.5.5 0 0 0 .5-.5z" />
+                  <path
+                    d="M4 1.667v.383A2.5 2.5 0 0 0 2 4.5v7a2.5 2.5 0 0 0 2 2.45v.383C4 15.253 4.746 16 5.667 16h4.666c.92 0 1.667-.746 1.667-1.667v-.383a2.5 2.5 0 0 0 2-2.45V8h.5a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 0-.5-.5H14v-.5a2.5 2.5 0 0 0-2-2.45v-.383C12 .747 11.254 0 10.333 0H5.667C4.747 0 4 .746 4 1.667M4.5 3h7A1.5 1.5 0 0 1 13 4.5v7a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 11.5v-7A1.5 1.5 0 0 1 4.5 3" />
+                </svg>
+                Connect new device
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="#">Another action</a>
+            </li>
+            <li><a class="dropdown-item" href="#">Something else here</a></li>
+            <li class="text-center">
+              <button class="btn btn-outline-info mt-2" onclick="logout()">
+                Logout
+              </button>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </nav>
   <main>
+    <div id="emailVerificationState" class="alert alert-warning alert-dismissible fade show m-3" role="alert"
+      style="display: none;">
+      <span id="emailVerificationStateText"></span>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
     <div class="container">
-
       <div class="text-center">
         <h1 class="my-5 text-info" id="header" style="font-family: 'Anta', sans-serif; font-size: 160px;">rupl rupl rupl
-          rupl rupl rupl rupl rupl rupl</h1>
+          rupl rupl rupl</h1>
       </div>
     </div>
   </main>
 
-  <!-- Modal -->
+  <!-- Create Profile Modal -->
   <div class="modal fade" id="createProfileModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content border border-1 border-info rounded-4 bg-black">
@@ -117,11 +128,69 @@
               </div>
             </div>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-              <button id="continueBtn" type="submit" class="btn btn-info">
+              <button id="createProfileContinueBtn" type="submit" class="btn btn-info">
                 Continue
               </button>
             </div>
           </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Connect Device Modal -->
+  <div class="modal fade" id="connectDeviceModal" tabindex="-1">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+      <div class="modal-content border border-1 border-info rounded-4 bg-black">
+        <div class="container content p-4">
+          <h1 class="col fw-light fs-3 text-light">Connect a device</h1>
+
+          <p class="fw-light fs-6 text-secondary">
+            Enter the code displayed on your device to connect it to your account.
+          </p>
+
+          <form id="login">
+            <div class="input-group mb-4">
+              <input type="text" class="form-control bg-info border-info text-white fs-3 ps-4"
+                style="--bs-bg-opacity: .1;" id="code" name="code" placeholder="XXXX-XXXX" required>
+              <span id="resetCode" class="input-group-text bg-info border-info text-black" onclick="resetCode()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-x-lg"
+                  viewBox="0 0 16 16">
+                  <path
+                    d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                </svg>
+              </span>
+            </div>
+            <div class="row px-2">
+              <button type="button" class="col mx-1 btn btn-outline-info" data-bs-dismiss="modal">
+                Close
+              </button>
+              <button type="button" id="connectDeviceContinueBtn" class="col mx-1 btn btn-info" disabled>
+                Continue
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Connected Devices Modal -->
+  <div class="modal fade" id="connectedDevicesModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border border-1 border-info rounded-4 bg-black">
+        <div class="container content p-4">
+          <h1 class="col fw-light fs-3 text-light">Your connected devices</h1>
+          <div class="mt-4" id="devicesList"></div>
+          <div class="row px-2">
+            <button type="button" class="col mx-1 btn btn-outline-info" data-bs-dismiss="modal">
+              Close
+            </button>
+            <button type="button" id="connectAnotherDeviceBtn" class="col mx-1 btn btn-info"
+              data-bs-target="#connectDeviceModal" data-bs-toggle="modal">
+              Connect another device
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -141,31 +210,84 @@
           return response.json();
         } else if (response.status === 500) {
           console.log('Failed to fetch profile.');
-          openModal();
+          openModal('createProfileModal');
         } else {
-          // console.log('Failed to fetch profile.');
           refreshTokens();
         }
       })
       .then(data => {
         console.log('Profile:', data);
+        if (data) {
+          document.getElementById('profileName').style.display = 'block';
+          document.getElementById('profileName').innerText = data.first_name;
+          checkEmailVerification();
+          getDevices();
+        }
       })
       .catch(error => {
         console.error('Error fetching profile:', error);
       });
   }
 
-  // Function to open modal
-  function openModal() {
-    var myModal = new bootstrap.Modal(document.getElementById('createProfileModal'));
-    myModal.show();
+  // Get connected devices
+  function getDevices() {
+    fetch('/api/v1/profile/devices', {
+      method: 'GET',
+      credentials: 'include'
+    })
+      .then(response => {
+        if (response.ok) {
+          console.log('Devices fetched successfully.');
+          return response.json();
+        } else {
+          console.error('Failed to fetch devices:', response);
+        }
+      })
+      .then(data => {
+        if (data.devices) {
+          console.log('Devices:', data);
+
+          document.getElementById('connectedDevicesLi').innerHTML = `
+            <a class="dropdown-item icon-link" onclick="openModal('connectedDevicesModal')">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                class="bi bi-smartwatch" viewBox="0 0 16 16">
+                <path d="M9 5a.5.5 0 0 0-1 0v3H6a.5.5 0 0 0 0 1h2.5a.5.5 0 0 0 .5-.5z" />
+                <path
+                  d="M4 1.667v.383A2.5 2.5 0 0 0 2 4.5v7a2.5 2.5 0 0 0 2 2.45v.383C4 15.253 4.746 16 5.667 16h4.666c.92 0 1.667-.746 1.667-1.667v-.383a2.5 2.5 0 0 0 2-2.45V8h.5a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 0-.5-.5H14v-.5a2.5 2.5 0 0 0-2-2.45v-.383C12 .747 11.254 0 10.333 0H5.667C4.747 0 4 .746 4 1.667M4.5 3h7A1.5 1.5 0 0 1 13 4.5v7a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 11.5v-7A1.5 1.5 0 0 1 4.5 3" />
+              </svg>
+              Connected devices
+            </a>
+          `;
+
+          var devicesList = document.getElementById('devicesList');
+          data.devices.forEach(device => {
+            devicesList.innerHTML += `
+                <div class="py-3 border-top border-1 border-secondary">
+                  <div class="d-flex w-100 justify-content-between mb-1">
+                    <small class="text-secondary">${device.device_id}</small>
+                    <small class="text-info">version: ${device.app_version}</small>
+                  </div>
+                  <div class="d-flex w-100 justify-content-between mb-1">
+                    <h6 class="mb-2 text-light">${device.device_name}</h5>
+                    <button type="button" class="btn btn-outline-danger" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;" onclick="deleteDevice('${device.device_id}')">Disconnect</button>
+                  </div>
+                </div >
+              `;
+          });
+        } else {
+          console.log('No devices connected.');
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching devices:', error);
+      });
   }
 
   // Refresh tokens
   function refreshTokens() {
     fetch('/api/v1/auth/refresh', {
       method: 'GET',
-      credentials: 'include' // Send cookies along with the request
+      credentials: 'include'
     })
       .then(response => {
         if (response.ok) {
@@ -173,6 +295,22 @@
           window.location.href = '/dashboard';
         } else {
           window.location.href = '/login';
+        }
+      })
+  }
+
+  // Check email verification status
+  function checkEmailVerification() {
+    fetch('/api/v1/auth/verify_email', {
+      method: 'GET',
+      credentials: 'include'
+    })
+      .then(response => {
+        if (response.ok) {
+          console.log('Email verified.');
+        } else {
+          document.getElementById('emailVerificationState').style.display = 'block';
+          document.getElementById('emailVerificationStateText').innerHTML = 'Please verify your email address. <a href="/verify-email" class="alert-link">Resend verification email</a>';
         }
       })
   }
@@ -193,8 +331,41 @@
       })
   }
 
+  // Function to delete device
+  async function deleteDevice(deviceID) {
+    try {
+      const response = await fetch('/api/v1/profile/devices', {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ device_id: deviceID })
+      });
+
+      if (!response.ok) {
+        throw new Error('An error occurred while disconnecting the device.');
+      }
+
+      const data = await response.json();
+      if (data.message) {
+        console.log(data.message);
+      }
+
+      window.location.href = '/dashboard';
+    } catch (error) {
+      console.error('Error:', error.message);
+    }
+  }
+
+  // Function to open modal
+  function openModal(modalID) {
+    var myModal = new bootstrap.Modal(document.getElementById(modalID));
+    myModal.show();
+  }
+
   // Form validation
-  document.getElementById("continueBtn").addEventListener("click", async function (event) {
+  document.getElementById("createProfileContinueBtn").addEventListener("click", async function (event) {
     event.preventDefault();
 
     const firstName = document.getElementById("firstName").value;
@@ -236,6 +407,13 @@
     saveProfileData(firstName.trim(), lastName.trim(), gender, dob);
   });
 
+  /**
+   * Saves the profile data by sending a POST request to the server.
+   * @param {string} firstName - The first name of the user.
+   * @param {string} lastName - The last name of the user.
+   * @param {string} gender - The gender of the user.
+   * @param {string} dob - The date of birth of the user.
+   */
   async function saveProfileData(firstName, lastName, gender, dob) {
     var profileData = {
       first_name: firstName.replace(/ /g, ''),
@@ -271,6 +449,94 @@
   // Check authentication status
   document.addEventListener('DOMContentLoaded', function () {
     getProfile();
+  });
+
+  // Continue button click event
+  document.getElementById('connectDeviceContinueBtn').addEventListener('click', function () {
+    const code = document.getElementById('code').value;
+    if (code.length === 9) {
+      fetch('/api/v1/device/connect', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          code: code
+        })
+      })
+        .then(response => {
+          if (response.ok) {
+            window.location.href = '/dashboard';
+          } else {
+            console.error('Error connecting device:', response);
+          }
+        })
+        .catch(error => {
+          console.error('Error connecting device:', error);
+        });
+    }
+  });
+
+  // JavaScript for resetting the code input
+  function resetCode() {
+    const codeInput = document.getElementById("code");
+    codeInput.value = "";
+  }
+
+  function code_check(field, e) {
+    var new_number,
+      selection_start = field.selectionStart,
+      selection_end = field.selectionEnd,
+      number = field.value.replace(/\D/g, '');
+
+    var min_length = (field.value.length < 5) ? 3 : 4;
+
+    if (number.length > min_length) {
+      new_number = number.substring(0, 4) + '-' + number.substring(4);
+    } else {
+      new_number = number;
+    }
+
+    field.value = (new_number.length > 9) ? new_number.substring(0, 9) : new_number;
+  }
+
+  document.getElementById('code').onkeyup = function (event) {
+    code_check(this, event);
+
+    if (this.value.length === 9) {
+      document.getElementById('connectDeviceContinueBtn').disabled = false;
+    } else {
+      document.getElementById('connectDeviceContinueBtn').disabled = true;
+    }
+  }
+
+  // JavaScript for device identification
+  document.getElementById("connectDeviceContinueBtn").addEventListener("click", async function (event) {
+    event.preventDefault();
+
+    const code = document.getElementById("code").value.replace(/ /g, '');
+
+    try {
+      const response = await fetch('/api/v1/auth/device_identify?user_code=' + code, {
+        method: 'POST',
+      });
+
+      const data = await response.json();
+      if (data.message) {
+        console.log(data.message);
+      }
+
+      if (!response.ok) {
+        throw new Error("An error occurred while identifying the device!");
+      }
+
+      window.location.href = '/dashboard'; // Redirect to the personal dashboard
+    } catch (error) {
+      alert('Invalid user code!');
+      document.getElementById("code").reset();
+      console.error('Error:', error.message);
+    }
   });
 
 </script>

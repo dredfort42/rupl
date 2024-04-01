@@ -10,6 +10,13 @@ type DeviceAuthorizationResponse struct {
 	Interval                int    `json:"interval"`
 }
 
+// DeviceAccessTokenResponse is a struct for JSON
+type DeviceAccessTokenResponse struct {
+	AccessToken string `json:"access_token"`
+	TokenType   string `json:"token_type"`
+	ExpiresIn   int    `json:"expires_in"`
+}
+
 // UserCredentials is a struct for JSON
 type UserCredentials struct {
 	Email    string `json:"email"`
