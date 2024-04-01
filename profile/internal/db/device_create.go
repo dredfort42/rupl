@@ -8,7 +8,7 @@ import (
 
 // CreateDevice creates a new device in the database
 func CreateDevice(email string, device Device) error {
-	if CheckDeviceExists(email, device.DeviceID) {
+	if CheckDeviceExists(device.DeviceID) {
 		return errors.New("device already exists")
 	}
 
