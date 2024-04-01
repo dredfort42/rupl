@@ -3,8 +3,10 @@ package db
 import "github.com/dredfort42/tools/logprinter"
 
 // CheckDeviceExists checks if a device exists in the database based on the email and device ID provided
+
+// TO DO rewrite this function to return a boolean value
 func CheckDeviceExists(deviceID string) bool {
-	query := `SELECT email FROM ` + db.tableDevices + ` WHERE device_id = $1;`
+	query := `SELECT device_id FROM ` + db.tableDevices + ` WHERE device_id = $1;`
 
 	if err := db.database.QueryRow(query, deviceID).Scan(&deviceID); err != nil {
 		if DEBUG {
