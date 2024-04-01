@@ -12,15 +12,8 @@ import os
 
 
 class Profile {
-	var email: String = ""
-	var firstName: String = ""
-	var lastName: String = ""
-	var dateOfBirth: String = ""
-	var gender: String = ""
 
-	static let shared = Profile()
-
-	func getProfile() {
+	static func getProfile() {
 		let apiUrl = URL(string: "\(AppSettings.shared.profileURL)?client_id=\(AppSettings.shared.clientID)&access_token=\(AppSettings.shared.deviceAccessToken)")!
 		var request = URLRequest(url: apiUrl)
 
@@ -35,32 +28,29 @@ class Profile {
 			if let data = data {
 				do {
 
-
 					if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
 						if let email = json["email"] as? String,
 						   let firstName = json["first_name"] as? String,
 						   let lastName = json["last_name"] as? String,
 						   let dateOfBirth = json["date_of_birth"] as? String,
 						   let gender = json["gender"] as? String {
+							let dateFormatter = DateFormatter()
 
-							self.email = email
-							self.firstName = firstName
-							self.lastName = lastName
-							self.dateOfBirth = dateOfBirth
-							self.gender = gender
+							dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+							dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+							dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+
+							AppSettings.shared.userEmail = email
+							AppSettings.shared.userFirstName = firstName
+							AppSettings.shared.userLastName = lastName
+							AppSettings.shared.userDateOfBirth = dateFormatter.date(from: dateOfBirth)
+							AppSettings.shared.userGender = gender
 						}
 					}
 				} catch {
 					Logger.shared.log("Error parsing JSON: \(error)")
 				}
 			}
-//			completion("OK")
-
-			print(self.email)
-			print(self.firstName)
-			print(self.lastName)
-			print(self.dateOfBirth)
-			print(self.gender)
 		}
 		task.resume()
 	}

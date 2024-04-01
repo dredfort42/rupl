@@ -9,11 +9,7 @@
 import SwiftUI
 
 struct SettingsView: View {
-	private let maxUserBirthYear: Int = AppSettings.shared.getCurrentYear() - 14
-	private let minUserBirthYear: Int = AppSettings.shared.getCurrentYear() - 100
-
 	@AppStorage(AppSettings.useAutoPauseKey) var useAutoPause = AppSettings.shared.useAutoPause
-	@AppStorage(AppSettings.userYearOfBirthKey) var userYearOfBirth = AppSettings.shared.userYearOfBirth
 	@AppStorage(AppSettings.criticalHeartRateKey) var criticalHeartRate = AppSettings.shared.criticalHeartRate
 	@AppStorage(AppSettings.connectedToRuplKey) var isConnectedToRupl = AppSettings.shared.connectedToRupl
 
@@ -44,18 +40,7 @@ struct SettingsView: View {
 						Text("If heart rate exceeds this value, an alarm will sound")
 					}
 
-					Section {
-						Stepper(value: $userYearOfBirth,
-								in: minUserBirthYear...maxUserBirthYear,
-								step: 1) {
-							Text(String(userYearOfBirth))
-								.font(.title2)
-						}.focusable(false)
-					} header: {
-						Text("Year of birth")
-					} footer: {
-						Text("Year of birth is required to calculate individual heart rate intervals")
-					}
+
 
 					Section {
 						if isConnectedToRupl {
@@ -97,6 +82,13 @@ struct SettingsView: View {
 					}
 
 					Section {
+						if isConnectedToRupl && AppSettings.shared.userDateOfBirth != nil {
+							Text("\(AppSettings.shared.userFirstName) \(AppSettings.shared.userLastName)\nAge: \(AppSettings.shared.getUserAge(dateOfBirth: AppSettings.shared.userDateOfBirth!)) years")
+						}
+					} header: {
+						if isConnectedToRupl && AppSettings.shared.userDateOfBirth != nil {
+							Text("Profile")
+						}
 					} footer: {
 						Text("Version: " + AppSettings.shared.appVersion)
 							.foregroundColor(.ruplBlue)
@@ -159,6 +151,12 @@ struct SettingsView: View {
 			AppSettings.shared.deviceAccessToken = ""
 			AppSettings.shared.deviceAccessTokenType = ""
 			AppSettings.shared.deviceAccessTokenExpiresIn = 0
+			AppSettings.shared.userEmail = ""
+			AppSettings.shared.userFirstName = ""
+			AppSettings.shared.userLastName = ""
+			AppSettings.shared.userDateOfBirth = nil
+			AppSettings.shared.userGender = ""
+			DeviceInfo.shared.deleteDeviceInfo()
 		}
 	}
 }

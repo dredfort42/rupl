@@ -13,12 +13,14 @@ import Foundation
 class AppSettings {
 	static let shared = AppSettings()
 
+	// User app settings
 	static let useAutoPauseKey = "useAutoPause"
 	static let isSoundNotificationOnKey = "isSoundNotificationOn"
-	static let userYearOfBirthKey = "userYearOfBirth"
 	static let criticalHeartRateKey = "criticalHeartRate"
 	static let connectedToRuplKey = "connectedToRupl"
 	static let runningTaskHeartRateKey = "runningTaskHeartRate"
+
+	// Connection data
 	private let appVersionKey = "appVersion"
 	private let clientIDKey = "clientID"
 	private let deviceAuthURLKey = "deviceAuthURL"
@@ -28,6 +30,15 @@ class AppSettings {
 	private let deviceAccessTokenKey = "deviceAccessToken"
 	private let deviceAccessTokenTypeKey = "deviceAccessTokenType"
 	private let deviceAccessTokenExpiresInKey = "deviceAccessTokenExpiresIn"
+
+	// User profile data
+	private let userEmailKey = "userEmail"
+	private let userFirstNameKey = "userFirstName"
+	private let userLastNameKey = "userLastName"
+	private let userDateOfBirthKey = "userDateOfBirth"
+	private let userGenderKey = "userGender"
+
+	// General app settings
 	private let permissibleHorizontalAccuracyKey = "permissibleHorizontalAccuracy"
 	private let paceForAutoPauseKey = "paceForAutoPause"
 	private let paceForAutoResumeKey = "paceForAutoResume"
@@ -126,12 +137,48 @@ class AppSettings {
 		}
 	}
 
-	var userYearOfBirth: Int {
+	var userEmail: String {
 		get {
-			return UserDefaults.standard.integer(forKey: AppSettings.userYearOfBirthKey)
+			return UserDefaults.standard.string(forKey: userEmailKey) ?? ""
 		}
 		set {
-			UserDefaults.standard.set(newValue, forKey: AppSettings.userYearOfBirthKey)
+			UserDefaults.standard.set(newValue, forKey: userEmailKey)
+		}
+	}
+
+	var userFirstName: String {
+		get {
+			return UserDefaults.standard.string(forKey: userFirstNameKey) ?? ""
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: userFirstNameKey)
+		}
+	}
+
+	var userLastName: String {
+		get {
+			return UserDefaults.standard.string(forKey: userLastNameKey) ?? ""
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: userLastNameKey)
+		}
+	}
+
+	var userDateOfBirth: Date? {
+		get {
+			return UserDefaults.standard.object(forKey: userDateOfBirthKey) as? Date
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: userDateOfBirthKey)
+		}
+	}
+
+	var userGender: String {
+		get {
+			return UserDefaults.standard.string(forKey: userGenderKey) ?? ""
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: userGenderKey)
 		}
 	}
 
@@ -280,7 +327,7 @@ class AppSettings {
 	}
 
 	private init() {
-		let age: Int = userYearOfBirth != 0 ? getCurrentYear() - userYearOfBirth : 21
+		let age: Int = userDateOfBirth != nil ? getUserAge(dateOfBirth: userDateOfBirth!) : 21
 		let maximumHeartRate: Double = 208 - Double(age) * 0.7
 
 		if clientID == "" {
@@ -296,10 +343,6 @@ class AppSettings {
 		if paceForAutoPause == 0.0 || paceForAutoResume == 0.0 {
 			useAutoPause = true
 			isSoundNotificationOn = true
-		}
-
-		if userYearOfBirth == 0 {
-			userYearOfBirth = getCurrentYear() - 21
 		}
 
 		if criticalHeartRate == 0 {
@@ -319,15 +362,16 @@ class AppSettings {
 		timeForShowLastSegmentView = 20
 		soundNotificationTimeOut = 10
 		viewNotificationTimeOut = 20
-
-		//		// to auto pause test
-		//		paceForAutoPause = 3.3
-		//		paceForAutoResume = 3.60
 	}
 
-	func getCurrentYear() -> Int {
+	func getUserAge(dateOfBirth: Date) -> Int {
 		let calendar = Calendar.current
-		let year = calendar.component(.year, from: .now)
-		return year
+		let ageComponents = calendar.dateComponents([.year], from: dateOfBirth, to: Date())
+
+		if let years = ageComponents.year {
+			return years
+		} else {
+			return 21
+		}
 	}
 }

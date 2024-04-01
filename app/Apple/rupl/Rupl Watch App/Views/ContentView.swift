@@ -42,8 +42,7 @@ struct ContentView: View {
 			AppSettings.shared.appVersion = appVersion + "." + buildNumber
 			selection = .controls
 			// MARK: - get profile
-			DeviceInfo().printDeviceInfo()
-			Profile.shared.getProfile()
+			Profile.getProfile()
 		}
 		.sheet(isPresented: $isSheetActive) {
 			if workoutManager.sessionState != .ended {
