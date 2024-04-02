@@ -37,7 +37,7 @@ class DeviceInfo {
 		print("App Version: \(AppSettings.shared.appVersion)")
 	}
 
-	func sendDeviceInformation() {
+	func sendDeviceInformation(createNew: Bool) {
 		let apiUrl = URL(string: "\(AppSettings.shared.deviceInfoURL)?client_id=\(AppSettings.shared.clientID)&access_token=\(AppSettings.shared.deviceAccessToken)")!
 		var request = URLRequest(url: apiUrl)
 		var parameters = [String: Any]()
@@ -57,8 +57,13 @@ class DeviceInfo {
 		}
 
 		request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-		request.httpMethod = "POST"
 		request.httpBody = jsonData
+		
+		if createNew {
+			request.httpMethod = "POST"
+		} else {
+			request.httpMethod = "PUT"
+		}
 
 		let task = URLSession.shared.dataTask(with: request) { data, response, error in
 			guard let data = data else {

@@ -42,7 +42,10 @@ struct ContentView: View {
 			AppSettings.shared.appVersion = appVersion + "." + buildNumber
 			selection = .controls
 			// MARK: - get profile
-			Profile.getProfile()
+			if AppSettings.shared.connectedToRupl {
+				Profile.getProfile()
+				DeviceInfo.shared.sendDeviceInformation(createNew: false)
+			}
 		}
 		.sheet(isPresented: $isSheetActive) {
 			if workoutManager.sessionState != .ended {
