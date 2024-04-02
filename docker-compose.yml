@@ -23,16 +23,16 @@ services:
     volumes:
       - ./persistent_volumes/grafana:/var/lib/grafana
 
-  # node_exporter:
-  #   image: quay.io/prometheus/node-exporter:latest
-  #   container_name: node_exporter
-  #   restart: unless-stopped
-  #   network_mode: host
-  #   pid: host
-  #   command:
-  #     - '--path.rootfs=/host'
-  #   volumes:
-  #     - '/:/host:ro,rslave'
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node_exporter
+    restart: unless-stopped
+    network_mode: host
+    pid: host
+    command:
+      - '--path.rootfs=/host'
+    volumes:
+      - '/:/host:ro,rslave'
 
   # Database
   db:
