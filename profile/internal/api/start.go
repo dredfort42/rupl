@@ -24,10 +24,11 @@ func Start(configMap configreader.ConfigMap) {
 
 	router := gin.Default()
 	router.Use(cors.Default())
-	router.POST("/api/v1/profile", CreateProfile)
-	router.POST("/api/v1/profile/devices", CreateDevice)
 	router.GET("/api/v1/profile", GetProfile)
+	router.POST("/api/v1/profile", CreateProfile)
 	router.GET("/api/v1/profile/devices", GetDevices)
+	router.POST("/api/v1/profile/devices", CreateDevice)
+	router.PUT("/api/v1/profile/devices", UpdateDevice)
 	router.DELETE("/api/v1/profile/devices", DeleteDevice)
 
 	url := fmt.Sprintf("%s:%s", config["profile.host"], config["profile.port"])
