@@ -77,6 +77,74 @@ func CreateDevice(c *gin.Context) {
 	c.IndentedJSON(http.StatusCreated, gin.H{"message": "Device created successfully", "device": device})
 }
 
+// UpdateDevice updates a device based on the access token provided in the request.
+func UpdateDevice(c *gin.Context) {
+	var email string
+	var device db.Device
+	var errorResponse ResponseError
+	var err error
+
+	if email = VerifyDevice(c); email == "" {
+		return
+	}
+
+	if err = c.ShouldBindJSON(&device); err != nil {
+		errorResponse.Error = "invalid_request"
+		errorResponse.ErrorDescription = "Invalid request"
+		c.IndentedJSON(http.StatusBadRequest, errorResponse)
+		return
+	}
+
+	if device.DeviceModel == "" {
+		errorResponse.Error = "invalid_request"
+		errorResponse.ErrorDescription = "Missing device model"
+		c.IndentedJSON(http.StatusBadRequest, errorResponse)
+		return
+	}
+
+	if device.DeviceName == "" {
+		errorResponse.Error = "invalid_request"
+		errorResponse.ErrorDescription = "Missing device name"
+		c.IndentedJSON(http.StatusBadRequest, errorResponse)
+		return
+	}
+
+	if device.SystemName == "" {
+		errorResponse.Error = "invalid_request"
+		errorResponse.ErrorDescription = "Missing system name"
+		c.IndentedJSON(http.StatusBadRequest, errorResponse)
+		return
+	}
+
+	if device.SystemVersion == "" {
+		errorResponse.Error = "invalid_request"
+		errorResponse.ErrorDescription = "Missing system version"
+		c.IndentedJSON(http.StatusBadRequest, errorResponse)
+		return
+	}
+
+	if device.DeviceID == "" {
+		errorResponse.Error = "invalid_request"
+		errorResponse.ErrorDescription = "Missing device ID"
+		c.IndentedJSON(http.StatusBadRequest, errorResponse)
+		return
+	}
+
+	if err = db.UpdateDevice(device); err != nil {
+		errorResponse.Error = "server_error"
+		errorResponse.ErrorDescription = "Error updating device"
+		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
+		return
+	}
+
+	if DEBUG {
+		logprinter.PrintInfo("Device updated successfully for an ID: ", device.DeviceID)
+		logprinter.PrintInfo("Device name: ", device.DeviceName)
+	}
+
+	c.IndentedJSON(http.StatusOK, gin.H{"message": "Device updated successfully", "device": device})
+}
+
 // GetDevices returns all devices associated with the user.
 func GetDevices(c *gin.Context) {
 	var devices db.UserDevices
