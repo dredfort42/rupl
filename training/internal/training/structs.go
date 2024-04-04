@@ -2,11 +2,12 @@ package training
 
 // Interval is a struct for JSON
 type Interval struct {
-	ID        int `json:"id"`
-	Speed     int `json:"speed"`      // in m/s
-	PulseZone int `json:"pulse_zone"` // 0-5
-	Distance  int `json:"distance"`   // in meters
-	Duration  int `json:"duration"`   // in seconds
+	ID          int    `json:"id"`
+	Description string `json:"description"`
+	Speed       int    `json:"speed"`      // in m/s
+	PulseZone   int    `json:"pulse_zone"` // 0-5
+	Distance    int    `json:"distance"`   // in meters
+	Duration    int    `json:"duration"`   // in seconds
 }
 
 // Task is a struct for JSON
