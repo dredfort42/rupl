@@ -2,38 +2,39 @@ package api
 
 import (
 	"net/http"
-	"training/internal/db"
+
+	"training/internal/training"
 
 	"github.com/gin-gonic/gin"
 )
 
 func GetTask(c *gin.Context) {
 	// TODO: Implement GetTask
-	var task db.Task
+	var task training.Task
 
 	task.ID = 1
 	task.Description = "Test task"
-	task.Intervals = []db.Interval{
+	task.Intervals = []training.Interval{
 		{
 			ID:        1,
 			Speed:     10,
-			PulseZone: 3,
+			PulseZone: 0,
 			Distance:  1000,
-			Duration:  600,
+			Duration:  0,
 		},
 		{
 			ID:        2,
-			Speed:     12,
+			Speed:     0,
 			PulseZone: 4,
-			Distance:  2000,
+			Distance:  0,
 			Duration:  1200,
 		},
 		{
 			ID:        3,
-			Speed:     14,
-			PulseZone: 5,
-			Distance:  3000,
-			Duration:  1800,
+			Speed:     10,
+			PulseZone: 0,
+			Distance:  1000,
+			Duration:  0,
 		},
 	}
 
