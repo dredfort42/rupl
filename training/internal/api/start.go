@@ -24,7 +24,7 @@ func Start(configMap configreader.ConfigMap) {
 
 	router := gin.Default()
 	router.Use(cors.Default())
-	router.GET("/api/v1/treining/task", GetTask)
+	router.GET("/api/v1/training/task", GetTask)
 	// router.GET("/api/v1/profile", GetProfile)
 	// router.POST("/api/v1/profile", CreateProfile)
 	// router.GET("/api/v1/profile/devices", GetDevices)
