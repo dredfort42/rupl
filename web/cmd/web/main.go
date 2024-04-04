@@ -16,6 +16,7 @@ import (
 var (
 	authURL      string
 	profileURL   string
+	trainingURL  string
 	notFoundPath string = "/html/404.html"
 )
 
@@ -97,6 +98,12 @@ func proxyRequest(w http.ResponseWriter, r *http.Request) {
 			logprinter.PrintError("Error parsing target URL:", err)
 			return
 		}
+	} else if strings.HasPrefix(r.URL.Path, "/api/v1/training") {
+		targetURL, err = url.Parse("http://" + trainingURL)
+		if err != nil {
+			logprinter.PrintError("Error parsing target URL:", err)
+			return
+		}
 	} else {
 		notFound(w, r)
 		return
@@ -158,6 +165,7 @@ func main() {
 
 	authURL = fmt.Sprintf("%s:%s", config["auth.host"], config["auth.port"])
 	profileURL = fmt.Sprintf("%s:%s", config["profile.host"], config["profile.port"])
+	trainingURL = fmt.Sprintf("%s:%s", config["training.host"], config["training.port"])
 
 	http.HandleFunc("/", sendData)
 	http.HandleFunc("/download/", sendData)
