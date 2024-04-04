@@ -21,12 +21,19 @@ type Interval struct {
 	Duration  int `json:"duration"`   // in seconds
 }
 
-// Plan is a struct for JSON
-type Plan struct {
+// Task is a struct for JSON
+type Task struct {
 	ID          int        `json:"id"`
 	Description string     `json:"description"`
-	Task        []Interval `json:"task"`
+	Intervals   []Interval `json:"intervals"`
 }
+
+// Plan is a struct for JSON
+// type Plan struct {
+// 	Email       string `json:"email"`
+// 	Description string `json:"description"`
+// 	Tasks       []Task `json:"tasks"`
+// }
 
 // Session is a struct for JSON
 // type Session struct {
