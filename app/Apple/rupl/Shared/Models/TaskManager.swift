@@ -7,19 +7,23 @@
 //
 
 import Foundation
+import os
 
 class TaskManager {
-//	struct PaceZone {
-//		//	seconds per segment
-//		var maxPace: Int = 0
-//		var minPace: Int = 0
-//	}
+	struct Interval: Codable {
+		var id: Int
+		var description: String
+		var speed: Int
+		var pulse_zone: Int
+		var distance: Int
+		var duration: Int
+	}
 
-//	struct HeartRateZone {
-//		//	bpm
-//		var maxHeartRate: Int = 0
-//		var minHeartRate: Int = 0
-//	}
+	struct Task: Codable {
+		var id: Int
+		var description: String
+		var intervals: [Interval]
+	}
 
 	enum HeartRateZones: String, CaseIterable, Identifiable {
 		case any, pz1, pz2, pz3, pz4, pz5
@@ -49,7 +53,40 @@ class TaskManager {
 			default:
 				return (AppSettings.shared.criticalHeartRate, 0)
 		}
+	}
 
+	func getTask(completion: @escaping (String) -> Void) {
+		let apiUrl = URL(string: "\(AppSettings.shared.taskURL)?client_id=\(AppSettings.shared.clientID)&access_token=\(AppSettings.shared.deviceAccessToken)")!
+		var request = URLRequest(url: apiUrl)
+
+		request.httpMethod = "GET"
+
+		let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+			if let error = error {
+				Logger.shared.log("Error: \(error)")
+				return
+			}
+
+			if let data = data {
+				do {
+					let decoder = JSONDecoder()
+					let runTask = try decoder.decode(Task.self, from: data)
+					print("ID: \(runTask.id), Description: \(runTask.description)")
+					for i in runTask.intervals {
+						print(i.id)
+						print(i.description)
+						print(i.speed)
+						print(i.pulse_zone)
+						print(i.distance)
+						print(i.duration)
+					}
+				} catch {
+					Logger.shared.log("Error parsing JSON: \(error)")
+				}
+			}
+			completion("OK")
+		}
+		task.resume()
 	}
 
 }
