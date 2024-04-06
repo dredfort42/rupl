@@ -46,7 +46,11 @@ struct ContentView: View {
 				Profile.getProfile()
 				DeviceInfo.shared.sendDeviceInformation(createNew: false)
 				TaskManager.shared.getTask { result in
-					print("Task received!")
+					TaskManager.shared.startTask()
+#if DEBUG
+					TaskManager.shared.printTask()
+					print(result)
+#endif
 				}
 			}
 		}

@@ -10,16 +10,23 @@ import Foundation
 import os
 
 class TaskManager {
-	struct Interval: Codable {
+	var intervalID: Int = -1
+	var intervalTimeLeft: Int = 0
+	var intervalDistanceLift: Double = 0
+	lazy var intervalHeartRateZone: (maxHeartRate: Int, minHeartRate: Int) = getHeartRateInterval(pz: AppSettings.shared.runningTaskHeartRate)
+	var intervalSpeed: Double = 0
+
+
+	private struct Interval: Codable {
 		var id: Int
 		var description: String
-		var speed: Int
+		var speed: Double
 		var pulse_zone: Int
 		var distance: Int
 		var duration: Int
 	}
 
-	struct Task: Codable {
+	private struct Task: Codable {
 		var id: Int
 		var description: String
 		var intervals: [Interval]
@@ -30,11 +37,9 @@ class TaskManager {
 		var id: Self { self }
 	}
 
-	lazy var intervalHeartRateZone: (maxHeartRate: Int, minHeartRate: Int) = getHeartRateInterval(pz: AppSettings.shared.runningTaskHeartRate) {
-		didSet {
-			print(self.intervalHeartRateZone)
-		}
-	}
+	private var task: Task?
+
+
 
 	static let shared = TaskManager()
 
@@ -56,37 +61,85 @@ class TaskManager {
 	}
 
 	func getTask(completion: @escaping (String) -> Void) {
-		let apiUrl = URL(string: "\(AppSettings.shared.taskURL)?client_id=\(AppSettings.shared.clientID)&access_token=\(AppSettings.shared.deviceAccessToken)")!
-		var request = URLRequest(url: apiUrl)
+		DispatchQueue.global().async {
+			let apiUrl = URL(string: "\(AppSettings.shared.taskURL)?client_id=\(AppSettings.shared.clientID)&access_token=\(AppSettings.shared.deviceAccessToken)")!
+			var request = URLRequest(url: apiUrl)
 
-		request.httpMethod = "GET"
+			request.httpMethod = "GET"
 
-		let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-			if let error = error {
-				Logger.shared.log("Error: \(error)")
-				return
-			}
-
-			if let data = data {
-				do {
-					let decoder = JSONDecoder()
-					let runTask = try decoder.decode(Task.self, from: data)
-					print("ID: \(runTask.id), Description: \(runTask.description)")
-					for i in runTask.intervals {
-						print(i.id)
-						print(i.description)
-						print(i.speed)
-						print(i.pulse_zone)
-						print(i.distance)
-						print(i.duration)
-					}
-				} catch {
-					Logger.shared.log("Error parsing JSON: \(error)")
+			let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+				if let error = error {
+					Logger.shared.log("Error: \(error)")
+					return
 				}
+
+				if let data = data {
+					do {
+						let decoder = JSONDecoder()
+						let runTask = try decoder.decode(Task.self, from: data)
+						self.task = runTask
+					} catch {
+						Logger.shared.log("Error parsing JSON: \(error)")
+					}
+				}
+				completion("getTask() compleated")
 			}
-			completion("OK")
+			task.resume()
 		}
-		task.resume()
 	}
 
+	func startTask() {
+		getNextInterval()
+		getNextInterval()
+		getNextInterval()
+		getNextInterval()
+		getNextInterval()
+	}
+
+	private func getNextInterval() {
+		if intervalID != -2 {
+			intervalID += 1
+		} else {
+			return
+		}
+
+		intervalTimeLeft = task?.intervals[intervalID].duration ?? 0
+		intervalDistanceLift = Double(task?.intervals[intervalID].distance ?? 0)
+		intervalHeartRateZone = getHeartRateInterval(pz: HeartRateZones.allCases[(task?.intervals[intervalID].pulse_zone ?? 0)].rawValue)
+		intervalSpeed = task?.intervals[intervalID].speed ?? 0
+
+#if DEBUG
+		printNextInterval()
+#endif
+
+		if intervalID + 1 == task?.intervals.count {
+			intervalID = -2
+		}
+	}
+
+	private func printNextInterval() {
+		print("### INTERVAL \(intervalID) ###")
+		print("# Speed:\t\(intervalSpeed)")
+		print("# Pulse:\t\(intervalHeartRateZone)")
+		print("# Distance:\t\(intervalDistanceLift)")
+		print("# Duration:\t\(intervalTimeLeft)")
+	}
+
+
+
+	func printTask() {
+		if task == nil {
+			return
+		}
+
+		print("ID: \(task!.id), Description: \(task!.description)")
+
+		for i in task!.intervals {
+			print("### INTERVAL \(i.id) - \(i.description) ###")
+			print("# Speed:\t\(i.speed)")
+			print("# Pulse:\t\(i.pulse_zone)")
+			print("# Distance:\t\(i.distance)")
+			print("# Duration:\t\(i.duration)")
+		}
+	}
 }

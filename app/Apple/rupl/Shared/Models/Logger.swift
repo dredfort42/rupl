@@ -14,6 +14,6 @@ extension Logger {
 	#if os(watchOS)
 		static let shared = Logger(subsystem: subsystem, category: "rupl for watch")
 	#else
-		static let shared = Logger(subsystem: subsystem, category: "rupl")
+		static let shared = Logger(subsystem: subsystem, category: "rupl for phone")
 	#endif
 }
