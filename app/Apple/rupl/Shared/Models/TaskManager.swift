@@ -11,8 +11,9 @@ import os
 
 class TaskManager {
 	var intervalID: Int = -1
-	var intervalTimeLeft: Int = 0
-	var intervalDistanceLift: Double = 0
+	var intervalTimeLeft: Int = 0 { didSet { runTask() } }
+	var intervalDistanceLeft: Double = 0 { didSet { runTask() } }
+	var intervalEndDistance: Double = 0
 	lazy var intervalHeartRateZone: (maxHeartRate: Int, minHeartRate: Int) = getHeartRateInterval(pz: AppSettings.shared.runningTaskHeartRate)
 	var intervalSpeed: Double = 0
 
@@ -38,8 +39,6 @@ class TaskManager {
 	}
 
 	private var task: Task?
-
-
 
 	static let shared = TaskManager()
 
@@ -82,18 +81,35 @@ class TaskManager {
 						Logger.shared.log("Error parsing JSON: \(error)")
 					}
 				}
+#if DEBUG
+				self.printTask()
+#endif
 				completion("getTask() compleated")
 			}
 			task.resume()
 		}
 	}
 
-	func startTask() {
-		getNextInterval()
-		getNextInterval()
-		getNextInterval()
-		getNextInterval()
-		getNextInterval()
+	private func printTask() {
+		if task == nil {
+			return
+		}
+
+		print("ID: \(task!.id), Description: \(task!.description)")
+
+		for i in task!.intervals {
+			print("### INTERVAL \(i.id) - \(i.description) ###")
+			print("# Speed:\t\(i.speed)")
+			print("# Pulse:\t\(i.pulse_zone)")
+			print("# Distance:\t\(i.distance)")
+			print("# Duration:\t\(i.duration)")
+		}
+	}
+
+	func runTask() {
+		if intervalID != -2 && intervalTimeLeft == 0 && intervalDistanceLeft == 0 {
+			getNextInterval()
+		}
 	}
 
 	private func getNextInterval() {
@@ -104,7 +120,7 @@ class TaskManager {
 		}
 
 		intervalTimeLeft = task?.intervals[intervalID].duration ?? 0
-		intervalDistanceLift = Double(task?.intervals[intervalID].distance ?? 0)
+		intervalDistanceLeft = Double(task?.intervals[intervalID].distance ?? 0)
 		intervalHeartRateZone = getHeartRateInterval(pz: HeartRateZones.allCases[(task?.intervals[intervalID].pulse_zone ?? 0)].rawValue)
 		intervalSpeed = task?.intervals[intervalID].speed ?? 0
 
@@ -121,25 +137,8 @@ class TaskManager {
 		print("### INTERVAL \(intervalID) ###")
 		print("# Speed:\t\(intervalSpeed)")
 		print("# Pulse:\t\(intervalHeartRateZone)")
-		print("# Distance:\t\(intervalDistanceLift)")
+		print("# Distance:\t\(intervalDistanceLeft)")
 		print("# Duration:\t\(intervalTimeLeft)")
 	}
 
-
-
-	func printTask() {
-		if task == nil {
-			return
-		}
-
-		print("ID: \(task!.id), Description: \(task!.description)")
-
-		for i in task!.intervals {
-			print("### INTERVAL \(i.id) - \(i.description) ###")
-			print("# Speed:\t\(i.speed)")
-			print("# Pulse:\t\(i.pulse_zone)")
-			print("# Distance:\t\(i.distance)")
-			print("# Duration:\t\(i.duration)")
-		}
-	}
 }

@@ -20,7 +20,7 @@ func GetTask(c *gin.Context) {
 			Description: "Warm up",
 			Speed:       10,
 			PulseZone:   0,
-			Distance:    1000,
+			Distance:    100,
 			Duration:    0,
 		},
 		{
@@ -29,14 +29,14 @@ func GetTask(c *gin.Context) {
 			Speed:       0,
 			PulseZone:   4,
 			Distance:    0,
-			Duration:    1200,
+			Duration:    60,
 		},
 		{
 			ID:          3,
 			Description: "Cool down",
 			Speed:       10,
 			PulseZone:   0,
-			Distance:    1000,
+			Distance:    100,
 			Duration:    0,
 		},
 	}

@@ -138,6 +138,7 @@ extension WorkoutManager {
 		MotionManager.shared.start()
 		timerManager.start(timeInterval: 1, repeats: true, action: autoPause)
 		timerManager.start(timeInterval: 1, repeats: true, action: addLocationsToRoute)
+		timerManager.start(timeInterval: 1, repeats: true, action: checkIntervalTimeLeft)
 		timerManager.start(timeInterval: TimeInterval(AppSettings.shared.soundNotificationTimeOut), repeats: true, action: checkHeartRate)
 		
 		session = nil
@@ -236,10 +237,6 @@ extension WorkoutManager{
 			}
 		}
 #endif
-		
-//		DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-//			self.sessionState = .notStarted
-//		}
 	}
 }
 
@@ -256,7 +253,8 @@ extension WorkoutManager {
 				let distanceUnit = HKUnit.meter()
 				distance = statistics.sumQuantity()?.doubleValue(for: distanceUnit) ?? 0
 				checkLastSegment()
-				
+				checkIntervalDistanceLeft()
+
 			case HKQuantityType.quantityType(forIdentifier: .runningSpeed):
 				let speedUnit = HKUnit.meter().unitDivided(by: HKUnit.second())
 				speed = statistics.mostRecentQuantity()?.doubleValue(for: speedUnit) ?? 0
