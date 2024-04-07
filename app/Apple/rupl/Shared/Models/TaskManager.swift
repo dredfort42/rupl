@@ -12,8 +12,24 @@ import os
 class TaskManager {
 	var intervalID: Int = -1
 	var intervalTimeLeft: Int = 0 { didSet { runTask() } }
-	var intervalDistanceLeft: Double = 0 { didSet { runTask() } }
+	var intervalDistanceLeft: Double = 0 {
+		didSet {
+			if intervalDistanceLeft <= 0 {
+				intervalDistanceLeft = 0
+				intervalEndDistance = 0
+			}
+			runTask()
+			print("Left")
+			print(intervalDistanceLeft)
+		}
+	}
 	var intervalEndDistance: Double = 0
+//	{
+//		didSet {
+//			print("End")
+//			print(self.intervalEndDistance)
+//		}
+//	}
 	lazy var intervalHeartRateZone: (maxHeartRate: Int, minHeartRate: Int) = getHeartRateInterval(pz: AppSettings.shared.runningTaskHeartRate)
 	var intervalSpeed: Double = 0
 
@@ -108,7 +124,11 @@ class TaskManager {
 
 	func runTask() {
 		if intervalID != -2 && intervalTimeLeft == 0 && intervalDistanceLeft == 0 {
-			getNextInterval()
+			//			getNextInterval()
+			//			intervalTimeLeft = 10
+			//			print("interval time set")
+			intervalDistanceLeft = 100
+			print("interval distance set")
 		}
 	}
 
@@ -119,6 +139,7 @@ class TaskManager {
 			return
 		}
 
+		//		intervalTimeLeft = 10
 		intervalTimeLeft = task?.intervals[intervalID].duration ?? 0
 		intervalDistanceLeft = Double(task?.intervals[intervalID].distance ?? 0)
 		intervalHeartRateZone = getHeartRateInterval(pz: HeartRateZones.allCases[(task?.intervals[intervalID].pulse_zone ?? 0)].rawValue)

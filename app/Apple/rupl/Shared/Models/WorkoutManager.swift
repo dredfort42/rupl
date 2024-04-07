@@ -184,6 +184,9 @@ extension WorkoutManager {
 				configuration.activityType = .running
 				configuration.locationType = .outdoor
 				try await startWorkout(workoutConfiguration: configuration)
+				
+				// TODO: work with runTask()
+				TaskManager.shared.runTask()
 			} catch {
 				Logger.shared.log("Failed to start workout \(error))")
 			}

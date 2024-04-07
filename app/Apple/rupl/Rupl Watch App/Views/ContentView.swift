@@ -45,9 +45,7 @@ struct ContentView: View {
 			if AppSettings.shared.connectedToRupl {
 				Profile.getProfile()
 				DeviceInfo.shared.sendDeviceInformation(createNew: false)
-				TaskManager.shared.getTask { result in
-					TaskManager.shared.runTask()
-				}
+				TaskManager.shared.getTask { result in }
 			}
 		}
 		.sheet(isPresented: $isSheetActive) {
