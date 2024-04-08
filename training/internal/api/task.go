@@ -14,6 +14,7 @@ func GetTask(c *gin.Context) {
 
 	task.ID = 1
 	task.Description = "Test task"
+	task.Compleated = false
 	task.Intervals = []training.Interval{
 		{
 			ID:          1,

@@ -138,6 +138,7 @@ extension WorkoutManager {
 		MotionManager.shared.start()
 		timerManager.start(timeInterval: 1, repeats: true, action: autoPause)
 		timerManager.start(timeInterval: 1, repeats: true, action: addLocationsToRoute)
+		timerManager.start(timeInterval: 1, repeats: true, action: TaskManager.shared.runSession)
 		timerManager.start(timeInterval: 1, repeats: true, action: checkIntervalTimeLeft)
 		timerManager.start(timeInterval: TimeInterval(AppSettings.shared.soundNotificationTimeOut), repeats: true, action: checkHeartRate)
 		
@@ -184,9 +185,6 @@ extension WorkoutManager {
 				configuration.activityType = .running
 				configuration.locationType = .outdoor
 				try await startWorkout(workoutConfiguration: configuration)
-				
-				// TODO: work with runTask()
-				TaskManager.shared.runTask()
 			} catch {
 				Logger.shared.log("Failed to start workout \(error))")
 			}

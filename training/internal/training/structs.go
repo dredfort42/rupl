@@ -14,6 +14,7 @@ type Interval struct {
 type Task struct {
 	ID          int        `json:"id"`
 	Description string     `json:"description"`
+	Compleated  bool       `json:"compleated"`
 	Intervals   []Interval `json:"intervals"`
 }
 
