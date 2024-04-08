@@ -146,6 +146,10 @@ extension WorkoutManager {
 					TaskManager.shared.intervalEndDistance = self.distance + TaskManager.shared.intervalDistanceLeft
 				}
 				TaskManager.shared.intervalDistanceLeft = TaskManager.shared.intervalEndDistance - self.distance
+				if TaskManager.shared.intervalDistanceLeft <= 0 {
+					TaskManager.shared.intervalDistanceLeft = 0
+					TaskManager.shared.intervalEndDistance = 0
+				}
 			}
 		}
 	}

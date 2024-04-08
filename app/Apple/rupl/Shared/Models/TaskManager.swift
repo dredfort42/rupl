@@ -78,7 +78,9 @@ class TaskManager {
 		if intervalID == -1 {
 			intervalID = 0
 			interval = getInterval(intervalID)
-			intervalHeartRateZone = getHeartRateInterval(pz: HeartRateZones.allCases[(task?.intervals[intervalID].pulse_zone ?? 0)].rawValue)
+			intervalTimeLeft = interval?.duration ?? 0
+			intervalDistanceLeft = Double(interval?.distance ?? 0)
+			intervalHeartRateZone = getHeartRateInterval(pz: HeartRateZones.allCases[(interval?.pulse_zone ?? 0)].rawValue)
 			intervalSpeedZone = getSpeedInterval(speed: interval?.speed ?? 0)
 #if DEBUG
 			printInterval()
@@ -86,7 +88,7 @@ class TaskManager {
 			return
 		}
 
-		if !(task?.compleated ?? false) && isRunTaskStarted && interval?.duration == 0 && interval?.distance == 0 {
+		if !(task?.compleated ?? false) && isRunTaskStarted && intervalTimeLeft == 0 && intervalDistanceLeft == 0 {
 			intervalID += 1
 			interval = getInterval(intervalID)
 
@@ -95,12 +97,13 @@ class TaskManager {
 				return
 			}
 
+			intervalTimeLeft = interval?.duration ?? 0
+			intervalDistanceLeft = Double(interval?.distance ?? 0)
+			intervalHeartRateZone = getHeartRateInterval(pz: HeartRateZones.allCases[(interval?.pulse_zone ?? 0)].rawValue)
+			intervalSpeedZone = getSpeedInterval(speed: interval?.speed ?? 0)
 #if DEBUG
 			printInterval()
 #endif
-
-			intervalHeartRateZone = getHeartRateInterval(pz: HeartRateZones.allCases[(task?.intervals[intervalID].pulse_zone ?? 0)].rawValue)
-			intervalSpeedZone = getSpeedInterval(speed: interval?.speed ?? 0)
 		}
 	}
 
