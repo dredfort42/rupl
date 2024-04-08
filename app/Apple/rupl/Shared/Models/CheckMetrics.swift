@@ -9,6 +9,21 @@
 import Foundation
 import os
 
+// MARK: - Check last segment
+//
+extension WorkoutManager {
+	func checkLastSegment() {
+		DispatchQueue.global().async {
+			let segment = Int(self.distance / 1000)
+			if self.segmentNumber != segment {
+				self.segmentFinishTime = Date()
+				self.segmentNumber = segment
+				SoundEffects.shared.playSegmentSound()
+			}
+		}
+	}
+}
+
 // MARK: - Check heart rate
 //
 extension WorkoutManager {
@@ -43,21 +58,6 @@ extension WorkoutManager {
 			SoundEffects.shared.playRunSlowerSound()
 		} else if Int(self.heartRate) < TaskManager.shared.intervalHeartRateZone.minHeartRate {
 			SoundEffects.shared.playRunFasterSound()
-		}
-	}
-}
-
-// MARK: - Check last segment
-//
-extension WorkoutManager {
-	func checkLastSegment() {
-		DispatchQueue.global().async {
-			let segment = Int(self.distance / 1000)
-			if self.segmentNumber != segment {
-				self.segmentFinishTime = Date()
-				self.segmentNumber = segment
-				SoundEffects.shared.playSegmentSound()
-			}
 		}
 	}
 }
@@ -130,6 +130,39 @@ extension WorkoutManager {
 			self.routeBuilder?.insertRouteData(LocationManager.shared.filteredLocations) { (success, error) in
 				if !success {
 					Logger.shared.log("Failed to add locations to the route: \(error))")
+				}
+			}
+		}
+	}
+}
+
+// MARK: - Check interval distance left
+//
+extension WorkoutManager {
+	func checkIntervalDistanceLeft() {
+		DispatchQueue.global().async {
+			if TaskManager.shared.isRunTaskStarted && TaskManager.shared.intervalDistanceLeft > 0 {
+				if TaskManager.shared.intervalEndDistance == 0 {
+					TaskManager.shared.intervalEndDistance = self.distance + TaskManager.shared.intervalDistanceLeft
+				}
+				TaskManager.shared.intervalDistanceLeft = TaskManager.shared.intervalEndDistance - self.distance
+				if TaskManager.shared.intervalDistanceLeft <= 0 {
+					TaskManager.shared.intervalDistanceLeft = 0
+					TaskManager.shared.intervalEndDistance = 0
+				}
+			}
+		}
+	}
+}
+
+// MARK: - Check interval time left
+//
+extension WorkoutManager {
+	func checkIntervalTimeLeft() {
+		DispatchQueue.global().async {
+			if TaskManager.shared.isRunTaskStarted && TaskManager.shared.intervalTimeLeft > 0 {
+				if self.sessionState == .running {
+					TaskManager.shared.intervalTimeLeft  -= 1
 				}
 			}
 		}

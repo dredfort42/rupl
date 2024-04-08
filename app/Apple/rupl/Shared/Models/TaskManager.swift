@@ -7,33 +7,116 @@
 //
 
 import Foundation
+import os
 
 class TaskManager {
-//	struct PaceZone {
-//		//	seconds per segment
-//		var maxPace: Int = 0
-//		var minPace: Int = 0
-//	}
+	private struct Interval: Codable {
+		var id: Int
+		var description: String
+		var speed: Double
+		var pulse_zone: Int
+		var distance: Int
+		var duration: Int
+	}
 
-//	struct HeartRateZone {
-//		//	bpm
-//		var maxHeartRate: Int = 0
-//		var minHeartRate: Int = 0
-//	}
+	private struct Task: Codable {
+		var id: Int
+		var description: String
+		var intervals: [Interval]
+		var compleated: Bool
+	}
+
+	private var task: Task?
+	private var interval: Interval?
+	private var intervalID: Int = -1
 
 	enum HeartRateZones: String, CaseIterable, Identifiable {
 		case any, pz1, pz2, pz3, pz4, pz5
 		var id: Self { self }
 	}
 
-	lazy var intervalHeartRateZone: (maxHeartRate: Int, minHeartRate: Int) = getHeartRateInterval(pz: AppSettings.shared.runningTaskHeartRate) {
-		didSet {
-			print(self.intervalHeartRateZone)
-		}
-	}
+	var isRunTaskStarted: Bool = false
+	var intervalTimeLeft: Int = 0
+	var intervalDistanceLeft: Double = 0
+	var intervalEndDistance: Double = 0
+	var intervalHeartRateZone: (maxHeartRate: Int, minHeartRate: Int) = (0, AppSettings.shared.criticalHeartRate) // bpm
+	var intervalSpeedZone: (maxSpeed: Double, minSpeed: Double) = (0, 11) // mps
 
 	static let shared = TaskManager()
 
+	func getTask(completion: @escaping (String) -> Void) {
+		DispatchQueue.global().async {
+			let apiUrl = URL(string: "\(AppSettings.shared.taskURL)?client_id=\(AppSettings.shared.clientID)&access_token=\(AppSettings.shared.deviceAccessToken)")!
+			var request = URLRequest(url: apiUrl)
+
+			request.httpMethod = "GET"
+
+			let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+				if let error = error {
+					Logger.shared.log("Error: \(error)")
+					return
+				}
+
+				if let data = data {
+					do {
+						self.task = try JSONDecoder().decode(Task.self, from: data)
+						completion("getTask() successfully completed")
+#if DEBUG
+						self.printTask(self.task!)
+#endif
+					} catch {
+						Logger.shared.log("Error parsing JSON: \(error)")
+						completion("getTask() completed with error")
+					}
+				}
+			}
+			task.resume()
+		}
+	}
+
+	func runSession() {
+		if intervalID == -1 {
+			intervalID = 0
+			interval = getInterval(intervalID)
+			intervalTimeLeft = interval?.duration ?? 0
+			intervalDistanceLeft = Double(interval?.distance ?? 0)
+			intervalHeartRateZone = getHeartRateInterval(pz: HeartRateZones.allCases[(interval?.pulse_zone ?? 0)].rawValue)
+			intervalSpeedZone = getSpeedInterval(speed: interval?.speed ?? 0)
+#if DEBUG
+			printInterval()
+#endif
+			return
+		}
+
+		if !(task?.compleated ?? false) && isRunTaskStarted && intervalTimeLeft == 0 && intervalDistanceLeft == 0 {
+			intervalID += 1
+			interval = getInterval(intervalID)
+
+			if interval == nil {
+				task?.compleated = true
+				return
+			}
+
+			intervalTimeLeft = interval?.duration ?? 0
+			intervalDistanceLeft = Double(interval?.distance ?? 0)
+			intervalHeartRateZone = getHeartRateInterval(pz: HeartRateZones.allCases[(interval?.pulse_zone ?? 0)].rawValue)
+			intervalSpeedZone = getSpeedInterval(speed: interval?.speed ?? 0)
+#if DEBUG
+			printInterval()
+#endif
+		}
+	}
+
+	private func getInterval(_ num: Int) -> Interval? {
+		if num >= 0 && num < task?.intervals.count ?? 0 {
+			return (task?.intervals[num])
+		}
+
+		return (nil)
+	}
+
+	// MARK: - Get measurements intervals
+	//
 	func getHeartRateInterval(pz: String) -> (maxHeartRate: Int, minHeartRate: Int) {
 		switch pz {
 			case HeartRateZones.pz1.rawValue:
@@ -49,7 +132,31 @@ class TaskManager {
 			default:
 				return (AppSettings.shared.criticalHeartRate, 0)
 		}
-
 	}
 
+	private func getSpeedInterval(speed: Double) -> (maxSpeed: Double, minSpeed: Double) {
+		return (speed * 0.9, speed * 1.2)
+	}
+
+	// MARK: - Printers
+	//
+	private func printTask(_ task: Task) {
+		print("ID: \(task.id), Description: \(task.description)")
+
+		for i in task.intervals {
+			print("### INTERVAL \(i.id) - \(i.description) ###")
+			print("# Speed:\t\(i.speed)")
+			print("# Pulse:\t\(i.pulse_zone)")
+			print("# Distance:\t\(i.distance)")
+			print("# Duration:\t\(i.duration)")
+		}
+	}
+
+	private func printInterval() {
+		print("### INTERVAL \(intervalID) ###")
+		print("# Speed:\t\(intervalSpeedZone)")
+		print("# Pulse:\t\(intervalHeartRateZone)")
+		print("# Distance:\t\(intervalDistanceLeft)")
+		print("# Duration:\t\(intervalTimeLeft)")
+	}
 }

@@ -51,18 +51,6 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
 
-  # adminer:
-  #   image: adminer
-  #   hostname: adminer
-  #   container_name: adminer
-  #   restart: always
-  #   networks:
-  #     - rupl_net
-  #   ports:
-  #     - 21212:8080
-  #   depends_on:
-  #     - db
-
   # Project services
   ## Auth service
   auth:
@@ -82,6 +70,19 @@ services:
     build: ./profile
     hostname: profile
     container_name: profile
+    restart: always
+    networks:
+      - rupl_net
+    volumes:
+      - ./global.cfg:/app/global.cfg
+    environment:
+      - DEBUG=true
+
+  ## Training plans and sessions service
+  training:
+    build: ./training
+    hostname: training
+    container_name: training
     restart: always
     networks:
       - rupl_net

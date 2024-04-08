@@ -9,20 +9,7 @@
 import SwiftUI
 
 struct TaskView: View {
-
-	//	private enum RunningTask: String {
-	//		case no = "No task"
-	//		case pz1 = "Easy"
-	//		case pz2 = "Endurance"
-	//		case pz3 = "Tempo"
-	//		case pz4 = "Threshold"
-	//		case pz5 = "Anaerobic"
-	//	}
-
-
-
 	@AppStorage(AppSettings.runningTaskHeartRateKey) var runningTaskHeartRate = AppSettings.shared.runningTaskHeartRate
-	//	@State private var selectedTask = TaskManager.HeartRateZones.any
 
 	var body: some View {
 		VStack(alignment: .leading) {
@@ -44,7 +31,9 @@ struct TaskView: View {
 					.foregroundColor(.ruplRed)
 				Text("Any").tag(TaskManager.HeartRateZones.any.rawValue)
 					.foregroundColor(.ruplGray)
-			}.frame(height: 80)
+			}
+//			.frame(height: 80)
+			.pickerStyle(WheelPickerStyle())
 
 			Text("\(TaskManager.shared.getHeartRateInterval(pz: runningTaskHeartRate).minHeartRate) bpm - \( TaskManager.shared.getHeartRateInterval(pz: runningTaskHeartRate).maxHeartRate) bpm")
 				.font(.caption2)

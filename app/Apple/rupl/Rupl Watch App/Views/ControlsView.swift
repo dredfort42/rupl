@@ -46,6 +46,7 @@ struct ControlsView: View {
 		HStack {
 			Button {
 				workoutManager.startWorkout()
+				TaskManager.shared.isRunTaskStarted = true
 			} label: {
 				ZStack {
 					Circle()
