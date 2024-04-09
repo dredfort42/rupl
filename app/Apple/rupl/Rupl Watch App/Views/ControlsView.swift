@@ -16,6 +16,7 @@ struct ControlsView: View {
 
 	@State private var isSettingsActive = false
 	@State private var isTaskActive = false
+	@State private var isNewTaskAvailable = TaskManager.shared.isNewRunTaskAvailable
 
 	var body: some View {
 		VStack {
@@ -38,6 +39,11 @@ struct ControlsView: View {
 //			print("Close settings screen")
 		} content: {
 			TaskView()
+		}
+		.onAppear() {
+			TaskManager.shared.getTask { result in
+				isNewTaskAvailable = TaskManager.shared.isNewRunTaskAvailable
+			}
 		}
 	}
 
@@ -181,21 +187,24 @@ struct ControlsView: View {
 
 	@ViewBuilder
 	private func TaskButtonView() -> some View {
+		var color: Color = isNewTaskAvailable ? .ruplYellow : .ruplGreen
+
 		Button {
 			isTaskActive = true
 		} label: {
+
 			ZStack {
 				Circle()
 					.frame(width: 40, height: 40)
-					.foregroundColor(.ruplGreen)
+					.foregroundColor(color)
 					.opacity(0.1)
 				Image(systemName: "list.clipboard")
-					.foregroundColor(.ruplGreen)
+					.foregroundColor(color)
 			}
 		}
 		.clipShape(Circle())
 		.overlay {
-			Circle().stroke(.ruplGreen.opacity(0.8), lineWidth: 2)
+			Circle().stroke(color.opacity(0.8), lineWidth: 2)
 		}
 		.buttonStyle(.bordered)
 		.frame(width: 40, height: 40)

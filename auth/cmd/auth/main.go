@@ -7,9 +7,14 @@ import (
 	"auth/internal/db"
 
 	"github.com/dredfort42/tools/configreader"
+	"github.com/dredfort42/tools/logprinter"
 )
 
 func main() {
+	if debug := os.Getenv("DEBUG"); debug != "" {
+		logprinter.PrintWarning("Debugging is enabled.", "")
+	}
+
 	config, err := configreader.GetConfig()
 
 	if err != nil {

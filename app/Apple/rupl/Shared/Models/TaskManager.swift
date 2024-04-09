@@ -35,6 +35,8 @@ class TaskManager {
 		var id: Self { self }
 	}
 
+	var isNewRunTaskAvailable: Bool = false
+	var isRunTaskAccepted: Bool?
 	var isRunTaskStarted: Bool = false
 	var intervalTimeLeft: Int = 0
 	var intervalDistanceLeft: Double = 0
@@ -60,6 +62,7 @@ class TaskManager {
 				if let data = data {
 					do {
 						self.task = try JSONDecoder().decode(Task.self, from: data)
+						self.isNewRunTaskAvailable = true
 						completion("getTask() successfully completed")
 #if DEBUG
 						self.printTask(self.task!)
