@@ -10,7 +10,7 @@ import Foundation
 import os
 
 class TaskManager {
-	private struct Interval: Codable {
+	struct Interval: Codable {
 		var id: Int
 		var description: String
 		var speed: Double
@@ -19,14 +19,14 @@ class TaskManager {
 		var duration: Int
 	}
 
-	private struct Task: Codable {
+	struct Task: Codable {
 		var id: Int
 		var description: String
 		var intervals: [Interval]
 		var compleated: Bool
 	}
 
-	private var task: Task?
+	var task: Task?
 	private var interval: Interval?
 	private var intervalID: Int = -1
 

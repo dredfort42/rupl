@@ -10,14 +10,69 @@ import SwiftUI
 
 struct TaskView: View {
 	@AppStorage(AppSettings.runningTaskHeartRateKey) var runningTaskHeartRate = AppSettings.shared.runningTaskHeartRate
+	
+	@Environment(\.dismiss) var dismiss
+	
+	@State private var isNewTaskAvailable = TaskManager.shared.isNewRunTaskAvailable
 
 	var body: some View {
-		VStack(alignment: .leading) {
+
+		if isNewTaskAvailable {
+			ShowTaskView()
+		} else {
+			CreateTaskView()
+		}
+	}
+
+	@ViewBuilder
+	private func ShowHeader() -> some View {
+		HStack(content: {
+			Spacer()
 			Text("Running task")
 				.font(.headline)
 				.foregroundColor(.ruplBlue)
-				.padding(.bottom)
+		})
+		.padding(.horizontal)
+		.padding(.top, -25)
+		.padding(.bottom)
+	}
 
+	@ViewBuilder
+	private func ShowTaskView() -> some View {
+		ScrollView {
+			ShowHeader()
+			Text(TaskManager.shared.task?.description ?? "")
+			VStack {
+				Button {
+					TaskManager.shared.isRunTaskAccepted = true
+					TaskManager.shared.isNewRunTaskAvailable = false
+					dismiss()
+				} label: {
+					Text("Accept")
+				}
+				Button {
+					TaskManager.shared.isRunTaskAccepted = false
+					TaskManager.shared.isNewRunTaskAvailable = false
+					dismiss()
+				} label: {
+					Text("Decline")
+				}
+
+			}
+			.padding(.vertical)
+
+		}
+		.onDisappear() {
+
+		}
+//		.onAppear() {
+//		}
+	}
+
+	@ViewBuilder
+	private func CreateTaskView() -> some View {
+		ScrollView {
+			ShowHeader()
 			Picker("Heart rate zone", selection: $runningTaskHeartRate) {
 				Text("Easy").tag(TaskManager.HeartRateZones.pz1.rawValue)
 					.foregroundColor(.ruplBlue)
@@ -32,7 +87,7 @@ struct TaskView: View {
 				Text("Any").tag(TaskManager.HeartRateZones.any.rawValue)
 					.foregroundColor(.ruplGray)
 			}
-//			.frame(height: 80)
+						.frame(height: 80)
 			.pickerStyle(WheelPickerStyle())
 
 			Text("\(TaskManager.shared.getHeartRateInterval(pz: runningTaskHeartRate).minHeartRate) bpm - \( TaskManager.shared.getHeartRateInterval(pz: runningTaskHeartRate).maxHeartRate) bpm")
@@ -41,7 +96,6 @@ struct TaskView: View {
 				.padding(.horizontal)
 
 			Spacer()
-
 		}
 		.onDisappear() {
 			TaskManager.shared.intervalHeartRateZone =  TaskManager.shared.getHeartRateInterval(pz: runningTaskHeartRate)

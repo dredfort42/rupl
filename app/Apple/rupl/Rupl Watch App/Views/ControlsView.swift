@@ -36,7 +36,7 @@ struct ControlsView: View {
 			SettingsView()
 		}
 		.sheet(isPresented: $isTaskActive) {
-//			print("Close settings screen")
+			isNewTaskAvailable = TaskManager.shared.isNewRunTaskAvailable
 		} content: {
 			TaskView()
 		}
@@ -70,11 +70,11 @@ struct ControlsView: View {
 			Spacer()
 			// Task
 			if isNewTaskAvailable {
-				GetButtonView(size: 40, color: .ruplRed, image: "paperclip", title: "") {
+				GetButtonView(size: 40, color: .ruplRed, image: "paperclip.badge.ellipsis", title: "") {
 					isTaskActive = true
 				}
 			} else {
-				GetButtonView(size: 40, color: .ruplGreen, image: "list.clipboard", title: "") {
+				GetButtonView(size: 40, color: .ruplGreen, image: "paperclip", title: "") {
 					isTaskActive = true
 				}
 			}
@@ -120,7 +120,7 @@ struct ControlsView: View {
 	@ViewBuilder
 	private func GetButtonView(size: CGFloat, color: Color, image: String, title: String, action: @escaping () -> Void) -> some View {
 		Button(action: action) {
-			let imageSize = size > 50 ? size / 3 : size * 2 / 3
+			let imageSize = size > 50 ? size / 4 : size * 2 / 3
 			ZStack {
 				Circle()
 					.frame(width: size, height: size)
@@ -131,7 +131,7 @@ struct ControlsView: View {
 						Image(systemName: image)
 							.resizable()
 							.scaledToFit()
-							.frame(width: imageSize, height: imageSize)
+							.frame(height: imageSize)
 					}
 					if title != "" {
 						Text(title)
