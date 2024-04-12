@@ -35,6 +35,7 @@ class TaskManager {
 		var id: Self { self }
 	}
 
+	var isRunTaskDownloaded: Bool = false
 	var isNewRunTaskAvailable: Bool = false
 	var isRunTaskAccepted: Bool?
 	var isRunTaskStarted: Bool = false
@@ -63,6 +64,7 @@ class TaskManager {
 					do {
 						self.task = try JSONDecoder().decode(Task.self, from: data)
 						self.isNewRunTaskAvailable = true
+						self.isRunTaskDownloaded = true
 						completion("getTask() successfully completed")
 #if DEBUG
 						self.printTask(self.task!)
@@ -78,6 +80,10 @@ class TaskManager {
 	}
 
 	func runSession() {
+		if isRunTaskAccepted == false {
+			return
+		}
+
 		if intervalID == -1 {
 			intervalID = 0
 			interval = getInterval(intervalID)
@@ -97,6 +103,9 @@ class TaskManager {
 
 			if interval == nil {
 				task?.compleated = true
+#if DEBUG
+				print("### SESSION COMPLEATED ###")
+#endif
 				return
 			}
 

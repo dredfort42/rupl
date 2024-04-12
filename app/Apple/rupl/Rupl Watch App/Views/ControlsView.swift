@@ -36,13 +36,19 @@ struct ControlsView: View {
 			SettingsView()
 		}
 		.sheet(isPresented: $isTaskActive) {
+			if TaskManager.shared.isRunTaskAccepted != false {
+				TaskManager.shared.isRunTaskAccepted = true
+			}
+			TaskManager.shared.isNewRunTaskAvailable = false
 			isNewTaskAvailable = TaskManager.shared.isNewRunTaskAvailable
 		} content: {
 			TaskView()
 		}
 		.onAppear() {
-			TaskManager.shared.getTask { result in
-				isNewTaskAvailable = TaskManager.shared.isNewRunTaskAvailable
+			if !TaskManager.shared.isRunTaskDownloaded {
+				TaskManager.shared.getTask { result in
+					isNewTaskAvailable = TaskManager.shared.isNewRunTaskAvailable
+				}
 			}
 		}
 	}
@@ -53,7 +59,19 @@ struct ControlsView: View {
 			// Start
 			GetButtonView(size: 130, color: .ruplBlue, image: "figure.run", title: "Start") {
 				workoutManager.startWorkout()
-				TaskManager.shared.isRunTaskStarted = true
+
+				if TaskManager.shared.isNewRunTaskAvailable {
+					TaskManager.shared.isNewRunTaskAvailable = false
+					TaskManager.shared.isRunTaskAccepted = true
+				}
+
+				if TaskManager.shared.isRunTaskAccepted == true {
+					TaskManager.shared.isRunTaskStarted = true
+				} else {
+					TaskManager.shared.intervalHeartRateZone = TaskManager.shared.getHeartRateInterval(pz: AppSettings.shared.runningTaskHeartRate)
+				}
+
+				isNewTaskAvailable = TaskManager.shared.isNewRunTaskAvailable
 			}
 			Spacer()
 		}
@@ -94,6 +112,9 @@ struct ControlsView: View {
 				workoutManager.sessionState = workoutManager.sessionState == .running ? .paused : .running
 				workoutManager.session?.state == .running ? workoutManager.session?.pause() : workoutManager.session?.resume()
 				workoutManager.session?.state == .running ? SoundEffects.shared.playStopSound() : SoundEffects.shared.playStartSound()
+				if TaskManager.shared.isRunTaskAccepted == true {
+					TaskManager.shared.task?.compleated = true
+				}
 			}
 			Spacer()
 		}

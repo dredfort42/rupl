@@ -20,7 +20,11 @@ struct TaskView: View {
 		if isNewTaskAvailable {
 			ShowTaskView()
 		} else {
-			CreateTaskView()
+			if TaskManager.shared.isRunTaskAccepted == true && !TaskManager.shared.isRunTaskStarted  {
+				ShowTaskView()
+			} else {
+				CreateTaskView()
+			}
 		}
 	}
 
@@ -43,16 +47,15 @@ struct TaskView: View {
 			ShowHeader()
 			Text(TaskManager.shared.task?.description ?? "")
 			VStack {
-				Button {
-					TaskManager.shared.isRunTaskAccepted = true
-					TaskManager.shared.isNewRunTaskAvailable = false
-					dismiss()
-				} label: {
-					Text("Accept")
-				}
+//				Button {
+//					TaskManager.shared.isRunTaskAccepted = true
+//					TaskManager.shared.isNewRunTaskAvailable = false
+//					dismiss()
+//				} label: {
+//					Text("Accept")
+//				}
 				Button {
 					TaskManager.shared.isRunTaskAccepted = false
-					TaskManager.shared.isNewRunTaskAvailable = false
 					dismiss()
 				} label: {
 					Text("Decline")
@@ -60,10 +63,8 @@ struct TaskView: View {
 
 			}
 			.padding(.vertical)
-
 		}
 		.onDisappear() {
-
 		}
 //		.onAppear() {
 //		}
