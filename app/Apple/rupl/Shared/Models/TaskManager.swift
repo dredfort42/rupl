@@ -10,7 +10,7 @@ import Foundation
 import os
 
 class TaskManager {
-	struct Interval: Codable {
+	struct Interval: Codable, Hashable {
 		var id: Int
 		var description: String
 		var speed: Double
