@@ -10,9 +10,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var config configreader.ConfigMap
-
 var DEBUG bool = false
+var config configreader.ConfigMap
 
 // Start starts the web service
 func Start(configMap configreader.ConfigMap) {
