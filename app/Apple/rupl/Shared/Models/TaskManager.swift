@@ -9,7 +9,7 @@
 import Foundation
 import os
 
-class TaskManager {
+class TaskManager: ObservableObject {
 	struct Interval: Codable, Hashable {
 		var id: Int
 		var description: String
@@ -26,24 +26,25 @@ class TaskManager {
 		var compleated: Bool
 	}
 
-	var task: Task?
-	private var interval: Interval?
-	private var intervalID: Int = -1
-
 	enum HeartRateZones: String, CaseIterable, Identifiable {
 		case any, pz1, pz2, pz3, pz4, pz5
 		var id: Self { self }
 	}
 
-	var isRunTaskDownloaded: Bool = false
-	var isNewRunTaskAvailable: Bool = false
-	var isRunTaskAccepted: Bool?
-	var isRunTaskStarted: Bool = false
-	var intervalTimeLeft: Int = 0
-	var intervalDistanceLeft: Double = 0
-	var intervalEndDistance: Double = 0
-	var intervalHeartRateZone: (maxHeartRate: Int, minHeartRate: Int) = (0, AppSettings.shared.criticalHeartRate) // bpm
-	var intervalSpeedZone: (maxSpeed: Double, minSpeed: Double) = (0, 11) // mps
+
+	private var interval: Interval?
+	private var intervalID: Int = -1
+
+	@Published var task: Task?
+	@Published var isRunTaskDownloaded: Bool = false
+	@Published var isNewRunTaskAvailable: Bool = false
+	@Published var isRunTaskAccepted: Bool?
+	@Published var isRunTaskStarted: Bool = false
+	@Published var intervalTimeLeft: Int = 0
+	@Published var intervalDistanceLeft: Double = 0
+	@Published var intervalEndDistance: Double = 0
+	@Published var intervalHeartRateZone: (maxHeartRate: Int, minHeartRate: Int) = (0, AppSettings.shared.criticalHeartRate) // bpm
+	@Published var intervalSpeedZone: (maxSpeed: Double, minSpeed: Double) = (0, 11) // mps
 
 	static let shared = TaskManager()
 
