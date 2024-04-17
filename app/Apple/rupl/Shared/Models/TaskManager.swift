@@ -35,16 +35,16 @@ class TaskManager: ObservableObject {
 	private var interval: Interval?
 	private var intervalID: Int = -1
 
-	@Published var task: Task?
-	@Published var isRunTaskDownloaded: Bool = false
-	@Published var isNewRunTaskAvailable: Bool = false
-	@Published var isRunTaskAccepted: Bool?
-	@Published var isRunTaskStarted: Bool = false
-	@Published var intervalTimeLeft: Int = 0
-	@Published var intervalDistanceLeft: Double = 0
-	@Published var intervalEndDistance: Double = 0
-	@Published var intervalHeartRateZone: (maxHeartRate: Int, minHeartRate: Int) = (0, AppSettings.shared.criticalHeartRate) // bpm
-	@Published var intervalSpeedZone: (maxSpeed: Double, minSpeed: Double) = (0, 11) // mps
+	var task: Task?
+	var isTaskDownloaded: Bool = false
+	var isNewTask: Bool = false
+	var isTaskAccepted: Bool?
+	var isTaskStarted: Bool = false
+	var intervalTimeLeft: Int = 0
+	var intervalDistanceLeft: Double = 0
+	var intervalEndDistance: Double = 0
+	var intervalHeartRateZone: (maxHeartRate: Int, minHeartRate: Int) = (0, AppSettings.shared.criticalHeartRate) // bpm
+	var intervalSpeedZone: (maxSpeed: Double, minSpeed: Double) = (0, 11) // mps
 
 	static let shared = TaskManager()
 
@@ -64,8 +64,8 @@ class TaskManager: ObservableObject {
 				if let data = data {
 					do {
 						self.task = try JSONDecoder().decode(Task.self, from: data)
-						self.isNewRunTaskAvailable = true
-						self.isRunTaskDownloaded = true
+						self.isNewTask = true
+						self.isTaskDownloaded = true
 						completion("getTask() successfully completed")
 #if DEBUG
 						self.printTask(self.task!)
@@ -81,7 +81,7 @@ class TaskManager: ObservableObject {
 	}
 
 	func runSession() {
-		if isRunTaskAccepted == false {
+		if isTaskAccepted == false {
 			return
 		}
 
@@ -98,7 +98,7 @@ class TaskManager: ObservableObject {
 			return
 		}
 
-		if !(task?.compleated ?? false) && isRunTaskStarted && intervalTimeLeft == 0 && intervalDistanceLeft == 0 {
+		if !(task?.compleated ?? false) && isTaskStarted && intervalTimeLeft == 0 && intervalDistanceLeft == 0 {
 			intervalID += 1
 			interval = getInterval(intervalID)
 

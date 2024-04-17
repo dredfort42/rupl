@@ -13,14 +13,12 @@ struct TaskView: View {
 
 	@Environment(\.dismiss) var dismiss
 
-	@State private var isNewTaskAvailable = TaskManager.shared.isNewRunTaskAvailable
-
 	var body: some View {
 
-		if isNewTaskAvailable {
+		if TaskManager.shared.isNewTask {
 			ShowTaskView()
 		} else {
-			if TaskManager.shared.isRunTaskAccepted == true && !TaskManager.shared.isRunTaskStarted  {
+			if TaskManager.shared.isTaskAccepted == true && !TaskManager.shared.isTaskStarted  {
 				ShowTaskView()
 			} else {
 				CreateTaskView()
@@ -58,7 +56,7 @@ struct TaskView: View {
 
 
 			Button {
-				TaskManager.shared.isRunTaskAccepted = false
+				TaskManager.shared.isTaskAccepted = false
 				dismiss()
 			} label: {
 				Text("Decline")
@@ -66,26 +64,6 @@ struct TaskView: View {
 			.padding(.vertical)
 		}
 		.onDisappear() {
-		}
-		//		.onAppear() {
-		//		}
-	}
-
-	struct TaskIntervalView: View {
-		var interval: TaskManager.Interval
-
-		var body: some View {
-			let title: String = interval.description
-			let intencety: String = interval.speed != 0 ? String(interval.speed) : String(interval.pulse_zone)
-			let duration: String = interval.duration != 0 ? String(interval.distance) : String(interval.distance)
-
-			Divider()
-			Text(title)
-				.foregroundStyle(.foreground)
-			Text(intencety)
-				.font(.system(.title2, design: .rounded).lowercaseSmallCaps())
-			Text(duration)
-				.font(.system(.title2, design: .rounded).lowercaseSmallCaps())
 		}
 	}
 
@@ -119,6 +97,24 @@ struct TaskView: View {
 		}
 		.onDisappear() {
 			TaskManager.shared.intervalHeartRateZone =  TaskManager.shared.getHeartRateInterval(pz: runningTaskHeartRate)
+		}
+	}
+
+	struct TaskIntervalView: View {
+		var interval: TaskManager.Interval
+
+		var body: some View {
+			let title: String = interval.description
+			let intencety: String = interval.speed != 0 ? String(interval.speed) : String(interval.pulse_zone)
+			let duration: String = interval.duration != 0 ? String(interval.distance) : String(interval.distance)
+
+			Divider()
+			Text(title)
+				.foregroundStyle(.foreground)
+			Text(intencety)
+				.font(.system(.title2, design: .rounded).lowercaseSmallCaps())
+			Text(duration)
+				.font(.system(.title2, design: .rounded).lowercaseSmallCaps())
 		}
 	}
 }

@@ -16,7 +16,7 @@ struct ControlsView: View {
 
 	@State private var isSettingsActive = false
 	@State private var isTaskActive = false
-	@State private var isNewTaskAvailable = TaskManager.shared.isNewRunTaskAvailable
+	@State private var isNewTaskAvailable = TaskManager.shared.isNewTask
 
 	var body: some View {
 		VStack {
@@ -36,18 +36,18 @@ struct ControlsView: View {
 			SettingsView()
 		}
 		.sheet(isPresented: $isTaskActive) {
-			if TaskManager.shared.isRunTaskAccepted != false {
-				TaskManager.shared.isRunTaskAccepted = true
+			if TaskManager.shared.isTaskAccepted != false {
+				TaskManager.shared.isTaskAccepted = true
 			}
-			TaskManager.shared.isNewRunTaskAvailable = false
-			isNewTaskAvailable = TaskManager.shared.isNewRunTaskAvailable
+			TaskManager.shared.isNewTask = false
+			isNewTaskAvailable = TaskManager.shared.isNewTask
 		} content: {
 			TaskView()
 		}
 		.onAppear() {
-			if !TaskManager.shared.isRunTaskDownloaded {
+			if !TaskManager.shared.isTaskDownloaded {
 				TaskManager.shared.getTask { result in
-					isNewTaskAvailable = TaskManager.shared.isNewRunTaskAvailable
+					isNewTaskAvailable = TaskManager.shared.isNewTask
 				}
 			}
 		}
@@ -60,18 +60,18 @@ struct ControlsView: View {
 			GetButtonView(size: 130, color: .ruplBlue, image: "figure.run", title: "Start") {
 				workoutManager.startWorkout()
 
-				if TaskManager.shared.isNewRunTaskAvailable {
-					TaskManager.shared.isNewRunTaskAvailable = false
-					TaskManager.shared.isRunTaskAccepted = true
+				if TaskManager.shared.isNewTask {
+					TaskManager.shared.isNewTask = false
+					TaskManager.shared.isTaskAccepted = true
 				}
 
-				if TaskManager.shared.isRunTaskAccepted == true {
-					TaskManager.shared.isRunTaskStarted = true
+				if TaskManager.shared.isTaskAccepted == true {
+					TaskManager.shared.isTaskStarted = true
 				} else {
 					TaskManager.shared.intervalHeartRateZone = TaskManager.shared.getHeartRateInterval(pz: AppSettings.shared.runningTaskHeartRate)
 				}
 
-				isNewTaskAvailable = TaskManager.shared.isNewRunTaskAvailable
+				isNewTaskAvailable = TaskManager.shared.isNewTask
 			}
 			Spacer()
 		}
@@ -112,7 +112,7 @@ struct ControlsView: View {
 				workoutManager.sessionState = workoutManager.sessionState == .running ? .paused : .running
 				workoutManager.session?.state == .running ? workoutManager.session?.pause() : workoutManager.session?.resume()
 				workoutManager.session?.state == .running ? SoundEffects.shared.playStopSound() : SoundEffects.shared.playStartSound()
-				if TaskManager.shared.isRunTaskAccepted == true {
+				if TaskManager.shared.isTaskAccepted == true {
 					TaskManager.shared.task?.compleated = true
 				}
 			}
