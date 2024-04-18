@@ -23,7 +23,6 @@ class TaskManager: ObservableObject {
 		var id: Int
 		var description: String
 		var intervals: [Interval]
-		var compleated: Bool
 	}
 
 	enum HeartRateZones: String, CaseIterable, Identifiable {
@@ -35,11 +34,9 @@ class TaskManager: ObservableObject {
 	private var interval: Interval?
 	private var intervalID: Int = -1
 
-	var task: Task?
-	var isTaskDownloaded: Bool = false
-	var isNewTask: Bool = false
-	var isTaskAccepted: Bool?
+//	var isTaskDeclined: Bool = false
 	var isTaskStarted: Bool = false
+	var task: Task?
 	var intervalTimeLeft: Int = 0
 	var intervalDistanceLeft: Double = 0
 	var intervalEndDistance: Double = 0
@@ -48,7 +45,9 @@ class TaskManager: ObservableObject {
 
 	static let shared = TaskManager()
 
-	func getTask(completion: @escaping (String) -> Void) {
+	// MARK: - API Methods
+	//
+	func getTask(completion: @escaping (Bool) -> Void) {
 		DispatchQueue.global().async {
 			let apiUrl = URL(string: "\(AppSettings.shared.taskURL)?client_id=\(AppSettings.shared.clientID)&access_token=\(AppSettings.shared.deviceAccessToken)")!
 			var request = URLRequest(url: apiUrl)
@@ -64,15 +63,13 @@ class TaskManager: ObservableObject {
 				if let data = data {
 					do {
 						self.task = try JSONDecoder().decode(Task.self, from: data)
-						self.isNewTask = true
-						self.isTaskDownloaded = true
-						completion("getTask() successfully completed")
+						completion(true)
 #if DEBUG
 						self.printTask(self.task!)
 #endif
 					} catch {
 						Logger.shared.log("Error parsing JSON: \(error)")
-						completion("getTask() completed with error")
+						completion(false)
 					}
 				}
 			}
@@ -80,33 +77,32 @@ class TaskManager: ObservableObject {
 		}
 	}
 
-	func runSession() {
-		if isTaskAccepted == false {
-			return
-		}
-
-		if intervalID == -1 {
-			intervalID = 0
-			interval = getInterval(intervalID)
-			intervalTimeLeft = interval?.duration ?? 0
-			intervalDistanceLeft = Double(interval?.distance ?? 0)
-			intervalHeartRateZone = getHeartRateInterval(pz: HeartRateZones.allCases[(interval?.pulse_zone ?? 0)].rawValue)
-			intervalSpeedZone = getSpeedInterval(speed: interval?.speed ?? 0)
+	func declineTask() {
 #if DEBUG
-			printInterval()
+		print("declineTask()")
 #endif
+//		isTaskDeclined = true
+		task = nil
+		// post to rupl.org
+		
+	}
+
+	// MARK: - Running session
+	//
+	func runSession() {
+		if task == nil {
 			return
 		}
 
-		if !(task?.compleated ?? false) && isTaskStarted && intervalTimeLeft == 0 && intervalDistanceLeft == 0 {
+		if isTaskStarted && intervalTimeLeft == 0 && intervalDistanceLeft == 0 {
 			intervalID += 1
-			interval = getInterval(intervalID)
+			let interval: Interval? = intervalID < (task?.intervals.count ?? 0) ? task?.intervals[intervalID] : nil
 
 			if interval == nil {
-				task?.compleated = true
 #if DEBUG
 				print("### SESSION COMPLEATED ###")
 #endif
+				task = nil
 				return
 			}
 
@@ -120,15 +116,7 @@ class TaskManager: ObservableObject {
 		}
 	}
 
-	private func getInterval(_ num: Int) -> Interval? {
-		if num >= 0 && num < task?.intervals.count ?? 0 {
-			return (task?.intervals[num])
-		}
-
-		return (nil)
-	}
-
-	// MARK: - Get measurements intervals
+	// MARK: - Get interval parameters
 	//
 	func getHeartRateInterval(pz: String) -> (maxHeartRate: Int, minHeartRate: Int) {
 		switch pz {
@@ -166,7 +154,7 @@ class TaskManager: ObservableObject {
 	}
 
 	private func printInterval() {
-		print("### INTERVAL \(intervalID) ###")
+		print("### INTERVAL \(intervalID + 1) ###")
 		print("# Speed:\t\(intervalSpeedZone)")
 		print("# Pulse:\t\(intervalHeartRateZone)")
 		print("# Distance:\t\(intervalDistanceLeft)")

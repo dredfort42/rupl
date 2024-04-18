@@ -16,7 +16,7 @@ struct ControlsView: View {
 
 	@State private var isSettingsActive = false
 	@State private var isTaskActive = false
-	@State private var isNewTaskAvailable = TaskManager.shared.isNewTask
+	@State private var isNewTask: Bool = false
 
 	var body: some View {
 		VStack {
@@ -36,18 +36,14 @@ struct ControlsView: View {
 			SettingsView()
 		}
 		.sheet(isPresented: $isTaskActive) {
-			if TaskManager.shared.isTaskAccepted != false {
-				TaskManager.shared.isTaskAccepted = true
-			}
-			TaskManager.shared.isNewTask = false
-			isNewTaskAvailable = TaskManager.shared.isNewTask
+			isNewTask = false
 		} content: {
 			TaskView()
 		}
 		.onAppear() {
-			if !TaskManager.shared.isTaskDownloaded {
+			if TaskManager.shared.task == nil {
 				TaskManager.shared.getTask { result in
-					isNewTaskAvailable = TaskManager.shared.isNewTask
+					isNewTask = result
 				}
 			}
 		}
@@ -57,21 +53,16 @@ struct ControlsView: View {
 	private func StartView() -> some View {
 		HStack {
 			// Start
-			GetButtonView(size: 130, color: .ruplBlue, image: "figure.run", title: "Start") {
-				workoutManager.startWorkout()
+			GetButtonView(size: 130, color: .ruplBlue, image: "", title: "Start") {
+				isNewTask = false
 
-				if TaskManager.shared.isNewTask {
-					TaskManager.shared.isNewTask = false
-					TaskManager.shared.isTaskAccepted = true
-				}
-
-				if TaskManager.shared.isTaskAccepted == true {
+				if TaskManager.shared.task != nil {
 					TaskManager.shared.isTaskStarted = true
 				} else {
 					TaskManager.shared.intervalHeartRateZone = TaskManager.shared.getHeartRateInterval(pz: AppSettings.shared.runningTaskHeartRate)
 				}
 
-				isNewTaskAvailable = TaskManager.shared.isNewTask
+				workoutManager.startWorkout()
 			}
 			Spacer()
 		}
@@ -87,12 +78,12 @@ struct ControlsView: View {
 				.padding(.top, 10)
 			Spacer()
 			// Task
-			if isNewTaskAvailable {
-				GetButtonView(size: 40, color: .ruplRed, image: "paperclip.badge.ellipsis", title: "") {
+			if isNewTask {
+				GetButtonView(size: 40, color: .ruplRed, image: "figure.stand", title: "") {
 					isTaskActive = true
 				}
 			} else {
-				GetButtonView(size: 40, color: .ruplGreen, image: "paperclip", title: "") {
+				GetButtonView(size: 40, color: .ruplGreen, image: "figure.run", title: "") {
 					isTaskActive = true
 				}
 			}
@@ -112,9 +103,6 @@ struct ControlsView: View {
 				workoutManager.sessionState = workoutManager.sessionState == .running ? .paused : .running
 				workoutManager.session?.state == .running ? workoutManager.session?.pause() : workoutManager.session?.resume()
 				workoutManager.session?.state == .running ? SoundEffects.shared.playStopSound() : SoundEffects.shared.playStartSound()
-				if TaskManager.shared.isTaskAccepted == true {
-					TaskManager.shared.task?.compleated = true
-				}
 			}
 			Spacer()
 		}
@@ -131,6 +119,8 @@ struct ControlsView: View {
 			Spacer()
 			// End
 			GetButtonView(size: 60, color: .ruplRed, image: "", title: "End") {
+				TaskManager.shared.task = nil
+
 				workoutManager.finishWorkout()
 			}
 		}

@@ -241,6 +241,42 @@ extension WorkoutManager{
 	}
 }
 
+//	MARK: - Post workout
+//
+extension WorkoutManager{
+	func postWorkout() {
+#if DEBUG
+		print("postWorkout()")
+#endif
+//		timerManager.stop()
+//		LocationManager.shared.stop()
+//		MotionManager.shared.stop()
+//		session?.end()
+//
+//		guard let endDate = session?.endDate else {
+//			Logger.shared.log("End date for the workout session is nil")
+//			return
+//		}
+//
+//#if os(watchOS)
+//		Task {
+//			do {
+//				try await builder?.endCollection(at: endDate)
+//
+//				if let finishedWorkout = try await builder?.finishWorkout() {
+//					try await routeBuilder?.finishRoute(with: finishedWorkout, metadata: nil)
+//				}
+//
+//				// Change state after route saving is complete
+//				self.sessionState = .notStarted
+//			} catch {
+//				Logger.shared.log("Failed to end workout: \(error)")
+//			}
+//		}
+//#endif
+	}
+}
+
 //	MARK: - Workout statistics
 //
 extension WorkoutManager {

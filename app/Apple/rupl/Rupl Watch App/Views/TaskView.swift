@@ -15,14 +15,10 @@ struct TaskView: View {
 
 	var body: some View {
 
-		if TaskManager.shared.isNewTask {
-			ShowTaskView()
+		if TaskManager.shared.task == nil {
+			CreateTaskView()
 		} else {
-			if TaskManager.shared.isTaskAccepted == true && !TaskManager.shared.isTaskStarted  {
-				ShowTaskView()
-			} else {
-				CreateTaskView()
-			}
+			ShowTaskView()
 		}
 	}
 
@@ -56,7 +52,7 @@ struct TaskView: View {
 
 
 			Button {
-				TaskManager.shared.isTaskAccepted = false
+				TaskManager.shared.declineTask()
 				dismiss()
 			} label: {
 				Text("Decline")
