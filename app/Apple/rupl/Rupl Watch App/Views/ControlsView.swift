@@ -118,7 +118,7 @@ struct ControlsView: View {
 				.padding(.top, 30)
 			Spacer()
 			// End
-			GetButtonView(size: 60, color: .ruplRed, image: "", title: "End") {
+			GetButtonView(size: 60, color: .ruplRed, image: "", title: "Stop") {
 				TaskManager.shared.task = nil
 
 				workoutManager.finishWorkout()
