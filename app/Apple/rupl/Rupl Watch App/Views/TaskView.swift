@@ -35,36 +35,7 @@ struct TaskView: View {
 		.padding(.bottom)
 	}
 
-	@ViewBuilder
-	private func ShowTaskView() -> some View {
-		ScrollView {
-			ShowHeader()
-			Text(TaskManager.shared.task?.description ?? "")
 
-			if let intervals = TaskManager.shared.task?.intervals {
-				ForEach(intervals, id: \.self) { interval in
-					TaskIntervalView(interval: interval)
-						.padding()
-				}
-			} else {
-				Text("No intervals available")
-			}
-
-
-			Button {
-				TaskManager.shared.declineTask() { result in
-					if result {
-						dismiss()
-					}
-				}
-			} label: {
-				Text("Decline")
-			}
-			.padding(.vertical)
-		}
-		.onDisappear() {
-		}
-	}
 
 	@ViewBuilder
 	private func CreateTaskView() -> some View {
@@ -96,6 +67,40 @@ struct TaskView: View {
 		}
 		.onDisappear() {
 			TaskManager.shared.intervalHeartRateZone =  TaskManager.shared.getHeartRateInterval(pz: runningTaskHeartRate)
+		}
+	}
+
+	@ViewBuilder
+	private func ShowTaskView() -> some View {
+		ScrollView {
+			ShowHeader()
+			VStack(alignment: .leading) {
+
+				Text(TaskManager.shared.task?.description ?? "")
+					.padding()
+
+				if let intervals = TaskManager.shared.task?.intervals {
+					ForEach(intervals, id: \.self) { interval in
+						TaskIntervalView(interval: interval)
+							.padding()
+					}
+				} else {
+					Text("No intervals available")
+				}
+			}
+
+			Button {
+				TaskManager.shared.declineTask() { result in
+					if result {
+						dismiss()
+					}
+				}
+			} label: {
+				Text("Decline")
+			}
+			.padding(.vertical)
+		}
+		.onDisappear() {
 		}
 	}
 
