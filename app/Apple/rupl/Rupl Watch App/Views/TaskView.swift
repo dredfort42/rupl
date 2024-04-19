@@ -106,10 +106,6 @@ struct TaskView: View {
 
 	@ViewBuilder
 	private func TaskIntervalView(interval: TaskManager.Interval) -> some View {
-
-		let intencety: String = interval.speed != 0 ? String(interval.speed) : String(interval.pulse_zone)
-		let duration: String = interval.duration != 0 ? String(interval.distance) : String(interval.distance)
-
 		Divider()
 		VStack(alignment: .leading) {
 			HStack {
