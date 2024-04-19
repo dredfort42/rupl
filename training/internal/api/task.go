@@ -2,13 +2,28 @@ package api
 
 import (
 	"net/http"
+	"time"
 
 	"training/internal/training"
 
 	"github.com/gin-gonic/gin"
 )
 
+// TMP: taskDeclined is a temporary var
+var taskDeclined bool
+
+// GetTask returns a task
 func GetTask(c *gin.Context) {
+	// TMP: taskDeclined is a temporary check
+	if time.Now().Minute()%2 == 0 {
+		taskDeclined = false
+	}
+
+	if taskDeclined {
+		c.IndentedJSON(http.StatusNoContent, nil)
+		return
+	}
+
 	// TODO: Implement GetTask
 	var task training.Task
 
@@ -43,4 +58,10 @@ func GetTask(c *gin.Context) {
 	}
 
 	c.IndentedJSON(http.StatusOK, task)
+}
+
+// DeclineTask declines a task
+func DeclineTask(c *gin.Context) {
+	taskDeclined = true
+	c.IndentedJSON(http.StatusOK, gin.H{"message": "Task successfully declined"})
 }

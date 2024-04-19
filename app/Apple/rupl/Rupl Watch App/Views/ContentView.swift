@@ -50,6 +50,7 @@ struct ContentView: View {
 		.sheet(isPresented: $isSheetActive) {
 			if workoutManager.sessionState != .ended {
 				workoutManager.saveWorkout()
+				workoutManager.postWorkout()
 			}
 		} content: {
 			SummaryView()

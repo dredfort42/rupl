@@ -11,13 +11,65 @@ import SwiftUI
 struct TaskView: View {
 	@AppStorage(AppSettings.runningTaskHeartRateKey) var runningTaskHeartRate = AppSettings.shared.runningTaskHeartRate
 
+	@Environment(\.dismiss) var dismiss
+
 	var body: some View {
-		VStack(alignment: .leading) {
+
+		if TaskManager.shared.task == nil {
+			CreateTaskView()
+		} else {
+			ShowTaskView()
+		}
+	}
+
+	@ViewBuilder
+	private func ShowHeader() -> some View {
+		HStack(content: {
+			Spacer()
 			Text("Running task")
 				.font(.headline)
 				.foregroundColor(.ruplBlue)
-				.padding(.bottom)
+		})
+		.padding(.horizontal)
+		.padding(.top, -25)
+		.padding(.bottom)
+	}
 
+	@ViewBuilder
+	private func ShowTaskView() -> some View {
+		ScrollView {
+			ShowHeader()
+			Text(TaskManager.shared.task?.description ?? "")
+
+			if let intervals = TaskManager.shared.task?.intervals {
+				ForEach(intervals, id: \.self) { interval in
+					TaskIntervalView(interval: interval)
+						.padding()
+				}
+			} else {
+				Text("No intervals available")
+			}
+
+
+			Button {
+				TaskManager.shared.declineTask() { result in
+					if result {
+						dismiss()
+					}
+				}
+			} label: {
+				Text("Decline")
+			}
+			.padding(.vertical)
+		}
+		.onDisappear() {
+		}
+	}
+
+	@ViewBuilder
+	private func CreateTaskView() -> some View {
+		ScrollView {
+			ShowHeader()
 			Picker("Heart rate zone", selection: $runningTaskHeartRate) {
 				Text("Easy").tag(TaskManager.HeartRateZones.pz1.rawValue)
 					.foregroundColor(.ruplBlue)
@@ -32,7 +84,7 @@ struct TaskView: View {
 				Text("Any").tag(TaskManager.HeartRateZones.any.rawValue)
 					.foregroundColor(.ruplGray)
 			}
-//			.frame(height: 80)
+			.frame(height: 80)
 			.pickerStyle(WheelPickerStyle())
 
 			Text("\(TaskManager.shared.getHeartRateInterval(pz: runningTaskHeartRate).minHeartRate) bpm - \( TaskManager.shared.getHeartRateInterval(pz: runningTaskHeartRate).maxHeartRate) bpm")
@@ -41,10 +93,27 @@ struct TaskView: View {
 				.padding(.horizontal)
 
 			Spacer()
-
 		}
 		.onDisappear() {
 			TaskManager.shared.intervalHeartRateZone =  TaskManager.shared.getHeartRateInterval(pz: runningTaskHeartRate)
+		}
+	}
+
+	struct TaskIntervalView: View {
+		var interval: TaskManager.Interval
+
+		var body: some View {
+			let title: String = interval.description
+			let intencety: String = interval.speed != 0 ? String(interval.speed) : String(interval.pulse_zone)
+			let duration: String = interval.duration != 0 ? String(interval.distance) : String(interval.distance)
+
+			Divider()
+			Text(title)
+				.foregroundStyle(.foreground)
+			Text(intencety)
+				.font(.system(.title2, design: .rounded).lowercaseSmallCaps())
+			Text(duration)
+				.font(.system(.title2, design: .rounded).lowercaseSmallCaps())
 		}
 	}
 }

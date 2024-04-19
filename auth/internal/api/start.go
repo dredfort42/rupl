@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -10,10 +11,15 @@ import (
 	"github.com/dredfort42/tools/logprinter"
 )
 
+var DEBUG bool = false
 var config configreader.ConfigMap
 
 // Start starts the web service
 func Start(configMap configreader.ConfigMap) {
+	if debug := os.Getenv("DEBUG"); debug != "" {
+		DEBUG = true
+	}
+
 	config = configMap
 
 	router := gin.Default()

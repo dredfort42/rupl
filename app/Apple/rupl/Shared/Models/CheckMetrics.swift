@@ -141,7 +141,7 @@ extension WorkoutManager {
 extension WorkoutManager {
 	func checkIntervalDistanceLeft() {
 		DispatchQueue.global().async {
-			if TaskManager.shared.isRunTaskStarted && TaskManager.shared.intervalDistanceLeft > 0 {
+			if TaskManager.shared.isTaskStarted && TaskManager.shared.intervalDistanceLeft > 0 {
 				if TaskManager.shared.intervalEndDistance == 0 {
 					TaskManager.shared.intervalEndDistance = self.distance + TaskManager.shared.intervalDistanceLeft
 				}
@@ -160,7 +160,7 @@ extension WorkoutManager {
 extension WorkoutManager {
 	func checkIntervalTimeLeft() {
 		DispatchQueue.global().async {
-			if TaskManager.shared.isRunTaskStarted && TaskManager.shared.intervalTimeLeft > 0 {
+			if TaskManager.shared.isTaskStarted && TaskManager.shared.intervalTimeLeft > 0 {
 				if self.sessionState == .running {
 					TaskManager.shared.intervalTimeLeft  -= 1
 				}

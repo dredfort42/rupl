@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"os"
 	"time"
 
 	_ "github.com/lib/pq"
@@ -43,10 +44,14 @@ func ConnectToDatabase() bool {
 	return true
 }
 
-//
+var DEBUG bool = false
 
 // Start starts the web service
 func Start(configMap configreader.ConfigMap) {
+	if debug := os.Getenv("DEBUG"); debug != "" {
+		DEBUG = true
+	}
+
 	config = configMap
 
 	db.database, db.err = nil, nil
