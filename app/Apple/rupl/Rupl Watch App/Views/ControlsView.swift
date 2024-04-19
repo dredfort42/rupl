@@ -32,7 +32,7 @@ struct ControlsView: View {
 			}
 		}
 		.sheet(isPresented: $isSettingsActive) {
-//			print("Close settings screen")
+			//			print("Close settings screen")
 		} content: {
 			SettingsView()
 		}
@@ -48,7 +48,9 @@ struct ControlsView: View {
 			}
 		}
 		.onDisappear() {
-			taskRequestsTimer?.invalidate()
+			if AppSettings.shared.connectedToRupl {
+				taskRequestsTimer?.invalidate()
+			}
 		}
 	}
 
@@ -86,7 +88,7 @@ struct ControlsView: View {
 			GetButtonView(size: 30, color: .ruplGray, image: "gear", title: "") {
 				isSettingsActive = true
 			}
-				.padding(.top, 10)
+			.padding(.top, 10)
 			Spacer()
 			// Task
 			if isNewTask {
@@ -126,7 +128,7 @@ struct ControlsView: View {
 			GetButtonView(size: 30, color: .ruplGray, image: "gear", title: "") {
 				isSettingsActive = true
 			}
-				.padding(.top, 30)
+			.padding(.top, 30)
 			Spacer()
 			// End
 			GetButtonView(size: 60, color: .ruplRed, image: "", title: "Stop") {

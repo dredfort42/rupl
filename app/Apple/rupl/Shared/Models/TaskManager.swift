@@ -47,6 +47,11 @@ class TaskManager: ObservableObject {
 	// MARK: - API Methods
 	//
 	func getTask(completion: @escaping (Bool) -> Void) {
+		if !AppSettings.shared.connectedToRupl {
+			completion(false)
+			return
+		}
+
 		DispatchQueue.global().async {
 			let apiUrl = URL(string: "\(AppSettings.shared.taskURL)?client_id=\(AppSettings.shared.clientID)&access_token=\(AppSettings.shared.deviceAccessToken)")!
 			var request = URLRequest(url: apiUrl)
@@ -56,6 +61,16 @@ class TaskManager: ObservableObject {
 			let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
 				if let error = error {
 					Logger.shared.log("Error: \(error)")
+					return
+				}
+
+				guard let httpResponse = response as? HTTPURLResponse else {
+					completion(false)
+					return
+				}
+
+				if httpResponse.statusCode != 200 {
+					completion(false)
 					return
 				}
 
@@ -77,9 +92,12 @@ class TaskManager: ObservableObject {
 	}
 
 	func declineTask(completion: @escaping (Bool) -> Void) {
-#if DEBUG
-		print("declineTask()")
-#endif
+		if !AppSettings.shared.connectedToRupl {
+			self.task = nil
+			completion(true)
+			return
+		}
+		
 		DispatchQueue.global().async {
 			let apiUrl = URL(string: "\(AppSettings.shared.taskURL)?client_id=\(AppSettings.shared.clientID)&access_token=\(AppSettings.shared.deviceAccessToken)&task_id=\(self.task?.id ?? 0)")!
 			var request = URLRequest(url: apiUrl)
