@@ -77,14 +77,40 @@ class TaskManager: ObservableObject {
 		}
 	}
 
-	func declineTask() {
+	func declineTask(taskID: Int) {
 #if DEBUG
 		print("declineTask()")
 #endif
 //		isTaskDeclined = true
 		task = nil
-		// post to rupl.org
-		
+		DispatchQueue.global().async {
+			let apiUrl = URL(string: "\(AppSettings.shared.taskURL)?client_id=\(AppSettings.shared.clientID)&access_token=\(AppSettings.shared.deviceAccessToken)&task_id=\(taskID)")!
+			var request = URLRequest(url: apiUrl)
+
+			request.httpMethod = "POST"
+
+			let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+				if let error = error {
+					Logger.shared.log("Error: \(error)")
+					return
+				}
+
+				if let data = data {
+					do {
+						self.task = try JSONDecoder().decode(Task.self, from: data)
+						completion(true)
+#if DEBUG
+						self.printTask(self.task!)
+#endif
+					} catch {
+						Logger.shared.log("Error parsing JSON: \(error)")
+						completion(false)
+					}
+				}
+			}
+			task.resume()
+		}
+
 	}
 
 	// MARK: - Running session

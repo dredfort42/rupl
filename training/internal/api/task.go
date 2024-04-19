@@ -63,5 +63,5 @@ func GetTask(c *gin.Context) {
 // DeclineTask declines a task
 func DeclineTask(c *gin.Context) {
 	taskDeclined = true
-	c.IndentedJSON(http.StatusOK, nil)
+	c.IndentedJSON(http.StatusOK, gin.H{"message": "Task successfully declined"})
 }
