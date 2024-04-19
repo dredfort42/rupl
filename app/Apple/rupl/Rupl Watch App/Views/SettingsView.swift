@@ -40,8 +40,6 @@ struct SettingsView: View {
 						Text("If heart rate exceeds this value, an alarm will sound")
 					}
 
-
-
 					Section {
 						if isConnectedToRupl {
 							Button {

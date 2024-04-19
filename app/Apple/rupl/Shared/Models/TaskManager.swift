@@ -34,7 +34,6 @@ class TaskManager: ObservableObject {
 	private var interval: Interval?
 	private var intervalID: Int = -1
 
-//	var isTaskDeclined: Bool = false
 	var isTaskStarted: Bool = false
 	var task: Task?
 	var intervalTimeLeft: Int = 0
@@ -77,14 +76,12 @@ class TaskManager: ObservableObject {
 		}
 	}
 
-	func declineTask(taskID: Int) {
+	func declineTask(completion: @escaping (Bool) -> Void) {
 #if DEBUG
 		print("declineTask()")
 #endif
-//		isTaskDeclined = true
-		task = nil
 		DispatchQueue.global().async {
-			let apiUrl = URL(string: "\(AppSettings.shared.taskURL)?client_id=\(AppSettings.shared.clientID)&access_token=\(AppSettings.shared.deviceAccessToken)&task_id=\(taskID)")!
+			let apiUrl = URL(string: "\(AppSettings.shared.taskURL)?client_id=\(AppSettings.shared.clientID)&access_token=\(AppSettings.shared.deviceAccessToken)&task_id=\(self.task?.id ?? 0)")!
 			var request = URLRequest(url: apiUrl)
 
 			request.httpMethod = "POST"
@@ -95,22 +92,21 @@ class TaskManager: ObservableObject {
 					return
 				}
 
-				if let data = data {
-					do {
-						self.task = try JSONDecoder().decode(Task.self, from: data)
-						completion(true)
-#if DEBUG
-						self.printTask(self.task!)
-#endif
-					} catch {
-						Logger.shared.log("Error parsing JSON: \(error)")
-						completion(false)
-					}
+				guard let httpResponse = response as? HTTPURLResponse else {
+					completion(false)
+					return
 				}
+
+				if httpResponse.statusCode != 200 {
+					completion(false)
+					return
+				}
+				
+				self.task = nil
+				completion(true)
 			}
 			task.resume()
 		}
-
 	}
 
 	// MARK: - Running session

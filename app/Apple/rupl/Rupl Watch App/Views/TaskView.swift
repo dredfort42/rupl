@@ -52,8 +52,11 @@ struct TaskView: View {
 
 
 			Button {
-				TaskManager.shared.declineTask()
-				dismiss()
+				TaskManager.shared.declineTask() { result in
+					if result {
+						dismiss()
+					}
+				}
 			} label: {
 				Text("Decline")
 			}

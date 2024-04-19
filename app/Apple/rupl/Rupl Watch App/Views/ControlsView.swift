@@ -17,6 +17,7 @@ struct ControlsView: View {
 	@State private var isSettingsActive = false
 	@State private var isTaskActive = false
 	@State private var isNewTask: Bool = false
+	@State private var taskRequestsTimer: Timer?
 
 	var body: some View {
 		VStack {
@@ -41,11 +42,16 @@ struct ControlsView: View {
 			TaskView()
 		}
 		.onAppear() {
-			if TaskManager.shared.task == nil {
-				TaskManager.shared.getTask { result in
-					isNewTask = result
+			var taskRequestsTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { _ in
+				if TaskManager.shared.task == nil {
+					TaskManager.shared.getTask { result in
+						isNewTask = result
+					}
 				}
 			}
+		}
+		.onDisappear() {
+			taskRequestsTimer?.invalidate()
 		}
 	}
 
