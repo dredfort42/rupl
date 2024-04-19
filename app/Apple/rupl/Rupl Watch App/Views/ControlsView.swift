@@ -42,16 +42,21 @@ struct ControlsView: View {
 			TaskView()
 		}
 		.onAppear() {
-			var taskRequestsTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { _ in
-				if TaskManager.shared.task == nil {
-					TaskManager.shared.getTask { result in
-						isNewTask = result
-					}
-				}
+			getTask()
+			taskRequestsTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { _ in
+				getTask()
 			}
 		}
 		.onDisappear() {
 			taskRequestsTimer?.invalidate()
+		}
+	}
+
+	private func getTask() {
+		if TaskManager.shared.task == nil {
+			TaskManager.shared.getTask { result in
+				isNewTask = result
+			}
 		}
 	}
 
