@@ -13,10 +13,20 @@ class TaskManager: ObservableObject {
 	struct Interval: Codable, Hashable {
 		var id: Int
 		var description: String
-		var speed: Double
-		var pulse_zone: Int
 		var distance: Int
 		var duration: Int
+		var speed: Speed
+		var pulse: Pulse
+	}
+
+	struct Speed: Codable, Hashable {
+		var min: Float32
+		var max: Float32
+	}
+
+	struct Pulse: Codable, Hashable {
+		var min: Int
+		var max: Int
 	}
 
 	struct Task: Codable {
@@ -33,7 +43,6 @@ class TaskManager: ObservableObject {
 	enum ParametersToControl {
 		case all, heartRate, speed
 	}
-
 
 	private var interval: Interval?
 	private var intervalID: Int = -1
@@ -151,9 +160,9 @@ class TaskManager: ObservableObject {
 				return
 			}
 
-			if interval?.speed != 0 && interval?.pulse_zone == 0 {
+			if interval?.speed.max != 0 && interval?.pulse.max == 0 {
 				controlParaneters = .speed
-			} else if interval?.speed == 0 && interval?.pulse_zone != 0 {
+			} else if interval?.speed.max == 0 && interval?.pulse.max != 0 {
 				controlParaneters = .heartRate
 			} else {
 				controlParaneters = .all
@@ -161,8 +170,8 @@ class TaskManager: ObservableObject {
 
 			intervalTimeLeft = interval?.duration ?? 0
 			intervalDistanceLeft = Double(interval?.distance ?? 0)
-			intervalHeartRateZone = getHeartRateInterval(pz: HeartRateZones.allCases[(interval?.pulse_zone ?? 0)].rawValue)
-			intervalSpeedZone = getSpeedInterval(speed: interval?.speed ?? 0)
+			intervalHeartRateZone = (interval?.pulse.max ?? 0, interval?.pulse.min ?? 0)
+			intervalSpeedZone = (Double(interval?.speed.max ?? 0), Double(interval?.speed.min ?? 0))
 #if DEBUG
 			printInterval()
 #endif
@@ -189,7 +198,7 @@ class TaskManager: ObservableObject {
 	}
 
 	private func getSpeedInterval(speed: Double) -> (maxSpeed: Double, minSpeed: Double) {
-		return (speed * 0.9, speed * 1.2)
+		return (speed * 0.8, speed * 1.2)
 	}
 
 	// MARK: - Printers
@@ -200,7 +209,7 @@ class TaskManager: ObservableObject {
 		for i in task.intervals {
 			print("### INTERVAL \(i.id) - \(i.description) ###")
 			print("# Speed:\t\(i.speed)")
-			print("# Pulse:\t\(i.pulse_zone)")
+			print("# Pulse:\t\(i.pulse)")
 			print("# Distance:\t\(i.distance)")
 			print("# Duration:\t\(i.duration)")
 		}
