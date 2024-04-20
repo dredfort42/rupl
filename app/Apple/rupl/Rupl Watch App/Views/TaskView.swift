@@ -119,13 +119,15 @@ struct TaskView: View {
 				Text("Speed")
 					.foregroundColor(.ruplGray)
 					.font(.footnote)
-				Text("\(workoutManager.convertToMinutesPerKilometer(metersPerSecond: Double(interval.speed.min))) min/km - \(workoutManager.convertToMinutesPerKilometer(metersPerSecond: Double(interval.speed.max))) min/km")
+				Text("\(workoutManager.convertToMinutesPerKilometer(metersPerSecond: Double(interval.speed.min)))/km - \(workoutManager.convertToMinutesPerKilometer(metersPerSecond: Double(interval.speed.max)))/km")
+					.font(.footnote)
 					.padding(.bottom)
 			} else {
 				Text("Heart rate")
 					.foregroundColor(.ruplGray)
 					.font(.footnote)
 				Text("\(interval.pulse.min) bpm - \(interval.pulse.max) bpm")
+					.font(.footnote)
 					.padding(.bottom)
 			}
 
