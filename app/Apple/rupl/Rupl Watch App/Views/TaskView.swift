@@ -115,17 +115,17 @@ struct TaskView: View {
 			.padding(.bottom)
 
 
-			if interval.speed != 0 {
+			if interval.speed.max != 0 {
 				Text("Speed")
 					.foregroundColor(.ruplGray)
 					.font(.footnote)
-				Text(workoutManager.convertToMinutesPerKilometer(metersPerSecond: Double(interval.speed)) + " min/km")
+				Text("\(workoutManager.convertToMinutesPerKilometer(metersPerSecond: Double(interval.speed.min))) min/km - \(workoutManager.convertToMinutesPerKilometer(metersPerSecond: Double(interval.speed.max))) min/km")
 					.padding(.bottom)
 			} else {
 				Text("Heart rate")
 					.foregroundColor(.ruplGray)
 					.font(.footnote)
-				Text("\(TaskManager.shared.getHeartRateInterval(pz: "pz\(interval.pulse_zone)").minHeartRate) bpm - \(TaskManager.shared.getHeartRateInterval(pz: "pz\(interval.pulse_zone)").maxHeartRate) bpm")
+				Text("\(interval.pulse.min) bpm - \(interval.pulse.max) bpm")
 					.padding(.bottom)
 			}
 
