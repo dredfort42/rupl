@@ -161,7 +161,7 @@ class TaskManager: ObservableObject {
 	func getHeartRateInterval(pz: String) -> (maxHeartRate: Int, minHeartRate: Int) {
 		switch pz {
 			case HeartRateZones.pz1.rawValue:
-				return (AppSettings.shared.pz1NotInZone, 0)
+				return (AppSettings.shared.pz1NotInZone, 60)
 			case HeartRateZones.pz2.rawValue:
 				return (AppSettings.shared.pz2Easy, AppSettings.shared.pz1NotInZone)
 			case HeartRateZones.pz3.rawValue:
@@ -171,7 +171,7 @@ class TaskManager: ObservableObject {
 			case HeartRateZones.pz5.rawValue:
 				return (AppSettings.shared.pz5Anaerobic, AppSettings.shared.pz4Aerobic)
 			default:
-				return (AppSettings.shared.criticalHeartRate, 0)
+				return (AppSettings.shared.criticalHeartRate, 60)
 		}
 	}
 

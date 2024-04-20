@@ -88,15 +88,12 @@ struct TaskView: View {
 					Text("No intervals available")
 				}
 			}
-
-			Button {
+			SlideButton("Decline task", styling: .init(color: .ruplRed, indicatorSystemName: "xmark")) {
 				TaskManager.shared.declineTask() { result in
 					if result {
 						dismiss()
 					}
 				}
-			} label: {
-				Text("Decline")
 			}
 			.padding(.vertical)
 		}
@@ -149,11 +146,6 @@ struct TaskView: View {
 		}
 	}
 }
-
-
-//#Preview {
-//	TaskView()
-//}
 
 //Zone 1: Recovery/Easy (50-60% of MHR)
 //Lower limit: 0.50 x MHR
