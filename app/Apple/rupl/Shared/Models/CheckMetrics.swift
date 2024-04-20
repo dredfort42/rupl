@@ -54,10 +54,20 @@ extension WorkoutManager {
 	}
 
 	private func checkHeartRateZone() {
+		if TaskManager.shared.controlParaneters == .speed {
+			return
+		}
+
 		if Int(self.heartRate) > TaskManager.shared.intervalHeartRateZone.maxHeartRate {
 			SoundEffects.shared.playRunSlowerSound()
+#if DEBUG
+			print("[!] High heart rate")
+#endif
 		} else if Int(self.heartRate) < TaskManager.shared.intervalHeartRateZone.minHeartRate {
 			SoundEffects.shared.playRunFasterSound()
+#if DEBUG
+			print("[!] Low heart rate")
+#endif
 		}
 	}
 }
@@ -82,6 +92,23 @@ extension WorkoutManager {
 
 			self.last10SpeedAverage = self.last10SpeedMeasurementsSum / Double(self.last10SpeedMeasurements.count)
 		}
+
+		if TaskManager.shared.controlParaneters == .heartRate {
+			return
+		}
+
+		if self.last10SpeedAverage > TaskManager.shared.intervalSpeedZone.maxSpeed {
+			SoundEffects.shared.playRunSlowerSound()
+#if DEBUG
+			print("[!] High speed")
+#endif
+		} else if self.last10SpeedAverage < TaskManager.shared.intervalSpeedZone.minSpeed {
+			SoundEffects.shared.playRunFasterSound()
+#if DEBUG
+			print("[!] Low speed")
+#endif
+		}
+
 	}
 }
 

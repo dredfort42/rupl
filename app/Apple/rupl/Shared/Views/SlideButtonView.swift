@@ -50,7 +50,7 @@ public struct SlideButton<Label: View>: View {
 				.mask {
 					Rectangle()
 						.overlay(alignment: .leading) {
-							Color.red
+							Color.ruplRed
 								.frame(width: calculatedOffset + (0.5 * styling.indicatorSize - styling.indicatorSpacing))
 								.frame(maxWidth: .infinity, alignment: .leading)
 								.animation(.interactiveSpring(), value: swipeState)
@@ -120,19 +120,6 @@ public struct SlideButton<Label: View>: View {
 			.mask({ Capsule() })
 		}
 		.frame(height: styling.indicatorSize)
-		.accessibilityRepresentation {
-			Button(action: {
-				swipeState = .end
-
-				Task {
-					await callback()
-					swipeState = .start
-				}
-			}, label: {
-				title
-			})
-			.disabled(swipeState != .start)
-		}
 	}
 
 	private func clampValue(value: CGFloat, min minValue: CGFloat, max maxValue: CGFloat) -> CGFloat {

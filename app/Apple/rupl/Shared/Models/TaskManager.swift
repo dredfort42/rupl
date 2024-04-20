@@ -30,6 +30,10 @@ class TaskManager: ObservableObject {
 		var id: Self { self }
 	}
 
+	enum ParametersToControl {
+		case all, heartRate, speed
+	}
+
 
 	private var interval: Interval?
 	private var intervalID: Int = -1
@@ -41,6 +45,7 @@ class TaskManager: ObservableObject {
 	var intervalEndDistance: Double = 0
 	var intervalHeartRateZone: (maxHeartRate: Int, minHeartRate: Int) = (0, AppSettings.shared.criticalHeartRate) // bpm
 	var intervalSpeedZone: (maxSpeed: Double, minSpeed: Double) = (0, 11) // mps
+	var controlParaneters: ParametersToControl = .all
 
 	static let shared = TaskManager()
 
@@ -144,6 +149,14 @@ class TaskManager: ObservableObject {
 #endif
 				task = nil
 				return
+			}
+
+			if interval?.speed != 0 && interval?.pulse_zone == 0 {
+				controlParaneters = .speed
+			} else if interval?.speed == 0 && interval?.pulse_zone != 0 {
+				controlParaneters = .heartRate
+			} else {
+				controlParaneters = .all
 			}
 
 			intervalTimeLeft = interval?.duration ?? 0

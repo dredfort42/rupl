@@ -95,7 +95,6 @@ struct TaskView: View {
 					}
 				}
 			}
-			.padding(.vertical)
 		}
 		.onDisappear() {
 		}
