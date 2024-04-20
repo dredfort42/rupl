@@ -10,7 +10,7 @@ import SwiftUI
 
 struct TaskView: View {
 	@AppStorage(AppSettings.runningTaskHeartRateKey) var runningTaskHeartRate = AppSettings.shared.runningTaskHeartRate
-
+	@EnvironmentObject var workoutManager: WorkoutManager
 	@Environment(\.dismiss) var dismiss
 
 	var body: some View {
@@ -35,36 +35,7 @@ struct TaskView: View {
 		.padding(.bottom)
 	}
 
-	@ViewBuilder
-	private func ShowTaskView() -> some View {
-		ScrollView {
-			ShowHeader()
-			Text(TaskManager.shared.task?.description ?? "")
 
-			if let intervals = TaskManager.shared.task?.intervals {
-				ForEach(intervals, id: \.self) { interval in
-					TaskIntervalView(interval: interval)
-						.padding()
-				}
-			} else {
-				Text("No intervals available")
-			}
-
-
-			Button {
-				TaskManager.shared.declineTask() { result in
-					if result {
-						dismiss()
-					}
-				}
-			} label: {
-				Text("Decline")
-			}
-			.padding(.vertical)
-		}
-		.onDisappear() {
-		}
-	}
 
 	@ViewBuilder
 	private func CreateTaskView() -> some View {
@@ -99,28 +70,82 @@ struct TaskView: View {
 		}
 	}
 
-	struct TaskIntervalView: View {
-		var interval: TaskManager.Interval
+	@ViewBuilder
+	private func ShowTaskView() -> some View {
+		ScrollView {
+			ShowHeader()
+			VStack(alignment: .leading) {
+				Text(TaskManager.shared.task?.description ?? "")
+					.font(.title2)
+					.padding()
 
-		var body: some View {
-			let title: String = interval.description
-			let intencety: String = interval.speed != 0 ? String(interval.speed) : String(interval.pulse_zone)
-			let duration: String = interval.duration != 0 ? String(interval.distance) : String(interval.distance)
+				if let intervals = TaskManager.shared.task?.intervals {
+					ForEach(intervals, id: \.self) { interval in
+						TaskIntervalView(interval: interval)
+							.padding()
+					}
+				} else {
+					Text("No intervals available")
+				}
+			}
+			SlideButton("Decline task", styling: .init(color: .ruplRed, indicatorSystemName: "xmark")) {
+				TaskManager.shared.declineTask() { result in
+					if result {
+						dismiss()
+					}
+				}
+			}
+			.padding(.vertical)
+		}
+		.onDisappear() {
+		}
+	}
 
-			Divider()
-			Text(title)
-				.foregroundStyle(.foreground)
-			Text(intencety)
-				.font(.system(.title2, design: .rounded).lowercaseSmallCaps())
-			Text(duration)
-				.font(.system(.title2, design: .rounded).lowercaseSmallCaps())
+	@ViewBuilder
+	private func TaskIntervalView(interval: TaskManager.Interval) -> some View {
+		Divider()
+		VStack(alignment: .leading) {
+			HStack {
+				Text("\(interval.id)")
+					.foregroundColor(.ruplGray)
+					.padding(.trailing)
+				Text(interval.description)
+					.foregroundColor(.ruplBlue)
+			}
+			.font(.title3)
+			.padding(.bottom)
+
+
+			if interval.speed != 0 {
+				Text("Speed")
+					.foregroundColor(.ruplGray)
+					.font(.footnote)
+				Text(workoutManager.convertToMinutesPerKilometer(metersPerSecond: Double(interval.speed)) + " min/km")
+					.padding(.bottom)
+			} else {
+				Text("Heart rate")
+					.foregroundColor(.ruplGray)
+					.font(.footnote)
+				Text("\(TaskManager.shared.getHeartRateInterval(pz: "pz\(interval.pulse_zone)").minHeartRate) bpm - \(TaskManager.shared.getHeartRateInterval(pz: "pz\(interval.pulse_zone)").maxHeartRate) bpm")
+					.padding(.bottom)
+			}
+
+			if interval.distance != 0 {
+				Text("Distance")
+					.foregroundColor(.ruplGray)
+					.font(.footnote)
+				Text("\(interval.distance / 1000) km")
+					.padding(.bottom)
+			} else {
+				Text("Dutation")
+					.foregroundColor(.ruplGray)
+					.font(.footnote)
+				Text("\(workoutManager.formatDuration(seconds: Double(interval.duration))) min")
+					.padding(.bottom)
+			}
 		}
 	}
 }
-
-//#Preview {
-//	TaskView()
-//}
 
 //Zone 1: Recovery/Easy (50-60% of MHR)
 //Lower limit: 0.50 x MHR

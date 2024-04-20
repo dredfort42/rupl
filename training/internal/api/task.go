@@ -28,32 +28,72 @@ func GetTask(c *gin.Context) {
 	var task training.Task
 
 	task.ID = 1
-	task.Description = "Test task"
+	task.Description = "Tempo Intervals"
 	task.Compleated = false
 	task.Intervals = []training.Interval{
 		{
 			ID:          1,
-			Description: "Warm up",
-			Speed:       10,
-			PulseZone:   0,
-			Distance:    100,
-			Duration:    0,
+			Description: "Easy run",
+			Speed:       0,
+			PulseZone:   1,
+			Distance:    0,
+			Duration:    10 * 60,
 		},
 		{
 			ID:          2,
-			Description: "Sprint",
+			Description: "Tempo run",
 			Speed:       0,
-			PulseZone:   4,
+			PulseZone:   3,
 			Distance:    0,
-			Duration:    60,
+			Duration:    5 * 60,
 		},
 		{
 			ID:          3,
-			Description: "Cool down",
-			Speed:       10,
-			PulseZone:   0,
-			Distance:    100,
-			Duration:    0,
+			Description: "Easy run",
+			Speed:       0,
+			PulseZone:   1,
+			Distance:    0,
+			Duration:    2*60 + 30,
+		},
+		{
+			ID:          4,
+			Description: "Tempo run",
+			Speed:       0,
+			PulseZone:   3,
+			Distance:    0,
+			Duration:    5 * 60,
+		},
+		{
+			ID:          5,
+			Description: "Easy run",
+			Speed:       0,
+			PulseZone:   1,
+			Distance:    0,
+			Duration:    2*60 + 30,
+		},
+		{
+			ID:          6,
+			Description: "Tempo run",
+			Speed:       0,
+			PulseZone:   3,
+			Distance:    0,
+			Duration:    5 * 60,
+		},
+		{
+			ID:          7,
+			Description: "Easy run",
+			Speed:       0,
+			PulseZone:   1,
+			Distance:    0,
+			Duration:    2*60 + 30,
+		},
+		{
+			ID:          8,
+			Description: "Steady run",
+			Speed:       0,
+			PulseZone:   2,
+			Distance:    0,
+			Duration:    10 * 60,
 		},
 	}
 
