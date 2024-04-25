@@ -10,6 +10,7 @@ import Foundation
 import os
 import HealthKit
 import SwiftUI
+import CoreLocation
 
 @MainActor
 class WorkoutManager: NSObject, ObservableObject {
@@ -62,6 +63,7 @@ class WorkoutManager: NSObject, ObservableObject {
 	var contextDate: Date?
 #endif
 	var routeBuilder: HKWorkoutRouteBuilder?
+	var workoutRoute: HKWorkoutRoute?
 
 	//	Array for store last 10 speed measurements to colculate average speed
 	var last10SpeedMeasurements: [Double] = []
@@ -147,6 +149,7 @@ extension WorkoutManager {
 		builder = nil
 #endif
 		routeBuilder = nil
+		workoutRoute = nil
 
 		//	Array for store last 10 speed measurements to colculate average speed
 		last10SpeedMeasurements = []
@@ -223,18 +226,29 @@ extension WorkoutManager{
 		}
 
 #if os(watchOS)
-		Task {
-			do {
-				try await builder?.endCollection(at: endDate)
-
-				if let finishedWorkout = try await builder?.finishWorkout() {
-					try await routeBuilder?.finishRoute(with: finishedWorkout, metadata: nil)
-				}
-
-				// Change state after route saving is complete
-				self.sessionState = .notStarted
-			} catch {
+		print("Save workout start")
+		builder?.endCollection(withEnd: endDate) { (_, error) in
+			print("Ended data collection")
+			if error != nil {
 				Logger.shared.log("Failed to end workout: \(error)")
+			} else {
+				self.builder?.finishWorkout() { (newWorkout, error) in
+					print("Finished workout")
+					guard newWorkout != nil else {
+						Logger.shared.log("Failed to create workout")
+						return
+					}
+					self.routeBuilder?.finishRoute(with: newWorkout!, metadata: nil) { (newRoute, error) in
+						print("Finished workout route")
+						guard newRoute != nil else {
+							Logger.shared.log("Failed to create workout route")
+							return
+						}
+
+						self.workoutRoute = newRoute
+						self.postWorkout()
+					}
+				}
 			}
 		}
 #endif
@@ -244,201 +258,37 @@ extension WorkoutManager{
 //	MARK: - Post workout
 //
 extension WorkoutManager{
-	func postWorkout() async {
+	func postWorkout() {
 #if DEBUG
 		print("postWorkout()")
 #endif
+		
+		guard let route = workoutRoute else {
+			return
+		}
 
+		var allLocations: [CLLocation] = []
 
+		// Create the route query.
+		let query = HKWorkoutRouteQuery(route: route) { (query, locationsOrNil, done, errorOrNil) in
 
-//		let query = HKSampleQuery(sampleType: HKObjectType.workoutType(), predicate: nil, limit: 1, sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)]) { (query, samples, error) in
-//			guard let workoutSamples = samples as? [HKWorkout], let runWorkout = workoutSamples.first(where: { $0.workoutActivityType == .running }) else {
-//				print("No running workout data available.")
-//				return
-//			}
-//
-//			// Extract relevant data from the workout
-//			let workoutStartDate = runWorkout.startDate
-//			let workoutEndDate = runWorkout.endDate
-//			let totalDistance = runWorkout.totalDistance?.doubleValue(for: .meter())
-//			let totalEnergyBurned = runWorkout.totalEnergyBurned?.doubleValue(for: .kilocalorie())
-//
-//			print(workoutStartDate)
-//			print(workoutEndDate)
-//			print(totalDistance ?? 0.0)
-//			print(totalEnergyBurned ?? 0.0)
-//
-//
-//			//			// Prepare the data to send to the server
-//			//			let dataToSend: [String: Any] = [
-//			//				"startDate": workoutStartDate,
-//			//				"endDate": workoutEndDate,
-//			//				"totalDistance": totalDistance ?? 0.0,
-//			//				"totalEnergyBurned": totalEnergyBurned ?? 0.0
-//			//				// Add more data as needed
-//			//			]
-//			//
-//			//			// Send data to server
-//			//			print("sendDataToServer(data: dataToSend)")
-//			let runningObjectQuery = HKQuery.predicateForObjects(from: runWorkout)
-//
-//
-//			let routeQuery = HKAnchoredObjectQuery(type: HKSeriesType.workoutRoute(), predicate: runningObjectQuery, anchor: nil, limit: HKObjectQueryNoLimit) { (query, samples, deletedObjects, anchor, error) in
-//
-//				guard error == nil else {
-//					// Handle any errors here.
-//					fatalError("The initial query failed.")
-//				}
-//
-//				// Process the initial route data here.
-//			}
-//
-//
-//			routeQuery.updateHandler = { (query, samples, deleted, anchor, error) in
-//
-//				guard error == nil else {
-//					// Handle any errors here.
-//					fatalError("The update failed.")
-//				}
-//
-//				// Process updates or additions here.
-//			}
-//
-//
-//			self.healthStore.execute(routeQuery)
-//		}
-//		healthStore.execute(query)
+			if errorOrNil != nil {
+				return
+			}
 
+			guard let currentLocationBatch = locationsOrNil else {
+				fatalError("*** Invalid State: This can only fail if there was an error. ***")
+			}
 
+			allLocations.append(contentsOf: currentLocationBatch)
 
+		}
 
-//		let routeQuery = HKSampleQuery(sampleType: HKSeriesType.workoutRoute(), predicate: nil, limit: 1, sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)]) { (query, samples, error) in
-//			guard let workoutRouteSamples = samples as? [HKWorkoutRoute], let workoutRoute = workoutRouteSamples.first else {
-//				print("No workout route data available.")
-//				return
-//			}
-//
-//			let routeQueryDescriptor = HKWorkoutRouteQueryDescriptor(workoutRoute)
-////
-////			// Get the AsyncSequence that returns individual locations.
-//			let locations = routeQueryDescriptor.results(for: self.healthStore)
-////
-////
-//// Access each location.
-//			for try await location in locations {
-//
-//				// Process the results here.
-//				print(location.coordinate)
-//				print(location.timestamp)
-//			}
-////			print("---")
-////			print(locations)
-//
-//		}
-//		healthStore.execute(routeQuery)
+		self.healthStore.execute(query)
 
-		let workouts = await readWorkouts()
-//		guard let workout = workouts?.first else {
-//			return
-//		}
-		print("---workout---")
-		print(workouts ?? "")
-
-//		let routes = await getWorkoutRoute(workout: workout)
-//		guard let route = routes?.first else {
-//			return
-//		}
-//		print("---route---")
-//		print(route)
-
-//		let locations = await getLocationDataForRoute(givenRoute: route)
-//		print("---locations---")
-//		print(locations)
+		print(allLocations)
 
 	}
-
-	func readWorkouts() async -> [HKWorkout]? {
-		let cycling = HKQuery.predicateForWorkouts(with: .cycling)
-
-		let samples = try! await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[HKSample], Error>) in
-			healthStore.execute(HKSampleQuery(sampleType: .workoutType(), predicate: cycling, limit: HKObjectQueryNoLimit,sortDescriptors: [.init(keyPath: \HKSample.startDate, ascending: false)], resultsHandler: { query, samples, error in
-				if let hasError = error {
-					continuation.resume(throwing: hasError)
-					return
-				}
-
-				guard let samples = samples else {
-					Logger.shared.log("Can't read workout from Health Storage")
-					return
-				}
-
-				continuation.resume(returning: samples)
-			}))
-		}
-
-		guard let workouts = samples as? [HKWorkout] else {
-			return nil
-		}
-
-		return workouts
-	}
-
-	func getWorkoutRoute(workout: HKWorkout) async -> [HKWorkoutRoute]? {
-		let byWorkout = HKQuery.predicateForObjects(from: workout)
-
-		let samples = try! await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[HKSample], Error>) in
-			healthStore.execute(HKAnchoredObjectQuery(type: HKSeriesType.workoutRoute(), predicate: byWorkout, anchor: nil, limit: HKObjectQueryNoLimit, resultsHandler: { (query, samples, deletedObjects, anchor, error) in
-				if let hasError = error {
-					continuation.resume(throwing: hasError)
-					return
-				}
-
-				guard let samples = samples else {
-					Logger.shared.log("Can't read workout route from Health Storage")
-					return
-				}
-
-				continuation.resume(returning: samples)
-			}))
-		}
-
-		guard let routs = samples as? [HKWorkoutRoute] else {
-			return nil
-		}
-
-		return routs
-	}
-
-//	func getLocationDataForRoute(givenRoute: HKWorkoutRoute) async -> [CLLocation] {
-//		let locations = try! await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[CLLocation], Error>) in
-//			var allLocations: [CLLocation] = []
-//
-//			// Create the route query.
-//			let query = HKWorkoutRouteQuery(route: givenRoute) { (query, locationsOrNil, done, errorOrNil) in
-//
-//				if let error = errorOrNil {
-//					continuation.resume(throwing: error)
-//					return
-//				}
-//
-//				guard let currentLocationBatch = locationsOrNil else {
-//					Logger.shared.log("Can't read locations from Workout Route")
-//					return
-//				}
-//
-//				allLocations.append(contentsOf: currentLocationBatch)
-//
-//				if done {
-//					continuation.resume(returning: allLocations)
-//				}
-//			}
-//
-//			healthStore.execute(query)
-//		}
-//
-//		return locations
-//	}
-
 }
 
 //	MARK: - Workout statistics

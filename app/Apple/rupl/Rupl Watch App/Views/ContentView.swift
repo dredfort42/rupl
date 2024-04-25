@@ -50,11 +50,6 @@ struct ContentView: View {
 		.sheet(isPresented: $isSheetActive) {
 			if workoutManager.sessionState != .ended {
 				workoutManager.saveWorkout()
-				Task {
-					do {
-						await workoutManager.postWorkout()
-					}
-				}
 			}
 		} content: {
 			SummaryView()
