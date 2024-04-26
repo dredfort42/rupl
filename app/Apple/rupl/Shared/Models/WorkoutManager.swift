@@ -245,6 +245,33 @@ extension WorkoutManager{
 							return
 						}
 
+						let query = HKWorkoutRouteQuery(route: newRoute!) { (query, locationsOrNil, done, errorOrNil) in
+
+							// This block may be called multiple times.
+
+							if let error = errorOrNil {
+								// Handle any errors here.
+								return
+							}
+
+							guard let locations = locationsOrNil else {
+								fatalError("*** Invalid State: This can only fail if there was an error. ***")
+							}
+
+							// Do something with this batch of location data.
+							print(locations)
+
+//							if done {
+								// The query returned all the location data associated with the route.
+								// Do something with the complete data set.
+//							}
+
+							// You can stop the query by calling:
+							// store.stop(query)
+
+						}
+						self.healthStore.execute(query)
+
 						self.workoutRoute = newRoute
 						self.postWorkout()
 					}
