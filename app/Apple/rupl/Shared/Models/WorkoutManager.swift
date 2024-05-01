@@ -243,52 +243,52 @@ extension WorkoutManager{
 		}
 
 
-//		builder?.endCollection(withEnd: endDate) { (_, error) in
-//			print("Ended data collection")
-//			if error != nil {
-//				Logger.shared.log("Failed to end workout: \(error)")
-//			} else {
-//				self.builder?.finishWorkout() { (newWorkout, error) in
-//					print("Finished workout")
-//					guard newWorkout != nil else {
-//						Logger.shared.log("Failed to create workout")
-//						return
-//					}
-//					self.routeBuilder?.finishRoute(with: newWorkout!, metadata: nil) { (newRoute, error) in
-//						print("Finished workout route")
-//						guard newRoute != nil else {
-//							Logger.shared.log("Failed to create workout route")
-//							return
-//						}
-//
-//						let query = HKWorkoutRouteQuery(route: newRoute!) { (query, locationsOrNil, done, errorOrNil) in
-//							if let error = errorOrNil {
-//								Logger.shared.log("Failed to execute workout route query")
-//								return
-//							}
-//
-//							guard let locations = locationsOrNil else {
-//								Logger.shared.log("Failed to get workout route locations")
-//								return
-//							}
-//
-//							if done {
-//								// The query returned all the location data associated with the route.
-//								// Do something with the complete data set.
-//								print(locations)
-//								self.postWorkout(locations: locations)
-//							}
-//
-//							// You can stop the query by calling:
-//							// store.stop(query)
-//
-//						}
-//						self.healthStore.execute(query)
-//
-//					}
-//				}
-//			}
-//		}
+		//		builder?.endCollection(withEnd: endDate) { (_, error) in
+		//			print("Ended data collection")
+		//			if error != nil {
+		//				Logger.shared.log("Failed to end workout: \(error)")
+		//			} else {
+		//				self.builder?.finishWorkout() { (newWorkout, error) in
+		//					print("Finished workout")
+		//					guard newWorkout != nil else {
+		//						Logger.shared.log("Failed to create workout")
+		//						return
+		//					}
+		//					self.routeBuilder?.finishRoute(with: newWorkout!, metadata: nil) { (newRoute, error) in
+		//						print("Finished workout route")
+		//						guard newRoute != nil else {
+		//							Logger.shared.log("Failed to create workout route")
+		//							return
+		//						}
+		//
+		//						let query = HKWorkoutRouteQuery(route: newRoute!) { (query, locationsOrNil, done, errorOrNil) in
+		//							if let error = errorOrNil {
+		//								Logger.shared.log("Failed to execute workout route query")
+		//								return
+		//							}
+		//
+		//							guard let locations = locationsOrNil else {
+		//								Logger.shared.log("Failed to get workout route locations")
+		//								return
+		//							}
+		//
+		//							if done {
+		//								// The query returned all the location data associated with the route.
+		//								// Do something with the complete data set.
+		//								print(locations)
+		//								self.postWorkout(locations: locations)
+		//							}
+		//
+		//							// You can stop the query by calling:
+		//							// store.stop(query)
+		//
+		//						}
+		//						self.healthStore.execute(query)
+		//
+		//					}
+		//				}
+		//			}
+		//		}
 #endif
 	}
 }
@@ -384,68 +384,70 @@ extension WorkoutManager{
 			predicate: HKQuery.predicateForWorkouts(with: .running),
 			limit: HKObjectQueryNoLimit,
 			sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)]) { (query, samples, error) in
-			guard let samples = samples as? [HKWorkout], let lastRun = samples.first else {
-				print("No running workouts found")
-				return
-			}
-
-			// Access data from the last run
-			print("Last run:")
-			print("Start Date: \(lastRun.startDate)")
-			print("End Date: \(lastRun.endDate)")
-			print("Distance: \(lastRun.totalDistance?.doubleValue(for: HKUnit.meter()) ?? 0) meters")
-			print("Duration: \(lastRun.duration)")
-
-			let predicate = HKQuery.predicateForSamples(withStart: lastRun.startDate, end: lastRun.endDate, options: .strictStartDate)
-
-				// Define query for heart rate samples during the run
-				let heartRateQuery = HKSampleQuery(sampleType: HKObjectType.quantityType(forIdentifier: .heartRate)!, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { (query, samples, error) in
-					guard let samples = samples as? [HKQuantitySample] else {
-						print("No heart rate data found during the run")
-						return
-					}
-
-					// Access heart rate data
-					print("Heart rates during the run:")
-					for sample in samples {
-						print("Date: \(Int64(sample.startDate.timeIntervalSince1970)), Heart Rate: \(sample.quantity.doubleValue(for: HKUnit(from: "count/min")))")
-					}
+				guard let samples = samples as? [HKWorkout], let lastRun = samples.first else {
+					print("No running workouts found")
+					return
 				}
 
-				// Execute the heart rate query
-				self.healthStore.execute(heartRateQuery)
-		}
+				// Access data from the last run
+//				print("Last run:")
+//				print("Start Date: \(lastRun.startDate)")
+//				print("End Date: \(lastRun.endDate)")
+//				print("Distance: \(lastRun.totalDistance?.doubleValue(for: HKUnit.meter()) ?? 0) meters")
+//				print("Duration: \(lastRun.duration)")
+
+				let predicate = HKQuery.predicateForSamples(withStart: lastRun.startDate, end: lastRun.endDate, options: .strictStartDate)
+
+				// Define query for heart rate samples during the run
+				for type in self.typesToRead {
+					let heartRateQuery = HKSampleQuery(sampleType: type, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { (query, samples, error) in
+						guard let samples = samples as? [HKQuantitySample] else {
+							print("No data found during the run")
+							return
+						}
+
+						print(type.description)
+						print("Data during the run:")
+						for sample in samples {
+							print("Date: \(Int64(sample.startDate.timeIntervalSince1970)), data: \(sample.quantity)")
+						}
+					}
+
+					// Execute the heart rate query
+					self.healthStore.execute(heartRateQuery)
+				}
+			}
 
 		// Execute the query
 		healthStore.execute(query)
-//		let query = HKSampleQuery(sampleType: HKQuantityType(.heartRate), predicate: nil, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { (query, samples, error) in
+		//		let query = HKSampleQuery(sampleType: HKQuantityType(.heartRate), predicate: nil, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { (query, samples, error) in
 
-		
-//			var healthData: [String: Any] = [:]
-//		
-//			// Fetch data for each type
-//			for type in typesToRead {
-//				let query = HKSampleQuery(sampleType: type, predicate: nil, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { (query, samples, error) in
-//					if let samples = samples {
-//						var sampleData: [[String: Any]] = []
-//						for sample in samples {
-//							// Convert each sample to a dictionary representation
-//														let sampleDict = sampleDataDict(from: sample)
-//														sampleData.append(sampleDict)
-//						}
-//		
-//						print(type.identifier)
-//						print(sampleData)
-//		
-//						healthData[type.identifier] = sampleData
-//					} else {
-//						healthData[type.identifier] = []
-//					}
-//				}
-//				healthStore.execute(query)
-//			}
-//		
-//			print(healthData)
+
+		//			var healthData: [String: Any] = [:]
+		//
+		//			// Fetch data for each type
+		//			for type in typesToRead {
+		//				let query = HKSampleQuery(sampleType: type, predicate: nil, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { (query, samples, error) in
+		//					if let samples = samples {
+		//						var sampleData: [[String: Any]] = []
+		//						for sample in samples {
+		//							// Convert each sample to a dictionary representation
+		//														let sampleDict = sampleDataDict(from: sample)
+		//														sampleData.append(sampleDict)
+		//						}
+		//
+		//						print(type.identifier)
+		//						print(sampleData)
+		//
+		//						healthData[type.identifier] = sampleData
+		//					} else {
+		//						healthData[type.identifier] = []
+		//					}
+		//				}
+		//				healthStore.execute(query)
+		//			}
+		//
+		//			print(healthData)
 
 	}
 }
