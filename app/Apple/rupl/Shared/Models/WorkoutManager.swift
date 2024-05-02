@@ -50,7 +50,9 @@ class WorkoutManager: NSObject, ObservableObject {
 		HKQuantityType(.runningVerticalOscillation),
 		HKQuantityType(.stepCount),
 		HKQuantityType(.vo2Max),
-		HKQuantityType(.flightsClimbed)
+		HKQuantityType(.flightsClimbed),
+		HKObjectType.workoutType(),
+		HKSeriesType.workoutRoute()
 	]
 
 	//	Environment
@@ -241,135 +243,9 @@ extension WorkoutManager{
 				Logger.shared.log("Failed to end workout: \(error)")
 			}
 		}
-
-
-		//		builder?.endCollection(withEnd: endDate) { (_, error) in
-		//			print("Ended data collection")
-		//			if error != nil {
-		//				Logger.shared.log("Failed to end workout: \(error)")
-		//			} else {
-		//				self.builder?.finishWorkout() { (newWorkout, error) in
-		//					print("Finished workout")
-		//					guard newWorkout != nil else {
-		//						Logger.shared.log("Failed to create workout")
-		//						return
-		//					}
-		//					self.routeBuilder?.finishRoute(with: newWorkout!, metadata: nil) { (newRoute, error) in
-		//						print("Finished workout route")
-		//						guard newRoute != nil else {
-		//							Logger.shared.log("Failed to create workout route")
-		//							return
-		//						}
-		//
-		//						let query = HKWorkoutRouteQuery(route: newRoute!) { (query, locationsOrNil, done, errorOrNil) in
-		//							if let error = errorOrNil {
-		//								Logger.shared.log("Failed to execute workout route query")
-		//								return
-		//							}
-		//
-		//							guard let locations = locationsOrNil else {
-		//								Logger.shared.log("Failed to get workout route locations")
-		//								return
-		//							}
-		//
-		//							if done {
-		//								// The query returned all the location data associated with the route.
-		//								// Do something with the complete data set.
-		//								print(locations)
-		//								self.postWorkout(locations: locations)
-		//							}
-		//
-		//							// You can stop the query by calling:
-		//							// store.stop(query)
-		//
-		//						}
-		//						self.healthStore.execute(query)
-		//
-		//					}
-		//				}
-		//			}
-		//		}
 #endif
 	}
 }
-
-
-//func sampleDataDict(from sample: HKSample) -> [String: Any] {
-//	var sampleDict: [String: Any] = [:]
-//
-//	// Add sample metadata
-//	sampleDict["startDate"] = sample.startDate
-//	sampleDict["endDate"] = sample.endDate
-//
-//	// Extract specific data depending on the type
-//	if let quantitySample = sample as? HKQuantitySample {
-//		sampleDict["quantity"] = quantitySample.quantity.doubleValue(for: HKUnit.count())
-//		sampleDict["unit"] = quantitySample.quantity
-//	}
-//
-//	// Add more properties as needed for different types of samples
-//
-//	return sampleDict
-//}
-
-//func fetchHealthData(completion: @escaping ([String: Any]?, Error?) -> Void) {
-//	let healthStore = HKHealthStore()
-//
-//	// Define the types of data you want to retrieve
-//	let types: Set<HKObjectType> = [
-//		HKObjectType.workoutType(),
-////		HKSeriesType.workoutRoute(),
-////		HKObjectType.quantityType(forIdentifier: .heartRate)!,
-////		HKObjectType.quantityType(forIdentifier: .distanceWalkingRunning)!,
-////		HKObjectType.quantityType(forIdentifier: .runningSpeed)!,
-////		HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!,
-////		HKObjectType.quantityType(forIdentifier: .bodyMass)!,
-////		HKObjectType.quantityType(forIdentifier: .bodyFatPercentage)!,
-////		HKObjectType.quantityType(forIdentifier: .bodyMassIndex)!,
-////		HKObjectType.quantityType(forIdentifier: .bodyTemperature)!,
-////		HKObjectType.quantityType(forIdentifier: .height)!,
-////		HKObjectType.quantityType(forIdentifier: .oxygenSaturation)!,
-////		HKObjectType.quantityType(forIdentifier: .runningPower)!,
-////		HKObjectType.quantityType(forIdentifier: .runningGroundContactTime)!,
-////		HKObjectType.quantityType(forIdentifier: .runningStrideLength)!,
-////		HKObjectType.quantityType(forIdentifier: .runningVerticalOscillation)!,
-////		HKObjectType.quantityType(forIdentifier: .stepCount)!,
-////		HKObjectType.quantityType(forIdentifier: .vo2Max)!,
-////		HKObjectType.quantityType(forIdentifier: .flightsClimbed)!
-//	]
-//
-//
-//	var healthData: [String: Any] = [:]
-//
-//	// Fetch data for each type
-//	for type in types {
-//		let query = HKSampleQuery(sampleType: type as! HKSampleType, predicate: nil, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { (query, samples, error) in
-//			if let samples = samples {
-//				var sampleData: [[String: Any]] = []
-//				for sample in samples {
-//					// Convert each sample to a dictionary representation
-//												let sampleDict = sampleDataDict(from: sample)
-//												sampleData.append(sampleDict)
-//				}
-//
-//				print(type.identifier)
-//				print(sampleData)
-//
-//				healthData[type.identifier] = sampleData
-//			} else {
-//				healthData[type.identifier] = []
-//			}
-//		}
-//		healthStore.execute(query)
-//	}
-//
-//	completion(healthData, nil)
-//}
-
-
-
-
-
 
 //	MARK: - Post workout
 //
@@ -389,66 +265,53 @@ extension WorkoutManager{
 					return
 				}
 
-				// Access data from the last run
-//				print("Last run:")
-//				print("Start Date: \(lastRun.startDate)")
-//				print("End Date: \(lastRun.endDate)")
-//				print("Distance: \(lastRun.totalDistance?.doubleValue(for: HKUnit.meter()) ?? 0) meters")
-//				print("Duration: \(lastRun.duration)")
-
 				let predicate = HKQuery.predicateForSamples(withStart: lastRun.startDate, end: lastRun.endDate, options: .strictStartDate)
-
-				// Define query for heart rate samples during the run
 				for type in self.typesToRead {
-					let heartRateQuery = HKSampleQuery(sampleType: type, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { (query, samples, error) in
-						guard let samples = samples as? [HKQuantitySample] else {
-							print("No data found during the run")
-							return
-						}
+					let workoutQuery = HKSampleQuery(sampleType: type, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { (query, results, error) in
 
-						print(type.description)
-						print("Data during the run:")
-						for sample in samples {
-							print("Date: \(Int64(sample.startDate.timeIntervalSince1970)), data: \(sample.quantity)")
+						switch type {
+							case HKSeriesType.workoutRoute():
+
+								guard let routes = results as? [HKWorkoutRoute] else {
+									print("No workout routes found or error occurred")
+									return
+								}
+
+								for route in routes {
+									let routeQuery = HKWorkoutRouteQuery(route: route) { (query, locationsOrNil, done, errorOrNil) in
+										guard let locations = locationsOrNil else {
+											print("Error fetching locations for route")
+											return
+										}
+
+										for location in locations {
+											print("Location: \(location)")
+										}
+
+//										if done {
+//											print("All locations fetched for route.")
+//										}
+									}
+
+									self.healthStore.execute(routeQuery)
+								}
+							default:
+								guard let samples = results as? [HKQuantitySample] else {
+									print("No data found during the run")
+									return
+								}
+
+								for sample in samples {
+									print("Date: \(Int64(sample.startDate.timeIntervalSince1970)), data: \(sample.quantity)")
+								}
 						}
 					}
 
-					// Execute the heart rate query
-					self.healthStore.execute(heartRateQuery)
+					self.healthStore.execute(workoutQuery)
 				}
 			}
 
-		// Execute the query
 		healthStore.execute(query)
-		//		let query = HKSampleQuery(sampleType: HKQuantityType(.heartRate), predicate: nil, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { (query, samples, error) in
-
-
-		//			var healthData: [String: Any] = [:]
-		//
-		//			// Fetch data for each type
-		//			for type in typesToRead {
-		//				let query = HKSampleQuery(sampleType: type, predicate: nil, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { (query, samples, error) in
-		//					if let samples = samples {
-		//						var sampleData: [[String: Any]] = []
-		//						for sample in samples {
-		//							// Convert each sample to a dictionary representation
-		//														let sampleDict = sampleDataDict(from: sample)
-		//														sampleData.append(sampleDict)
-		//						}
-		//
-		//						print(type.identifier)
-		//						print(sampleData)
-		//
-		//						healthData[type.identifier] = sampleData
-		//					} else {
-		//						healthData[type.identifier] = []
-		//					}
-		//				}
-		//				healthStore.execute(query)
-		//			}
-		//
-		//			print(healthData)
-
 	}
 }
 
