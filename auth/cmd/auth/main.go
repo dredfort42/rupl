@@ -14,5 +14,5 @@ func main() {
 	}
 
 	db.DatabaseInit()
-	api.Start()
+	api.ApiInit()
 }
