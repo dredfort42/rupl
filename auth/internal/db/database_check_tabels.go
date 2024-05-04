@@ -3,26 +3,26 @@ package db
 import (
 	"time"
 
-	"github.com/dredfort42/tools/logprinter"
+	loger "github.com/dredfort42/tools/logprinter"
 )
 
-// CheckTableExists checks if the table exists
-func CheckTableExists(tabelName string) bool {
+// checkTableExists checks if the table exists
+func checkTableExists(tabelName string) bool {
 	tabelExists := false
 
 	err := db.database.QueryRow("SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = $1)", tabelName).Scan(&tabelExists)
 	if err != nil || !tabelExists {
-		logprinter.PrintWarning("Table does not exist", tabelName)
+		loger.Warning("Table does not exist", tabelName)
 		return false
 	} else {
-		logprinter.PrintSuccess("Table found successfully", tabelName)
+		loger.Success("Table found successfully", tabelName)
 		return true
 	}
 }
 
-// CheckUsersTable checks if the users table exists, if not, it creates it
-func CheckUsersTable() {
-	var tabalExists bool = CheckTableExists(db.tableUsers)
+// checkUsersTable checks if the users table exists, if not, it creates it
+func checkUsersTable() {
+	var tabalExists bool = checkTableExists(db.tableUsers)
 
 	for !tabalExists {
 
@@ -31,10 +31,10 @@ func CheckUsersTable() {
 		for !extensionExists {
 			query := "CREATE EXTENSION IF NOT EXISTS pgcrypto;"
 			if _, db.err = db.database.Exec(query); db.err != nil {
-				logprinter.PrintError("Failed to create extension", db.err)
+				loger.Error("Failed to create extension", db.err)
 			} else {
 				extensionExists = true
-				logprinter.PrintSuccess("Extension successfully created", "pgcrypto")
+				loger.Success("Extension successfully created", "pgcrypto")
 			}
 			time.Sleep(5 * time.Second)
 		}
@@ -54,18 +54,18 @@ func CheckUsersTable() {
 				);
 			`
 		if _, db.err = db.database.Exec(query); db.err != nil {
-			logprinter.PrintError("Failed to create table", db.err)
+			loger.Error("Failed to create table", db.err)
 			time.Sleep(5 * time.Second)
 		} else {
 			tabalExists = true
-			logprinter.PrintSuccess("Table successfully created", db.tableUsers)
+			loger.Success("Table successfully created", db.tableUsers)
 		}
 	}
 }
 
-// CheckTables checks if the tables exists, if not, it creates it
-func CheckTables() {
-	CheckUsersTable()
+// checkTables checks if the tables exists, if not, it creates it
+func checkTables() {
+	checkUsersTable()
 }
 
 // -- Insert user with hashed password

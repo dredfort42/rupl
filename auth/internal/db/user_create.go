@@ -1,7 +1,7 @@
 package db
 
 import (
-	"github.com/dredfort42/tools/logprinter"
+	loger "github.com/dredfort42/tools/logprinter"
 )
 
 // AddNewUser adds a new user to the database
@@ -31,8 +31,8 @@ func AddNewUser(email string, password string, accessToken string, refreshToken 
 		)`
 
 	if _, db.err = db.database.Exec(query, email, password, accessToken, refreshToken); db.err != nil {
-		logprinter.PrintError("Failed to add new user to the database", db.err)
+		loger.Error("Failed to add new user to the database", db.err)
 	} else {
-		logprinter.PrintSuccess("New user successfully aded to the database", "")
+		loger.Debug("New user successfully aded to the database")
 	}
 }
