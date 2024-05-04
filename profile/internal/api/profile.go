@@ -2,16 +2,16 @@ package api
 
 import (
 	"net/http"
-
 	"profile/internal/db"
+	s "profile/internal/structs"
 
-	"github.com/dredfort42/tools/logprinter"
+	loger "github.com/dredfort42/tools/logprinter"
 	"github.com/gin-gonic/gin"
 )
 
 // GetProfile retrieves the user profile based on the access token provided in the request.
 func GetProfile(c *gin.Context) {
-	var userProfile db.Profile
+	var userProfile s.Profile
 	var errorResponse ResponseError
 	var err error
 
@@ -28,10 +28,8 @@ func GetProfile(c *gin.Context) {
 		return
 	}
 
-	if DEBUG {
-		logprinter.PrintInfo("User profile retrieved successfully for an ID: ", userProfile.Email)
-		logprinter.PrintInfo("User profile: ", userProfile.FirstName+" "+userProfile.LastName)
-	}
+	loger.Debug("User profile retrieved successfully for an ID: ", userProfile.Email)
+	loger.Debug("User profile: ", userProfile.FirstName+" "+userProfile.LastName)
 
 	c.IndentedJSON(http.StatusOK, userProfile)
 }
@@ -57,9 +55,7 @@ func CreateProfile(c *gin.Context) {
 		return
 	}
 
-	if DEBUG {
-		logprinter.PrintInfo("Request to create a user profile for an ID: ", email)
-	}
+	loger.Debug("Request to create a user profile for an ID: ", email)
 
 	var profile Profile
 	if err := c.BindJSON(&profile); err != nil {
@@ -69,7 +65,7 @@ func CreateProfile(c *gin.Context) {
 		return
 	}
 
-	var profileDB db.Profile
+	var profileDB s.Profile
 	profileDB.Email = email
 	profileDB.FirstName = profile.FirstName
 	profileDB.LastName = profile.LastName
@@ -83,8 +79,8 @@ func CreateProfile(c *gin.Context) {
 		return
 	}
 
-	logprinter.PrintInfo("User profile created successfully for an ID: ", email)
-	logprinter.PrintInfo("User profile: ", profile.FirstName+" "+profile.LastName)
+	loger.Debug("User profile created successfully for an ID: ", email)
+	loger.Debug("User profile: ", profile.FirstName+" "+profile.LastName)
 
 	c.IndentedJSON(http.StatusCreated, gin.H{"message": "Profile created successfully", "profile": profileDB})
 }

@@ -9,8 +9,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/dredfort42/tools/configreader"
-	"github.com/dredfort42/tools/logprinter"
+	cfg "github.com/dredfort42/tools/configreader"
+	loger "github.com/dredfort42/tools/logprinter"
 )
 
 var (
@@ -89,19 +89,19 @@ func proxyRequest(w http.ResponseWriter, r *http.Request) {
 	if strings.HasPrefix(r.URL.Path, "/api/v1/auth/") {
 		targetURL, err = url.Parse("http://" + authURL)
 		if err != nil {
-			logprinter.PrintError("Error parsing target URL:", err)
+			loger.Error("Error parsing target URL:", err)
 			return
 		}
 	} else if strings.HasPrefix(r.URL.Path, "/api/v1/profile") {
 		targetURL, err = url.Parse("http://" + profileURL)
 		if err != nil {
-			logprinter.PrintError("Error parsing target URL:", err)
+			loger.Error("Error parsing target URL:", err)
 			return
 		}
 	} else if strings.HasPrefix(r.URL.Path, "/api/v1/training") {
 		targetURL, err = url.Parse("http://" + trainingURL)
 		if err != nil {
-			logprinter.PrintError("Error parsing target URL:", err)
+			loger.Error("Error parsing target URL:", err)
 			return
 		}
 	} else {
@@ -112,67 +112,53 @@ func proxyRequest(w http.ResponseWriter, r *http.Request) {
 	proxy := httputil.NewSingleHostReverseProxy(targetURL)
 	r.Host = targetURL.Host
 
-	if DEBUG {
-		logRequest(r)
-	}
+	// logRequest(r)
 
 	proxy.ServeHTTP(w, r)
 
-	if DEBUG {
-		logResponse(w)
-	}
-
+	// logResponse(w)
 }
 
-func logRequest(r *http.Request) {
-	logprinter.PrintInfo("Request Information:", "")
-	logprinter.PrintInfo("Method:", r.Method)
-	logprinter.PrintInfo("URL:", r.URL.String())
-	logprinter.PrintInfo("Proto:", r.Proto)
-	logprinter.PrintInfo("Host:", r.Host)
-	logprinter.PrintInfo("Headers:", "")
-	for key, value := range r.Header {
-		headerValue := strings.Join(value, ", ")
-		logprinter.PrintInfo("\t"+key+":", headerValue)
-	}
-	logprinter.PrintInfo("------------------------------------------", "")
-}
+// func logRequest(r *http.Request) {
+// 	loger.Info("Request Information:", "")
+// 	loger.Info("Method:", r.Method)
+// 	loger.Info("URL:", r.URL.String())
+// 	loger.Info("Proto:", r.Proto)
+// 	loger.Info("Host:", r.Host)
+// 	loger.Info("Headers:", "")
+// 	for key, value := range r.Header {
+// 		headerValue := strings.Join(value, ", ")
+// 		loger.Info("\t"+key+":", headerValue)
+// 	}
+// 	loger.Info("------------------------------------------", "")
+// }
 
-func logResponse(w http.ResponseWriter) {
-	logprinter.PrintInfo("Response Information:", "")
-	logprinter.PrintInfo("Headers:", "")
-	for key, value := range w.Header() {
-		headerValue := strings.Join(value, ", ")
-		logprinter.PrintInfo("\t"+key+":", headerValue)
-	}
-	logprinter.PrintInfo("------------------------------------------", "")
-}
-
-var DEBUG bool = false
+// func logResponse(w http.ResponseWriter) {
+// 	loger.Info("Response Information:", "")
+// 	loger.Info("Headers:", "")
+// 	for key, value := range w.Header() {
+// 		headerValue := strings.Join(value, ", ")
+// 		loger.Info("\t"+key+":", headerValue)
+// 	}
+// 	loger.Info("------------------------------------------", "")
+// }
 
 func main() {
-
-	if debug := os.Getenv("DEBUG"); debug != "" {
-		logprinter.PrintWarning("Debugging is enabled.", "")
-		DEBUG = true
-	}
-
-	config, err := configreader.GetConfig()
-
+	err := cfg.GetConfig()
 	if err != nil {
-		os.Exit(1)
+		panic(err)
 	}
 
-	authURL = fmt.Sprintf("%s:%s", config["auth.host"], config["auth.port"])
-	profileURL = fmt.Sprintf("%s:%s", config["profile.host"], config["profile.port"])
-	trainingURL = fmt.Sprintf("%s:%s", config["training.host"], config["training.port"])
+	authURL = fmt.Sprintf("%s:%s", cfg.Config["auth.host"], cfg.Config["auth.port"])
+	profileURL = fmt.Sprintf("%s:%s", cfg.Config["profile.host"], cfg.Config["profile.port"])
+	trainingURL = fmt.Sprintf("%s:%s", cfg.Config["training.host"], cfg.Config["training.port"])
 
 	http.HandleFunc("/", sendData)
 	http.HandleFunc("/download/", sendData)
 	http.HandleFunc("/api/v1/", proxyRequest)
 
-	port := fmt.Sprintf(":%s", config["entrypoint.port.ssl"])
-	url := fmt.Sprintf("%s://%s%s", config["endpoint.protocol.ssl"], config["entrypoint.address"], port)
+	port := fmt.Sprintf(":%s", cfg.Config["entrypoint.port.ssl"])
+	url := fmt.Sprintf("%s://%s%s", cfg.Config["endpoint.protocol.ssl"], cfg.Config["entrypoint.address"], port)
 	certFile := "/app/fullchain.pem"
 	keyFile := "/app/privkey.pem"
 
@@ -183,16 +169,16 @@ func main() {
 	// Start HTTP server on port 80
 	go func() {
 		if err := http.ListenAndServe(":80", http.HandlerFunc(redirectPortHandler)); err != nil {
-			logprinter.PrintError("Error starting HTTP server", err)
+			loger.Error("Error starting HTTP server", err)
 			panic(err)
 		}
 	}()
 
 	// Start HTTPS server on port 443
 	if err := http.ListenAndServeTLS(port, certFile, keyFile, nil); err != nil {
-		logprinter.PrintError("Error starting HTTPS server", err)
+		loger.Error("Error starting HTTPS server", err)
 		panic(err)
 	}
 
-	logprinter.PrintSuccess("Entry point", url)
+	loger.Success("Entry point", url)
 }

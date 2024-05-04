@@ -15,7 +15,7 @@ func checkTableExists(tabelName string) bool {
 		loger.Warning("Table does not exist", tabelName)
 		return false
 	} else {
-		loger.Success("Table found successfully", tabelName)
+		loger.Debug("Table found successfully", tabelName)
 		return true
 	}
 }
@@ -34,7 +34,7 @@ func checkUsersTable() {
 				loger.Error("Failed to create extension", db.err)
 			} else {
 				extensionExists = true
-				loger.Success("Extension successfully created", "pgcrypto")
+				loger.Debug("Extension successfully created", "pgcrypto")
 			}
 			time.Sleep(5 * time.Second)
 		}

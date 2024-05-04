@@ -1,25 +1,14 @@
 package api
 
 import (
-	"fmt"
-	"os"
-
-	"github.com/dredfort42/tools/configreader"
-	"github.com/dredfort42/tools/logprinter"
+	cfg "github.com/dredfort42/tools/configreader"
+	loger "github.com/dredfort42/tools/logprinter"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
-var DEBUG bool = false
-var config configreader.ConfigMap
-
-// Start starts the web service
-func Start(configMap configreader.ConfigMap) {
-	if debug := os.Getenv("DEBUG"); debug != "" {
-		DEBUG = true
-	}
-
-	config = configMap
+// ApiInit starts the web service
+func ApiInit() {
 
 	router := gin.Default()
 	router.Use(cors.Default())
@@ -30,8 +19,8 @@ func Start(configMap configreader.ConfigMap) {
 	router.PUT("/api/v1/profile/devices", UpdateDevice)
 	router.DELETE("/api/v1/profile/devices", DeleteDevice)
 
-	url := fmt.Sprintf("%s:%s", config["profile.host"], config["profile.port"])
+	url := cfg.Config["profile.host"] + ":" + cfg.Config["profile.port"]
 
-	logprinter.PrintSuccess("Entry point", url)
+	loger.Success("Service successfully started", url)
 	router.Run(url)
 }

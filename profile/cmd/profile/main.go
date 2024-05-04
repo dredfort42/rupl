@@ -1,25 +1,18 @@
 package main
 
 import (
-	"os"
-
 	"profile/internal/api"
 	"profile/internal/db"
 
-	"github.com/dredfort42/tools/configreader"
-	"github.com/dredfort42/tools/logprinter"
+	cfg "github.com/dredfort42/tools/configreader"
 )
 
 func main() {
-	if debug := os.Getenv("DEBUG"); debug != "" {
-		logprinter.PrintWarning("Debugging is enabled.", "")
-	}
-
-	config, err := configreader.GetConfig()
+	err := cfg.GetConfig()
 	if err != nil {
-		os.Exit(1)
+		panic(err)
 	}
 
-	db.Start(config)
-	api.Start(config)
+	db.DatabaseInit()
+	api.ApiInit()
 }

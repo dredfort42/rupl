@@ -15,8 +15,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible h1:7qlOGliEKZXTDg6OTjfoBKDXWrumCAMpl/TFQ4/5kLM=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
-github.com/dredfort42/tools v0.0.5 h1:j0g6h3IIlUCzukweWm36JcqR6EF4utTvipebxmZ3Tt8=
-github.com/dredfort42/tools v0.0.5/go.mod h1:0WykwDVmDuYms4t9SMalMHQ2EzZJDiYb+4a6E0azMIg=
+github.com/dredfort42/tools v0.1.3 h1:YqlcmN8G/ykTij66Fgb9i5Y/5WkdPMELmkYm8Qxnrtw=
+github.com/dredfort42/tools v0.1.3/go.mod h1:EI96Nl6vYFHeromtfOMR2dFMBvrOjICWp8TIuYwInDg=
 github.com/gabriel-vasile/mimetype v1.4.3 h1:in2uUcidCuFcDKtdcBxlR0rJ1+fsokWf+uqxgUFjbI0=
 github.com/gabriel-vasile/mimetype v1.4.3/go.mod h1:d8uq/6HKRL6CGdk+aubisF/M5GcPfT7nKyLpA0lbSSk=
 github.com/gin-contrib/cors v1.6.0 h1:0Z7D/bVhE6ja07lI8CTjTonp6SB07o8bNuFyRbsBUQg=

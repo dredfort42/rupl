@@ -10,9 +10,10 @@ import (
 
 // Database is the database struct
 type Database struct {
-	database   *sql.DB
-	tableUsers string
-	err        error
+	database      *sql.DB
+	tablePlans    string
+	tableSessions string
+	err           error
 }
 
 var db Database
@@ -41,7 +42,8 @@ func connectToDatabase() {
 
 // DatabaseInit initializes the database
 func DatabaseInit() {
-	db.tableUsers = cfg.Config["db.table.users"]
+	db.tablePlans = cfg.Config["db.table.plans"]
+	db.tableSessions = cfg.Config["db.table.sessions"]
 
 	connectToDatabase()
 	checkTables()
