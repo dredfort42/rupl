@@ -172,7 +172,7 @@ func main() {
 	http.HandleFunc("/api/v1/", proxyRequest)
 
 	port := fmt.Sprintf(":%s", config["entrypoint.port.ssl"])
-	url := fmt.Sprintf("%s://%s%s", config["entrypoint.protocol.ssl"], config["entrypoint.address"], port)
+	url := fmt.Sprintf("%s://%s%s", config["endpoint.protocol.ssl"], config["entrypoint.address"], port)
 	certFile := "/app/fullchain.pem"
 	keyFile := "/app/privkey.pem"
 

@@ -41,7 +41,7 @@ struct ContentView: View {
 		.onAppear {
 			AppSettings.shared.appVersion = appVersion + "." + buildNumber
 			selection = .controls
-			// MARK: - get profile
+			// TODO: - get profile
 			if AppSettings.shared.connectedToRupl {
 				Profile.getProfile()
 				DeviceInfo.shared.sendDeviceInformation(createNew: false)
@@ -50,7 +50,6 @@ struct ContentView: View {
 		.sheet(isPresented: $isSheetActive) {
 			if workoutManager.sessionState != .ended {
 				workoutManager.saveWorkout()
-				workoutManager.postWorkout()
 			}
 		} content: {
 			SummaryView()

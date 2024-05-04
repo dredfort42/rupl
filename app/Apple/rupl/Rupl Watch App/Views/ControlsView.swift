@@ -19,14 +19,29 @@ struct ControlsView: View {
 	@State private var isNewTask: Bool = false
 	@State private var taskRequestsTimer: Timer?
 
+
+//case notStarted = 1
+//
+//case running = 2
+//
+//case ended = 3
+//
+//	@available(watchOS 3.0, *)
+//case paused = 4
+//
+//	@available(watchOS 5.0, *)
+//case prepared = 5
+//
+//	@available(watchOS 5.0, *)
+//case stopped = 6
+
+
 	var body: some View {
 		VStack {
-			if (workoutManager.sessionState != .ended && workoutManager.sessionState != .stopped) {
-				if workoutManager.sessionState == .notStarted {
-					StartView()
-				} else {
-					StopView()
-				}
+			if (workoutManager.sessionState == .notStarted || workoutManager.sessionState == .ended){
+				StartView()
+			} else if (workoutManager.sessionState == .running || workoutManager.sessionState == .paused) {
+				StopView()
 			} else {
 				LoadingIndicatorView()
 			}

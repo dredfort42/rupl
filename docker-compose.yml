@@ -54,7 +54,8 @@ services:
   # Project services
   ## Auth service
   auth:
-    build: ./auth
+    # build: ./auth
+    image: dredfort/rupl-auth:latest
     hostname: auth
     container_name: auth
     restart: always
@@ -67,7 +68,8 @@ services:
 
   ## Profile management service
   profile:
-    build: ./profile
+    # build: ./profile
+    image: dredfort/rupl-profile:latest
     hostname: profile
     container_name: profile
     restart: always
@@ -80,7 +82,8 @@ services:
 
   ## Training plans and sessions service
   training:
-    build: ./training
+    # build: ./training
+    image: dredfort/rupl-training:latest
     hostname: training
     container_name: training
     restart: always
@@ -93,7 +96,8 @@ services:
 
   ## Web interface
   web:
-    build: ./web
+    # build: ./web
+    image: dredfort/rupl-web:latest
     hostname: web
     container_name: web
     restart: always

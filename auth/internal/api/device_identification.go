@@ -1,9 +1,8 @@
 package api
 
 import (
-	"net/http"
-
 	"auth/internal/db"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -52,7 +51,6 @@ func DeviceIdentification(c *gin.Context) {
 	}
 
 	userCode := c.Request.URL.Query().Get("user_code")
-
 	if userCode == "" {
 		errorResponse.Error = "invalid_request"
 		errorResponse.ErrorDescription = "Missing required parameter: user_code"
