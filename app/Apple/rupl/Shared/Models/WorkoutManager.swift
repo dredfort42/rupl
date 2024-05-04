@@ -255,73 +255,26 @@ extension WorkoutManager{
 		print("postWorkout()")
 #endif
 
-		var workoutData: [String: Any] = [:]
-		var jsonData: Data?
+		getWorkoutData()
 
-		let query = HKSampleQuery(
-			sampleType: HKObjectType.workoutType(),
-			predicate: HKQuery.predicateForWorkouts(with: .running),
-			limit: HKObjectQueryNoLimit,
-			sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)]) { (query, samples, error) in
-				guard let samples = samples as? [HKWorkout], let lastRun = samples.first else {
-					print("No running workouts found")
-					return
-				}
+//		for workout in workoutData {
+//			print(workout)
+//		}
 
-				let predicate = HKQuery.predicateForSamples(withStart: lastRun.startDate, end: lastRun.endDate, options: .strictStartDate)
-
-				for type in self.typesToRead {
-					let workoutQuery = HKSampleQuery(sampleType: type, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { (query, results, error) in
-						if error != nil {
-							print("Workout query executed with error")
-							return
-						}
-
-						switch type {
-							case HKSeriesType.workoutRoute():
-								workoutData["route"] = self.getWorkoutRoute(results: results)
-
-							default:
-								guard let samples = results as? [HKQuantitySample] else {
-									print("No data found during the run")
-									return
-								}
-
-								for sample in samples {
-									print("Date: \(Int64(sample.startDate.timeIntervalSince1970)), data: \(sample.quantity)")
-								}
-
-								var samplesData: [[String: Any]] = []
-
-								for sample in samples {
-									let sampleData: [String: Any] = [
-										"timestamp": Int64(sample.startDate.timeIntervalSince1970),
-										"quantity": sample.quantity,
-										"quantityType": sample.quantityType,
-										"description": sample.description,
-										"sampleType": sample.sampleType,
-										"count": sample.count
-									]
-									samplesData.append(sampleData)
-								}
-
-								workoutData[type.description] = samplesData
-						}
-					}
-
-					self.healthStore.execute(workoutQuery)
-				}
-			}
-
-		healthStore.execute(query)
-
-		if let jData = try? JSONSerialization.data(withJSONObject: workoutData, options: .prettyPrinted) {
-			jsonData = jData
-		}
-		
-		if let jd = jsonData {
-			postWorkoutJsonData(jd)
-		}
+//		if let jData = try? JSONSerialization.data(withJSONObject: workoutData, options: .prettyPrinted) {
+//			jsonData = jData
+//		}
+//		
+//		if let jd = jsonData {
+//			if let jsonString = String(data: jd, encoding: .utf8) {
+//				print("Raw JSON data:")
+//				print(jsonString)
+//			} else {
+//				print("Failed to convert JSON data to string")
+//			}
+//
+//			postWorkoutJsonData(jd)
+//		}
 	}
 }
 

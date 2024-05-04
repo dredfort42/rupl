@@ -89,6 +89,13 @@ class TaskManager: ObservableObject {
 				}
 
 				if let data = data {
+//					if let jsonString = String(data: data, encoding: .utf8) {
+//						print("Raw JSON data:")
+//						print(jsonString)
+//					} else {
+//						print("Failed to convert JSON data to string")
+//					}
+
 					do {
 						self.task = try JSONDecoder().decode(Task.self, from: data)
 						completion(true)
