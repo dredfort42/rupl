@@ -28,6 +28,7 @@ class AppSettings {
 	private let profileURLKey = "profileURL"
 	private let deviceInfoURLKey = "deviceInfoURL"
 	private let taskURLKey = "taskURL"
+	private let sessionURLKey = "sessionURL"
 	private let deviceAccessTokenKey = "deviceAccessToken"
 	private let deviceAccessTokenTypeKey = "deviceAccessTokenType"
 	private let deviceAccessTokenExpiresInKey = "deviceAccessTokenExpiresIn"
@@ -96,6 +97,12 @@ class AppSettings {
 	var taskURL: String {
 		get {
 			return UserDefaults.standard.string(forKey: taskURLKey) ?? ""
+		}
+	}
+
+	var sessionURL: String {
+		get {
+			return UserDefaults.standard.string(forKey: sessionURLKey) ?? ""
 		}
 	}
 
@@ -346,6 +353,7 @@ class AppSettings {
 		UserDefaults.standard.set("https://rupl.org/api/v1/profile", forKey: profileURLKey)
 		UserDefaults.standard.set("https://rupl.org/api/v1/profile/devices", forKey: deviceInfoURLKey)
 		UserDefaults.standard.set("https://rupl.org/api/v1/training/task", forKey: taskURLKey)
+		UserDefaults.standard.set("https://rupl.org/api/v1/training/session", forKey: sessionURLKey)
 
 		if paceForAutoPause == 0.0 || paceForAutoResume == 0.0 {
 			useAutoPause = true

@@ -255,6 +255,9 @@ extension WorkoutManager{
 		print("postWorkout()")
 #endif
 
+		var workoutData: [String: Any] = [:]
+		var jsonData: Data?
+
 		let query = HKSampleQuery(
 			sampleType: HKObjectType.workoutType(),
 			predicate: HKQuery.predicateForWorkouts(with: .running),
@@ -266,35 +269,18 @@ extension WorkoutManager{
 				}
 
 				let predicate = HKQuery.predicateForSamples(withStart: lastRun.startDate, end: lastRun.endDate, options: .strictStartDate)
+
 				for type in self.typesToRead {
 					let workoutQuery = HKSampleQuery(sampleType: type, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { (query, results, error) in
+						if error != nil {
+							print("Workout query executed with error")
+							return
+						}
 
 						switch type {
 							case HKSeriesType.workoutRoute():
+								workoutData["route"] = self.getWorkoutRoute(results: results)
 
-								guard let routes = results as? [HKWorkoutRoute] else {
-									print("No workout routes found or error occurred")
-									return
-								}
-
-								for route in routes {
-									let routeQuery = HKWorkoutRouteQuery(route: route) { (query, locationsOrNil, done, errorOrNil) in
-										guard let locations = locationsOrNil else {
-											print("Error fetching locations for route")
-											return
-										}
-
-										for location in locations {
-											print("Location: \(location)")
-										}
-
-//										if done {
-//											print("All locations fetched for route.")
-//										}
-									}
-
-									self.healthStore.execute(routeQuery)
-								}
 							default:
 								guard let samples = results as? [HKQuantitySample] else {
 									print("No data found during the run")
@@ -304,6 +290,22 @@ extension WorkoutManager{
 								for sample in samples {
 									print("Date: \(Int64(sample.startDate.timeIntervalSince1970)), data: \(sample.quantity)")
 								}
+
+								var samplesData: [[String: Any]] = []
+
+								for sample in samples {
+									let sampleData: [String: Any] = [
+										"timestamp": Int64(sample.startDate.timeIntervalSince1970),
+										"quantity": sample.quantity,
+										"quantityType": sample.quantityType,
+										"description": sample.description,
+										"sampleType": sample.sampleType,
+										"count": sample.count
+									]
+									samplesData.append(sampleData)
+								}
+
+								workoutData[type.description] = samplesData
 						}
 					}
 
@@ -312,6 +314,14 @@ extension WorkoutManager{
 			}
 
 		healthStore.execute(query)
+
+		if let jData = try? JSONSerialization.data(withJSONObject: workoutData, options: .prettyPrinted) {
+			jsonData = jData
+		}
+		
+		if let jd = jsonData {
+			postWorkoutJsonData(jd)
+		}
 	}
 }
 

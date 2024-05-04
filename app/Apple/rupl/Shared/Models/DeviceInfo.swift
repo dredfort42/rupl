@@ -38,7 +38,10 @@ class DeviceInfo {
 	}
 
 	func sendDeviceInformation(createNew: Bool) {
-		let apiUrl = URL(string: "\(AppSettings.shared.deviceInfoURL)?client_id=\(AppSettings.shared.clientID)&access_token=\(AppSettings.shared.deviceAccessToken)")!
+		guard let apiUrl = URL(string: "\(AppSettings.shared.deviceInfoURL)?client_id=\(AppSettings.shared.clientID)&access_token=\(AppSettings.shared.deviceAccessToken)") else {
+			print("Invalid URL")
+			return
+		}
 		var request = URLRequest(url: apiUrl)
 		var parameters = [String: Any]()
 		var jsonData = Data()
@@ -100,7 +103,6 @@ class DeviceInfo {
 		request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 		request.httpMethod = "DELETE"
 		request.httpBody = jsonData
-
 
 		let task = URLSession.shared.dataTask(with: request) { data, response, error in
 			guard let data = data else {
