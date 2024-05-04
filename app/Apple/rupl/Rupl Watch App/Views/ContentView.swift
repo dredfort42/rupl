@@ -41,11 +41,10 @@ struct ContentView: View {
 		.onAppear {
 			AppSettings.shared.appVersion = appVersion + "." + buildNumber
 			selection = .controls
-			// MARK: - get profile
+			// TODO: - get profile
 			if AppSettings.shared.connectedToRupl {
 				Profile.getProfile()
 				DeviceInfo.shared.sendDeviceInformation(createNew: false)
-				TaskManager.shared.getTask { result in }
 			}
 		}
 		.sheet(isPresented: $isSheetActive) {

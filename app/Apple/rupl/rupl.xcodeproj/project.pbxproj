@@ -54,6 +54,8 @@
 		AF5ACB232B4732ED0010C316 /* ControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF5ACB222B4732ED0010C316 /* ControlsView.swift */; };
 		AF5ACB252B4733270010C316 /* MetricsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF5ACB242B4733270010C316 /* MetricsView.swift */; };
 		AF5ACB272B4733510010C316 /* SummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF5ACB262B4733510010C316 /* SummaryView.swift */; };
+		AF608E5F2BD3E6F400E455D5 /* SlideButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF608E5E2BD3E6F400E455D5 /* SlideButtonView.swift */; };
+		AF608E602BD3E6F400E455D5 /* SlideButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF608E5E2BD3E6F400E455D5 /* SlideButtonView.swift */; };
 		AF720D432B504326008423D6 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF720D422B504326008423D6 /* LocationManager.swift */; };
 		AF720D442B504326008423D6 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF720D422B504326008423D6 /* LocationManager.swift */; };
 		AF7B30372B5ABC10002FEDC9 /* WorkoutStopSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AF7B30352B5ABC10002FEDC9 /* WorkoutStopSound.aif */; };
@@ -75,6 +77,8 @@
 		AFA6755C2B48494C00AD5A69 /* ElapsedTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFA6755A2B48494C00AD5A69 /* ElapsedTimeView.swift */; };
 		AFD0B1982B5C74B90027001F /* WorkoutSegmentSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AFD0B1972B5C74B90027001F /* WorkoutSegmentSound.aif */; };
 		AFD0B1992B5C74B90027001F /* WorkoutSegmentSound.aif in Resources */ = {isa = PBXBuildFile; fileRef = AFD0B1972B5C74B90027001F /* WorkoutSegmentSound.aif */; };
+		AFDF39712BE6BBE100F55D9C /* CollectWorkoutData.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFDF39702BE6BBE100F55D9C /* CollectWorkoutData.swift */; };
+		AFDF39722BE6BBE100F55D9C /* CollectWorkoutData.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFDF39702BE6BBE100F55D9C /* CollectWorkoutData.swift */; };
 		AFEEDE442B5EB69700B2C27A /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEEDE432B5EB69700B2C27A /* StartView.swift */; };
 		AFEEDE462B5EB78000B2C27A /* MirroringWorkoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEEDE452B5EB78000B2C27A /* MirroringWorkoutView.swift */; };
 		AFEEDE482B5EB8DE00B2C27A /* WorkoutListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEEDE472B5EB8DE00B2C27A /* WorkoutListView.swift */; };
@@ -178,6 +182,7 @@
 		AF5ACB282B4734560010C316 /* rupl-Watch-App-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "rupl-Watch-App-Info.plist"; sourceTree = SOURCE_ROOT; };
 		AF5ACB292B4734790010C316 /* rupl Watch App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "rupl Watch App.entitlements"; sourceTree = "<group>"; };
 		AF5ACB2A2B4736030010C316 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		AF608E5E2BD3E6F400E455D5 /* SlideButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideButtonView.swift; sourceTree = "<group>"; };
 		AF720D422B504326008423D6 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		AF7B30352B5ABC10002FEDC9 /* WorkoutStopSound.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = WorkoutStopSound.aif; sourceTree = "<group>"; };
 		AF7B30362B5ABC10002FEDC9 /* WorkoutStartSound.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = WorkoutStartSound.aif; sourceTree = "<group>"; };
@@ -190,6 +195,7 @@
 		AFA675572B4848B600AD5A69 /* MetricsTimelineSchedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricsTimelineSchedule.swift; sourceTree = "<group>"; };
 		AFA6755A2B48494C00AD5A69 /* ElapsedTimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElapsedTimeView.swift; sourceTree = "<group>"; };
 		AFD0B1972B5C74B90027001F /* WorkoutSegmentSound.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = WorkoutSegmentSound.aif; sourceTree = "<group>"; };
+		AFDF39702BE6BBE100F55D9C /* CollectWorkoutData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectWorkoutData.swift; sourceTree = "<group>"; };
 		AFEEDE432B5EB69700B2C27A /* StartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartView.swift; sourceTree = "<group>"; };
 		AFEEDE452B5EB78000B2C27A /* MirroringWorkoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MirroringWorkoutView.swift; sourceTree = "<group>"; };
 		AFEEDE472B5EB8DE00B2C27A /* WorkoutListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutListView.swift; sourceTree = "<group>"; };
@@ -292,6 +298,7 @@
 			children = (
 				AFA6755A2B48494C00AD5A69 /* ElapsedTimeView.swift */,
 				AF06CC442B69132200943CEB /* LoadingIndicatorView.swift */,
+				AF608E5E2BD3E6F400E455D5 /* SlideButtonView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -299,15 +306,16 @@
 		AF3F354F2B66AC4D007399F9 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				AF41FA852B6825B5004FC0AB /* OAuth2.swift */,
 				AF43BF3B2B4C9EE800E5A89C /* AppSettings.swift */,
 				AFA196062B5FAF62002EB704 /* CheckMetrics.swift */,
+				AFDF39702BE6BBE100F55D9C /* CollectWorkoutData.swift */,
 				AFA196092B5FBD95002EB704 /* Converters.swift */,
 				AF1DB30F2BB5F61A0089B159 /* DeviceInfo.swift */,
 				AF720D422B504326008423D6 /* LocationManager.swift */,
 				AF5ACB1D2B4713FE0010C316 /* Logger.swift */,
 				AFA675572B4848B600AD5A69 /* MetricsTimelineSchedule.swift */,
 				AF56CDED2B644C47009E8CB8 /* MotionManager.swift */,
+				AF41FA852B6825B5004FC0AB /* OAuth2.swift */,
 				AF1BCFC22BB4D3DE001EC2B9 /* Profile.swift */,
 				AF53FF042B5AE4D5005DE76D /* SoundEffects.swift */,
 				AF0FA3D62B7B8B67005572CF /* TaskManager.swift */,
@@ -695,8 +703,10 @@
 				AF40FDC02B6E66BD00C8CFA8 /* LoadingIndicatorView.swift in Sources */,
 				AF0FA3D72B7B8B67005572CF /* TaskManager.swift in Sources */,
 				AF43BF3C2B4C9EE800E5A89C /* AppSettings.swift in Sources */,
+				AFDF39712BE6BBE100F55D9C /* CollectWorkoutData.swift in Sources */,
 				AFEEDE4A2B5EBACA00B2C27A /* ChartView.swift in Sources */,
 				AF1DB3102BB5F61A0089B159 /* DeviceInfo.swift in Sources */,
+				AF608E5F2BD3E6F400E455D5 /* SlideButtonView.swift in Sources */,
 				AF5ACB212B472FAA0010C316 /* WorkoutManager+iOS.swift in Sources */,
 				AFA675582B4848B700AD5A69 /* MetricsTimelineSchedule.swift in Sources */,
 				AF5ACAB72B46D0710010C316 /* ruplApp.swift in Sources */,
@@ -741,6 +751,7 @@
 				AFA0ECEA2B6D5E5B009AC138 /* OAuthInstructionView.swift in Sources */,
 				AF5ACB1C2B4712550010C316 /* WorkoutManager+watchOS.swift in Sources */,
 				AFA196082B5FAF62002EB704 /* CheckMetrics.swift in Sources */,
+				AFDF39722BE6BBE100F55D9C /* CollectWorkoutData.swift in Sources */,
 				AF5ACB192B47107F0010C316 /* WorkoutManager.swift in Sources */,
 				AF0FA3D82B7B8B67005572CF /* TaskManager.swift in Sources */,
 				AF7F28682B861051005C0B6B /* TaskView.swift in Sources */,
@@ -748,6 +759,7 @@
 				AF8312962B79415400F1C790 /* TimerManager.swift in Sources */,
 				AF5ACADF2B46D07A0010C316 /* ruplApp.swift in Sources */,
 				AF5ACB252B4733270010C316 /* MetricsView.swift in Sources */,
+				AF608E602BD3E6F400E455D5 /* SlideButtonView.swift in Sources */,
 				AF06CC452B69132200943CEB /* LoadingIndicatorView.swift in Sources */,
 				AF53FF062B5AE4D5005DE76D /* SoundEffects.swift in Sources */,
 				AF5ACB272B4733510010C316 /* SummaryView.swift in Sources */,

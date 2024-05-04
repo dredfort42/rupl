@@ -2,17 +2,17 @@ package api
 
 import (
 	"net/http"
-
 	"profile/internal/db"
+	s "profile/internal/structs"
 
-	"github.com/dredfort42/tools/logprinter"
+	loger "github.com/dredfort42/tools/logprinter"
 	"github.com/gin-gonic/gin"
 )
 
 // CreateDevice creates a new device based on the access token provided in the request.
 func CreateDevice(c *gin.Context) {
 	var email string
-	var device db.Device
+	var device s.Device
 	var errorResponse ResponseError
 	var err error
 
@@ -69,10 +69,8 @@ func CreateDevice(c *gin.Context) {
 		return
 	}
 
-	if DEBUG {
-		logprinter.PrintInfo("Device created successfully for an ID: ", device.DeviceID)
-		logprinter.PrintInfo("Device name: ", device.DeviceName)
-	}
+	loger.Debug("Device created successfully for an ID: ", device.DeviceID)
+	loger.Debug("Device name: ", device.DeviceName)
 
 	c.IndentedJSON(http.StatusCreated, gin.H{"message": "Device created successfully", "device": device})
 }
@@ -80,7 +78,7 @@ func CreateDevice(c *gin.Context) {
 // UpdateDevice updates a device based on the access token provided in the request.
 func UpdateDevice(c *gin.Context) {
 	var email string
-	var device db.Device
+	var device s.Device
 	var errorResponse ResponseError
 	var err error
 
@@ -137,17 +135,15 @@ func UpdateDevice(c *gin.Context) {
 		return
 	}
 
-	if DEBUG {
-		logprinter.PrintInfo("Device updated successfully for an ID: ", device.DeviceID)
-		logprinter.PrintInfo("Device name: ", device.DeviceName)
-	}
+	loger.Debug("Device updated successfully for an ID: ", device.DeviceID)
+	loger.Debug("Device name: ", device.DeviceName)
 
 	c.IndentedJSON(http.StatusOK, gin.H{"message": "Device updated successfully", "device": device})
 }
 
 // GetDevices returns all devices associated with the user.
 func GetDevices(c *gin.Context) {
-	var devices db.UserDevices
+	var devices s.UserDevices
 	var errorResponse ResponseError
 	var err error
 
@@ -164,9 +160,7 @@ func GetDevices(c *gin.Context) {
 		return
 	}
 
-	if DEBUG {
-		logprinter.PrintInfo("User devices retrieved successfully for an ID: ", devices.Email)
-	}
+	loger.Debug("User devices retrieved successfully for an ID: ", devices.Email)
 
 	c.IndentedJSON(http.StatusOK, devices)
 }
@@ -174,7 +168,7 @@ func GetDevices(c *gin.Context) {
 // DeleteDevice deletes a device based on the access token provided in the request.
 func DeleteDevice(c *gin.Context) {
 	var email string
-	var device db.Device
+	var device s.Device
 	var errorResponse ResponseError
 	var err error
 
@@ -209,9 +203,7 @@ func DeleteDevice(c *gin.Context) {
 		return
 	}
 
-	if DEBUG {
-		logprinter.PrintInfo("Device deleted successfully for an ID: ", device.DeviceID)
-	}
+	loger.Debug("Device deleted successfully for an ID: ", device.DeviceID)
 
 	c.IndentedJSON(http.StatusOK, gin.H{"message": "Device deleted successfully", "device": device})
 }

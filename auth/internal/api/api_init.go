@@ -1,20 +1,14 @@
 package api
 
 import (
-	"fmt"
-
+	cfg "github.com/dredfort42/tools/configreader"
+	loger "github.com/dredfort42/tools/logprinter"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-
-	"github.com/dredfort42/tools/configreader"
-	"github.com/dredfort42/tools/logprinter"
 )
 
-var config configreader.ConfigMap
-
-// Start starts the web service
-func Start(configMap configreader.ConfigMap) {
-	config = configMap
+// ApiInit starts the web service
+func ApiInit() {
 
 	router := gin.Default()
 	router.Use(cors.Default())
@@ -30,8 +24,8 @@ func Start(configMap configreader.ConfigMap) {
 	router.GET("/api/v1/auth/refresh", RefreshUserTokens)
 	router.GET("/api/v1/auth/logout", LogOutUser)
 
-	url := fmt.Sprintf("%s:%s", config["auth.host"], config["auth.port"])
+	url := cfg.Config["auth.host"] + ":" + cfg.Config["auth.port"]
 
-	logprinter.PrintSuccess("Entry point", url)
+	loger.Success("Service successfully started", url)
 	router.Run(url)
 }

@@ -10,10 +10,11 @@ import SwiftUI
 
 struct LoadingIndicatorView: View {
 	var wheelSize: CGFloat = 100.0
-	
+	var indicatorColor: Color = .ruplBlue
+
 	@State private var wheelRotating: Double = 0.0
 //	@State var circleColor: Color = .ruplBlue
-	@State var indicatorColor: Color = .ruplBlue
+//	@State var indicatorColor: Color = .ruplBlue
 	
 	var body: some View {
 		
@@ -29,7 +30,7 @@ struct LoadingIndicatorView: View {
 		
 		.onAppear {
 //			circleColor = getColor()
-			indicatorColor = getColor()
+//			indicatorColor = getColor()
 
 			withAnimation(
 				.linear(duration: 1)
@@ -41,9 +42,9 @@ struct LoadingIndicatorView: View {
 		}
 	}
 	
-	private func getColor() -> Color {
-		return ([.ruplBlue, .ruplRed, .ruplYellow, .ruplGreen, .ruplGray].randomElement() ?? .ruplBlue)
-	}
+//	private func getColor() -> Color {
+//		return ([.ruplBlue, .ruplRed, .ruplYellow, .ruplGreen, .ruplGray].randomElement() ?? .ruplBlue)
+//	}
 }
 
 #Preview {

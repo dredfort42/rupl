@@ -1,10 +1,8 @@
 package api
 
 import (
-	// "fmt"
-	"net/http"
-
 	"auth/internal/db"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )

@@ -20,7 +20,7 @@ extension WorkoutManager {
 		builder = session?.associatedWorkoutBuilder()
 		builder?.delegate = self
 		builder?.dataSource = HKLiveWorkoutDataSource(healthStore: healthStore, workoutConfiguration: workoutConfiguration)
-		routeBuilder = HKWorkoutRouteBuilder(healthStore: healthStore, device: nil)
+		routeBuilder = HKWorkoutRouteBuilder(healthStore: healthStore, device: HKDevice.local())
 
 		session?.startActivity(with: .now)
 		try await builder?.beginCollection(at: session?.startDate ?? Date())

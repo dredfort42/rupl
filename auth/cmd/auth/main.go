@@ -1,21 +1,18 @@
 package main
 
 import (
-	"os"
-
 	"auth/internal/api"
 	"auth/internal/db"
 
-	"github.com/dredfort42/tools/configreader"
+	cfg "github.com/dredfort42/tools/configreader"
 )
 
 func main() {
-	config, err := configreader.GetConfig()
-
+	err := cfg.GetConfig()
 	if err != nil {
-		os.Exit(1)
+		panic(err)
 	}
 
-	db.Start(config)
-	api.Start(config)
+	db.DatabaseInit()
+	api.ApiInit()
 }

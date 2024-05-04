@@ -5,17 +5,18 @@ import (
 	"net/http"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/dredfort42/tools/logprinter"
+	cfg "github.com/dredfort42/tools/configreader"
+	loger "github.com/dredfort42/tools/logprinter"
 )
 
 // ValidateAccessToken validates access token
 func ValidateAccessToken(accesstToken string) string {
-	authServerURL := fmt.Sprintf("http://%s:%s/api/v1/auth/verify", config["auth.host"], config["auth.port"])
+	authServerURL := fmt.Sprintf("http://%s:%s/api/v1/auth/verify", cfg.Config["auth.host"], cfg.Config["auth.port"])
 	client := &http.Client{}
 
 	request, err := http.NewRequest("GET", authServerURL, nil)
 	if err != nil {
-		logprinter.PrintError("Error creating request", err)
+		loger.Error("Error creating request", err)
 		return ""
 	}
 
@@ -23,7 +24,7 @@ func ValidateAccessToken(accesstToken string) string {
 
 	response, err := client.Do(request)
 	if err != nil {
-		logprinter.PrintError("Error sending request", err)
+		loger.Error("Error sending request", err)
 		return ""
 	}
 	defer response.Body.Close()
@@ -41,7 +42,7 @@ func ParseToken(tokenString string) (string, error) {
 		return []byte("secret"), nil
 	})
 	if err != nil {
-		logprinter.PrintError("Error parsing token", err)
+		loger.Error("Error parsing token", err)
 		return "", err
 	}
 

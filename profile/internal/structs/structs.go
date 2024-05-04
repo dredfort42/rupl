@@ -1,16 +1,4 @@
-package db
-
-import (
-	"database/sql"
-)
-
-// Database is the database struct
-type Database struct {
-	database      *sql.DB
-	tableProfiles string
-	tableDevices  string
-	err           error
-}
+package structs
 
 // Profile is a struct for JSON
 type Profile struct {

@@ -1,9 +1,8 @@
 package api
 
 import (
-	"net/http"
-
 	"auth/internal/db"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )

@@ -10,27 +10,28 @@ import Foundation
 import os
 import HealthKit
 import SwiftUI
+import CoreLocation
 
 @MainActor
 class WorkoutManager: NSObject, ObservableObject {
-	
+
 	struct SessionSateChange {
 		let newState: HKWorkoutSessionState
 		let date: Date
 	}
-	
+
 	//	The workout session live states that the UI observes.
 	@Published var sessionState: HKWorkoutSessionState = .notStarted
 	@Published var heartRate: Double = 0
 	@Published var distance: Double = 0
 	@Published var speed: Double = 0
-	
+
 	//	HealthKit data types to share
 	let typesToShare: Set = [
 		HKQuantityType.workoutType(),
 		HKSeriesType.workoutRoute()
 	]
-	
+
 	//	HealthKit data types to read
 	let typesToRead: Set = [
 		HKQuantityType(.heartRate),
@@ -49,9 +50,11 @@ class WorkoutManager: NSObject, ObservableObject {
 		HKQuantityType(.runningVerticalOscillation),
 		HKQuantityType(.stepCount),
 		HKQuantityType(.vo2Max),
-		HKQuantityType(.flightsClimbed)
+		HKQuantityType(.flightsClimbed),
+		HKObjectType.workoutType(),
+		HKSeriesType.workoutRoute()
 	]
-	
+
 	//	Environment
 	let timerManager = TimerManager()
 	let healthStore = HKHealthStore()
@@ -62,34 +65,35 @@ class WorkoutManager: NSObject, ObservableObject {
 	var contextDate: Date?
 #endif
 	var routeBuilder: HKWorkoutRouteBuilder?
-	
+	var workoutRoute: HKWorkoutRoute?
+
 	//	Array for store last 10 speed measurements to colculate average speed
 	var last10SpeedMeasurements: [Double] = []
 	var last10SpeedMeasurementsSum: Double = 0
 	var last10SpeedAverage: Double = 0
-	
+
 	//	Summary dataSession state changed
 	var summaryHeartRateSum: UInt64 = 0
 	var summaryHeartRateCount: UInt = 0
-	
+
 	//	Segment data
 	var segmentStartTime: Date = Date()
 	var segmentFinishTime: Date = Date()
 	var segmentNumber: Int = 0
 	var segmentHeartRatesSum: UInt64 = 0
 	var segmentHeartRatesCount: UInt = 0
-	
+
 	//	Pause data
 	var isPauseSetWithButton: Bool = false
 	var pauseStartTime: Date = Date()
-	
+
 	let asynStreamTuple = AsyncStream.makeStream(of: SessionSateChange.self, bufferingPolicy: .bufferingNewest(1))
-	
+
 	static let shared = WorkoutManager()
-	
+
 	private override init() {
 		super.init()
-		
+
 		LocationManager.shared.start()
 		MotionManager.shared.start()
 
@@ -100,17 +104,17 @@ class WorkoutManager: NSObject, ObservableObject {
 				Logger.shared.log("Failed to request authorization: \(error)")
 			}
 		}
-		
+
 		Task {
 			for await value in asynStreamTuple.stream {
 				await consumeSessionStateChange(value)
 			}
 		}
 	}
-	
+
 	private func consumeSessionStateChange(_ change: SessionSateChange) async {
 		sessionState = change.newState
-		
+
 		switch change.newState {
 			case .paused:
 				pauseStartTime = Date()
@@ -133,7 +137,7 @@ extension WorkoutManager {
 		heartRate = 0
 		distance = 0
 		speed = 0
-		
+
 		LocationManager.shared.start()
 		MotionManager.shared.start()
 		timerManager.start(timeInterval: 1, repeats: true, action: autoPause)
@@ -141,29 +145,30 @@ extension WorkoutManager {
 		timerManager.start(timeInterval: 1, repeats: true, action: TaskManager.shared.runSession)
 		timerManager.start(timeInterval: 1, repeats: true, action: checkIntervalTimeLeft)
 		timerManager.start(timeInterval: TimeInterval(AppSettings.shared.soundNotificationTimeOut), repeats: true, action: checkHeartRate)
-		
+
 		session = nil
 #if os(watchOS)
 		builder = nil
 #endif
 		routeBuilder = nil
-		
+		workoutRoute = nil
+
 		//	Array for store last 10 speed measurements to colculate average speed
 		last10SpeedMeasurements = []
 		last10SpeedMeasurementsSum = 0
 		last10SpeedAverage = 0
-		
+
 		//	Summary data
 		summaryHeartRateSum = 0
 		summaryHeartRateCount = 0
-		
+
 		//	Segment data
 		segmentStartTime = session?.startDate ?? Date()
 		segmentFinishTime = session?.startDate ?? Date()
 		segmentNumber = 0
 		segmentHeartRatesSum = 0
 		segmentHeartRatesCount = 0
-		
+
 		//	Pause data
 		isPauseSetWithButton = false
 		pauseStartTime = session?.startDate ?? Date()
@@ -223,21 +228,53 @@ extension WorkoutManager{
 		}
 
 #if os(watchOS)
+		print("Save workout start")
+
 		Task {
 			do {
 				try await builder?.endCollection(at: endDate)
-				
+
 				if let finishedWorkout = try await builder?.finishWorkout() {
 					try await routeBuilder?.finishRoute(with: finishedWorkout, metadata: nil)
 				}
 
-				// Change state after route saving is complete
-				self.sessionState = .notStarted
+				postWorkout()
 			} catch {
 				Logger.shared.log("Failed to end workout: \(error)")
 			}
 		}
 #endif
+	}
+}
+
+//	MARK: - Post workout
+//
+extension WorkoutManager{
+	func postWorkout() {
+#if DEBUG
+		print("postWorkout()")
+#endif
+
+		getWorkoutData()
+
+//		for workout in workoutData {
+//			print(workout)
+//		}
+
+//		if let jData = try? JSONSerialization.data(withJSONObject: workoutData, options: .prettyPrinted) {
+//			jsonData = jData
+//		}
+//		
+//		if let jd = jsonData {
+//			if let jsonString = String(data: jd, encoding: .utf8) {
+//				print("Raw JSON data:")
+//				print(jsonString)
+//			} else {
+//				print("Failed to convert JSON data to string")
+//			}
+//
+//			postWorkoutJsonData(jd)
+//		}
 	}
 }
 
@@ -249,7 +286,7 @@ extension WorkoutManager {
 			case HKQuantityType.quantityType(forIdentifier: .heartRate):
 				let heartRateUnit = HKUnit.count().unitDivided(by: .minute())
 				heartRate = statistics.mostRecentQuantity()?.doubleValue(for: heartRateUnit) ?? 0
-				
+
 			case HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning):
 				let distanceUnit = HKUnit.meter()
 				distance = statistics.sumQuantity()?.doubleValue(for: distanceUnit) ?? 0
@@ -260,7 +297,7 @@ extension WorkoutManager {
 				let speedUnit = HKUnit.meter().unitDivided(by: HKUnit.second())
 				speed = statistics.mostRecentQuantity()?.doubleValue(for: speedUnit) ?? 0
 				checkSpeed()
-				
+
 			default:
 				return
 		}
@@ -279,11 +316,11 @@ extension WorkoutManager: HKWorkoutSessionDelegate {
 #if DEBUG
 		print("Session state changed from \(fromState.rawValue) to \(toState.rawValue)")
 #endif
-		
+
 		let sessionSateChange = SessionSateChange(newState: toState, date: date)
 		asynStreamTuple.continuation.yield(sessionSateChange)
 	}
-	
+
 	nonisolated func workoutSession(_ workoutSession: HKWorkoutSession,
 									didFailWithError error: Error) {
 		Logger.shared.log("\(#function): \(error)")

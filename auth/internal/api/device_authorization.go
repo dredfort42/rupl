@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	cfg "github.com/dredfort42/tools/configreader"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
@@ -36,7 +37,7 @@ func DeviceAuthorization(c *gin.Context) {
 		fmt.Println("Devices check not ok")
 	}
 
-	url := fmt.Sprintf("%s://%s", config["entrypoint.protocol.ssl"], config["entrypoint.address"])
+	url := cfg.Config["endpoint.protocol.ssl"] + "://" + cfg.Config["entrypoint.address"]
 
 	response.DeviceCode = uuid.New().String()
 	response.UserCode = fmt.Sprintf("%04d-%04d", generateRandomDigits(4), generateRandomDigits(4))

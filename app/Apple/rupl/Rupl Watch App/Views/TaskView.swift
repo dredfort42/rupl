@@ -10,14 +10,37 @@ import SwiftUI
 
 struct TaskView: View {
 	@AppStorage(AppSettings.runningTaskHeartRateKey) var runningTaskHeartRate = AppSettings.shared.runningTaskHeartRate
+	@EnvironmentObject var workoutManager: WorkoutManager
+	@Environment(\.dismiss) var dismiss
 
 	var body: some View {
-		VStack(alignment: .leading) {
+
+		if TaskManager.shared.task == nil {
+			CreateTaskView()
+		} else {
+			ShowTaskView()
+		}
+	}
+
+	@ViewBuilder
+	private func ShowHeader() -> some View {
+		HStack(content: {
+			Spacer()
 			Text("Running task")
 				.font(.headline)
 				.foregroundColor(.ruplBlue)
-				.padding(.bottom)
+		})
+		.padding(.horizontal)
+		.padding(.top, -25)
+		.padding(.bottom)
+	}
 
+
+
+	@ViewBuilder
+	private func CreateTaskView() -> some View {
+		ScrollView {
+			ShowHeader()
 			Picker("Heart rate zone", selection: $runningTaskHeartRate) {
 				Text("Easy").tag(TaskManager.HeartRateZones.pz1.rawValue)
 					.foregroundColor(.ruplBlue)
@@ -32,7 +55,7 @@ struct TaskView: View {
 				Text("Any").tag(TaskManager.HeartRateZones.any.rawValue)
 					.foregroundColor(.ruplGray)
 			}
-//			.frame(height: 80)
+			.frame(height: 80)
 			.pickerStyle(WheelPickerStyle())
 
 			Text("\(TaskManager.shared.getHeartRateInterval(pz: runningTaskHeartRate).minHeartRate) bpm - \( TaskManager.shared.getHeartRateInterval(pz: runningTaskHeartRate).maxHeartRate) bpm")
@@ -41,17 +64,89 @@ struct TaskView: View {
 				.padding(.horizontal)
 
 			Spacer()
-
 		}
 		.onDisappear() {
 			TaskManager.shared.intervalHeartRateZone =  TaskManager.shared.getHeartRateInterval(pz: runningTaskHeartRate)
 		}
 	}
-}
 
-//#Preview {
-//	TaskView()
-//}
+	@ViewBuilder
+	private func ShowTaskView() -> some View {
+		ScrollView {
+			ShowHeader()
+			VStack(alignment: .leading) {
+				Text(TaskManager.shared.task?.description ?? "")
+					.font(.title2)
+					.padding()
+
+				if let intervals = TaskManager.shared.task?.intervals {
+					ForEach(intervals, id: \.self) { interval in
+						TaskIntervalView(interval: interval)
+							.padding()
+					}
+				} else {
+					Text("No intervals available")
+				}
+			}
+			SlideButton("Decline task", styling: .init(color: .ruplRed, indicatorSystemName: "xmark")) {
+				TaskManager.shared.declineTask() { result in
+					if result {
+						dismiss()
+					}
+				}
+			}
+		}
+		.onDisappear() {
+		}
+	}
+
+	@ViewBuilder
+	private func TaskIntervalView(interval: TaskManager.Interval) -> some View {
+		Divider()
+		VStack(alignment: .leading) {
+			HStack {
+				Text("\(interval.id)")
+					.foregroundColor(.ruplGray)
+					.padding(.trailing)
+				Text(interval.description)
+					.foregroundColor(.ruplBlue)
+			}
+			.font(.title3)
+			.padding(.bottom)
+
+
+			if interval.speed.max != 0 {
+				Text("Speed")
+					.foregroundColor(.ruplGray)
+					.font(.footnote)
+				Text("\(workoutManager.convertToMinutesPerKilometer(metersPerSecond: Double(interval.speed.min)))/km - \(workoutManager.convertToMinutesPerKilometer(metersPerSecond: Double(interval.speed.max)))/km")
+					.font(.footnote)
+					.padding(.bottom)
+			} else {
+				Text("Heart rate")
+					.foregroundColor(.ruplGray)
+					.font(.footnote)
+				Text("\(interval.pulse.min) bpm - \(interval.pulse.max) bpm")
+					.font(.footnote)
+					.padding(.bottom)
+			}
+
+			if interval.distance != 0 {
+				Text("Distance")
+					.foregroundColor(.ruplGray)
+					.font(.footnote)
+				Text("\(interval.distance / 1000) km")
+					.padding(.bottom)
+			} else {
+				Text("Dutation")
+					.foregroundColor(.ruplGray)
+					.font(.footnote)
+				Text("\(workoutManager.formatDuration(seconds: Double(interval.duration))) min")
+					.padding(.bottom)
+			}
+		}
+	}
+}
 
 //Zone 1: Recovery/Easy (50-60% of MHR)
 //Lower limit: 0.50 x MHR
