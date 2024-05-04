@@ -25,23 +25,27 @@ jobs:
       - name: Build and push Docker image for auch
         run: |
           cd auth
+          docker pull dredfort/rupl-auth:latest || true
           docker build -t dredfort/rupl-auth:latest .
           docker push dredfort/rupl-auth:latest
   
       - name: Build and push Docker image for profile
         run: |
           cd profile
+          docker pull dredfort/rupl-profile:latest || true
           docker build -t dredfort/rupl-profile:latest .
           docker push dredfort/rupl-profile:latest
 
       - name: Build and push Docker image for training
         run: |
           cd training
+          docker pull dredfort/rupl-training:latest || true
           docker build -t dredfort/rupl-training:latest .
           docker push dredfort/rupl-training:latest
 
       - name: Build and push Docker image for web
         run: |
           cd web
+          docker pull dredfort/rupl-web:latest || true
           docker build -t dredfort/rupl-web:latest .
           docker push dredfort/rupl-web:latest
