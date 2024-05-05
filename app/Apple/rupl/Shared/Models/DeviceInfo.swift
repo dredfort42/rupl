@@ -74,7 +74,7 @@ class DeviceInfo {
 				return
 			}
 #if DEBUG
-			print(String(data: data, encoding: .utf8)!)
+//			print(String(data: data, encoding: .utf8)!)
 #endif
 		}
 
@@ -110,7 +110,7 @@ class DeviceInfo {
 				return
 			}
 #if DEBUG
-			print(String(data: data, encoding: .utf8)!)
+//			print(String(data: data, encoding: .utf8)!)
 #endif
 		}
 

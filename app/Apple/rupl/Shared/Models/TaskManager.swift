@@ -100,7 +100,7 @@ class TaskManager: ObservableObject {
 						self.task = try JSONDecoder().decode(Task.self, from: data)
 						completion(true)
 #if DEBUG
-						self.printTask(self.task!)
+//						self.printTask(self.task!)
 #endif
 					} catch {
 						Logger.shared.log("Error parsing JSON: \(error)")
@@ -180,7 +180,7 @@ class TaskManager: ObservableObject {
 			intervalHeartRateZone = (interval?.pulse.max ?? 0, interval?.pulse.min ?? 0)
 			intervalSpeedZone = (Double(interval?.speed.max ?? 0), Double(interval?.speed.min ?? 0))
 #if DEBUG
-			printInterval()
+//			printInterval()
 #endif
 		}
 	}
