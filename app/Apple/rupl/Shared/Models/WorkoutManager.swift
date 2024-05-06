@@ -51,7 +51,7 @@ class WorkoutManager: NSObject, ObservableObject {
 		HKQuantityType(.stepCount),
 		HKQuantityType(.vo2Max),
 		HKQuantityType(.flightsClimbed),
-		HKObjectType.workoutType(),
+		HKQuantityType.workoutType(),
 		HKSeriesType.workoutRoute()
 	]
 

@@ -14,6 +14,8 @@ class WorkoutData {
 	let isHealthDataAvailable: Bool = HKHealthStore.isHealthDataAvailable()
 	let healthStore = HKHealthStore()
 	var predicate: NSPredicate?
+	var compleatedQuery: UInt8 = 0
+	var workoutData: [String: Any] = [:]
 
 
 	private func getPredicate(completion: @escaping (NSPredicate?, Error?) -> Void) {
@@ -68,14 +70,14 @@ class WorkoutData {
 					"timestamp": Int64(location.timestamp.timeIntervalSince1970),
 					"latitude": location.coordinate.latitude,
 					"longitude": location.coordinate.longitude,
-					"horizontalAccuracy": location.horizontalAccuracy,
+					"h_acc": location.horizontalAccuracy,
 					"altitude": location.altitude,
-					"verticalAccuracy": location.verticalAccuracy,
+					"ellipsoidal_altitude": location.ellipsoidalAltitude,
+					"v_acc": location.verticalAccuracy,
 					"course": location.course,
-					"courseAccuracy": location.courseAccuracy,
+					"crs_acc": location.courseAccuracy,
 					"speed": location.speed,
-					"speedAccuracy": location.speedAccuracy,
-					"ellipsoidalAltitude": location.ellipsoidalAltitude
+					"spd_acc": location.speedAccuracy
 				]
 
 				routeData.append(locationData)
@@ -114,37 +116,12 @@ class WorkoutData {
 									return
 								}
 
-								print("\n\n\n")
-								print(type.description)
-//								print(route)
-								self.serialization(data: [type.description: route])
+								self.workoutData[type.description] = route
+								self.compleatedQuery += 1
 							}
-							
-//						case HKQuantityType(.activeEnergyBurned):
-//							guard let samples = results as? [HKQuantitySample] else {
-//								print("No data found during the run")
-//								return
-//							}
-//
-//							var samplesData: [[String: Any]] = []
-//
-//							for sample in samples {
-//
-//								let sampleData: [String: Any] = [
-//									"timestamp": Int64(sample.startDate.timeIntervalSince1970),
-//									"quantity": sample.quantity.description,
-//									"quantityType": sample.quantityType.description,
-//									"description": sample.description,
-//									"sampleType": sample.sampleType.description,
-//									"count": sample.count
-//								]
-//								samplesData.append(sampleData)
-//							}
-//
-//							print("\n\n\n")
-//							print(type.description)
-////							print(samplesData)
-//							self.serialization(data: [type.description: samplesData])
+
+						case HKQuantityType.workoutType():
+							self.compleatedQuery += 1
 
 						default:
 							guard let samples = results as? [HKQuantitySample] else {
@@ -152,296 +129,180 @@ class WorkoutData {
 								return
 							}
 
-							var samplesData: [[String: Any]] = []
+							var sampleData: [[String: Any]] = []
 
 							for sample in samples {
-								let sampleData: [String: Any] = [
+								let data: [String: Any] = [
 									"timestamp": Int64(sample.startDate.timeIntervalSince1970),
 									"quantity": sample.quantity.description
-//									"quantityType": sample.quantityType.description,
-//									"description": sample.description,
-//									"sampleType": sample.sampleType.description,
-//									"count": sample.count
 								]
-								samplesData.append(sampleData)
+								sampleData.append(data)
 							}
 
-							//							workoutData[type.description] = samplesData
-
-							print("\n\n\n")
-							print(type.description)
-//							print(samplesData)
-							self.serialization(data: [type.description: samplesData])
-
+							self.workoutData[type.description] = sampleData
+							self.compleatedQuery += 1
 					}
-
 				}
-
 				self.healthStore.execute(workoutQuery)
 			}
 		}
 	}
 
-	private func serialization(data: [String: Any]) -> Data? {
-		if data.isEmpty {
-			return nil
+	private func dumpJson() {
+		getWorkoutData()
+
+		while self.compleatedQuery < WorkoutManager.shared.typesToRead.count {
+			sleep(1)
 		}
 
-		if let jData = try? JSONSerialization.data(withJSONObject: data, options: .prettyPrinted) {
-			if let jsonString = String(data: jData, encoding: .utf8) {
-				print("Raw JSON data:")
-				print(jsonString)
-			} else {
-				print("Failed to convert JSON data to string")
+		if workoutData.isEmpty {
+			return
+		}
+
+		guard let jData = try? JSONSerialization.data(withJSONObject: workoutData, options: [.withoutEscapingSlashes, .fragmentsAllowed]) else {
+			Logger.shared.log("Failed to convert convert object to JSON")
+			return
+		}
+
+		do {
+			let temporaryDirectoryURL = FileManager.default.temporaryDirectory
+			let fileName = UUID().uuidString + ".rupl"
+			let fileURL = temporaryDirectoryURL.appendingPathComponent(fileName)
+
+			try jData.write(to: fileURL)
+
+			//			print(fileURL)
+		} catch {
+			Logger.shared.log("Error: \(error)")
+			return
+		}
+	}
+
+	private func forDispatch() -> [String] {
+		var filesToSend: [String] = []
+		let temporaryDirectoryURL = FileManager.default.temporaryDirectory
+
+		do {
+			let fileURLs = try FileManager.default.contentsOfDirectory(at: temporaryDirectoryURL, includingPropertiesForKeys: nil, options: [])
+
+			for fileURL in fileURLs {
+				if fileURL.lastPathComponent.hasSuffix(".rupl") {
+					filesToSend.append(fileURL.lastPathComponent)
+				}
+			}
+		} catch {
+			Logger.shared.log("Error: \(error)")
+		}
+
+		return filesToSend
+	}
+
+	private func sendData(jsonURL: URL, completion: @escaping (Bool) -> Void) {
+		print("sendData", jsonURL)
+
+		var jsonData: Data = Data()
+
+		do {
+			jsonData = try Data(contentsOf: jsonURL)
+		} catch {
+			Logger.shared.log("Error: \(error)")
+			completion(false)
+			return
+		}
+
+		//		print(String(data: jsonData, encoding: .utf8)!)
+
+		guard let apiUrl = URL(string: "\(AppSettings.shared.sessionURL)?client_id=\(AppSettings.shared.clientID)&access_token=\(AppSettings.shared.deviceAccessToken)") else {
+			Logger.shared.log("Invalid URL")
+			completion(false)
+			return
+		}
+
+		var request = URLRequest(url: apiUrl)
+		request.httpMethod = "POST"
+		request.httpBody = jsonData
+		//		request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
+		let task = URLSession.shared.dataTask(with: request) { data, response, error in
+			if let error = error {
+				Logger.shared.log("Error: \(error)")
+				completion(false)
+				return
 			}
 
-			return jData
+			guard let httpResponse = response as? HTTPURLResponse else {
+				completion(false)
+				return
+			}
+
+			if httpResponse.statusCode != 200 {
+				completion(false)
+				return
+			}
+
+			completion(true)
 		}
 
-		return nil
+		task.resume()
+	}
+
+	private func sendSessionData(sessions: [String]) {
+		print("sendSessionData", sessions)
+
+		if sessions.isEmpty {
+			return
+		}
+
+		DispatchQueue.global().async {
+			let temporaryDirectoryURL = FileManager.default.temporaryDirectory
+
+			for s in sessions {
+				let fileURL = temporaryDirectoryURL.appendingPathComponent(s)
+
+				self.sendData(jsonURL: fileURL) { success in
+					if success {
+						do {
+							try FileManager.default.removeItem(at: fileURL)
+						} catch {
+							Logger.shared.log("Error: \(error)")
+							return
+						}
+					} else {
+						return
+					}
+				}
+			}
+		}
+	}
+
+	func sendSessionDataController() {
+		var retryCount: UInt8 = 10
+		var timer: UInt32 = 1
+		var sessions: [String] = self.forDispatch()
+
+		while !sessions.isEmpty && retryCount > 0 {
+			print(timer, retryCount)
+
+			sleep(timer)
+			sendSessionData(sessions: sessions)
+
+			sessions = self.forDispatch()
+
+			if !sessions.isEmpty {
+				timer *= 2
+				retryCount -= 1
+			}
+		}
 	}
 
 	func postWorkout() {
 #if DEBUG
 		print("postWorkout()")
 #endif
-		getWorkoutData()
+
+		dumpJson()
+		sendSessionDataController()
 	}
 
 	static let shared = WorkoutData()
 }
-
-//
-////	MARK: - Collect workout route data
-////
-//extension WorkoutManager{
-
-//}
-//
-//// MARK: - 	Get start and stop Date of last run workout
-////
-//extension WorkoutManager{
-////	func getLastRunPredicate(completion: @escaping (NSPredicate?, Error?) -> Void) async {
-////		let query = HKSampleQuery(
-////			sampleType: HKObjectType.workoutType(),
-////			predicate: HKQuery.predicateForWorkouts(with: .running),
-////			limit: HKObjectQueryNoLimit,
-////			sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)]) { (query, samples, error) in
-////				guard let samples = samples as? [HKWorkout], let lastRun = samples.first, error == nil else {
-////					completion(nil, error)
-////					return
-////				}
-////
-////				completion(HKQuery.predicateForSamples(withStart: lastRun.startDate, end: lastRun.endDate, options: .strictStartDate), nil)
-////			}
-////
-////		healthStore.execute(query)
-////	}
-//
-//	// Asynchronous function to perform the workout query and return the result
-//	func fetchWorkoutsAsync(completion: @escaping ([HKWorkout]?, Error?) -> Void) {
-//		// Predicate to specify any filtering criteria (optional)
-//		let predicate = NSPredicate(format: "duration > %@", NSNumber(value: 3)) // Example: Filter workouts with duration greater than 300 seconds (5 minutes)
-//
-//		// Create a query to retrieve workouts matching the specified type and predicate
-//		let workoutQuery = HKSampleQuery(sampleType: HKObjectType.workoutType(), predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { (query, samples, error) in
-//			guard let retrievedWorkouts = samples as? [HKWorkout], error == nil else {
-//				completion(nil, error)
-//				return
-//			}
-//
-//			// Return the retrieved workouts
-//			completion(retrievedWorkouts, nil)
-//		}
-//
-//		// Execute the workout query
-//		healthStore.execute(workoutQuery)
-//	}
-//
-//}
-//
-////	MARK: - Collect workout data
-////
-//extension WorkoutManager{
-//	func getWorkoutData() -> [String: Any] {
-//
-////		var predicate: NSPredicate?
-//		var workoutData: [String: Any] = [:]
-//
-//		var workouts: [HKWorkout]?
-//
-//		fetchWorkoutsAsync { retrievedWorkouts, error in
-//			if let error = error {
-//				print("Error retrieving workouts: \(error)")
-//				return
-//			}
-//
-//			workouts = retrievedWorkouts
-//		}
-//
-//
-//		print("---PRINTER---")
-//		// Process the retrieved workouts
-//		for workout in workouts ?? [] {
-//			print("Workout: \(workout)")
-//
-//		}
-//
-////		Task {
-////			do {
-////				try await getLastRunPredicate() { (data, error) in
-////					if error != nil {
-////						Logger.shared.log("Error in getLastRunPredicate(): \(error)")
-////						return
-////					}
-////					predicate = data
-////				}
-////			} catch {
-//////				Logger.shared.log("Error: \(error)")
-////			}
-////		}
-//
-////		let query = HKSampleQuery(
-////			sampleType: HKObjectType.workoutType(),
-////			predicate: HKQuery.predicateForWorkouts(with: .running),
-////			limit: HKObjectQueryNoLimit,
-////			sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)]) { (query, samples, error) in
-////				guard let samples = samples as? [HKWorkout], let lastRun = samples.first else {
-////					print("No running workouts found")
-////					return
-////				}
-////
-////				let predicate = HKQuery.predicateForSamples(withStart: lastRun.startDate, end: lastRun.endDate, options: .strictStartDate)
-////
-////				for type in self.typesToRead {
-////					let workoutQuery = HKSampleQuery(sampleType: type, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { (query, results, error) in
-////						if error != nil {
-////							print("Workout query executed with error")
-////							return
-////						}
-////
-////						switch type {
-////							case HKSeriesType.workoutRoute():
-//////								workoutData["route"] = self.getWorkoutRoute(results: results)
-////
-////								guard let routes = results as? [HKWorkoutRoute], let route = routes.first else {
-////									print("No workout routes found or error occurred")
-////									return
-////								}
-////
-////								let routeQuery = HKWorkoutRouteQuery(route: route) { (query, locationsOrNil, done, errorOrNil) in
-////									guard let locations = locationsOrNil else {
-////										print("Error fetching locations for route")
-////										return
-////									}
-////
-////									var routeData: [[String: Any]] = []
-////
-////									for location in locations {
-////										let locationData: [String: Any] = [
-////											"timestamp": location.timestamp.timeIntervalSince1970,
-////											"latitude": location.coordinate.latitude,
-////											"longitude": location.coordinate.longitude,
-////											"horizontalAccuracy": location.horizontalAccuracy,
-////											"altitude": location.altitude,
-////											"verticalAccuracy": location.verticalAccuracy,
-////											"course": location.course,
-////											"courseAccuracy": location.courseAccuracy,
-////											"speed": location.speed,
-////											"speedAccuracy": location.speedAccuracy,
-////											"ellipsoidalAltitude": location.ellipsoidalAltitude,
-////											"floor": location.floor ?? 0,
-////											"sourceInformation": location.sourceInformation ?? ""
-////										]
-////
-////										routeData.append(locationData)
-////									}
-////
-////									if done {
-////										workoutData["route"] = routeData
-////
-//////										print("\n\n\n")
-//////										print(type.description)
-//////										print(workoutData["route"] ?? "workoutData[\"route\"] empty")
-////									}
-////								}
-////
-////								self.healthStore.execute(routeQuery)
-////
-////							default:
-////								guard let samples = results as? [HKQuantitySample] else {
-////									print("No data found during the run")
-////									return
-////								}
-////
-////								var samplesData: [[String: Any]] = []
-////
-////								for sample in samples {
-////									let sampleData: [String: Any] = [
-////										"timestamp": Int64(sample.startDate.timeIntervalSince1970),
-////										"quantity": sample.quantity,
-////										"quantityType": sample.quantityType,
-////										"description": sample.description,
-////										"sampleType": sample.sampleType,
-////										"count": sample.count
-////									]
-////									samplesData.append(sampleData)
-////								}
-////
-////								workoutData[type.description] = samplesData
-////
-//////								print("\n\n\n")
-//////								print(type.description)
-//////								print(workoutData[type.description] ?? "workoutData[type.description] empty")
-////						}
-////
-////					}
-////
-////					self.healthStore.execute(workoutQuery)
-////				}
-////			}
-////
-////		healthStore.execute(query)
-//
-//
-//
-////
-//
-//		return workoutData
-//	}
-//}
-//
-//
-////	MARK: - Post workout json data
-////
-//extension WorkoutManager{
-//	func postWorkoutJsonData(_ jsonData: Data) {
-//		guard let apiUrl = URL(string: "\(AppSettings.shared.sessionURL)?client_id=\(AppSettings.shared.clientID)&access_token=\(AppSettings.shared.deviceAccessToken)") else {
-//			print("Invalid URL")
-//			return
-//		}
-//		var request = URLRequest(url: apiUrl)
-//		request.httpMethod = "POST"
-//		request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-//
-//		request.httpBody = jsonData
-//
-//		let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-//			guard let data = data else {
-//				Logger.shared.log("Error: \(error)")
-//				return
-//			}
-//
-//#if DEBUG
-//			if let response = response as? HTTPURLResponse {
-//				print("Response status code: \(response.statusCode)")
-//				// Handle response if needed
-//			}
-//
-//			print(String(data: data, encoding: .utf8)!)
-//#endif
-//		}
-//
-//		task.resume()
-//	}
-//}
