@@ -45,7 +45,7 @@ struct ContentView: View {
 			if AppSettings.shared.connectedToRupl {
 				Profile.getProfile()
 				DeviceInfo.shared.sendDeviceInformation(createNew: false)
-//				WorkoutData.shared.sendSessionDataController()
+				WorkoutData.shared.sendSessionData() { _ in }
 			}
 		}
 		.sheet(isPresented: $isSheetActive) {

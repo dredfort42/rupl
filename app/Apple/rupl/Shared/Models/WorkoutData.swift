@@ -246,10 +246,11 @@ class WorkoutData {
 		task.resume()
 	}
 
-	private func sendSessionData(sessions: [String]) {
-		print("sendSessionData", sessions)
+	func sendSessionData(completion: @escaping (Bool) -> Void) {
+		let sessions: [String] = forDispatch()
 
 		if sessions.isEmpty {
+			completion(true)
 			return
 		}
 
@@ -265,32 +266,29 @@ class WorkoutData {
 							try FileManager.default.removeItem(at: fileURL)
 						} catch {
 							Logger.shared.log("Error: \(error)")
+							completion(false)
 							return
 						}
 					} else {
+						completion(false)
 						return
 					}
 				}
 			}
+
+			completion(true)
 		}
 	}
 
-	func sendSessionDataController() {
-		var retryCount: UInt8 = 10
-		var timer: UInt32 = 1
-		var sessions: [String] = self.forDispatch()
-
-		while !sessions.isEmpty && retryCount > 0 {
-			print(timer, retryCount)
-
-			sleep(timer)
-			sendSessionData(sessions: sessions)
-
-			sessions = self.forDispatch()
-
-			if !sessions.isEmpty {
-				timer *= 2
-				retryCount -= 1
+	func sendSessionDataController(retryCount: Int) {
+		sendSessionData() { success in
+			if !success && retryCount > 0 {
+				Logger.shared.log("Retrying in 10 seconds...")
+				DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+					self.sendSessionDataController(retryCount: retryCount - 1)
+				}
+			} else if !success {
+				Logger.shared.log("Failed to send JSON data after retries.")
 			}
 		}
 	}
@@ -301,7 +299,7 @@ class WorkoutData {
 #endif
 
 		dumpJson()
-		sendSessionDataController()
+		sendSessionDataController(retryCount: 60) // 10 minutes
 	}
 
 	static let shared = WorkoutData()

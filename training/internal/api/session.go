@@ -16,7 +16,7 @@ func CreateSession(c *gin.Context) {
 		return
 	}
 
-	fmt.Println("Session: ", session)
+	fmt.Println("Session: ", string(session))
 
 	// if session.ID == "" {
 	// 	session.ID = fmt.Sprintf("%d", time.Now().UnixNano())
