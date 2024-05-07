@@ -41,10 +41,11 @@ struct ContentView: View {
 		.onAppear {
 			AppSettings.shared.appVersion = appVersion + "." + buildNumber
 			selection = .controls
-			// TODO: - get profile
+
 			if AppSettings.shared.connectedToRupl {
 				Profile.getProfile()
 				DeviceInfo.shared.sendDeviceInformation(createNew: false)
+//				WorkoutData.shared.sendSessionDataController()
 			}
 		}
 		.sheet(isPresented: $isSheetActive) {

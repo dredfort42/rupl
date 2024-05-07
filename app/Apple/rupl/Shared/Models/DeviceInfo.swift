@@ -56,7 +56,7 @@ class DeviceInfo {
 		do {
 			jsonData = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
 		} catch {
-			print("Error converting to JSON: \(error.localizedDescription)")
+			Logger.shared.log("Error converting to JSON: \(error.localizedDescription)")
 		}
 
 		request.addValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -69,12 +69,12 @@ class DeviceInfo {
 		}
 
 		let task = URLSession.shared.dataTask(with: request) { data, response, error in
-			guard let data = data else {
-				Logger.shared.log("Error: \(error)")
-				return
-			}
+//			guard let data = data else {
+//				Logger.shared.log("Error: \(error)")
+//				return
+//			}
 #if DEBUG
-			print(String(data: data, encoding: .utf8)!)
+//			print(String(data: data, encoding: .utf8)!)
 #endif
 		}
 
@@ -97,7 +97,7 @@ class DeviceInfo {
 		do {
 			jsonData = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
 		} catch {
-			print("Error converting to JSON: \(error.localizedDescription)")
+			Logger.shared.log("Error converting to JSON: \(error.localizedDescription)")
 		}
 
 		request.addValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -105,12 +105,12 @@ class DeviceInfo {
 		request.httpBody = jsonData
 
 		let task = URLSession.shared.dataTask(with: request) { data, response, error in
-			guard let data = data else {
-				Logger.shared.log("Error: \(error)")
-				return
-			}
+//			guard let data = data else {
+//				Logger.shared.log("Error: \(error)")
+//				return
+//			}
 #if DEBUG
-			print(String(data: data, encoding: .utf8)!)
+//			print(String(data: data, encoding: .utf8)!)
 #endif
 		}
 

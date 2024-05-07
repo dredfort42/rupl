@@ -51,7 +51,7 @@ class WorkoutManager: NSObject, ObservableObject {
 		HKQuantityType(.stepCount),
 		HKQuantityType(.vo2Max),
 		HKQuantityType(.flightsClimbed),
-		HKObjectType.workoutType(),
+		HKQuantityType.workoutType(),
 		HKSeriesType.workoutRoute()
 	]
 
@@ -238,43 +238,12 @@ extension WorkoutManager{
 					try await routeBuilder?.finishRoute(with: finishedWorkout, metadata: nil)
 				}
 
-				postWorkout()
+				WorkoutData.shared.postWorkout()
 			} catch {
 				Logger.shared.log("Failed to end workout: \(error)")
 			}
 		}
 #endif
-	}
-}
-
-//	MARK: - Post workout
-//
-extension WorkoutManager{
-	func postWorkout() {
-#if DEBUG
-		print("postWorkout()")
-#endif
-
-		getWorkoutData()
-
-//		for workout in workoutData {
-//			print(workout)
-//		}
-
-//		if let jData = try? JSONSerialization.data(withJSONObject: workoutData, options: .prettyPrinted) {
-//			jsonData = jData
-//		}
-//		
-//		if let jd = jsonData {
-//			if let jsonString = String(data: jd, encoding: .utf8) {
-//				print("Raw JSON data:")
-//				print(jsonString)
-//			} else {
-//				print("Failed to convert JSON data to string")
-//			}
-//
-//			postWorkoutJsonData(jd)
-//		}
 	}
 }
 
