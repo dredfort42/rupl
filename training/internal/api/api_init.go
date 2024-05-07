@@ -20,7 +20,7 @@ func ApiInit() {
 	router.Use(cors.Default())
 	router.GET("/api/v1/training/task", GetTask)
 	router.POST("/api/v1/training/task", DeclineTask)
-	router.POST("/api/v1/session", CreateSession)
+	router.POST("/api/v1/training/session", CreateSession)
 	// router.GET("/api/v1/profile", GetProfile)
 	// router.GET("/api/v1/profile/devices", GetDevices)
 	// router.POST("/api/v1/profile/devices", CreateDevice)
