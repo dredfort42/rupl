@@ -2,8 +2,9 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
+	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,7 +17,11 @@ func CreateSession(c *gin.Context) {
 		return
 	}
 
-	fmt.Println("Session: ", session)
+	// fmt.Println("Session: ", string(session))
+
+	fileName := time.Date(2020, time.January, 1, 0, 0, 0, 0, time.UTC).Format("2006-01-02") + ".json"
+
+	os.WriteFile("/app/dump/"+fileName, session, 0644)
 
 	// if session.ID == "" {
 	// 	session.ID = fmt.Sprintf("%d", time.Now().UnixNano())
