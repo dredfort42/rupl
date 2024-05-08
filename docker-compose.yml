@@ -91,6 +91,7 @@ services:
       - rupl_net
     volumes:
       - ./global.cfg:/app/global.cfg
+      - ./persistent_volumes/dump:/app/dump
     environment:
       - DEBUG=true
 

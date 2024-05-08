@@ -19,7 +19,7 @@ func CreateSession(c *gin.Context) {
 
 	// fmt.Println("Session: ", string(session))
 
-	fileName := time.Date(2020, time.January, 1, 0, 0, 0, 0, time.UTC).Format("2006-01-02") + ".json"
+	fileName := time.Now().Format("2006-01-02-15-04-05") + ".json"
 
 	os.WriteFile("/app/dump/"+fileName, session, 0644)
 
