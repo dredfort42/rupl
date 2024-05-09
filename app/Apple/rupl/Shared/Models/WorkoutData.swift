@@ -165,13 +165,13 @@ class WorkoutData {
 		}
 
 		do {
-			let temporaryDirectoryURL = FileManager.default.temporaryDirectory
+			let documentsDirectory = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
 			let fileName = UUID().uuidString + ".rupl"
-			let fileURL = temporaryDirectoryURL.appendingPathComponent(fileName)
+			let fileURL = documentsDirectory.appendingPathComponent(fileName)
 
 			try jData.write(to: fileURL)
 
-			//			print(fileURL)
+//						print(fileURL)
 		} catch {
 			Logger.shared.log("Error: \(error)")
 			return
@@ -180,10 +180,10 @@ class WorkoutData {
 
 	private func forDispatch() -> [String] {
 		var filesToSend: [String] = []
-		let temporaryDirectoryURL = FileManager.default.temporaryDirectory
 
 		do {
-			let fileURLs = try FileManager.default.contentsOfDirectory(at: temporaryDirectoryURL, includingPropertiesForKeys: nil, options: [])
+			let documentsDirectory = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+			let fileURLs = try FileManager.default.contentsOfDirectory(at: documentsDirectory, includingPropertiesForKeys: nil, options: [])
 
 			for fileURL in fileURLs {
 				if fileURL.lastPathComponent.hasSuffix(".rupl") {
@@ -255,28 +255,33 @@ class WorkoutData {
 		}
 
 		DispatchQueue.global().async {
-			let temporaryDirectoryURL = FileManager.default.temporaryDirectory
+			do {
+				let documentsDirectory = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
 
-			for s in sessions {
-				let fileURL = temporaryDirectoryURL.appendingPathComponent(s)
+				for s in sessions {
+					let fileURL = documentsDirectory.appendingPathComponent(s)
 
-				self.sendData(jsonURL: fileURL) { success in
-					if success {
-						do {
-							try FileManager.default.removeItem(at: fileURL)
-						} catch {
-							Logger.shared.log("Error: \(error)")
+					self.sendData(jsonURL: fileURL) { success in
+						if success {
+							do {
+								try FileManager.default.removeItem(at: fileURL)
+							} catch {
+								Logger.shared.log("Error: \(error)")
+								completion(false)
+								return
+							}
+						} else {
 							completion(false)
 							return
 						}
-					} else {
-						completion(false)
-						return
 					}
 				}
+				completion(true)
+			} catch {
+				Logger.shared.log("Error: \(error)")
+				completion(false)
+				return
 			}
-
-			completion(true)
 		}
 	}
 

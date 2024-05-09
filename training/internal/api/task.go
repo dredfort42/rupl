@@ -15,7 +15,7 @@ var taskDeclined bool
 // GetTask returns a task
 func GetTask(c *gin.Context) {
 	// TMP: taskDeclined is a temporary check
-	if time.Now().Minute()%2 == 0 {
+	if time.Now().Hour()%2 == 0 {
 		taskDeclined = false
 	}
 
