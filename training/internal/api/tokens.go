@@ -10,7 +10,7 @@ import (
 )
 
 // ValidateAccessToken validates access token
-func ValidateAccessToken(accesstToken string) string {
+func ValidateAccessToken(accesstToken string) (email string) {
 	authServerURL := fmt.Sprintf("http://%s:%s/api/v1/auth/verify", cfg.Config["auth.host"], cfg.Config["auth.port"])
 	client := &http.Client{}
 
@@ -37,17 +37,17 @@ func ValidateAccessToken(accesstToken string) string {
 }
 
 // ParseToken parses token
-func ParseToken(tokenString string) (string, error) {
+func ParseToken(tokenString string) (userID string, err error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return []byte("secret"), nil
 	})
 	if err != nil {
 		loger.Error("Error parsing token", err)
-		return "", err
+		return
 	}
 
 	claims := token.Claims.(jwt.MapClaims)
-	userID := claims["user_id"].(string)
+	userID = claims["user_id"].(string)
 
-	return userID, nil
+	return
 }
