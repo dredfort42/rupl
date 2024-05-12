@@ -22,13 +22,14 @@ func checkTableExists(tabelName string) bool {
 
 // checkSessionTables() checks if the sessions table exists, if not, it creates it
 func checkSessionsTotalTable() {
-	var tabalExists bool = checkTableExists(db.tableSessions)
+	var tabalExists bool = checkTableExists(db.tableSessions + "_total")
 
 	for !tabalExists {
 		query := `
 				CREATE TABLE IF NOT EXISTS ` + db.tableSessions + `_total (
 					session_uuid VARCHAR(255) PRIMARY KEY,
 					email VARCHAR(255) NOT NULL,
+					timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 					steps INT NOT NULL DEFAULT 0,
 					vo2max FLOAT NOT NULL DEFAULT 0,
 					avr_power FLOAT NOT NULL DEFAULT 0,
