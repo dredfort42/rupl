@@ -72,7 +72,6 @@ class WorkoutData {
 					"longitude": location.coordinate.longitude,
 					"h_acc": location.horizontalAccuracy,
 					"altitude": location.altitude,
-					"ellipsoidal_altitude": location.ellipsoidalAltitude,
 					"v_acc": location.verticalAccuracy,
 					"course": location.course,
 					"crs_acc": location.courseAccuracy,

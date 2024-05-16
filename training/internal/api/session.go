@@ -1,35 +1,53 @@
 package api
 
 import (
-	"encoding/json"
+	"fmt"
 	"net/http"
-	"os"
-	"time"
+	s "training/internal/structs"
 
 	"github.com/gin-gonic/gin"
 )
 
 // CreateSession is a function to create a new session
 func CreateSession(c *gin.Context) {
-	var session json.RawMessage
-	if err := c.BindJSON(&session); err != nil {
-		c.JSON(http.StatusBadRequest, ResponseError{Error: "Invalid request", ErrorDescription: err.Error()})
+	var session s.LastSessionData
+	// if err := c.BindJSON(&session); err != nil {
+	// 	c.JSON(http.StatusBadRequest, ResponseError{Error: "Invalid request", ErrorDescription: err.Error()})
+	// 	return
+	// }
+
+	// fileName := time.Now().Format("2006-01-02-15-04-05") + ".json"
+
+	// os.WriteFile("/app/dump/"+fileName, session, 0644)
+
+	var email string
+	var errorResponse ResponseError
+	var err error
+
+	if email = VerifyDevice(c); email == "" {
 		return
 	}
 
-	// fmt.Println("Session: ", string(session))
+	if err = c.ShouldBindJSON(&session); err != nil {
+		errorResponse.Error = "invalid_request"
+		errorResponse.ErrorDescription = err.Error()
+		c.IndentedJSON(http.StatusBadRequest, errorResponse)
+		return
+	}
 
-	fileName := time.Now().Format("2006-01-02-15-04-05") + ".json"
+	fmt.Println(session)
 
-	os.WriteFile("/app/dump/"+fileName, session, 0644)
-
-	// if session.ID == "" {
-	// 	session.ID = fmt.Sprintf("%d", time.Now().UnixNano())
+	// if session == nil {
+	// 	errorResponse.Error = "invalid_request"
+	// 	errorResponse.ErrorDescription = "Missing session"
+	// 	c.IndentedJSON(http.StatusBadRequest, errorResponse)
+	// 	return
 	// }
 
-	// if err := session.Create(); err != nil {
-	// 	c.JSON(http.StatusInternalServerError, ResponseError{Error: "Internal server error", ErrorDescription: err.Error()})
-	// 	return
+	// if err = db.CreateSession(email, session); err != nil {
+	// 	errorResponse.Error = "server_error"
+	// 	errorResponse.ErrorDescription = err.Error()
+	// 	c.IndentedJSON(http.StatusInternalServerError, errorResponse)
 	// }
 
 	c.JSON(http.StatusOK, session)
