@@ -146,6 +146,11 @@ class TaskManager: ObservableObject {
 			}
 			task.resume()
 		}
+
+		task = nil
+		intervalHeartRateZone = (0, AppSettings.shared.criticalHeartRate) // bpm
+		intervalSpeedZone = (0, 11) // mps
+		controlParaneters = .heartRate
 	}
 
 	// MARK: - Running session
