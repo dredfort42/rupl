@@ -10,7 +10,8 @@ import (
 )
 
 // TMP: taskDeclined is a temporary var
-var taskDeclined time.Time
+var taskDeclined bool
+var taskDeclinedTime time.Time
 
 // GetTask returns a task
 func GetTask(c *gin.Context) {
@@ -19,10 +20,12 @@ func GetTask(c *gin.Context) {
 	// 	taskDeclined = false
 	// }
 
-	if taskDeclined.Sub(time.Now()) < 5*time.Minute {
+	if taskDeclined && taskDeclinedTime.Sub(time.Now()) < 5*time.Minute {
 		c.IndentedJSON(http.StatusNoContent, nil)
 		return
 	}
+
+	taskDeclined = false
 
 	// TODO: Implement GetTask
 	var task s.Task
@@ -74,7 +77,8 @@ func GetTask(c *gin.Context) {
 
 // DeclineTask declines a task
 func DeclineTask(c *gin.Context) {
-	taskDeclined = time.Now()
+	taskDeclined = true
+	taskDeclinedTime = time.Now()
 	c.IndentedJSON(http.StatusOK, gin.H{"message": "Task successfully declined"})
 }
 
