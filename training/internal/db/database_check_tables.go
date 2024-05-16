@@ -20,5 +20,5 @@ func checkTableExists(tabelName string) bool {
 
 // CheckTables checks if the tables exists, if not, it creates it
 func checkTables() {
-	checkSessionTables()
+	checkSessionTable()
 }
