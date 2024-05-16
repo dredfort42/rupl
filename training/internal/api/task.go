@@ -20,7 +20,7 @@ func GetTask(c *gin.Context) {
 	// 	taskDeclined = false
 	// }
 
-	if taskDeclined && taskDeclinedTime.Sub(time.Now()) < 5*time.Minute {
+	if taskDeclined && time.Until(taskDeclinedTime) < 5*time.Minute {
 		c.IndentedJSON(http.StatusNoContent, nil)
 		return
 	}

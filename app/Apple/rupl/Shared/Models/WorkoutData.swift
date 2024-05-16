@@ -17,6 +17,34 @@ class WorkoutData {
 	var compleatedQuery: UInt8 = 0
 	var workoutData: [String: Any] = [:]
 
+	private func getWorkoutDataType(type: HKSampleType) -> String {
+		switch type {
+			case HKSeriesType.workoutRoute():
+				return "route_data"
+			case HKQuantityType(.heartRate):
+				return "heart_rate"
+			case HKQuantityType(.distanceWalkingRunning):
+				return "distance"
+			case HKQuantityType(.runningSpeed):
+				return "speed"
+			case HKQuantityType(.activeEnergyBurned):
+				return "energy_burned"
+			case HKQuantityType(.runningPower):
+				return "running_power"
+			case HKQuantityType(.runningGroundContactTime):
+				return "ground_contact_time"
+			case HKQuantityType(.runningStrideLength):
+				return "stride_length"
+			case HKQuantityType(.runningVerticalOscillation):
+				return "vertical_oscillation"
+			case HKQuantityType(.stepCount):
+				return "step_count"
+			case HKQuantityType(.vo2Max):
+				return "vo2_max"
+			default:
+				return "unknown"
+		}
+	}
 
 	private func getPredicate(completion: @escaping (NSPredicate?, Error?) -> Void) {
 		if !isHealthDataAvailable {
@@ -41,6 +69,14 @@ class WorkoutData {
 				completion(nil, nil)
 				return
 			}
+
+			let sessionData: [String: Any] = [
+				"session_start_time": Int64(lastRun.startDate.timeIntervalSince1970),
+				"session_end_time": Int64(lastRun.endDate.timeIntervalSince1970),
+				"email": AppSettings.shared.userEmail
+			]
+
+			self.workoutData["session"] = sessionData
 
 			let predicate = HKQuery.predicateForSamples(withStart: lastRun.startDate, end: lastRun.endDate, options: .strictStartDate)
 			completion(predicate, nil)
@@ -115,7 +151,7 @@ class WorkoutData {
 									return
 								}
 
-								self.workoutData[type.description] = route
+								self.workoutData[self.getWorkoutDataType(type: type)] = route
 								self.compleatedQuery += 1
 							}
 
@@ -138,7 +174,7 @@ class WorkoutData {
 								sampleData.append(data)
 							}
 
-							self.workoutData[type.description] = sampleData
+							self.workoutData[self.getWorkoutDataType(type: type)] = sampleData
 							self.compleatedQuery += 1
 					}
 				}
@@ -170,7 +206,7 @@ class WorkoutData {
 
 			try jData.write(to: fileURL)
 
-//						print(fileURL)
+			//						print(fileURL)
 		} catch {
 			Logger.shared.log("Error: \(error)")
 			return
