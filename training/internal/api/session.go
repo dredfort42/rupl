@@ -142,9 +142,12 @@ func parseSession(jsonSession s.JSONLastSessionData) (dbSession s.DBSession, err
 		return
 	}
 
-	vo2max, err := strconv.ParseFloat(strings.Split(jsonSession.VO2Max[0].Quantity, " ")[0], 32)
-	if err != nil {
-		return
+	vo2max := float64(0)
+	if len(jsonSession.VO2Max) > 0 {
+		vo2max, err = strconv.ParseFloat(strings.Split(jsonSession.VO2Max[0].Quantity, " ")[0], 32)
+		if err != nil {
+			return
+		}
 	}
 	dbSession.VO2MaxMLPerMinPerKg = float32(vo2max)
 
