@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/dgrijalva/jwt-go"
 	cfg "github.com/dredfort42/tools/configreader"
 	loger "github.com/dredfort42/tools/logprinter"
 )
@@ -36,18 +35,18 @@ func ValidateAccessToken(accesstToken string) string {
 	}
 }
 
-// ParseToken parses token
-func ParseToken(tokenString string) (string, error) {
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return []byte("secret"), nil
-	})
-	if err != nil {
-		loger.Error("Error parsing token", err)
-		return "", err
-	}
+// // ParseToken parses token
+// func ParseToken(tokenString string) (string, error) {
+// 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+// 		return []byte("secret"), nil
+// 	})
+// 	if err != nil {
+// 		loger.Error("Error parsing token", err)
+// 		return "", err
+// 	}
 
-	claims := token.Claims.(jwt.MapClaims)
-	userID := claims["user_id"].(string)
+// 	claims := token.Claims.(jwt.MapClaims)
+// 	userID := claims["user_id"].(string)
 
-	return userID, nil
-}
+// 	return userID, nil
+// }

@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// ApiInit starts the web service
+// ApiInit starts the profile service
 func ApiInit() {
 
 	router := gin.Default()
