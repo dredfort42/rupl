@@ -332,16 +332,17 @@ class WorkoutData {
 
 	func sendSessionDataController(retryCount: Int) {
 		var success = false
+		var retry = retryCount == 0 ? 1 : retryCount
 
 		DispatchQueue.global().async {
-			while !success && retryCount > 0 {
-				sendSessionData { s in
+			while !success && retry > 0 {
+				self.sendSessionData { s in
 					success = s
 				}
 
 				if !success {
 					Logger.shared.log("Retrying in 10 seconds...")
-					retryCount -= 1
+					retry -= 1
 					sleep(10)
 				} else if retryCount == 0 {
 					Logger.shared.log("Failed to send JSON data after retries.")
