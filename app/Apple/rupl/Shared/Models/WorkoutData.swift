@@ -247,6 +247,15 @@ class WorkoutData {
 
 		//		print(String(data: jsonData, encoding: .utf8)!)
 
+//		guard let apiUrl = URL(string: "\(AppSettings.shared.deviceInfoURL)?client_id=\(AppSettings.shared.clientID)&access_token=\(AppSettings.shared.deviceAccessToken)") else {
+//			print("Invalid URL")
+//			return
+//		}
+//		var request = URLRequest(url: apiUrl)
+//		var parameters = [String: Any]()
+//		var jsonData = Data()
+		
+
 		guard let apiUrl = URL(string: "\(AppSettings.shared.sessionURL)?client_id=\(AppSettings.shared.clientID)&access_token=\(AppSettings.shared.deviceAccessToken)") else {
 			Logger.shared.log("Invalid URL")
 			completion(false)
@@ -255,6 +264,7 @@ class WorkoutData {
 
 		var request = URLRequest(url: apiUrl)
 		request.httpMethod = "POST"
+		request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 		request.httpBody = jsonData
 		//		request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 
@@ -321,16 +331,34 @@ class WorkoutData {
 	}
 
 	func sendSessionDataController(retryCount: Int) {
-		sendSessionData() { success in
-			if !success && retryCount > 0 {
-				Logger.shared.log("Retrying in 10 seconds...")
-				DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
-					self.sendSessionDataController(retryCount: retryCount - 1)
+		var success = false
+
+		DispatchQueue.global().async {
+			while !success && retryCount > 0 {
+				sendSessionData { s in
+					success = s
 				}
-			} else if !success {
-				Logger.shared.log("Failed to send JSON data after retries.")
+
+				if !success {
+					Logger.shared.log("Retrying in 10 seconds...")
+					retryCount -= 1
+					sleep(10)
+				} else if retryCount == 0 {
+					Logger.shared.log("Failed to send JSON data after retries.")
+				}
 			}
 		}
+
+		// sendSessionData() { success in
+		// 	if !success && retryCount > 0 {
+		// 		Logger.shared.log("Retrying in 10 seconds...")
+		// 		DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+		// 			self.sendSessionDataController(retryCount: retryCount - 1)
+		// 		}
+		// 	} else if !success {
+		// 		Logger.shared.log("Failed to send JSON data after retries.")
+		// 	}
+		// }
 	}
 
 	func postWorkout() {

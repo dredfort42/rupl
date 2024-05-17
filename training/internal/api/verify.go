@@ -3,13 +3,15 @@ package api
 import (
 	"net/http"
 
+	s "training/internal/structs"
+
 	"github.com/gin-gonic/gin"
 )
 
 // // VerifyUser verifies the user based on the access token provided in the request.
 // func VerifyUser(c *gin.Context) string {
 // 	var accessToken string
-// 	var errorResponse ResponseError
+// 	var errorResponse s.ResponseError
 // 	var err error
 
 // 	if accessToken, err = c.Cookie("access_token"); err != nil {
@@ -33,7 +35,7 @@ import (
 // VerifyDevice verifies the device based on the client ID and access token provided in the request.
 func VerifyDevice(c *gin.Context) string {
 	var accessToken string
-	var errorResponse ResponseError
+	var errorResponse s.ResponseError
 
 	if accessToken = c.Request.URL.Query().Get("access_token"); accessToken == "" {
 		errorResponse.Error = "token_error"

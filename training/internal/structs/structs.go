@@ -1,5 +1,11 @@
 package structs
 
+// ResponseError is a struct for JSON error
+type ResponseError struct {
+	Error            string `json:"error"`
+	ErrorDescription string `json:"error_description"`
+}
+
 // Session is a struct for JSON
 type Session struct {
 	ID        int    `json:"id"`

@@ -82,7 +82,10 @@ class DeviceInfo {
 	}
 
 	func deleteDeviceInfo() {
-		let apiUrl = URL(string: "\(AppSettings.shared.deviceInfoURL)?client_id=\(AppSettings.shared.clientID)&access_token=\(AppSettings.shared.deviceAccessToken)")!
+		guard let apiUrl = URL(string: "\(AppSettings.shared.deviceInfoURL)?client_id=\(AppSettings.shared.clientID)&access_token=\(AppSettings.shared.deviceAccessToken)") else {
+			print("Invalid URL")
+			return
+		}
 		var request = URLRequest(url: apiUrl)
 		var parameters = [String: Any]()
 		var jsonData = Data()

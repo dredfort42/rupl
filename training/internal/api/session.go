@@ -5,6 +5,7 @@ import (
 	"net/http"
 	s "training/internal/structs"
 
+	loger "github.com/dredfort42/tools/logprinter"
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,7 +22,7 @@ func CreateSession(c *gin.Context) {
 	// os.WriteFile("/app/dump/"+fileName, session, 0644)
 
 	var email string
-	var errorResponse ResponseError
+	var errorResponse s.ResponseError
 	var err error
 
 	if email = VerifyDevice(c); email == "" {

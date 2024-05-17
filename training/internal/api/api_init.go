@@ -7,24 +7,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// ResponseError is a struct for JSON error
-type ResponseError struct {
-	Error            string `json:"error"`
-	ErrorDescription string `json:"error_description"`
-}
-
-// ApiInit starts the web service
+// ApiInit starts the training service
 func ApiInit() {
 
 	router := gin.Default()
 	router.Use(cors.Default())
 	router.POST("/api/v1/training/session", CreateSession)
-	// router.GET("/api/v1/profile", GetProfile)
-	// router.GET("/api/v1/profile/devices", GetDevices)
-	// router.POST("/api/v1/profile/devices", CreateDevice)
-	// router.PUT("/api/v1/profile/devices", UpdateDevice)
-	// router.DELETE("/api/v1/profile/devices", DeleteDevice)
-
 	router.GET("/api/v1/training/task", GetTask)
 	router.POST("/api/v1/training/task", DeclineTask)
 
