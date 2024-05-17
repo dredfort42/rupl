@@ -16,14 +16,14 @@ import (
 func parseSessionDataInt(data []s.JSONLastSessionTypeData) (dbData []s.DBSessionDataInt, err error) {
 	dbData = make([]s.DBSessionDataInt, len(data))
 	for i, d := range data {
-		var intValue int
-		intValue, err = strconv.Atoi(strings.Split(d.Quantity, " ")[0])
+		var float64Value float64
+		float64Value, err = strconv.ParseFloat(strings.Split(d.Quantity, " ")[0], 32)
 		if err != nil {
 			return
 		}
 
 		dbData[i].Timestamp = d.Timestamp
-		dbData[i].Data = intValue
+		dbData[i].Data = int(float64Value)
 	}
 
 	return
