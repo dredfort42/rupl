@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	s "training/internal/structs"
 
@@ -41,7 +42,7 @@ func CreateSession(c *gin.Context) {
 
 	// os.WriteFile("/app/dump/"+fileName, session, 0644)
 
-	// fmt.Println(session)
+	fmt.Println(session)
 
 	// if session == nil {
 	// 	errorResponse.Error = "invalid_request"
