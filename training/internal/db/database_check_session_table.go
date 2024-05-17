@@ -126,8 +126,8 @@ func checkSessionTable() {
 
 			CREATE TABLE IF NOT EXISTS ` + db.tableSessions + ` (
 				session_uuid VARCHAR(255) NOT NULL,
-				session_start_time TIMESTAMP DEFAULT 0,
-				session_end_time TIMESTAMP DEFAULT 0,
+				session_start_time BIGINT DEFAULT 0,
+				session_end_time BIGINT DEFAULT 0,
 				email VARCHAR(255) NOT NULL,
 				route_data route_data[] DEFAULT '{}'::route_data[] NOT NULL,
 				step_count step_count[] DEFAULT '{}'::step_count[] NOT NULL,
