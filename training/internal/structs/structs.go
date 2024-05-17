@@ -74,72 +74,78 @@ type LastSessionRouteData struct {
 	SpeedAccuracy      float64 `json:"spd_acc"`
 }
 
-// StepCount is a struct for JSON
-type LastSessionStepCount struct {
-	Timestamp  int64 `json:"timestamp"`
-	StepsCount int   `json:"quantity"`
+// LastSessionTypeData is a struct for JSON
+type LastSessionTypeData struct {
+	Timestamp int64  `json:"timestamp"`
+	Quantity  string `json:"quantity"`
 }
 
-// RunningPower is a struct for JSON
-type LastSessionRunningPower struct {
-	Timestamp int64 `json:"timestamp"`
-	PowerW    int   `json:"quantity"`
-}
+// // StepCount is a struct for JSON
+// type LastSessionStepCount struct {
+// 	Timestamp  int64 `json:"timestamp"`
+// 	StepsCount int   `json:"quantity"`
+// }
 
-// VerticalOscillation is a struct for JSON
-type LastSessionVerticalOscillation struct {
-	Timestamp             int64   `json:"timestamp"`
-	VerticalOscillationCm float32 `json:"quantity"`
-}
+// // RunningPower is a struct for JSON
+// type LastSessionRunningPower struct {
+// 	Timestamp int64 `json:"timestamp"`
+// 	PowerW    int   `json:"quantity"`
+// }
 
-// EnergyBurned is a struct for JSON
-type LastSessionEnergyBurned struct {
-	Timestamp        int64   `json:"timestamp"`
-	EnergyBurnedKcal float32 `json:"quantity"`
-}
+// // VerticalOscillation is a struct for JSON
+// type LastSessionVerticalOscillation struct {
+// 	Timestamp             int64   `json:"timestamp"`
+// 	VerticalOscillationCm float32 `json:"quantity"`
+// }
 
-// HeartRate is a struct for JSON
-type LastSessionHeartRate struct {
-	Timestamp int64   `json:"timestamp"`
-	HeartRate float32 `json:"quantity"`
-}
+// // EnergyBurned is a struct for JSON
+// type LastSessionEnergyBurned struct {
+// 	Timestamp        int64   `json:"timestamp"`
+// 	EnergyBurnedKcal float32 `json:"quantity"`
+// }
 
-// StrideLength is a struct for JSON
-type LastSessionStrideLength struct {
-	Timestamp    int64   `json:"timestamp"`
-	StrideLenght float32 `json:"quantity"`
-}
+// // HeartRate is a struct for JSON
+// type LastSessionHeartRate struct {
+// 	Timestamp int64   `json:"timestamp"`
+// 	HeartRate float32 `json:"quantity"`
+// }
 
-// GroundContactTime is a struct for JSON
-type LastSessionGroundContactTime struct {
-	Timestamp          int64 `json:"timestamp"`
-	GroundContactTimeS int   `json:"quantity"`
-}
+// // StrideLength is a struct for JSON
+// type LastSessionStrideLength struct {
+// 	Timestamp    int64   `json:"timestamp"`
+// 	StrideLenght float32 `json:"quantity"`
+// }
 
-// Speed is a struct for JSON
-type LastSessionSpeed struct {
-	Timestamp int64   `json:"timestamp"`
-	Speed     float32 `json:"quantity"`
-}
+// // GroundContactTime is a struct for JSON
+// type LastSessionGroundContactTime struct {
+// 	Timestamp          int64 `json:"timestamp"`
+// 	GroundContactTimeS int   `json:"quantity"`
+// }
 
-// Distance is a struct for JSON
-type LastSessionDistance struct {
-	Timestamp int64   `json:"timestamp"`
-	Distance  float32 `json:"quantity"`
-}
+// // Speed is a struct for JSON
+// type LastSessionSpeed struct {
+// 	Timestamp int64   `json:"timestamp"`
+// 	Speed     float32 `json:"quantity"`
+// }
+
+// // Distance is a struct for JSON
+// type LastSessionDistance struct {
+// 	Timestamp int64   `json:"timestamp"`
+// 	Distance  float32 `json:"quantity"`
+// }
 
 // LastSessionData is a struct for JSON
 type LastSessionData struct {
-	Session             LastSession                      `json:"session"`
-	RouteData           []LastSessionRouteData           `json:"route_data"`
-	StepCount           []LastSessionStepCount           `json:"step_count"`
-	RunningPower        []LastSessionRunningPower        `json:"running_power"`
-	VerticalOscillation []LastSessionVerticalOscillation `json:"vertical_oscillation"`
-	EnergyBurned        []LastSessionEnergyBurned        `json:"energy_burned"`
-	HeartRate           []LastSessionHeartRate           `json:"heart_rate"`
-	StrideLength        []LastSessionStrideLength        `json:"stride_length"`
-	GroundContactTime   []LastSessionGroundContactTime   `json:"ground_contact_time"`
-	Speed               []LastSessionSpeed               `json:"speed"`
-	Distance            []LastSessionDistance            `json:"distance"`
-	VO2Max              float32                          `json:"vo2_max"`
+	Session             LastSession            `json:"session"`
+	RouteData           []LastSessionRouteData `json:"route_data"`
+	StepCount           []LastSessionTypeData  `json:"step_count"`
+	RunningPower        []LastSessionTypeData  `json:"running_power"`
+	VerticalOscillation []LastSessionTypeData  `json:"vertical_oscillation"`
+	EnergyBurned        []LastSessionTypeData  `json:"energy_burned"`
+	HeartRate           []LastSessionTypeData  `json:"heart_rate"`
+	StrideLength        []LastSessionTypeData  `json:"stride_length"`
+	GroundContactTime   []LastSessionTypeData  `json:"ground_contact_time"`
+	Speed               []LastSessionTypeData  `json:"speed"`
+	Distance            []LastSessionTypeData  `json:"distance"`
+	VO2Max              []LastSessionTypeData  `json:"vo2_max"`
 }
