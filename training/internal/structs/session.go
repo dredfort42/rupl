@@ -7,8 +7,8 @@ type LastSession struct {
 	EndTime   int64  `json:"session_end_time"`
 }
 
-// RouteData is a struct for JSON and database
-type RouteData struct {
+// JSONRouteData is a struct for JSON
+type JSONRouteData struct {
 	Timestamp          int64   `json:"timestamp"`
 	Latitude           float64 `json:"latitude"`
 	Longitude          float64 `json:"longitude"`
@@ -30,7 +30,7 @@ type JSONLastSessionTypeData struct {
 // JSONLastSessionData is a struct for JSON
 type JSONLastSessionData struct {
 	Session             LastSession               `json:"session"`
-	RouteData           []RouteData               `json:"route_data"`
+	RouteData           []JSONRouteData           `json:"route_data"`
 	StepCount           []JSONLastSessionTypeData `json:"step_count"`
 	RunningPower        []JSONLastSessionTypeData `json:"running_power"`
 	VerticalOscillation []JSONLastSessionTypeData `json:"vertical_oscillation"`
@@ -41,6 +41,20 @@ type JSONLastSessionData struct {
 	Speed               []JSONLastSessionTypeData `json:"speed"`
 	Distance            []JSONLastSessionTypeData `json:"distance"`
 	VO2Max              []JSONLastSessionTypeData `json:"vo2_max"`
+}
+
+// DBRouteData is a struct for the database
+type DBRouteData struct {
+	Timestamp          int64
+	Latitude           float64
+	Longitude          float64
+	HorizontalAccuracy float64
+	Altitude           float64
+	VerticalAccuracy   float64
+	Speed              float64
+	SpeedAccuracy      float64
+	Course             float64
+	CourseAccuracy     float64
 }
 
 // DBSessionDataInt is a struct for database
@@ -61,7 +75,7 @@ type DBSession struct {
 	SessionStartTime         int64
 	SessionEndTime           int64
 	Email                    string
-	RouteData                []RouteData
+	RouteData                []DBRouteData
 	StepCount                []DBSessionDataInt
 	RunningPower             []DBSessionDataInt
 	VerticalOscillation      []DBSessionDataFloat32

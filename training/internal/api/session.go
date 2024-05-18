@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 	"strings"
@@ -11,6 +12,24 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
+
+func parseRouteData(data []s.JSONRouteData) (dbData []s.DBRouteData) {
+	dbData = make([]s.DBRouteData, len(data))
+	for i, d := range data {
+		dbData[i].Timestamp = d.Timestamp
+		dbData[i].Latitude = d.Latitude
+		dbData[i].Longitude = d.Longitude
+		dbData[i].HorizontalAccuracy = d.HorizontalAccuracy
+		dbData[i].Altitude = d.Altitude
+		dbData[i].VerticalAccuracy = d.VerticalAccuracy
+		dbData[i].Speed = d.Speed
+		dbData[i].SpeedAccuracy = d.SpeedAccuracy
+		dbData[i].Course = d.Course
+		dbData[i].CourseAccuracy = d.CourseAccuracy
+	}
+
+	return
+}
 
 // parseSessionDataInt is a function to parse a session data for int
 func parseSessionDataInt(data []s.JSONLastSessionTypeData) (dbData []s.DBSessionDataInt, err error) {
@@ -95,7 +114,11 @@ func parseSession(jsonSession s.JSONLastSessionData) (dbSession s.DBSession, err
 		Email:            jsonSession.Session.Email,
 	}
 
-	dbSession.RouteData = append(dbSession.RouteData, jsonSession.RouteData...)
+	dbSession.RouteData = parseRouteData(jsonSession.RouteData)
+	if len(dbSession.RouteData) == 0 {
+		err = errors.New("no route data")
+		return
+	}
 
 	dbSession.StepCount, err = parseSessionDataInt(jsonSession.StepCount)
 	if err != nil {
