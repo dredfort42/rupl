@@ -7,18 +7,18 @@ type LastSession struct {
 	EndTime   int64  `json:"session_end_time"`
 }
 
-// JSONRouteData is a struct for JSON
-type JSONRouteData struct {
+// RouteData is a struct for JSON and database
+type RouteData struct {
 	Timestamp          int64   `json:"timestamp"`
 	Latitude           float64 `json:"latitude"`
 	Longitude          float64 `json:"longitude"`
-	HorizontalAccuracy float64 `json:"h_acc"`
+	HorizontalAccuracy float64 `json:"horizontal_accuracy"`
 	Altitude           float64 `json:"altitude"`
-	VerticalAccuracy   float64 `json:"v_acc"`
+	VerticalAccuracy   float64 `json:"vertical_accuracy"`
 	Speed              float64 `json:"speed"`
-	SpeedAccuracy      float64 `json:"spd_acc"`
+	SpeedAccuracy      float64 `json:"speed_accuracy"`
 	Course             float64 `json:"course"`
-	CourseAccuracy     float64 `json:"crs_acc"`
+	CourseAccuracy     float64 `json:"course_accuracy"`
 }
 
 // JSONLastSessionTypeData is a struct for JSON
@@ -30,7 +30,7 @@ type JSONLastSessionTypeData struct {
 // JSONLastSessionData is a struct for JSON
 type JSONLastSessionData struct {
 	Session             LastSession               `json:"session"`
-	RouteData           []JSONRouteData           `json:"route_data"`
+	RouteData           []RouteData               `json:"route_data"`
 	StepCount           []JSONLastSessionTypeData `json:"step_count"`
 	RunningPower        []JSONLastSessionTypeData `json:"running_power"`
 	VerticalOscillation []JSONLastSessionTypeData `json:"vertical_oscillation"`
@@ -41,20 +41,6 @@ type JSONLastSessionData struct {
 	Speed               []JSONLastSessionTypeData `json:"speed"`
 	Distance            []JSONLastSessionTypeData `json:"distance"`
 	VO2Max              []JSONLastSessionTypeData `json:"vo2_max"`
-}
-
-// DBRouteData is a struct for the database
-type DBRouteData struct {
-	Timestamp          int64
-	Latitude           float64
-	Longitude          float64
-	HorizontalAccuracy float64
-	Altitude           float64
-	VerticalAccuracy   float64
-	Speed              float64
-	SpeedAccuracy      float64
-	Course             float64
-	CourseAccuracy     float64
 }
 
 // DBSessionDataInt is a struct for database
@@ -75,7 +61,7 @@ type DBSession struct {
 	SessionStartTime         int64
 	SessionEndTime           int64
 	Email                    string
-	RouteData                []DBRouteData
+	RouteData                []RouteData
 	StepCount                []DBSessionDataInt
 	RunningPower             []DBSessionDataInt
 	VerticalOscillation      []DBSessionDataFloat32
