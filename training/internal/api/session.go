@@ -209,7 +209,8 @@ func CreateSession(c *gin.Context) {
 
 	if err = db.CreateSession(dbSession); err != nil {
 		errorResponse.Error = "server_error"
-		errorResponse.ErrorDescription = "Error creating session"
+		// errorResponse.ErrorDescription = "Error creating session"
+		errorResponse.ErrorDescription = err.Error()
 		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
 		return
 	}
