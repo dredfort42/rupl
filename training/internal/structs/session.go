@@ -57,28 +57,28 @@ type DBSessionDataFloat32 struct {
 
 // DBSession represents a session entry in the database
 type DBSession struct {
-	SessionUUID              string
-	SessionStartTime         int64
-	SessionEndTime           int64
-	Email                    string
-	RouteData                []RouteData
-	StepCount                []DBSessionDataInt
-	RunningPower             []DBSessionDataInt
-	VerticalOscillation      []DBSessionDataFloat32
-	EnergyBurned             []DBSessionDataFloat32
-	HeartRate                []DBSessionDataFloat32
-	StrideLength             []DBSessionDataFloat32
-	GroundContactTime        []DBSessionDataInt
-	Speed                    []DBSessionDataFloat32
-	Distance                 []DBSessionDataFloat32
-	VO2MaxMLPerMinPerKg      float32
-	AvrSpeedMPerS            float32
-	AvrHeartRateCountPerS    float32
-	AvrPowerW                float32
-	AvrVerticalOscillationCm float32
-	AvrGroundContactTimeMs   float32
-	AvrStrideLengthM         float32
-	TotalDistanceM           float32
-	TotalStepsCount          int
-	TotalEnergyBurnedKcal    int
+	SessionUUID              string                 `json:"session_uuid"`
+	SessionStartTime         int64                  `json:"session_start_time"`
+	SessionEndTime           int64                  `json:"session_end_time"`
+	Email                    string                 `json:"email"`
+	RouteData                []RouteData            `json:"route_data"`
+	StepCount                []DBSessionDataInt     `json:"step_count"`
+	RunningPower             []DBSessionDataInt     `json:"running_power"`
+	VerticalOscillation      []DBSessionDataFloat32 `json:"vertical_oscillation"`
+	EnergyBurned             []DBSessionDataFloat32 `json:"energy_burned"`
+	HeartRate                []DBSessionDataFloat32 `json:"heart_rate"`
+	StrideLength             []DBSessionDataFloat32 `json:"stride_length"`
+	GroundContactTime        []DBSessionDataInt     `json:"ground_contact_time"`
+	Speed                    []DBSessionDataFloat32 `json:"speed"`
+	Distance                 []DBSessionDataFloat32 `json:"distance"`
+	VO2MaxMLPerMinPerKg      float32                `json:"vo2max_mL_per_min_per_kg"`
+	AvrSpeedMPerS            float32                `json:"avr_speed_m_per_s"`
+	AvrHeartRateCountPerS    float32                `json:"avr_heart_rate_count_per_s"`
+	AvrPowerW                float32                `json:"avr_power_W"`
+	AvrVerticalOscillationCm float32                `json:"avr_vertical_oscillation_cm"`
+	AvrGroundContactTimeMs   float32                `json:"avr_ground_contact_time_ms"`
+	AvrStrideLengthM         float32                `json:"avr_stride_length_m"`
+	TotalDistanceM           float32                `json:"total_distance_m"`
+	TotalStepsCount          int                    `json:"total_steps_count"`
+	TotalEnergyBurnedKcal    int                    `json:"total_energy_burned_kcal"`
 }
