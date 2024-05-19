@@ -353,7 +353,7 @@ class AppSettings {
 		UserDefaults.standard.set("https://rupl.org/api/v1/profile", forKey: profileURLKey)
 		UserDefaults.standard.set("https://rupl.org/api/v1/profile/devices", forKey: deviceInfoURLKey)
 		UserDefaults.standard.set("https://rupl.org/api/v1/training/task", forKey: taskURLKey)
-		UserDefaults.standard.set("https://rupl.org/api/v1/training/session", forKey: sessionURLKey)
+		UserDefaults.standard.set("https://rupl.org/api/v1/session", forKey: sessionURLKey)
 
 		if paceForAutoPause == 0.0 || paceForAutoResume == 0.0 {
 			useAutoPause = true

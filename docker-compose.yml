@@ -64,6 +64,8 @@ services:
     # TMP port for testing
     ports:
       - 4242:4242
+    depends_on:
+      - db
     volumes:
       - ./global.cfg:/app/global.cfg
     environment:
@@ -81,25 +83,49 @@ services:
     # TMP port for testing
     ports:
       - 4848:4848
+    depends_on:
+      - auth
+    volumes:
+      - ./global.cfg:/app/global.cfg
+    environment:
+      - DEBUG=true
+  
+  ## Sessions receiver service
+  sessions_receiver:
+    image: dredfort/rupl-sessions_receiver:latest
+    hostname: sessions_receiver
+    container_name: sessions_receiver
+    restart: always
+    networks:
+      - rupl_net
+    # TMP port for testing
+    ports:
+      - 4444:4444
+    depends_on:
+      - auth
     volumes:
       - ./global.cfg:/app/global.cfg
     environment:
       - DEBUG=true
 
-  # ## Training plans and sessions service
-  # training:
-  #   # build: ./training
-  #   image: dredfort/rupl-training:latest
-  #   hostname: training
-  #   container_name: training
-  #   restart: always
-  #   networks:
-  #     - rupl_net
-  #   volumes:
-  #     - ./global.cfg:/app/global.cfg
-  #     - ./persistent_volumes/dump:/app/dump
-  #   environment:
-  #     - DEBUG=true
+  ## Training plans and sessions service
+  training:
+    # build: ./training
+    image: dredfort/rupl-training:latest
+    hostname: training
+    container_name: training
+    restart: always
+    networks:
+      - rupl_net
+    # TMP port for testing
+    ports:
+      - 4646:4646
+    depends_on:
+      - auth
+    volumes:
+      - ./global.cfg:/app/global.cfg
+    environment:
+      - DEBUG=true
 
   ## Web interface
   web:
@@ -116,6 +142,8 @@ services:
     depends_on:
       - auth
       - profile
+      - sessions_receiver
+      - training
     volumes:
       - ./global.cfg:/app/global.cfg
       - ./html:/html
