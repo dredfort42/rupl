@@ -83,22 +83,31 @@ class TaskManager: ObservableObject {
 					return
 				}
 
-				if httpResponse.statusCode != 200 {
-					completion(false)
-					return
-				}
+//				if httpResponse.statusCode != 200  {
+//					completion(false)
+//					return
+//				}
 
-				if let data = data {
-					do {
-						self.task = try JSONDecoder().decode(Task.self, from: data)
+				switch httpResponse.statusCode {
+					case 204:
 						completion(true)
+						return
+					case 200:
+						if let data = data {
+							do {
+								self.task = try JSONDecoder().decode(Task.self, from: data)
+								completion(true)
 #if DEBUG
-//						self.printTask(self.task!)
+								//						self.printTask(self.task!)
 #endif
-					} catch {
-						Logger.shared.log("Error parsing JSON: \(error)")
+							} catch {
+								Logger.shared.log("Error parsing JSON: \(error)")
+								completion(false)
+							}
+						}
+					default:
 						completion(false)
-					}
+						return
 				}
 			}
 			task.resume()

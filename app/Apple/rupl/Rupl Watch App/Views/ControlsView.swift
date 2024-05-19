@@ -72,7 +72,14 @@ struct ControlsView: View {
 	private func getTask() {
 		if TaskManager.shared.task == nil {
 			TaskManager.shared.getTask { result in
-				isNewTask = result
+//				isNewTask = result
+				if result {
+					taskRequestsTimer?.invalidate()
+				}
+
+				if TaskManager.shared.task != nil {
+					isNewTask = true
+				}
 			}
 		}
 	}
