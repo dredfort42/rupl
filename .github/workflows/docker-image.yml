@@ -40,6 +40,13 @@ jobs:
           docker build -t dredfort/rupl-profile:latest .
           docker push dredfort/rupl-profile:latest
 
+      - name: Build and push Docker image for sessions receiver
+        run: |
+          cd sessions_receiver
+          docker pull dredfort/sessions-receiver:latest || true
+          docker build -t dredfort/sessions-receiver:latest .
+          docker push dredfort/sessions-receiver:latest
+
       - name: Build and push Docker image for training
         run: |
           cd training
