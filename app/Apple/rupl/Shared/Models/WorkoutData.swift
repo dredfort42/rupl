@@ -106,13 +106,13 @@ class WorkoutData {
 					"timestamp": Int64(location.timestamp.timeIntervalSince1970),
 					"latitude": location.coordinate.latitude,
 					"longitude": location.coordinate.longitude,
-					"h_acc": location.horizontalAccuracy,
+					"horizontal_accuracy": location.horizontalAccuracy,
 					"altitude": location.altitude,
-					"v_acc": location.verticalAccuracy,
+					"vertical_accuracy": location.verticalAccuracy,
 					"course": location.course,
-					"crs_acc": location.courseAccuracy,
+					"course_accuracy": location.courseAccuracy,
 					"speed": location.speed,
-					"spd_acc": location.speedAccuracy
+					"speed_accuracy": location.speedAccuracy
 				]
 
 				routeData.append(locationData)
@@ -245,17 +245,6 @@ class WorkoutData {
 			return
 		}
 
-		//		print(String(data: jsonData, encoding: .utf8)!)
-
-//		guard let apiUrl = URL(string: "\(AppSettings.shared.deviceInfoURL)?client_id=\(AppSettings.shared.clientID)&access_token=\(AppSettings.shared.deviceAccessToken)") else {
-//			print("Invalid URL")
-//			return
-//		}
-//		var request = URLRequest(url: apiUrl)
-//		var parameters = [String: Any]()
-//		var jsonData = Data()
-		
-
 		guard let apiUrl = URL(string: "\(AppSettings.shared.sessionURL)?client_id=\(AppSettings.shared.clientID)&access_token=\(AppSettings.shared.deviceAccessToken)") else {
 			Logger.shared.log("Invalid URL")
 			completion(false)
@@ -266,7 +255,6 @@ class WorkoutData {
 		request.httpMethod = "POST"
 		request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 		request.httpBody = jsonData
-		//		request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 
 		let task = URLSession.shared.dataTask(with: request) { data, response, error in
 			if let error = error {
@@ -279,6 +267,20 @@ class WorkoutData {
 				completion(false)
 				return
 			}
+
+			// TMP
+			guard let data = data else {
+				print("No data received")
+				return
+			}
+
+			// Convert data to a string (for demonstration purposes)
+			if let responseString = String(data: data, encoding: .utf8) {
+				print("Response: \(responseString)")
+			} else {
+				print("Unable to convert data to string")
+			}
+			// ---
 
 			if httpResponse.statusCode != 200 {
 				completion(false)

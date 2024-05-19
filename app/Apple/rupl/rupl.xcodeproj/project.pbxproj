@@ -308,7 +308,6 @@
 			children = (
 				AF43BF3B2B4C9EE800E5A89C /* AppSettings.swift */,
 				AFA196062B5FAF62002EB704 /* CheckMetrics.swift */,
-				AFDF39702BE6BBE100F55D9C /* WorkoutData.swift */,
 				AFA196092B5FBD95002EB704 /* Converters.swift */,
 				AF1DB30F2BB5F61A0089B159 /* DeviceInfo.swift */,
 				AF720D422B504326008423D6 /* LocationManager.swift */,
@@ -320,6 +319,7 @@
 				AF53FF042B5AE4D5005DE76D /* SoundEffects.swift */,
 				AF0FA3D62B7B8B67005572CF /* TaskManager.swift */,
 				AF8312942B79415300F1C790 /* TimerManager.swift */,
+				AFDF39702BE6BBE100F55D9C /* WorkoutData.swift */,
 				AF5ACB172B47107F0010C316 /* WorkoutManager.swift */,
 			);
 			path = Models;
