@@ -54,7 +54,7 @@ extension WorkoutManager {
 	}
 
 	private func checkHeartRateZone() {
-		if TaskManager.shared.controlParaneters == .speed {
+		if TaskManager.shared.controlParaneters != .all || TaskManager.shared.controlParaneters != .heartRate {
 			return
 		}
 
@@ -93,7 +93,7 @@ extension WorkoutManager {
 			self.last10SpeedAverage = self.last10SpeedMeasurementsSum / Double(self.last10SpeedMeasurements.count)
 		}
 
-		if TaskManager.shared.controlParaneters == .heartRate {
+		if TaskManager.shared.controlParaneters != .all || TaskManager.shared.controlParaneters != .speed {
 			return
 		}
 

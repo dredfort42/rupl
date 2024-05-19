@@ -105,7 +105,7 @@ public struct SlideButton<Label: View>: View {
 #endif
 
 										await callback()
-										swipeState = .start
+										swipeState = .end
 									}
 
 								} else {

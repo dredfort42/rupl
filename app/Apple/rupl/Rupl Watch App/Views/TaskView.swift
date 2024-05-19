@@ -42,6 +42,8 @@ struct TaskView: View {
 		ScrollView {
 			ShowHeader()
 			Picker("Heart rate zone", selection: $runningTaskHeartRate) {
+				Text("Any").tag(TaskManager.HeartRateZones.any.rawValue)
+					.foregroundColor(.ruplGray)
 				Text("Easy").tag(TaskManager.HeartRateZones.pz1.rawValue)
 					.foregroundColor(.ruplBlue)
 				Text("Endurance").tag(TaskManager.HeartRateZones.pz2.rawValue)
@@ -52,8 +54,6 @@ struct TaskView: View {
 					.foregroundColor(.ruplYellow)
 				Text("Anaerobic").tag(TaskManager.HeartRateZones.pz5.rawValue)
 					.foregroundColor(.ruplRed)
-				Text("Any").tag(TaskManager.HeartRateZones.any.rawValue)
-					.foregroundColor(.ruplGray)
 			}
 			.frame(height: 80)
 			.pickerStyle(WheelPickerStyle())

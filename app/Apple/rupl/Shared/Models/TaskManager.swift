@@ -89,13 +89,6 @@ class TaskManager: ObservableObject {
 				}
 
 				if let data = data {
-//					if let jsonString = String(data: data, encoding: .utf8) {
-//						print("Raw JSON data:")
-//						print(jsonString)
-//					} else {
-//						print("Failed to convert JSON data to string")
-//					}
-
 					do {
 						self.task = try JSONDecoder().decode(Task.self, from: data)
 						completion(true)
@@ -142,15 +135,14 @@ class TaskManager: ObservableObject {
 				}
 				
 				self.task = nil
+				self.intervalHeartRateZone = (0, AppSettings.shared.criticalHeartRate) // bpm
+				self.intervalSpeedZone = (0, 11) // mps
+				self.controlParaneters = .heartRate
+
 				completion(true)
 			}
 			task.resume()
 		}
-
-		task = nil
-		intervalHeartRateZone = (0, AppSettings.shared.criticalHeartRate) // bpm
-		intervalSpeedZone = (0, 11) // mps
-		controlParaneters = .heartRate
 	}
 
 	// MARK: - Running session

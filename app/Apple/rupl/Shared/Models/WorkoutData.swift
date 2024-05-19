@@ -183,11 +183,11 @@ class WorkoutData {
 		}
 	}
 
-	private func dumpJson() {
+	private func dumpSessionDataJson() {
 		getWorkoutData()
 
 		while self.compleatedQuery < WorkoutManager.shared.typesToRead.count {
-			sleep(1)
+			sleep(3)
 		}
 
 		if workoutData.isEmpty {
@@ -205,15 +205,13 @@ class WorkoutData {
 			let fileURL = documentsDirectory.appendingPathComponent(fileName)
 
 			try jData.write(to: fileURL)
-
-			//						print(fileURL)
 		} catch {
 			Logger.shared.log("Error: \(error)")
 			return
 		}
 	}
 
-	private func forDispatch() -> [String] {
+	private func getSessionDataFromStorage() -> [String] {
 		var filesToSend: [String] = []
 
 		do {
@@ -268,20 +266,6 @@ class WorkoutData {
 				return
 			}
 
-			// TMP
-			guard let data = data else {
-				print("No data received")
-				return
-			}
-
-			// Convert data to a string (for demonstration purposes)
-			if let responseString = String(data: data, encoding: .utf8) {
-				print("Response: \(responseString)")
-			} else {
-				print("Unable to convert data to string")
-			}
-			// ---
-
 			if httpResponse.statusCode != 200 {
 				completion(false)
 				return
@@ -293,8 +277,8 @@ class WorkoutData {
 		task.resume()
 	}
 
-	func sendSessionData(completion: @escaping (Bool) -> Void) {
-		let sessions: [String] = forDispatch()
+	func sendSessionDataFromStorage(completion: @escaping (Bool) -> Void) {
+		let sessions: [String] = getSessionDataFromStorage()
 
 		if sessions.isEmpty {
 			completion(true)
@@ -338,8 +322,8 @@ class WorkoutData {
 
 		DispatchQueue.global().async {
 			while !success && retry > 0 {
-				self.sendSessionData { s in
-					success = s
+				self.sendSessionDataFromStorage { result in
+					success = result
 				}
 
 				if !success {
@@ -347,21 +331,10 @@ class WorkoutData {
 					retry -= 1
 					sleep(10)
 				} else if retryCount == 0 {
-					Logger.shared.log("Failed to send JSON data after retries.")
+					Logger.shared.log("Failed to send JSON data.")
 				}
 			}
 		}
-
-		// sendSessionData() { success in
-		// 	if !success && retryCount > 0 {
-		// 		Logger.shared.log("Retrying in 10 seconds...")
-		// 		DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
-		// 			self.sendSessionDataController(retryCount: retryCount - 1)
-		// 		}
-		// 	} else if !success {
-		// 		Logger.shared.log("Failed to send JSON data after retries.")
-		// 	}
-		// }
 	}
 
 	func postWorkout() {
@@ -369,8 +342,10 @@ class WorkoutData {
 		print("postWorkout()")
 #endif
 
-		dumpJson()
-		sendSessionDataController(retryCount: 60) // 10 minutes
+		if AppSettings.shared.connectedToRupl {
+			dumpSessionDataJson()
+			sendSessionDataController(retryCount: 60) // 10 minutes
+		}
 	}
 
 	static let shared = WorkoutData()
