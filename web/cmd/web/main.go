@@ -14,11 +14,11 @@ import (
 )
 
 var (
-	authURL             string
-	profileURL          string
-	session_receiverURL string
-	trainingURL         string
-	notFoundPath        string = "/html/404.html"
+	authURL              string
+	profileURL           string
+	sessions_receiverURL string
+	trainingURL          string
+	notFoundPath         string = "/html/404.html"
 )
 
 func notFound(w http.ResponseWriter, _ *http.Request) {
@@ -100,7 +100,7 @@ func proxyRequest(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	} else if strings.HasPrefix(r.URL.Path, "/api/v1/session") {
-		targetURL, err = url.Parse("http://" + session_receiverURL)
+		targetURL, err = url.Parse("http://" + sessions_receiverURL)
 		if err != nil {
 			loger.Error("Error parsing target URL:", err)
 			return
@@ -158,7 +158,7 @@ func main() {
 
 	authURL = fmt.Sprintf("%s:%s", cfg.Config["auth.host"], cfg.Config["auth.port"])
 	profileURL = fmt.Sprintf("%s:%s", cfg.Config["profile.host"], cfg.Config["profile.port"])
-	session_receiverURL = fmt.Sprintf("%s:%s", cfg.Config["session.receiver.host"], cfg.Config["session.receiver.port"])
+	sessions_receiverURL = fmt.Sprintf("%s:%s", cfg.Config["sessions.receiver.host"], cfg.Config["sessions.receiver.port"])
 	trainingURL = fmt.Sprintf("%s:%s", cfg.Config["training.host"], cfg.Config["training.port"])
 
 	http.HandleFunc("/", sendData)
