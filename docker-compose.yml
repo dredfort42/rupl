@@ -41,7 +41,7 @@ services:
     container_name: db
     restart: always
     networks:
-      - rupl_net
+      - rupl-net
     ports:
       - 8484:5432
     volumes:
@@ -60,7 +60,7 @@ services:
     container_name: auth
     restart: always
     networks:
-      - rupl_net
+      - rupl-net
     # TMP port for testing
     ports:
       - 4242:4242
@@ -79,7 +79,7 @@ services:
     container_name: profile
     restart: always
     networks:
-      - rupl_net
+      - rupl-net
     # TMP port for testing
     ports:
       - 4848:4848
@@ -91,13 +91,13 @@ services:
       - DEBUG=true
   
   ## Sessions receiver service
-  sessions_receiver:
-    image: dredfort/rupl-sessions_receiver:latest
-    hostname: sessions_receiver
-    container_name: sessions_receiver
+  sessions-receiver:
+    image: dredfort/rupl-sessions-receiver:latest
+    hostname: sessions-receiver
+    container_name: sessions-receiver
     restart: always
     networks:
-      - rupl_net
+      - rupl-net
     # TMP port for testing
     ports:
       - 4444:4444
@@ -116,7 +116,7 @@ services:
     container_name: training
     restart: always
     networks:
-      - rupl_net
+      - rupl-net
     # TMP port for testing
     ports:
       - 4646:4646
@@ -135,14 +135,14 @@ services:
     container_name: web
     restart: always
     networks:
-      - rupl_net
+      - rupl-net
     ports:
       - 443:443
       - 80:80
     depends_on:
       - auth
       - profile
-      - sessions_receiver
+      - sessions-receiver
       - training
     volumes:
       - ./global.cfg:/app/global.cfg
@@ -153,5 +153,5 @@ services:
       - DEBUG=true
 
 networks:
-  rupl_net:
+  rupl-net:
     driver: bridge
