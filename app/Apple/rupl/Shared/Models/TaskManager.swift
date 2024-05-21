@@ -83,32 +83,24 @@ class TaskManager: ObservableObject {
 					return
 				}
 
-//				if httpResponse.statusCode != 200  {
-//					completion(false)
-//					return
-//				}
-
-				switch httpResponse.statusCode {
-					case 204:
-						completion(true)
-						return
-					case 200:
-						if let data = data {
-							do {
-								self.task = try JSONDecoder().decode(Task.self, from: data)
-								completion(true)
-#if DEBUG
-								//						self.printTask(self.task!)
-#endif
-							} catch {
-								Logger.shared.log("Error parsing JSON: \(error)")
-								completion(false)
-							}
-						}
-					default:
-						completion(false)
-						return
+				if httpResponse.statusCode != 200  {
+					completion(false)
+					return
 				}
+
+				if let data = data {
+					do {
+						self.task = try JSONDecoder().decode(Task.self, from: data)
+						completion(true)
+#if DEBUG
+						//						self.printTask(self.task!)
+#endif
+					} catch {
+						Logger.shared.log("Error parsing JSON: \(error)")
+						completion(false)
+					}
+				}
+
 			}
 			task.resume()
 		}
@@ -120,7 +112,7 @@ class TaskManager: ObservableObject {
 			completion(true)
 			return
 		}
-		
+
 		DispatchQueue.global().async {
 			let apiUrl = URL(string: "\(AppSettings.shared.taskURL)?client_id=\(AppSettings.shared.clientID)&access_token=\(AppSettings.shared.deviceAccessToken)&task_id=\(self.task?.id ?? 0)")!
 			var request = URLRequest(url: apiUrl)
@@ -142,7 +134,7 @@ class TaskManager: ObservableObject {
 					completion(false)
 					return
 				}
-				
+
 				self.task = nil
 				self.intervalHeartRateZone = (0, AppSettings.shared.criticalHeartRate) // bpm
 				self.intervalSpeedZone = (0, 11) // mps
@@ -186,7 +178,7 @@ class TaskManager: ObservableObject {
 			intervalHeartRateZone = (interval?.pulse.max ?? 0, interval?.pulse.min ?? 0)
 			intervalSpeedZone = (Double(interval?.speed.max ?? 0), Double(interval?.speed.min ?? 0))
 #if DEBUG
-//			printInterval()
+			//			printInterval()
 #endif
 		}
 	}

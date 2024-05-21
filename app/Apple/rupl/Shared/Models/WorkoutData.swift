@@ -318,7 +318,7 @@ class WorkoutData {
 
 	func sendSessionDataController(retryCount: Int) {
 		var success = false
-		var retry = retryCount == 0 ? 1 : retryCount
+		var retry = retryCount <= 0 ? 1 : retryCount
 
 		DispatchQueue.global().async {
 			while !success && retry > 0 {
