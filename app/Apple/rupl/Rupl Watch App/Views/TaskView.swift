@@ -67,6 +67,7 @@ struct TaskView: View {
 		}
 		.onDisappear() {
 			TaskManager.shared.intervalHeartRateZone =  TaskManager.shared.getHeartRateInterval(pz: runningTaskHeartRate)
+			TaskManager.shared.controlParaneters = .heartRate
 		}
 	}
 

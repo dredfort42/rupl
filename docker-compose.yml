@@ -42,6 +42,7 @@ services:
     restart: always
     networks:
       - rupl-net
+    # TMP port for testing
     ports:
       - 8484:5432
     volumes:
@@ -62,14 +63,14 @@ services:
     networks:
       - rupl-net
     # TMP port for testing
-    ports:
-      - 4242:4242
+    # ports:
+    #   - 4242:4242
     depends_on:
       - db
     volumes:
       - ./global.cfg:/app/global.cfg
     environment:
-      - DEBUG=true
+      - DEBUG=1
 
   ## Profile management service
   profile:
@@ -81,14 +82,14 @@ services:
     networks:
       - rupl-net
     # TMP port for testing
-    ports:
-      - 4848:4848
+    # ports:
+    #   - 4848:4848
     depends_on:
       - auth
     volumes:
       - ./global.cfg:/app/global.cfg
     environment:
-      - DEBUG=true
+      - DEBUG=1
   
   ## Sessions receiver service
   sessions-receiver:
@@ -99,14 +100,14 @@ services:
     networks:
       - rupl-net
     # TMP port for testing
-    ports:
-      - 4444:4444
+    # ports:
+    #   - 4444:4444
     depends_on:
       - auth
     volumes:
       - ./global.cfg:/app/global.cfg
     environment:
-      - DEBUG=true
+      - DEBUG=1
 
   ## Training plans and sessions service
   training:
@@ -118,14 +119,14 @@ services:
     networks:
       - rupl-net
     # TMP port for testing
-    ports:
-      - 4646:4646
+    # ports:
+    #   - 4646:4646
     depends_on:
       - auth
     volumes:
       - ./global.cfg:/app/global.cfg
     environment:
-      - DEBUG=true
+      - DEBUG=1
 
   ## Web interface
   web:
@@ -150,7 +151,7 @@ services:
       - /etc/letsencrypt/live/rupl.org/fullchain.pem:/app/fullchain.pem
       - /etc/letsencrypt/live/rupl.org/privkey.pem:/app/privkey.pem
     environment:
-      - DEBUG=true
+      - DEBUG=1
 
 networks:
   rupl-net:

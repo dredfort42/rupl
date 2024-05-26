@@ -17,23 +17,23 @@ struct ControlsView: View {
 	@State private var isSettingsActive = false
 	@State private var isTaskActive = false
 	@State private var isNewTask: Bool = false
-	@State private var taskRequestsTimer: Timer?
+	@State private var active: Bool = true
 
 
-//case notStarted = 1
-//
-//case running = 2
-//
-//case ended = 3
-//
-//	@available(watchOS 3.0, *)
-//case paused = 4
-//
-//	@available(watchOS 5.0, *)
-//case prepared = 5
-//
-//	@available(watchOS 5.0, *)
-//case stopped = 6
+	//case notStarted = 1
+	//
+	//case running = 2
+	//
+	//case ended = 3
+	//
+	//	@available(watchOS 3.0, *)
+	//case paused = 4
+	//
+	//	@available(watchOS 5.0, *)
+	//case prepared = 5
+	//
+	//	@available(watchOS 5.0, *)
+	//case stopped = 6
 
 
 	var body: some View {
@@ -57,28 +57,30 @@ struct ControlsView: View {
 			TaskView()
 		}
 		.onAppear() {
-			getTask()
-			taskRequestsTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { _ in
-				getTask()
-			}
+			getTask(retryCount: 12)
 		}
 		.onDisappear() {
-			if AppSettings.shared.connectedToRupl {
-				taskRequestsTimer?.invalidate()
-			}
+			active = false
 		}
 	}
 
-	private func getTask() {
-		if TaskManager.shared.task == nil {
-			TaskManager.shared.getTask { result in
-//				isNewTask = result
-				if result {
-					taskRequestsTimer?.invalidate()
-				}
+	private func getTask(retryCount: Int) {
+		var retry = retryCount <= 0 ? 1 : retryCount
 
-				if TaskManager.shared.task != nil {
-					isNewTask = true
+		if TaskManager.shared.task == nil {
+			DispatchQueue.global().async {
+				while active && !isNewTask && retry > 0 {
+					TaskManager.shared.getTask { result in
+						isNewTask = result
+					}
+
+					if !isNewTask {
+						Logger.shared.log("Retry getting task in 15 seconds...")
+						retry -= 1
+						sleep(15)
+					} else if retryCount == 0 {
+						Logger.shared.log("Failed to get task.")
+					}
 				}
 			}
 		}
@@ -155,7 +157,6 @@ struct ControlsView: View {
 			// End
 			GetButtonView(size: 60, color: .ruplRed, image: "", title: "Stop") {
 				TaskManager.shared.task = nil
-
 				workoutManager.finishWorkout()
 			}
 		}
@@ -195,5 +196,4 @@ struct ControlsView: View {
 		.buttonStyle(.bordered)
 		.frame(width: size, height: size)
 	}
-
 }

@@ -87,9 +87,6 @@ class WorkoutManager: NSObject, ObservableObject {
 	private override init() {
 		super.init()
 
-		LocationManager.shared.start()
-		MotionManager.shared.start()
-
 		Task {
 			do {
 				try await healthStore.requestAuthorization(toShare: typesToShare, read: typesToRead)
@@ -143,7 +140,7 @@ extension WorkoutManager {
 #if os(watchOS)
 		builder = nil
 #endif
-		routeBuilder = nil
+		routeBuilder = HKWorkoutRouteBuilder(healthStore: healthStore, device: HKDevice.local())
 		workoutRoute = nil
 
 		//	Array for store last 10 speed measurements to colculate average speed

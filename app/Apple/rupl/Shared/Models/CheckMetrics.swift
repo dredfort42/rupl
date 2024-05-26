@@ -36,7 +36,8 @@ extension WorkoutManager {
 				self.summaryHeartRateCount += 1
 			}
 
-			if self.session?.state == .running && (-(self.session?.startDate ?? Date()).timeIntervalSinceNow > 300){
+			if self.session?.state == .running {
+//				if !self.checkCriticalHeartRate() && (-(self.session?.startDate ?? Date()).timeIntervalSinceNow > 300) {
 				if !self.checkCriticalHeartRate() {
 					self.checkHeartRateZone()
 				}
@@ -54,7 +55,10 @@ extension WorkoutManager {
 	}
 
 	private func checkHeartRateZone() {
-		if TaskManager.shared.controlParaneters != .all || TaskManager.shared.controlParaneters != .heartRate {
+//		print("checkHeartRateZone()")
+//		print(TaskManager.shared.intervalHeartRateZone.maxHeartRate, TaskManager.shared.intervalHeartRateZone.minHeartRate, heartRate)
+
+		if TaskManager.shared.controlParaneters != .all && TaskManager.shared.controlParaneters != .heartRate {
 			return
 		}
 
@@ -93,7 +97,7 @@ extension WorkoutManager {
 			self.last10SpeedAverage = self.last10SpeedMeasurementsSum / Double(self.last10SpeedMeasurements.count)
 		}
 
-		if TaskManager.shared.controlParaneters != .all || TaskManager.shared.controlParaneters != .speed {
+		if TaskManager.shared.controlParaneters != .all && TaskManager.shared.controlParaneters != .speed {
 			return
 		}
 
