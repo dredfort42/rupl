@@ -70,7 +70,7 @@ services:
     volumes:
       - ./global.cfg:/app/global.cfg
     environment:
-      - DEBUG=true
+      - DEBUG=1
 
   ## Profile management service
   profile:
@@ -89,7 +89,7 @@ services:
     volumes:
       - ./global.cfg:/app/global.cfg
     environment:
-      - DEBUG=true
+      - DEBUG=1
   
   ## Sessions receiver service
   sessions-receiver:
@@ -107,7 +107,7 @@ services:
     volumes:
       - ./global.cfg:/app/global.cfg
     environment:
-      - DEBUG=true
+      - DEBUG=1
 
   ## Training plans and sessions service
   training:
@@ -126,7 +126,7 @@ services:
     volumes:
       - ./global.cfg:/app/global.cfg
     environment:
-      - DEBUG=true
+      - DEBUG=1
 
   ## Web interface
   web:
@@ -151,7 +151,7 @@ services:
       - /etc/letsencrypt/live/rupl.org/fullchain.pem:/app/fullchain.pem
       - /etc/letsencrypt/live/rupl.org/privkey.pem:/app/privkey.pem
     environment:
-      - DEBUG=true
+      - DEBUG=1
 
 networks:
   rupl-net:

@@ -100,8 +100,6 @@ class WorkoutManager: NSObject, ObservableObject {
 				await consumeSessionStateChange(value)
 			}
 		}
-
-		resetWorkout()
 	}
 
 	private func consumeSessionStateChange(_ change: SessionSateChange) async {
@@ -142,7 +140,7 @@ extension WorkoutManager {
 #if os(watchOS)
 		builder = nil
 #endif
-		routeBuilder = nil
+		routeBuilder = HKWorkoutRouteBuilder(healthStore: healthStore, device: HKDevice.local())
 		workoutRoute = nil
 
 		//	Array for store last 10 speed measurements to colculate average speed

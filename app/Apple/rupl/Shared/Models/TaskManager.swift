@@ -54,7 +54,8 @@ class TaskManager: ObservableObject {
 	var intervalEndDistance: Double = 0
 	var intervalHeartRateZone: (maxHeartRate: Int, minHeartRate: Int) = (0, AppSettings.shared.criticalHeartRate) // bpm
 	var intervalSpeedZone: (maxSpeed: Double, minSpeed: Double) = (0, 11) // mps
-	var controlParaneters: ParametersToControl = .all
+//	var controlParaneters: ParametersToControl = .all
+	var controlParaneters: ParametersToControl = .heartRate
 
 	static let shared = TaskManager()
 
