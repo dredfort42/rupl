@@ -87,9 +87,6 @@ class WorkoutManager: NSObject, ObservableObject {
 	private override init() {
 		super.init()
 
-		LocationManager.shared.start()
-		MotionManager.shared.start()
-
 		Task {
 			do {
 				try await healthStore.requestAuthorization(toShare: typesToShare, read: typesToRead)
@@ -103,6 +100,8 @@ class WorkoutManager: NSObject, ObservableObject {
 				await consumeSessionStateChange(value)
 			}
 		}
+
+		resetWorkout()
 	}
 
 	private func consumeSessionStateChange(_ change: SessionSateChange) async {

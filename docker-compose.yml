@@ -42,6 +42,7 @@ services:
     restart: always
     networks:
       - rupl-net
+    # TMP port for testing
     ports:
       - 8484:5432
     volumes:
@@ -62,8 +63,8 @@ services:
     networks:
       - rupl-net
     # TMP port for testing
-    ports:
-      - 4242:4242
+    # ports:
+    #   - 4242:4242
     depends_on:
       - db
     volumes:
@@ -81,8 +82,8 @@ services:
     networks:
       - rupl-net
     # TMP port for testing
-    ports:
-      - 4848:4848
+    # ports:
+    #   - 4848:4848
     depends_on:
       - auth
     volumes:
@@ -99,8 +100,8 @@ services:
     networks:
       - rupl-net
     # TMP port for testing
-    ports:
-      - 4444:4444
+    # ports:
+    #   - 4444:4444
     depends_on:
       - auth
     volumes:
@@ -118,8 +119,8 @@ services:
     networks:
       - rupl-net
     # TMP port for testing
-    ports:
-      - 4646:4646
+    # ports:
+    #   - 4646:4646
     depends_on:
       - auth
     volumes:
