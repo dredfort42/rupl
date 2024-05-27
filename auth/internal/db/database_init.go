@@ -12,13 +12,12 @@ import (
 type Database struct {
 	database   *sql.DB
 	tableUsers string
-	err        error
 }
 
 var db Database
 
 // connectToDatabase connects to the database and returns a pointer to it
-func connectToDatabase() {
+func connectToDatabase() (err error) {
 	url := "host=" + cfg.Config["db.host"] +
 		" port=" + cfg.Config["db.port"] +
 		" user=" + cfg.Config["db.user"] +
@@ -26,23 +25,31 @@ func connectToDatabase() {
 		" dbname=" + cfg.Config["db.database.name"] +
 		" sslmode=" + cfg.Config["db.security.ssl"]
 
-	db.database, db.err = sql.Open("postgres", url)
+	db.database, err = sql.Open("postgres", url)
+	if err != nil {
+		db.database.Close()
+		return
+	}
 
-	if db.err != nil {
+	err = db.database.Ping()
+	if err != nil {
 		db.database.Close()
-		panic(db.err)
-	} else if db.err = db.database.Ping(); db.err != nil {
-		db.database.Close()
-		panic(db.err)
+		return
 	}
 
 	loger.Success("Successfully connected to database")
+
+	return
 }
 
 // DatabaseInit initializes the database
-func DatabaseInit() {
+func DatabaseInit() (err error) {
 	db.tableUsers = cfg.Config["db.table.users"]
 
-	connectToDatabase()
-	checkTables()
+	err = connectToDatabase()
+	if err == nil {
+		err = checkUsersTable()
+	}
+
+	return
 }

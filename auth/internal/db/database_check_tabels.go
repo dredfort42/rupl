@@ -1,71 +1,73 @@
 package db
 
 import (
-	"time"
-
 	loger "github.com/dredfort42/tools/logprinter"
 )
 
-// checkTableExists checks if the table exists
-func checkTableExists(tabelName string) bool {
-	tabelExists := false
-
-	err := db.database.QueryRow("SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = $1)", tabelName).Scan(&tabelExists)
-	if err != nil || !tabelExists {
+// isTableExists checks if the table exists
+func isTableExists(tabelName string) (isTableExists bool) {
+	err := db.database.QueryRow("SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = $1)", tabelName).Scan(&isTableExists)
+	if err != nil || !isTableExists {
 		loger.Warning("Table does not exist", tabelName)
-		return false
 	} else {
 		loger.Debug("Table found successfully", tabelName)
-		return true
 	}
+
+	return
 }
 
 // checkUsersTable checks if the users table exists, if not, it creates it
-func checkUsersTable() {
-	var tabalExists bool = checkTableExists(db.tableUsers)
-
-	for !tabalExists {
-
-		extensionExists := false
-
-		for !extensionExists {
-			query := "CREATE EXTENSION IF NOT EXISTS pgcrypto;"
-			if _, db.err = db.database.Exec(query); db.err != nil {
-				loger.Error("Failed to create extension", db.err)
-			} else {
-				extensionExists = true
-				loger.Debug("Extension successfully created", "pgcrypto")
-			}
-			time.Sleep(5 * time.Second)
-		}
-
-		query := `
-				CREATE TABLE IF NOT EXISTS ` + db.tableUsers + ` (
-					email VARCHAR(255) PRIMARY KEY,
-					password_hash VARCHAR(255) NOT NULL,
-					remember_me BOOLEAN DEFAULT FALSE,
-					email_verified BOOLEAN DEFAULT FALSE,
-					device_uuid UUID,
-					device_access_token VARCHAR(255),
-					access_token VARCHAR(255),
-					refresh_token VARCHAR(255),
-					created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-					updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-				);
-			`
-		if _, db.err = db.database.Exec(query); db.err != nil {
-			loger.Error("Failed to create table", db.err)
-			time.Sleep(5 * time.Second)
+func checkUsersTable() (err error) {
+	for {
+		_, err = db.database.Exec("CREATE EXTENSION IF NOT EXISTS pgcrypto;")
+		if err != nil {
+			return
 		} else {
-			tabalExists = true
-			loger.Success("Table successfully created", db.tableUsers)
+			loger.Success("Extension successfully created", "pgcrypto")
+			break
 		}
 	}
-}
 
-// checkTables checks if the tables exists, if not, it creates it
-func checkTables() {
-	checkUsersTable()
+	query := `
+		DO $$
+		BEGIN
+			IF NOT EXISTS (
+				SELECT 1 
+				FROM pg_type 
+				WHERE typname = 'devices'
+			) THEN 
+				CREATE TYPE devices AS (
+					device_uuid UUID,
+					device_access_token VARCHAR(255),
+				);
+			END IF;
+		END $$
+		CREATE TABLE IF NOT EXISTS ` + db.tableUsers + ` (
+			email VARCHAR(255) PRIMARY KEY,
+			password_hash VARCHAR(255) NOT NULL,
+			remember_me BOOLEAN DEFAULT FALSE,
+			email_verified BOOLEAN DEFAULT FALSE,
+			access_token VARCHAR(255),
+			refresh_token VARCHAR(255),
+			devices devices[] DEFAULT '{}'::stride_length[] NOT NULL,
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+		);
+	`
+
+	if !isTableExists(db.tableUsers) {
+		for {
+			_, err = db.database.Exec(query)
+			if err != nil {
+				return
+			} else {
+				loger.Success("Table successfully created", db.tableUsers)
+				break
+			}
+		}
+	}
+
+	return
 }
 
 // -- Insert user with hashed password

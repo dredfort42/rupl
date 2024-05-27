@@ -6,28 +6,27 @@ import (
 
 // AddNewUser adds a new user to the database
 func AddNewUser(email string, password string, accessToken string, refreshToken string) {
-	query := `INSERT INTO ` + db.tableUsers + ` (
-		email, 
-		password_hash, 
-		email_verified,
-		remember_me,
-		device_uuid,
-		device_access_token, 
-		access_token, 
-		refresh_token, 
-		created_at, 
-		updated_at
-	) VALUES (
-		$1,
-		crypt($2, gen_salt('bf')),
-		FALSE, 
-		FALSE,
-		NULL,
-		NULL,
-		$3,
-		$4,
-		CURRENT_TIMESTAMP,
-		CURRENT_TIMESTAMP
+	query := `
+		INSERT INTO ` + db.tableUsers + ` (
+			email, 
+			password_hash, 
+			email_verified,
+			remember_me,
+			access_token, 
+			refresh_token, 
+			devices,
+			created_at, 
+			updated_at
+		) VALUES (
+			$1,
+			crypt($2, gen_salt('bf')),
+			FALSE, 
+			FALSE,
+			$3,
+			$4,
+			NULL,
+			CURRENT_TIMESTAMP,
+			CURRENT_TIMESTAMP
 		)`
 
 	if _, db.err = db.database.Exec(query, email, password, accessToken, refreshToken); db.err != nil {
