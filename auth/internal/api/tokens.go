@@ -8,79 +8,76 @@ import (
 )
 
 // GenerateToken generates token
-func GenerateToken(userID string, minitesToExpire int) (string, error) {
+func GenerateToken(userID string, minitesToExpire int) (response string, err error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 	tokenClaims := token.Claims.(jwt.MapClaims)
 	tokenClaims["user_id"] = userID
 	tokenClaims["exp"] = time.Now().Add(time.Minute * time.Duration(minitesToExpire)).Unix()
-	response, err := token.SignedString([]byte("secret"))
-	if err != nil {
-		return "", err
-	}
 
-	return response, nil
+	return token.SignedString([]byte("secret"))
 }
 
 // GetAccessAndRefreshTokens gets access and refresh tokens
-func GetAccessAndRefreshTokens(email string, accessTokenMinitesToExpire int, refreshTokenMinitesToExpire int) (string, string, error) {
-	accessToken, err := GenerateToken(email, accessTokenMinitesToExpire)
+func GetAccessAndRefreshTokens(email string, accessTokenMinitesToExpire int, refreshTokenMinitesToExpire int) (accessToken string, refreshToken string, err error) {
+	accessToken, err = GenerateToken(email, accessTokenMinitesToExpire)
 	if err != nil {
 		return "", "", err
 	}
 
-	refreshToken, err := GenerateToken(email, refreshTokenMinitesToExpire)
+	refreshToken, err = GenerateToken(email, refreshTokenMinitesToExpire)
 	if err != nil {
 		return "", "", err
 	}
 
-	return accessToken, refreshToken, nil
+	return
 }
 
 // ParseToken parses token
-func ParseToken(tokenString string) (string, error) {
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+func ParseToken(tokenString string) (userID string, err error) {
+	var token *jwt.Token
+
+	token, err = jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return []byte("secret"), nil
 	})
 	if err != nil {
-		return "", err
+		return
 	}
 
-	claims := token.Claims.(jwt.MapClaims)
-	userID := claims["user_id"].(string)
+	userID = token.Claims.(jwt.MapClaims)["user_id"].(string)
 
-	return userID, nil
+	return
 }
 
 // TokenHasExpired checks if token has expired
-func TokenHasExpired(tokenString string) (bool, error) {
+func TokenHasExpired(tokenString string) (result bool, err error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return []byte("secret"), nil
 	})
 	if err != nil {
-		return false, err
+		return
 	}
 
-	claims := token.Claims.(jwt.MapClaims)
-	exp := claims["exp"].(float64)
-	if time.Now().Unix() > int64(exp) {
-		return true, nil
-	}
+	result = time.Now().Unix() > int64(token.Claims.(jwt.MapClaims)["exp"].(float64))
 
-	return false, nil
+	return
 }
 
 // RefreshTokens with new access and refresh tokens
-func RefreshTokens(refreshToken string, accessTokenMinitesToExpire int, refreshTokenMinitesToExpire int) (string, string, error) {
-	userID, err := ParseToken(refreshToken)
+func RefreshTokens(refreshToken string, accessTokenMinitesToExpire int, refreshTokenMinitesToExpire int) (newAccessToken string, newRefreshToken string, err error) {
+	var userID string
+
+	userID, err = ParseToken(refreshToken)
 	if err != nil {
-		return "", "", err
+		return
 	}
 
 	tokenHasExpired, err := TokenHasExpired(refreshToken)
 	if err != nil {
-		return "", "", err
+		return
 	} else if tokenHasExpired {
-		return "", "", errors.New("Refresh token has expired")
+		err = errors.New("refresh token has expired")
+
+		return
 	}
 
 	return GetAccessAndRefreshTokens(userID, accessTokenMinitesToExpire, refreshTokenMinitesToExpire)

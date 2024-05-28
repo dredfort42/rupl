@@ -13,12 +13,15 @@ func LogInUser(c *gin.Context) {
 	var errorResponse ResponseError
 	var accessToken string
 	var refreshToken string
+	var result bool
 	var err error
 
-	if err := c.BindJSON(&logIn); err != nil {
+	err = c.BindJSON(&logIn)
+	if err != nil {
 		errorResponse.Error = "invalid_request"
 		errorResponse.ErrorDescription = "Invalid json"
 		c.IndentedJSON(http.StatusBadRequest, errorResponse)
+
 		return
 	}
 
@@ -26,22 +29,25 @@ func LogInUser(c *gin.Context) {
 		errorResponse.Error = "invalid_request"
 		errorResponse.ErrorDescription = "Invalid email or password"
 		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
+
 		return
 	}
 
-	// Check if user exists
-	if !db.CheckUserExists(logIn.Email) {
+	result, err = db.IsUserExists(logIn.Email)
+	if !result {
 		errorResponse.Error = "invalid_request"
 		errorResponse.ErrorDescription = "User does not exist"
 		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
+
 		return
 	}
 
-	// Check if password is correct
-	if !db.CheckUserPassword(logIn.Email, logIn.Password) {
+	result, err = db.IsUserPasswordCorrect(logIn.Email, logIn.Password)
+	if !result {
 		errorResponse.Error = "invalid_request"
 		errorResponse.ErrorDescription = "Invalid email or password"
 		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
+
 		return
 	}
 
@@ -59,11 +65,27 @@ func LogInUser(c *gin.Context) {
 		errorResponse.Error = "token_error"
 		errorResponse.ErrorDescription = "Failed to generate tokens"
 		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
+
 		return
 	}
 
-	db.UpdateUserRememberMe(logIn.Email, logIn.Remember)
-	db.UpdateUserTokens(logIn.Email, accessToken, refreshToken)
+	err = db.UpdateUserRememberMe(logIn.Email, logIn.Remember)
+	if err != nil {
+		errorResponse.Error = "database_error"
+		errorResponse.ErrorDescription = "Failed to update remember_me status"
+		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
+
+		return
+	}
+
+	err = db.UpdateUserTokens(logIn.Email, accessToken, refreshToken)
+	if err != nil {
+		errorResponse.Error = "database_error"
+		errorResponse.ErrorDescription = "Failed to update tokens"
+		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
+
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "User logged in successfully"})
 }
