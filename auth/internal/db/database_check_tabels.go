@@ -34,14 +34,15 @@ func checkUsersTable() (err error) {
 			IF NOT EXISTS (
 				SELECT 1 
 				FROM pg_type 
-				WHERE typname = 'devices'
-			) THEN 
-				CREATE TYPE devices AS (
+				WHERE typname = 'user_devices'
+			) THEN
+				CREATE TYPE user_devices AS (
 					device_uuid UUID,
-					device_access_token VARCHAR(255),
+					device_access_token VARCHAR(255)
 				);
 			END IF;
-		END $$
+		END $$;
+
 		CREATE TABLE IF NOT EXISTS ` + db.tableUsers + ` (
 			email VARCHAR(255) PRIMARY KEY,
 			password_hash VARCHAR(255) NOT NULL,
@@ -49,7 +50,7 @@ func checkUsersTable() (err error) {
 			email_verified BOOLEAN DEFAULT FALSE,
 			access_token VARCHAR(255),
 			refresh_token VARCHAR(255),
-			devices devices[] DEFAULT '{}'::stride_length[] NOT NULL,
+			user_devices user_devices[] DEFAULT '{}'::user_devices[] NOT NULL,
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 		);

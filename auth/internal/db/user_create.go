@@ -10,7 +10,7 @@ func AddNewUser(email string, password string, accessToken string, refreshToken 
 			remember_me,
 			access_token, 
 			refresh_token, 
-			devices,
+			user_devices,
 			created_at, 
 			updated_at
 		) VALUES (
@@ -20,7 +20,7 @@ func AddNewUser(email string, password string, accessToken string, refreshToken 
 			FALSE,
 			$3,
 			$4,
-			NULL,
+			'{}'::user_devices[],
 			CURRENT_TIMESTAMP,
 			CURRENT_TIMESTAMP
 		)`
