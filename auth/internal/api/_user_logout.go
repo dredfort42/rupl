@@ -24,7 +24,7 @@ func LogOutUser(c *gin.Context) {
 		return
 	}
 
-	email, err = ParseToken(accessToken)
+	email, err = parseToken(accessToken)
 	if err != nil {
 		errorResponse.Error = "token_error"
 		errorResponse.ErrorDescription = "Failed to parse access token"

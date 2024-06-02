@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 
 	cfg "github.com/dredfort42/tools/configreader"
 	loger "github.com/dredfort42/tools/logprinter"
@@ -18,12 +19,13 @@ var db Database
 
 // connectToDatabase connects to the database and returns a pointer to it
 func connectToDatabase() (err error) {
-	url := "host=" + cfg.Config["db.host"] +
-		" port=" + cfg.Config["db.port"] +
-		" user=" + cfg.Config["db.user"] +
-		" password=" + cfg.Config["db.password"] +
-		" dbname=" + cfg.Config["db.database.name"] +
-		" sslmode=" + cfg.Config["db.security.ssl"]
+	var url string = fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+		cfg.Config["db.host"],
+		cfg.Config["db.port"],
+		cfg.Config["db.user"],
+		cfg.Config["db.password"],
+		cfg.Config["db.database.name"],
+		cfg.Config["db.security.ssl"])
 
 	db.database, err = sql.Open("postgres", url)
 	if err != nil {

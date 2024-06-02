@@ -1,28 +1,32 @@
 package db
 
-// AddNewUser adds a new user to the database
-func AddNewUser(email string, password string, accessToken string, refreshToken string) (err error) {
+// UserSignUp adds a new user to the database
+func UserSignUp(email string, password string, accessToken string, refreshToken string) (err error) {
 	query := `
 		INSERT INTO ` + db.tableUsers + ` (
-			email, 
-			password_hash, 
-			email_verified,
-			remember_me,
-			access_token, 
-			refresh_token, 
+			id,
+			email,
+			password_hash,
+			access_token,
+			refresh_token,
+			user_browsers,
 			user_devices,
-			created_at, 
+			email_created_at,
+			is_email_confirmed,
+			created_at,
 			updated_at
 		) VALUES (
+			DEFAULT,
 			$1,
 			crypt($2, gen_salt('bf')),
-			FALSE, 
-			FALSE,
 			$3,
 			$4,
-			'{}'::user_devices[],
+			DEFAULT,
+			DEFAULT,
 			CURRENT_TIMESTAMP,
-			CURRENT_TIMESTAMP
+			DEFAULT,
+			DEFAULT,
+			DEFAULT
 		)`
 
 	_, err = db.database.Exec(query, email, password, accessToken, refreshToken)

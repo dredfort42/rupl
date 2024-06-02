@@ -1,4 +1,4 @@
-package api
+package structs
 
 // DeviceAuthorizationResponse is a struct for JSON
 type DeviceAuthorizationResponse struct {

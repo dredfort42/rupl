@@ -1,11 +1,8 @@
 package db
 
-// Delete user's access and refresh tokens from the database
-func DeleteUserTokens(email string) (err error) {
-	query := `
-		UPDATE ` + db.tableUsers + ` 
-		SET access_token = NULL, refresh_token = NULL 
-		WHERE email = $1`
+// DeleteUser deletes user from the database
+func DeleteUser(email string) (err error) {
+	query := `DELETE FROM ` + db.tableUsers + ` WHERE email = $1`
 
 	_, err = db.database.Exec(query, email)
 

@@ -1,105 +1,97 @@
 package db
 
 // IsUserExists checks if a user exists in the database
-func IsUserExists(email string) (result bool, err error) {
+func IsUserExists(email string) (result bool) {
 	query := `
-		SELECT email 
+		SELECT 1 
 		FROM ` + db.tableUsers + ` 
 		WHERE email = $1
 	`
 
-	err = db.database.QueryRow(query, email).Scan(&email)
-	if err == nil {
-		result = true
-	}
-
+	db.database.QueryRow(query, email).Scan(&result)
 	return
 }
 
-// IsUserPasswordCorrect checks if a user's password is correct
-func IsUserPasswordCorrect(email string, password string) (result bool, err error) {
+// IsPasswordCorrect checks if a user's password is correct
+func IsPasswordCorrect(email string, password string) (result bool) {
 	query := `
-		SELECT email 
-		FROM ` + db.tableUsers + ` 
-		WHERE email = $1 
+		SELECT 1
+		FROM ` + db.tableUsers + `
+		WHERE email = $1
 		AND password_hash = crypt($2, password_hash)
 	`
 
-	err = db.database.QueryRow(query, email, password).Scan(&email)
-	if err == nil {
-		result = true
-	}
-
+	db.database.QueryRow(query, email, password).Scan(&result)
 	return
 }
 
-// IsUserRememberMeSet checks if a user's remember_me status is true
-func IsUserRememberMeSet(email string) (result bool, err error) {
-	query := `
-		SELECT email 
-		FROM ` + db.tableUsers + ` 
-		WHERE email = $1 
-		AND remember_me = TRUE
-	`
+// // IsUserRememberMeSet checks if a user's remember_me status is true
+// func IsUserRememberMeSet(email string) (result bool, err error) {
+// 	query := `
+// 		SELECT email
+// 		FROM ` + db.tableUsers + `
+// 		WHERE email = $1
+// 		AND remember_me = TRUE
+// 	`
 
-	err = db.database.QueryRow(query, email).Scan(&email)
-	if err == nil {
-		result = true
-	}
+// 	err = db.database.QueryRow(query, email).Scan(&email)
+// 	if err == nil {
+// 		result = true
+// 	}
 
-	return
-}
+// 	return
+// }
 
-// IsUserEmailVerified checks if a user's email_verified status is true
-func IsUserEmailVerified(email string) (result bool, err error) {
-	query := `
-		SELECT email 
-		FROM ` + db.tableUsers + ` 
-		WHERE email = $1 
-		AND email_verified = TRUE
-	`
+// // IsUserEmailVerified checks if a user's email_verified status is true
+// func IsUserEmailVerified(email string) (result bool, err error) {
+// 	query := `
+// 		SELECT email
+// 		FROM ` + db.tableUsers + `
+// 		WHERE email = $1
+// 		AND email_verified = TRUE
+// 	`
 
-	err = db.database.QueryRow(query, email).Scan(&email)
-	if err == nil {
-		result = true
-	}
+// 	err = db.database.QueryRow(query, email).Scan(&email)
+// 	if err == nil {
+// 		result = true
+// 	}
 
-	return
-}
+// 	return
+// }
 
-// IsUserAccessTokenExists checks if a user's access token exists in the database
-func IsUserAccessTokenExists(email string, accessToken string) (result bool, err error) {
-	query := `
-		SELECT email 
-		FROM ` + db.tableUsers + ` 
-		WHERE email = $1 
-		AND access_token = $2
-	`
+// // IsUserAccessTokenExists checks if a user's access token exists in the database
+// func IsUserAccessTokenExists(email string, accessToken string) (result bool, err error) {
+// 	query := `
+// 		SELECT email
+// 		FROM ` + db.tableUsers + `
+// 		WHERE email = $1
+// 		AND access_token = $2
+// 	`
 
-	err = db.database.QueryRow(query, email, accessToken).Scan(&email)
-	if err == nil {
-		result = true
-	}
+// 	err = db.database.QueryRow(query, email, accessToken).Scan(&email)
+// 	if err == nil {
+// 		result = true
+// 	}
 
-	return
-}
+// 	return
+// }
 
-// IsUserRefreshTokenExists checks if a user's refresh token exists in the database
-func IsUserRefreshTokenExists(email string, refreshToken string) (result bool, err error) {
-	query := `
-		SELECT email 
-		FROM ` + db.tableUsers + ` 
-		WHERE email = $1 
-		AND refresh_token = $2
-	`
+// // IsUserRefreshTokenExists checks if a user's refresh token exists in the database
+// func IsUserRefreshTokenExists(email string, refreshToken string) (result bool, err error) {
+// 	query := `
+// 		SELECT email
+// 		FROM ` + db.tableUsers + `
+// 		WHERE email = $1
+// 		AND refresh_token = $2
+// 	`
 
-	err = db.database.QueryRow(query, email, refreshToken).Scan(&email)
-	if err == nil {
-		result = true
-	}
+// 	err = db.database.QueryRow(query, email, refreshToken).Scan(&email)
+// 	if err == nil {
+// 		result = true
+// 	}
 
-	return
-}
+// 	return
+// }
 
 // ====================================================================================================
 // // CheckDeviceAccessToken checks if a device's access token is correct

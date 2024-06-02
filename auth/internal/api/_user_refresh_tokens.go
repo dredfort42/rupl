@@ -25,7 +25,7 @@ func RefreshUserTokens(c *gin.Context) {
 		return
 	}
 
-	email, err = ParseToken(refreshToken)
+	email, err = parseToken(refreshToken)
 	if err != nil {
 		errorResponse.Error = "token_error"
 		errorResponse.ErrorDescription = "Failed to parse refresh token"
@@ -34,7 +34,7 @@ func RefreshUserTokens(c *gin.Context) {
 		return
 	}
 
-	result, err = TokenHasExpired(refreshToken)
+	result, err = isTokenExpired(refreshToken)
 	if err != nil {
 		errorResponse.Error = "token_error"
 		errorResponse.ErrorDescription = "Failed to check refresh token"

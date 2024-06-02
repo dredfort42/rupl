@@ -18,19 +18,28 @@ func isTableExists(tabelName string) (isTableExists bool) {
 
 // checkUsersTable checks if the users table exists, if not, it creates it
 func checkUsersTable() (err error) {
-	for {
-		_, err = db.database.Exec("CREATE EXTENSION IF NOT EXISTS pgcrypto;")
-		if err != nil {
-			return
-		} else {
-			loger.Success("Extension successfully created", "pgcrypto")
-			break
-		}
+	if isTableExists(db.tableUsers) {
+		return
+	}
+
+	_, err = db.database.Exec("CREATE EXTENSION IF NOT EXISTS pgcrypto;")
+	if err != nil {
+		return
 	}
 
 	query := `
 		DO $$
 		BEGIN
+			IF NOT EXISTS (
+				SELECT 1 
+				FROM pg_type 
+				WHERE typname = 'user_browsers'
+			) THEN
+				CREATE TYPE user_browsers AS (
+					remembered_access_token VARCHAR(255),
+					remembered_refresh_token VARCHAR(255)
+				);
+			END IF;
 			IF NOT EXISTS (
 				SELECT 1 
 				FROM pg_type 
@@ -44,38 +53,26 @@ func checkUsersTable() (err error) {
 		END $$;
 
 		CREATE TABLE IF NOT EXISTS ` + db.tableUsers + ` (
-			email VARCHAR(255) PRIMARY KEY,
+			id SERIAL PRIMARY KEY,
+			email VARCHAR(255) UNIQUE NOT NULL,
 			password_hash VARCHAR(255) NOT NULL,
-			remember_me BOOLEAN DEFAULT FALSE,
-			email_verified BOOLEAN DEFAULT FALSE,
 			access_token VARCHAR(255),
 			refresh_token VARCHAR(255),
+			user_browsers user_browsers[] DEFAULT '{}'::user_browsers[] NOT NULL,
 			user_devices user_devices[] DEFAULT '{}'::user_devices[] NOT NULL,
+			email_created_at TIMESTAMP DEFAULT NULL,
+			is_email_confirmed BOOLEAN DEFAULT FALSE,
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 		);
 	`
 
-	if !isTableExists(db.tableUsers) {
-		for {
-			_, err = db.database.Exec(query)
-			if err != nil {
-				return
-			} else {
-				loger.Success("Table successfully created", db.tableUsers)
-				break
-			}
-		}
+	_, err = db.database.Exec(query)
+	if err != nil {
+		return
+	} else {
+		loger.Success("Table successfully created", db.tableUsers)
 	}
 
 	return
 }
-
-// -- Insert user with hashed password
-// INSERT INTO user_credentials (username, password_hash, device_uuid)
-// VALUES ('example_user', crypt('user_password', gen_salt('bf')), 'device_uuid');
-
-// -- Select user with hashed password
-// SELECT * FROM user_credentials
-// WHERE username = 'example_user'
-// AND password_hash = crypt('user_input_password', password_hash);

@@ -24,27 +24,27 @@ func VerifyUser(c *gin.Context) {
 		return
 	}
 
-	email, err = ParseToken(accessToken)
-	if err != nil {
-		errorResponse.Error = "token_error"
-		errorResponse.ErrorDescription = "Failed to parse access token"
-		c.IndentedJSON(http.StatusUnauthorized, errorResponse)
+	// email, err = parseToken(accessToken)
+	// if err != nil {
+	// 	errorResponse.Error = "token_error"
+	// 	errorResponse.ErrorDescription = "Failed to parse access token"
+	// 	c.IndentedJSON(http.StatusUnauthorized, errorResponse)
 
-		return
-	}
+	// 	return
+	// }
 
-	result, err = TokenHasExpired(accessToken)
-	if err != nil {
-		errorResponse.Error = "token_error"
-		errorResponse.ErrorDescription = "Failed to check access token"
-		c.IndentedJSON(http.StatusUnauthorized, errorResponse)
-		return
-	} else if result {
-		errorResponse.Error = "token_error"
-		errorResponse.ErrorDescription = "Access token has expired"
-		c.IndentedJSON(http.StatusUnauthorized, errorResponse)
-		return
-	}
+	// result, err = isTokenExpired(accessToken)
+	// if err != nil {
+	// 	errorResponse.Error = "token_error"
+	// 	errorResponse.ErrorDescription = "Failed to check access token"
+	// 	c.IndentedJSON(http.StatusUnauthorized, errorResponse)
+	// 	return
+	// } else if result {
+	// 	errorResponse.Error = "token_error"
+	// 	errorResponse.ErrorDescription = "Access token has expired"
+	// 	c.IndentedJSON(http.StatusUnauthorized, errorResponse)
+	// 	return
+	// }
 
 	result, err = db.IsUserAccessTokenExists(email, accessToken)
 	if !result {

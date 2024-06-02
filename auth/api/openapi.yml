@@ -1,0 +1,582 @@
+openapi: 3.0.0
+
+info:
+  version: 1.0.0
+  title: Authorization service API
+  termsOfService: "https://rupl.org/terms/"
+  contact:
+    name: Rupl
+    email: i@rupl.org
+    url: "https://rupl.org/contact"
+  license:
+    name: GNU General Public License v3.0
+    url: "https://www.gnu.org/licenses/gpl-3.0.html"
+  x-logo:
+    url: "https://rupl.org/images/rupl-logo.png"
+  description: |
+    This is a description of the rupl.org authorization service API and its operations.
+
+tags:
+  - name: User
+    description: >-
+      The OAuth 2.0 user authorization for browser-based web applications and other clients that can interact with a user-agent.
+  - name: Device
+    description: >-
+      The OAuth 2.0 device authorization for browserless and input-constrained devices like watches and fitness trackers.
+
+servers:
+  - url: "https://rupl.org"
+    description: "Production server"
+  - url: "http://dredfort.ddns.net:8484"
+    description: "Development server"
+  - url: "https://staging.rupl.org"
+    description: "Staging server"
+
+paths:
+  /api/v1/auth/signup:
+    post:
+      security:
+        - basic_auth: []
+      tags:
+        - User
+      summary: Register a new user
+      description: |
+        Register a new user with the rupl.org authorization service.
+      operationId: register_user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "200":
+          description: OK
+          headers:
+            Content-Type:
+              description: |
+                The authorization server MUST include the "Content-Type: application/json" HTTP response header field.
+              schema:
+                type: string
+                example: application/json
+            Cache-Control:
+              description: |
+                The authorization server MUST include the "Cache-Control: no-store" HTTP response header field.
+              schema:
+                type: string
+                example: no-store
+          content:
+            application/json:
+              example:
+                message: "user successfully registered"
+        "400":
+          description: Bad Request
+          headers:
+            Content-Type:
+              description: |
+                The authorization server MUST include the "Content-Type: application/json" HTTP response header field.
+              schema:
+                type: string
+                example: application/json
+            Cache-Control:
+              description: |
+                The authorization server MUST include the "Cache-Control: no-store" HTTP response header field.
+              schema:
+                type: string
+                example: no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                invalidJson:
+                  summary: Invalid JSON
+                  value:
+                    error: "invalid_json"
+                    error_description: "invalid JSON in the request body"
+                missingEmail:
+                  summary: Missing email
+                  value:
+                    error: "invalid_parameter"
+                    error_description: "email address is required"
+                missingPassword:
+                  summary: Missing password
+                  value:
+                    error: "invalid_parameter"
+                    error_description: "password is required"
+                passwordTooShort:
+                  summary: Password too short
+                  value:
+                    error: "invalid_parameter"
+                    error_description: "password must be at least 8 characters long"
+                userExists:
+                  summary: User exists
+                  value:
+                    error: "user_exists"
+                    error_description: "user with this email already exists"
+        "500":
+          description: Internal Server Error
+          headers:
+            Content-Type:
+              description: |
+                The authorization server MUST include the "Content-Type: application/json" HTTP response header field.
+              schema:
+                type: string
+                example: application/json
+            Cache-Control:
+              description: |
+                The authorization server MUST include the "Cache-Control: no-store" HTTP response header field.
+              schema:
+                type: string
+                example: no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                tokenError:
+                  summary: Token error
+                  value:
+                    error: "token_error"
+                    error_description: "failed to generate tokens"
+                serverError:
+                  summary: Database error
+                  value:
+                    error: "database_error"
+                    error_description: "error creating user in the database"
+  /api/v1/auth/delete:
+    delete:
+      security:
+        - OAuth2AccessToken: [write, admin]
+      tags:
+        - User
+      summary: Delete a user
+      description: |
+        Delete a user from the rupl.org authorization service.
+      operationId: delete_user
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              example:
+                message: "user successfully deleted"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingAccessToken:
+                  summary: Missing access token
+                  value:
+                    error: "token_error"
+                    error_description: "missing access token"
+                failedToParseToken:
+                  summary: Failed to parse token
+                  value:
+                    error: "token_error"
+                    error_description: "failed to parse token"
+                tokenExpired:
+                  summary: Token expired
+                  value:
+                    error: "token_error"
+                    error_description: "token has expired"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                databaseError:
+                  summary: Database error
+                  value:
+                    error: "database_error"
+                    error_description: "failed to delete user"
+  /api/v1/auth/login:
+    post:
+      security:
+        - basic_auth: []
+      tags:
+        - User
+      summary: Login a user
+      description: |
+        Login a user with the rupl.org authorization service.
+      operationId: login_user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserLogin"
+      responses:
+        "200":
+          description: OK
+          headers:
+            Content-Type:
+              description: |
+                The authorization server MUST include the "Content-Type: application/json" HTTP response header field.
+              schema:
+                type: string
+                example: application/json
+            Cache-Control:
+              description: |
+                The authorization server MUST include the "Cache-Control: no-store" HTTP response header field.
+              schema:
+                type: string
+                example: no-store
+          content:
+            application/json:
+              example:
+                message: "user successfully logged in"
+        "400":
+          description: Bad Request
+          headers:
+            Content-Type:
+              description: |
+                The authorization server MUST include the "Content-Type: application/json" HTTP response header field.
+              schema:
+                type: string
+                example: application/json
+            Cache-Control:
+              description: |
+                The authorization server MUST include the "Cache-Control: no-store" HTTP response header field.
+              schema:
+                type: string
+                example: no-store
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                invalidJson:
+                  summary: Invalid JSON
+                  value:
+                    error: "invalid_json"
+                    error_description: "invalid JSON in the request body"
+                incalidCredentials:
+                  summary: Invalid credentials
+                  value:
+                    error: "invalid_parameter"
+                    error_description: "invalid email or password"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                tokenError:
+                  summary: Token error
+                  value:
+                    error: "token_error"
+                    error_description: "failed to generate tokens"
+                databaseError:
+                  summary: Database error
+                  value:
+                    error: "database_error"
+                    error_description: "failed to update user tokens in the database"
+
+components:
+  securitySchemes:
+  basic_auth:
+    type: http
+    scheme: basic
+  OAuth2AccessToken:
+    type: oauth2
+    flows:
+      password:
+        # tokenUrl: https://api.example.com/oauth/token
+        # refreshUrl: https://api.example.com/oauth/refresh
+        scopes:
+          read: Grants read access
+          write: Grants write access
+          admin: Grants access to admin operations
+  schemas:
+    Error:
+      description: |
+        Error response
+      type: object
+      properties:
+        error:
+          type: string
+          example: "invalid_request"
+        error_description:
+          type: string
+          example: "user with this email already exists"
+    Email:
+      description: |
+        User email address
+      type: string
+      format: email
+      example: john.smith@example.com
+    Password:
+      description: |
+        User password
+      type: string
+      format: password
+      example: P@ssw0rd
+    User:
+      description: |
+        User data
+      type: object
+      properties:
+        email:
+          $ref: "#/components/schemas/Email"
+        password:
+          $ref: "#/components/schemas/Password"
+    UserLogin:
+      description: |
+        User login data
+      type: object
+      properties:
+        email:
+          $ref: "#/components/schemas/Email"
+        password:
+          $ref: "#/components/schemas/Password"
+        remember:
+          type: boolean
+          example: true
+# tags:
+#   - name: Device
+#     description: >-
+#       The OAuth 2.0 device authorization for browserless and input-constrained devices like watches and fitness trackers.
+# servers:
+#   - url: "https://rupl.org/api/v1"
+#     description: "Production server"
+#   - url: "https://dev.rupl.org/api/v1"
+#     description: "Development server"
+#   - url: "https://staging.rupl.org/api/v1"
+#     description: "Staging server"
+# paths:
+#   /auth/register:
+#     post:
+#       security:
+#         - basic_auth: []
+#       tags:
+#         - User
+#       summary: Register a new user
+#       description: |
+#         Register a new user with the rupl.org authorization service.
+#       operationId: register_user
+#       requestBody:
+#         content:
+#           application/json:
+#             schema:
+#               $ref: "#/components/schemas/NewUser"
+#       responses:
+#         "200":
+#           description: OK
+#           headers:
+#             Content-Type:
+#               description: |
+#                 The authorization server MUST include the "Content-Type: application/json" HTTP response header field.
+#               schema:
+#                 type: string
+#                 example: application/json
+#             Cache-Control:
+#               description: |
+#                 The authorization server MUST include the "Cache-Control: no-store" HTTP response header field.
+#               schema:
+#                 type: string
+#                 example: no-store
+#           content:
+#             application/json:
+#               example:
+#                 message: "User successfully registered"
+#         "400":
+#           description: Bad Request
+#           headers:
+#             Content-Type:
+#               description: |
+#                 The authorization server MUST include the "Content-Type: application/json" HTTP response header field.
+#               schema:
+#                 type: string
+#                 example: application/json
+#             Cache-Control:
+#               description: |
+#                 The authorization server MUST include the "Cache-Control: no-store" HTTP response header field.
+#               schema:
+#                 type: string
+#                 example: no-store
+#           content:
+#             application/json:
+#               example:
+#                 error: "User already exists"
+
+#   /auth/device_authorization:
+#     post:
+#       security:
+#         - basic_auth: []
+#       tags:
+#         - Device
+#       summary: Device Authorization Request
+#       description: |
+#         The client initiates the authorization flow by requesting a set of
+#         verification codes from the authorization server by making an HTTP "POST"
+#         request to the device authorization endpoint.
+#       operationId: device_authorization
+#       parameters:
+#         - name: client_id
+#           in: query
+#           description: The client identifier
+#           required: true
+#           schema:
+#             type: string
+#             example: C8FF9127-5C0C-43D2-A08B-382E4D64AF20
+#       responses:
+#         "200":
+#           description: OK
+#           headers:
+#             Content-Type:
+#               description: |
+#                 The authorization server MUST include the "Content-Type: application/json" HTTP response header field.
+#               schema:
+#                 type: string
+#                 example: application/json
+#             Cache-Control:
+#               description: |
+#                 The authorization server MUST include the "Cache-Control: no-store" HTTP response header field.
+#               schema:
+#                 type: string
+#                 example: no-store
+#           content:
+#             application/json:
+#               schema:
+#                 $ref: "#/components/schemas/DeviceAuthorizationResponse"
+#         "400":
+#           description: Bad Request
+#           headers:
+#             Content-Type:
+#               description: |
+#                 The authorization server MUST include the "Content-Type: application/json" HTTP response header field.
+#               schema:
+#                 type: string
+#                 example: application/json
+#             Cache-Control:
+#               description: |
+#                 The authorization server MUST include the "Cache-Control: no-store" HTTP response header field.
+#               schema:
+#                 type: string
+#                 example: no-store
+#           content:
+#             application/json:
+#               schema:
+#                 $ref: "#/components/schemas/DeviceAuthorizationErrorResponse"
+
+# components:
+#   securitySchemes:
+#     basic_auth:
+#       type: http
+#       scheme: basic
+#   schemas:
+#     Email:
+#       description: |
+#         User email address
+#       type: string
+#       format: email
+#       example: john.smith@example.com
+
+#     NewUser:
+#       description: |
+#         New user registration
+#       type: object
+#       properties:
+#         email:
+#           $ref: "#/components/schemas/Email"
+#         password:
+#           type: string
+#           format: password
+#           example: P@ssw0rd
+
+#     # DeviceAuthorizationRequest:
+#     #   type: object
+#     #   title: Device Authorization Request
+#     #   description: |
+#     #     The client initiates the authorization flow by requesting a set of
+#     #     verification codes from the authorization server by making an HTTP "POST"
+#     #     request to the device authorization endpoint.
+#     #   properties:
+#     #     client_id:
+#     #       description: |
+#     #         REQUIRED. The client identifier.
+#     #       type: string
+#     #       example: C8FF9127-5C0C-43D2-A08B-382E4D64AF20
+
+#     DeviceAuthorizationResponse:
+#       type: object
+#       title: Device Authorization Response
+#       description: |
+#         In response, the authorization server generates a unique device
+#         verification code and an end-user code that are valid for a limited
+#         time and includes them in the HTTP response body using the
+#         "application/json" format [RFC8259] with a 200 (OK) status code.
+#       properties:
+#         device_code:
+#           description: |
+#             The device verification code, which is a case-sensitive string
+#             opaque to the client.
+#           type: string
+#           example: 4924e489-349c-4b9f-852f-b18e94de50bb
+#         user_code:
+#           description: |
+#             The end-user verification code, which is a case-sensitive string
+#             opaque to the client.
+#           type: string
+#           example: WDJB-MJHT
+#         verification_uri:
+#           description: |
+#             The end-user verification URI on the authorization server. The URI
+#             should be short and easy to remember as end users will be asked to
+#             manually type it into their user-agent.
+#           type: string
+#           example: https://rupl.org/device
+#         verification_uri_complete:
+#           description: |
+#             A verification URI that includes the "user_code" (or other
+#             information with the same function as the "user_code"), which is
+#             designed for non-textual transmission.
+#           type: string
+#           example: https://rupl.org/device?user_code=WDJB-MJHT
+#         expires_in:
+#           description: |
+#             The lifetime in seconds of the "device_code" and "user_code".
+#           type: integer
+#           example: 1800
+#         interval:
+#           description: |
+#             The minimum amount of time in seconds that the client SHOULD wait
+#             between polling requests to the token endpoint. If no value is
+#             provided, clients MUST use 5 as the default.
+#           type: integer
+#           example: 5
+#       additionalProperties: false
+#       required:
+#         - device_code
+#         - user_code
+#         - verification_uri
+#         - expires_in
+
+#     DeviceAuthorizationErrorResponse:
+#       type: object
+#       title: Device Authorization Error Response
+#       description: |
+#         If the request failed verification or is invalid, the authorization
+#         server returns an HTTP error response with a 4xx or 5xx HTTP status
+#         code to the client.
+#       properties:
+#         error:
+#           description: |
+#             REQUIRED. A single error code from the following:
+#             "invalid_request", "unauthorized_client", "access_denied",
+#             "unsupported_response_type", "invalid_scope", "server_error",
+#             "temporarily_unavailable", "slow_down", or "expired_token".
+#           type: string
+#           example: invalid_request
+#         error_description:
+#           description: |
+#             OPTIONAL. Human-readable text providing additional
+#             information, used to assist the client developer in understanding
+#             the error that occurred.
+#           type: string
+#           example: "Missing required parameter: client_id"
