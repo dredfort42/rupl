@@ -42,14 +42,14 @@ func IsTokenExists(id string, token string, tokenType s.TokenType) (result bool)
 	return
 }
 
-// Delete access and refresh tokens from the database
-func DeleteTokens(id string) (err error) {
-	query := `
-		UPDATE ` + db.tableUsers + `
-		SET access_token = NULL, refresh_token = NULL
-		WHERE email = $1`
+// // Delete access and refresh tokens from the database
+// func DeleteTokens(id string) (err error) {
+// 	query := `
+// 		UPDATE ` + db.tableUsers + `
+// 		SET access_token = NULL, refresh_token = NULL
+// 		WHERE email = $1`
 
-	_, err = db.database.Exec(query, id)
+// 	_, err = db.database.Exec(query, id)
 
-	return
-}
+// 	return
+// }
