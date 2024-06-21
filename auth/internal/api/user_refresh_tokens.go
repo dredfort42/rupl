@@ -11,10 +11,10 @@ import (
 // RefreshTokens refreshes user tokens
 func RefreshUserTokens(c *gin.Context) {
 	var email string
-	var accessToken string
 	var refreshToken string
+	var newAccessToken string
+	var newRefreshToken string
 	var errorResponse s.ResponseError
-	var result bool
 	var err error
 
 	refreshToken, err = c.Cookie("refresh_token")
@@ -25,7 +25,7 @@ func RefreshUserTokens(c *gin.Context) {
 		return
 	}
 
-	email, err = verifyToken(accessToken, s.RefreshToken)
+	email, err = verifyToken(refreshToken, s.RefreshToken)
 	if err != nil {
 		errorResponse.Error = "token_error"
 		errorResponse.ErrorDescription = "failed to verify refresh token " + err.Error()
@@ -35,35 +35,38 @@ func RefreshUserTokens(c *gin.Context) {
 
 	var isRefreshTokenRemembered bool
 
-	isRefreshTokenRemember, err = db.
+	isRefreshTokenRemembered = db.IsRefreshTokenRemembered(email, refreshToken)
 
-		// result, err = db.IsUserRememberMeSet(email)
-		// if result {
-		// 	accessToken, refreshToken, err = GetAccessAndRefreshTokens(email, 60, 24*60*7)
-		// 	c.SetCookie("access_token", accessToken, 60*60, "/", "", false, true)
-		// 	c.SetCookie("refresh_token", refreshToken, 24*60*60*7, "/", "", false, true)
-		// } else {
-		// 	accessToken, refreshToken, err = GetAccessAndRefreshTokens(email, 15, 24*60)
-		// 	c.SetCookie("access_token", accessToken, 15*60, "/", "", false, true)
-		// 	c.SetCookie("refresh_token", refreshToken, 24*60*60, "/", "", false, true)
-		// }
+	if isRefreshTokenRemembered {
+		newAccessToken, newRefreshToken, err = getTokens(email, 60*60, 24*60*7*60)
+		c.SetCookie("access_token", newAccessToken, 60*60, "/", "", false, true)
+		c.SetCookie("refresh_token", newRefreshToken, 24*60*7*60, "/", "", false, true)
+	} else {
+		newAccessToken, newRefreshToken, err = getTokens(email, 15*60, 24*60*60)
+		c.SetCookie("access_token", newAccessToken, 15*60, "/", "", false, true)
+		c.SetCookie("refresh_token", newRefreshToken, 24*60*60, "/", "", false, true)
+	}
 
-		// if err != nil {
-		// 	errorResponse.Error = "token_error"
-		// 	errorResponse.ErrorDescription = "Failed to generate tokens"
-		// 	c.IndentedJSON(http.StatusInternalServerError, errorResponse)
+	if err != nil {
+		errorResponse.Error = "token_error"
+		errorResponse.ErrorDescription = "failed to generate tokens | " + err.Error()
+		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
+		return
+	}
 
-		// 	return
-		// }
+	if isRefreshTokenRemembered {
+		err = db.UpdateBrowsersTokens(email, refreshToken, newAccessToken, newRefreshToken)
+	} else {
+		err = db.UpdateUserTokens(email, newAccessToken, newRefreshToken)
+	}
 
-		// err = db.UpdateUserTokens(email, accessToken, refreshToken)
-		// if err != nil {
-		// 	errorResponse.Error = "database_error"
-		// 	errorResponse.ErrorDescription = "Failed to update user tokens"
-		// 	c.IndentedJSON(http.StatusInternalServerError, errorResponse)
+	if err != nil {
+		errorResponse.Error = "database_error"
+		errorResponse.ErrorDescription = "failed to update user tokens in the database | " + err.Error()
+		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
 
-		// 	return
-		// }
+		return
+	}
 
-		c.JSON(http.StatusOK, gin.H{"message": "User tokens successfully refreshed"})
+	c.JSON(http.StatusOK, gin.H{"message": "user tokens successfully refreshed"})
 }

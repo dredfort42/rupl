@@ -22,7 +22,7 @@ func ApiInit() {
 	router.POST("/api/v1/auth/user/logout", LogOutUser) // remove tockens separately and all together
 	router.DELETE("/api/v1/auth/user/delete", UserDelete)
 	router.GET("/api/v1/auth/user/refresh", RefreshUserTokens)
-	// router.GET("/api/v1/auth/user/verify", VerifyUser)
+	router.GET("/api/v1/auth/user/verify", VerifyUser)
 	// router.POST("/api/v1/auth/device_authorization", DeviceAuthorization)
 	// router.DELETE("/api/v1/auth/device_authorization", DeviceDeauthorization)
 	// router.POST("/api/v1/auth/device_identify", DeviceIdentification)

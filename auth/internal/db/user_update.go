@@ -1,5 +1,11 @@
 package db
 
+import (
+	"database/sql"
+
+	loger "github.com/dredfort42/tools/logprinter"
+)
+
 // RememberUserTokens remembers a user's tokens in the database
 func RememberUserTokens(email string, accessToken string, refreshToken string) (err error) {
 	query := `
@@ -17,7 +23,7 @@ func RememberUserTokens(email string, accessToken string, refreshToken string) (
 }
 
 // UpdateUserTokens updates a user's tokens in the database
-func UpdateUserTokens(email string, accessToken string, refreshToken string) (err error) {
+func UpdateUserTokens(email string, newAccessToken string, newRefreshToken string) (err error) {
 	query := `
 		UPDATE ` + db.tableUsers + ` 
 		SET 
@@ -27,7 +33,76 @@ func UpdateUserTokens(email string, accessToken string, refreshToken string) (er
 		WHERE email = $1
 	`
 
-	_, err = db.database.Exec(query, email, accessToken, refreshToken)
+	_, err = db.database.Exec(query, email, newAccessToken, newRefreshToken)
+	return
+}
+
+// UpdateBrowsersTokens updates a user browser's tokens in the database
+func UpdateBrowsersTokens(email string, refreshToken string, newAccessToken string, newRefreshToken string) (err error) {
+	query := `
+		UPDATE ` + db.tableUsers + `
+		SET user_browsers = (
+			SELECT array_agg(ub) FROM (
+				SELECT 
+					CASE 
+						WHEN ub.remembered_refresh_token = $2 THEN
+							ROW($3, $4)::user_browsers
+						ELSE
+							ub
+					END
+				FROM unnest(user_browsers) AS ub
+			)
+		)
+		WHERE email = $1;
+	`
+
+	_, err = db.database.Exec(query, email, refreshToken, newAccessToken, newRefreshToken)
+	return
+}
+
+// Delete access and refresh tokens from the database
+func DeleteTokens(email string, accessToken string) (err error) {
+	var query string
+	query = `
+		UPDATE ` + db.tableUsers + `
+		SET access_token = NULL,
+			refresh_token = NULL, 
+			updated_at = CURRENT_TIMESTAMP
+		WHERE email = $1 AND access_token = $2;
+	`
+	_, err = db.database.Exec(query, email, accessToken)
+	if err != nil {
+		loger.Debug(err.Error())
+		return
+	}
+
+	var browserIndex int
+	query = `
+		SELECT i
+		FROM unnest((SELECT user_browsers FROM ` + db.tableUsers + ` WHERE email = $1))
+		WITH ORDINALITY a(user_browser, i)
+		WHERE user_browser.remembered_access_token = $2;
+	`
+	err = db.database.QueryRow(query, email, accessToken).Scan(&browserIndex)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil
+		}
+		loger.Debug(err.Error())
+		return
+	}
+
+	query = `
+		UPDATE ` + db.tableUsers + `
+		SET user_browsers = array_remove(user_browsers, user_browsers[$1]), 
+			updated_at = CURRENT_TIMESTAMP
+		WHERE email = $2;
+	`
+	_, err = db.database.Exec(query, browserIndex, email)
+	if err != nil {
+		loger.Debug(err.Error())
+	}
+
 	return
 }
 

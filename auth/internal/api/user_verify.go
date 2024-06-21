@@ -1,7 +1,7 @@
 package api
 
 import (
-	"auth/internal/db"
+	s "auth/internal/structs"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -11,52 +11,28 @@ import (
 func VerifyUser(c *gin.Context) {
 	var email string
 	var accessToken string
-	var errorResponse ResponseError
-	var result bool
+	var errorResponse s.ResponseError
 	var err error
 
 	accessToken, err = c.Cookie("access_token")
 	if err != nil {
 		errorResponse.Error = "token_error"
-		errorResponse.ErrorDescription = "Missing access token"
+		errorResponse.ErrorDescription = "missing access token " + err.Error()
 		c.IndentedJSON(http.StatusUnauthorized, errorResponse)
-
 		return
 	}
 
-	// email, err = parseToken(accessToken)
-	// if err != nil {
-	// 	errorResponse.Error = "token_error"
-	// 	errorResponse.ErrorDescription = "Failed to parse access token"
-	// 	c.IndentedJSON(http.StatusUnauthorized, errorResponse)
-
-	// 	return
-	// }
-
-	// result, err = isTokenExpired(accessToken)
-	// if err != nil {
-	// 	errorResponse.Error = "token_error"
-	// 	errorResponse.ErrorDescription = "Failed to check access token"
-	// 	c.IndentedJSON(http.StatusUnauthorized, errorResponse)
-	// 	return
-	// } else if result {
-	// 	errorResponse.Error = "token_error"
-	// 	errorResponse.ErrorDescription = "Access token has expired"
-	// 	c.IndentedJSON(http.StatusUnauthorized, errorResponse)
-	// 	return
-	// }
-
-	result, err = db.IsUserAccessTokenExists(email, accessToken)
-	if !result {
+	email, err = verifyToken(accessToken, s.AccessToken)
+	if err != nil {
 		errorResponse.Error = "token_error"
-		errorResponse.ErrorDescription = "Invalid access token"
+		errorResponse.ErrorDescription = "failed to verify access token " + err.Error()
 		c.IndentedJSON(http.StatusUnauthorized, errorResponse)
 		return
 	}
 
 	c.Header("email", email)
 
-	c.JSON(http.StatusOK, gin.H{"message": "User successfully verified"})
+	c.JSON(http.StatusOK, gin.H{"message": "user successfully verified"})
 }
 
 // // Verify email

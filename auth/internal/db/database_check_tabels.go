@@ -24,6 +24,7 @@ func checkUsersTable() (err error) {
 
 	_, err = db.database.Exec("CREATE EXTENSION IF NOT EXISTS pgcrypto;")
 	if err != nil {
+		loger.Debug(err.Error())
 		return
 	}
 
@@ -36,8 +37,8 @@ func checkUsersTable() (err error) {
 				WHERE typname = 'user_browsers'
 			) THEN
 				CREATE TYPE user_browsers AS (
-					remembered_access_token VARCHAR(255),
-					remembered_refresh_token VARCHAR(255)
+					remembered_access_token VARCHAR(255) NOT NULL,
+					remembered_refresh_token VARCHAR(255) NOT NULL
 				);
 			END IF;
 			IF NOT EXISTS (
@@ -46,29 +47,29 @@ func checkUsersTable() (err error) {
 				WHERE typname = 'user_devices'
 			) THEN
 				CREATE TYPE user_devices AS (
-					device_uuid UUID,
-					device_access_token VARCHAR(255)
+					device_uuid UUID NOT NULL,
+					device_access_token VARCHAR(255) NOT NULL
 				);
 			END IF;
 		END $$;
 
 		CREATE TABLE IF NOT EXISTS ` + db.tableUsers + ` (
-			id SERIAL PRIMARY KEY,
-			email VARCHAR(255) UNIQUE NOT NULL,
+			email VARCHAR(255) PRIMARY KEY,
 			password_hash VARCHAR(255) NOT NULL,
-			access_token VARCHAR(255),
-			refresh_token VARCHAR(255),
+			access_token VARCHAR(255) NOT NULL,
+			refresh_token VARCHAR(255) NOT NULL,
 			user_browsers user_browsers[] DEFAULT '{}'::user_browsers[] NOT NULL,
 			user_devices user_devices[] DEFAULT '{}'::user_devices[] NOT NULL,
-			email_created_at TIMESTAMP DEFAULT NULL,
-			is_email_confirmed BOOLEAN DEFAULT FALSE,
-			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+			email_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+			is_email_confirmed BOOLEAN DEFAULT FALSE NOT NULL,
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 		);
 	`
 
 	_, err = db.database.Exec(query)
 	if err != nil {
+		loger.Debug(err.Error())
 		return
 	} else {
 		loger.Success("Table successfully created", db.tableUsers)

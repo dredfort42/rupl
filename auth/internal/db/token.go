@@ -3,6 +3,8 @@ package db
 import (
 	s "auth/internal/structs"
 	"database/sql"
+
+	loger "github.com/dredfort42/tools/logprinter"
 )
 
 // IsUserAccessTokenExists checks if a user's access token exists in the database
@@ -39,45 +41,25 @@ func IsTokenExists(id string, token string, tokenType s.TokenType) (result bool)
 		return
 	}
 
-	db.database.QueryRow(query, id, token).Scan(&result)
+	err := db.database.QueryRow(query, id, token).Scan(&result)
+	if err != nil {
+		loger.Debug(err.Error())
+	}
+
 	return
 }
 
-// Delete access and refresh tokens from the database
-func DeleteTokens(id string, accessToken string) (err error) {
-	var query string
-	query = `
-		UPDATE ` + db.tableUsers + `
-		SET access_token = NULL,
-			refresh_token = NULL
-		WHERE id = $1 AND access_token = $2;
+// IsRefreshTokenRemembered checks if a user's refresh token is remembered in the user browsers
+func IsRefreshTokenRemembered(id string, refreshToken string) (result bool) {
+	query := `
+		SELECT 1 
+		FROM unnest((SELECT user_browsers FROM ` + db.tableUsers + ` WHERE id = $1)) AS ub 
+		WHERE ub.remembered_refresh_token = $2;
 	`
-	_, err = db.database.Exec(query, id, accessToken)
+	err := db.database.QueryRow(query, id, refreshToken).Scan(&result)
 	if err != nil {
-		return
+		loger.Debug(err.Error())
 	}
-
-	var browserIndex int
-	query = `
-		SELECT i
-		FROM unnest((SELECT user_browsers FROM ` + db.tableUsers + ` WHERE id = $1))
-		WITH ORDINALITY a(user_browser, i)
-		WHERE user_browser.remembered_access_token = $2;
-	`
-	err = db.database.QueryRow(query, id, accessToken).Scan(&browserIndex)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil
-		}
-		return
-	}
-
-	query = `
-		UPDATE ` + db.tableUsers + `
-		SET user_browsers = array_remove(user_browsers, user_browsers[$1])
-		WHERE id = $2;
-	`
-	_, err = db.database.Exec(query, browserIndex, id)
 
 	return
 }

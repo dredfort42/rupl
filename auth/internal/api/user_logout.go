@@ -41,5 +41,5 @@ func LogOutUser(c *gin.Context) {
 
 	c.SetCookie("access_token", "", -1, "/", "", false, true)
 	c.SetCookie("refresh_token", "", -1, "/", "", false, true)
-	c.JSON(http.StatusOK, gin.H{"message": "User successfully logged out"})
+	c.JSON(http.StatusOK, gin.H{"message": "user successfully logged out"})
 }
