@@ -18,7 +18,7 @@ func LogOutUser(c *gin.Context) {
 	accessToken, err = c.Cookie("access_token")
 	if err != nil {
 		errorResponse.Error = "token_error"
-		errorResponse.ErrorDescription = "Missing access token"
+		errorResponse.ErrorDescription = "missing access token " + err.Error()
 		c.IndentedJSON(http.StatusUnauthorized, errorResponse)
 		return
 	}
@@ -26,15 +26,15 @@ func LogOutUser(c *gin.Context) {
 	email, err = verifyToken(accessToken, s.AccessToken)
 	if err != nil {
 		errorResponse.Error = "token_error"
-		errorResponse.ErrorDescription = err.Error()
+		errorResponse.ErrorDescription = "failed to verify access token " + err.Error()
 		c.IndentedJSON(http.StatusUnauthorized, errorResponse)
 		return
 	}
 
-	err = db.DeleteTokens(email)
+	err = db.DeleteTokens(email, accessToken)
 	if err != nil {
 		errorResponse.Error = "database_error"
-		errorResponse.ErrorDescription = "failed to delete user's tokens from the database"
+		errorResponse.ErrorDescription = "failed to delete user's tokens from the database " + err.Error()
 		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
 		return
 	}

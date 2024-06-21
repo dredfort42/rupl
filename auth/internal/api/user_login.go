@@ -19,7 +19,7 @@ func UserLogIn(c *gin.Context) {
 	err = c.BindJSON(&logIn)
 	if err != nil {
 		errorResponse.Error = "invalid_json"
-		errorResponse.ErrorDescription = "invalid JSON in the request body"
+		errorResponse.ErrorDescription = "invalid JSON in the request body | " + err.Error()
 		c.IndentedJSON(http.StatusBadRequest, errorResponse)
 		return
 	}
@@ -44,7 +44,7 @@ func UserLogIn(c *gin.Context) {
 
 	if err != nil {
 		errorResponse.Error = "token_error"
-		errorResponse.ErrorDescription = "failed to generate tokens"
+		errorResponse.ErrorDescription = "failed to generate tokens | " + err.Error()
 		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
 		return
 	}
@@ -57,7 +57,7 @@ func UserLogIn(c *gin.Context) {
 
 	if err != nil {
 		errorResponse.Error = "database_error"
-		errorResponse.ErrorDescription = "failed to update user tokens in the database"
+		errorResponse.ErrorDescription = "failed to update user tokens in the database | " + err.Error()
 		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
 		return
 	}

@@ -20,14 +20,14 @@ func UserSignUp(c *gin.Context) {
 	err = c.BindJSON(&newUser)
 	if err != nil {
 		errorResponse.Error = "invalid_request"
-		errorResponse.ErrorDescription = "invalid JSON in the request body"
+		errorResponse.ErrorDescription = "invalid JSON in the request body | " + err.Error()
 		c.IndentedJSON(http.StatusBadRequest, errorResponse)
 		return
 	}
 
 	if newUser.Email == "" {
 		errorResponse.Error = "invalid_parameter"
-		errorResponse.ErrorDescription = "email address is required"
+		errorResponse.ErrorDescription = "email address is required "
 		c.IndentedJSON(http.StatusBadRequest, errorResponse)
 		return
 	}
@@ -57,7 +57,7 @@ func UserSignUp(c *gin.Context) {
 	accessToken, refreshToken, err = getTokens(newUser.Email, 15*60, 24*60*60)
 	if err != nil {
 		errorResponse.Error = "token_error"
-		errorResponse.ErrorDescription = "failed to generate tokens"
+		errorResponse.ErrorDescription = "failed to generate tokens | " + err.Error()
 		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
 		return
 	}
@@ -65,7 +65,7 @@ func UserSignUp(c *gin.Context) {
 	err = db.UserSignUp(newUser.Email, newUser.Password, accessToken, refreshToken)
 	if err != nil {
 		errorResponse.Error = "database_error"
-		errorResponse.ErrorDescription = "error creating user in the database"
+		errorResponse.ErrorDescription = "error creating user in the database | " + err.Error()
 		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
 		return
 	}
