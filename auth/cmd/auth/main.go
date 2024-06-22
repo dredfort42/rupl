@@ -13,10 +13,6 @@ func main() {
 		panic(err)
 	}
 
-	err = db.DatabaseInit()
-	if err != nil {
-		panic(err)
-	}
-
+	db.DatabaseInit()
 	api.ApiInit()
 }

@@ -39,6 +39,5 @@ func UserDelete(c *gin.Context) {
 		return
 	}
 
-	c.Header("email", email)
 	c.JSON(http.StatusOK, gin.H{"message": "user successfully deleted"})
 }

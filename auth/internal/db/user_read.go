@@ -12,18 +12,18 @@ func IsUserExists(email string) (result bool) {
 	return
 }
 
-// IsPasswordCorrect checks if a user's password is correct
-func IsPasswordCorrect(email string, password string) (result bool) {
-	query := `
-		SELECT 1
-		FROM ` + db.tableUsers + `
-		WHERE email = $1
-		AND password_hash = crypt($2, password_hash)
-	`
+// // IsPasswordCorrect checks if a user's password is correct
+// func IsPasswordCorrect(email string, password string) (result bool) {
+// 	query := `
+// 		SELECT 1
+// 		FROM ` + db.tableUsers + `
+// 		WHERE email = $1
+// 		AND password_hash = crypt($2, password_hash)
+// 	`
 
-	db.database.QueryRow(query, email, password).Scan(&result)
-	return
-}
+// 	db.database.QueryRow(query, email, password).Scan(&result)
+// 	return
+// }
 
 // // IsUserRememberMeSet checks if a user's remember_me status is true
 // func IsUserRememberMeSet(email string) (result bool, err error) {

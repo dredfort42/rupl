@@ -11,18 +11,22 @@ import (
 
 // ApiInit starts the web service
 func ApiInit() {
+	readJWTConfig()
+
 	if os.Getenv("DEBUG") != "1" {
 		gin.SetMode(gin.ReleaseMode)
+	} else {
+		gin.SetMode(gin.DebugMode)
 	}
 
 	router := gin.Default()
 	router.Use(cors.Default())
 	router.POST("/api/v1/auth/user/signup", UserSignUp)
-	router.POST("/api/v1/auth/user/login", UserLogIn)
-	router.POST("/api/v1/auth/user/logout", LogOutUser) // remove tockens separately and all together
-	router.DELETE("/api/v1/auth/user/delete", UserDelete)
-	router.GET("/api/v1/auth/user/refresh", RefreshUserTokens)
-	router.GET("/api/v1/auth/user/verify", VerifyUser)
+	// router.POST("/api/v1/auth/user/login", UserLogIn)
+	// router.POST("/api/v1/auth/user/logout", LogOutUser) // remove tockens separately and all together
+	// router.DELETE("/api/v1/auth/user/delete", UserDelete)
+	// router.GET("/api/v1/auth/user/refresh", RefreshUserTokens)
+	// router.GET("/api/v1/auth/user/verify", VerifyUser)
 	// router.POST("/api/v1/auth/device_authorization", DeviceAuthorization)
 	// router.DELETE("/api/v1/auth/device_authorization", DeviceDeauthorization)
 	// router.POST("/api/v1/auth/device_identify", DeviceIdentification)

@@ -4,32 +4,36 @@ package db
 func UserSignUp(email string, password string, accessToken string, refreshToken string) (err error) {
 	query := `
 		INSERT INTO ` + db.tableUsers + ` (
-			id,
 			email,
-			password_hash,
+			password_hash
+		) VALUES (
+			$1,
+			crypt($2, gen_salt('bf'))
+		)
+	`
+
+	_, err = db.database.Exec(query, email, password)
+	if err != nil {
+		return
+	}
+
+	query = `
+		INSERT INTO ` + db.tableSessions + ` (
+			email,
 			access_token,
 			refresh_token,
-			user_browsers,
-			user_devices,
-			email_created_at,
-			is_email_confirmed,
-			created_at,
-			updated_at
+			is_one_time,
+			created_at
 		) VALUES (
-			DEFAULT,
 			$1,
-			crypt($2, gen_salt('bf')),
+			$2,
 			$3,
-			$4,
-			DEFAULT,
-			DEFAULT,
-			CURRENT_TIMESTAMP,
-			DEFAULT,
-			DEFAULT,
-			DEFAULT
-		)`
+			TRUE,
+			CURRENT_TIMESTAMP
+		)
+	`
 
-	_, err = db.database.Exec(query, email, password, accessToken, refreshToken)
+	_, err = db.database.Exec(query, email, accessToken, refreshToken)
 
 	return
 }

@@ -4,27 +4,67 @@ import (
 	db "auth/internal/db"
 	s "auth/internal/structs"
 	"errors"
+	"strconv"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	cfg "github.com/dredfort42/tools/configreader"
 )
 
+// readJWTConfig reads JWT configuration
+func readJWTConfig() {
+	s.JWTConfig = s.JWTParamethers{
+		TokenSecret: cfg.Config["jwt.secret"],
+	}
+	if s.JWTConfig.TokenSecret == "" {
+		panic("JWT secret is not set")
+	}
+
+	var expiration int
+	var err error
+
+	expiration, err = strconv.Atoi(cfg.Config["jwt.onetime.access.token.expiration"])
+	if err != nil {
+		panic("JWT onetime access token expiration is not set")
+	}
+	s.JWTConfig.OneTimeAccessTokenExpiration = expiration
+
+	expiration, err = strconv.Atoi(cfg.Config["jwt.onetime.refresh.token.expiration"])
+	if err != nil {
+		panic("JWT onetime refresh token expiration is not set")
+	}
+	s.JWTConfig.OneTimeRefreshTokenExpiration = expiration
+
+	expiration, err = strconv.Atoi(cfg.Config["jwt.browser.access.token.expiration"])
+	if err != nil {
+		panic("JWT browser access token expiration is not set")
+	}
+	s.JWTConfig.BrowserAccessTokenExpiration = expiration
+
+	expiration, err = strconv.Atoi(cfg.Config["jwt.browser.refresh.token.expiration"])
+	if err != nil {
+		panic("JWT browser refresh token expiration is not set")
+	}
+	s.JWTConfig.BrowserRefreshTokenExpiration = expiration
+
+	expiration, err = strconv.Atoi(cfg.Config["jwt.device.token.expiration"])
+	if err != nil {
+		panic("JWT device token expiration is not set")
+	}
+	s.JWTConfig.DeviceTokenExpiration = expiration
+}
+
 // getToken generates token
-// id: id
-// expired: token expiration time in seconds
 func getToken(id string, expiration int) (response string, err error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 	tokenClaims := token.Claims.(jwt.MapClaims)
-	tokenClaims["user_id"] = id
+	tokenClaims["id"] = id
 	tokenClaims["exp"] = time.Now().Add(time.Second * time.Duration(expiration)).Unix()
 
-	return token.SignedString([]byte("secret"))
+	return token.SignedString([]byte(s.JWTConfig.TokenSecret))
 }
 
 // getTokens gets access and refresh tokens
-// id: id
-// accessTokenExpiration: access token expiration time in seconds
-// refreshTokenExpiration: refresh token expiration time in seconds
 func getTokens(id string, accessTokenExpiration int, refreshTokenExpiration int) (accessToken string, refreshToken string, err error) {
 	accessToken, err = getToken(id, accessTokenExpiration)
 	if err != nil {
@@ -46,7 +86,7 @@ func parseToken(token string) (id string, err error) {
 	jwtToken, err = jwt.Parse(
 		token,
 		func(jwtToken *jwt.Token) (interface{}, error) {
-			return []byte("secret"), nil
+			return []byte(s.JWTConfig.TokenSecret), nil
 		})
 	if err != nil {
 		err = errors.New("failed to parse token")
@@ -58,7 +98,11 @@ func parseToken(token string) (id string, err error) {
 		return
 	}
 
-	id = jwtToken.Claims.(jwt.MapClaims)["user_id"].(string)
+	id = jwtToken.Claims.(jwt.MapClaims)["id"].(string)
+	if id == "" {
+		err = errors.New("failed to get user ID from token")
+	}
+
 	return
 }
 

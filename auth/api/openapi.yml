@@ -27,13 +27,13 @@ tags:
 servers:
   - url: "https://rupl.org"
     description: "Production server"
-  - url: "http://dredfort.ddns.net:8484"
+  - url: "http://dredfort.ddns.net:4242"
     description: "Development server"
-  - url: "https://staging.rupl.org"
-    description: "Staging server"
+  - url: "http://localhost:4242"
+    description: "Local server"
 
 paths:
-  /api/v1/auth/signup:
+  /api/v1/auth/user/signup:
     post:
       security:
         - basic_auth: []
@@ -143,7 +143,8 @@ paths:
                   value:
                     error: "database_error"
                     error_description: "error creating user in the database"
-  /api/v1/auth/delete:
+
+  /api/v1/auth/user/delete:
     delete:
       security:
         - OAuth2AccessToken: [write, admin]
@@ -160,6 +161,15 @@ paths:
             application/json:
               example:
                 message: "user successfully deleted"
+          # headers:
+          #   email:
+          #     description: |
+          #       The authorization server returns the "email" HTTP response header field.
+          #     schema:
+          #       type: string
+          #       example:
+          #         key: email
+          #         value: "user@email.com"
         "401":
           description: Unauthorized
           content:
@@ -172,11 +182,11 @@ paths:
                   value:
                     error: "token_error"
                     error_description: "missing access token"
-                failedToParseToken:
+                failedToVerifyToken:
                   summary: Failed to parse token
                   value:
                     error: "token_error"
-                    error_description: "failed to parse token"
+                    error_description: "ailed to verify access token"
                 tokenExpired:
                   summary: Token expired
                   value:
@@ -193,8 +203,56 @@ paths:
                   summary: Database error
                   value:
                     error: "database_error"
-                    error_description: "failed to delete user"
-  /api/v1/auth/login:
+                    error_description: "failed to delete user from the database"
+
+  /api/v1/auth/user/logout:
+    post:
+      security:
+        - OAuth2AccessToken: [write, admin]
+      tags:
+        - User
+      summary: Logout a user
+      description: |
+        Logout a user from the rupl.org authorization service.
+      operationId: logout_user
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              example:
+                message: "user successfully logged out"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingAccessToken:
+                  summary: Missing access token
+                  value:
+                    error: "token_error"
+                    error_description: "missing access token"
+                failedToVerifyToken:
+                  summary: Failed to verify token
+                  value:
+                    error: "token_error"
+                    error_description: "failed to verify access token"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                databaseError:
+                  summary: Database error
+                  value:
+                    error: "database_error"
+                    error_description: "failed to delete user's tokens from the database"
+
+  /api/v1/auth/user/login:
     post:
       security:
         - basic_auth: []
@@ -278,20 +336,20 @@ paths:
                     error_description: "failed to update user tokens in the database"
 
 components:
-  securitySchemes:
-  basic_auth:
-    type: http
-    scheme: basic
-  OAuth2AccessToken:
-    type: oauth2
-    flows:
-      password:
-        # tokenUrl: https://api.example.com/oauth/token
-        # refreshUrl: https://api.example.com/oauth/refresh
-        scopes:
-          read: Grants read access
-          write: Grants write access
-          admin: Grants access to admin operations
+  # securitySchemes:
+  # basic_auth:
+  #   type: http
+  #   scheme: basic
+  # OAuth2AccessToken:
+  #   type: oauth2
+  #   flows:
+  #     password:
+  #       # tokenUrl: https://api.example.com/oauth/token
+  #       # refreshUrl: https://api.example.com/oauth/refresh
+  #       scopes:
+  #         read: Grants read access
+  #         write: Grants write access
+  #         admin: Grants access to admin operations
   schemas:
     Error:
       description: |

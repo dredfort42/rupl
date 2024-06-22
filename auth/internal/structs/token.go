@@ -13,3 +13,16 @@ const (
 func (t TokenType) String() string {
 	return [...]string{"AccessToken", "RefreshToken", "DeviceToken"}[t]
 }
+
+// JWTParamethers holds JWT parameters
+type JWTParamethers struct {
+	TokenSecret                   string
+	OneTimeAccessTokenExpiration  int
+	OneTimeRefreshTokenExpiration int
+	BrowserAccessTokenExpiration  int
+	BrowserRefreshTokenExpiration int
+	DeviceTokenExpiration         int
+}
+
+// JWTConfig holds JWT configuration
+var JWTConfig JWTParamethers

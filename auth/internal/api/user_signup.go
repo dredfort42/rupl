@@ -54,7 +54,7 @@ func UserSignUp(c *gin.Context) {
 		return
 	}
 
-	accessToken, refreshToken, err = getTokens(newUser.Email, 15*60, 24*60*60)
+	accessToken, refreshToken, err = getTokens(newUser.Email, s.JWTConfig.OneTimeAccessTokenExpiration, s.JWTConfig.OneTimeRefreshTokenExpiration)
 	if err != nil {
 		errorResponse.Error = "token_error"
 		errorResponse.ErrorDescription = "failed to generate tokens | " + err.Error()
@@ -70,7 +70,7 @@ func UserSignUp(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("access_token", accessToken, 15*60-10, "/", "", false, true)
-	c.SetCookie("refresh_token", refreshToken, 24*60*60-10, "/", "", false, true)
+	c.SetCookie("access_token", accessToken, s.JWTConfig.OneTimeAccessTokenExpiration, "/", "", false, true)
+	c.SetCookie("refresh_token", refreshToken, s.JWTConfig.OneTimeRefreshTokenExpiration, "/", "", false, true)
 	c.JSON(http.StatusOK, gin.H{"message": "user successfully registered"})
 }

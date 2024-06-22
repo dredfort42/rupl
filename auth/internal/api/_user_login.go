@@ -33,13 +33,13 @@ func UserLogIn(c *gin.Context) {
 	}
 
 	if logIn.Remember {
-		accessToken, refreshToken, err = getTokens(logIn.Email, 60*60, 24*60*7*60)
-		c.SetCookie("access_token", accessToken, 60*60, "/", "", false, true)
-		c.SetCookie("refresh_token", refreshToken, 24*60*7*60, "/", "", false, true)
+		accessToken, refreshToken, err = getTokens(logIn.Email, jwtConfig.BrowserAccessTokenExpiration, jwtConfig.BrowserRefreshTokenExpiration)
+		c.SetCookie("access_token", accessToken, jwtConfig.BrowserAccessTokenExpiration, "/", "", false, true)
+		c.SetCookie("refresh_token", refreshToken, jwtConfig.BrowserRefreshTokenExpiration, "/", "", false, true)
 	} else {
-		accessToken, refreshToken, err = getTokens(logIn.Email, 15*60, 24*60*60)
-		c.SetCookie("access_token", accessToken, 15*60, "/", "", false, true)
-		c.SetCookie("refresh_token", refreshToken, 24*60*60, "/", "", false, true)
+		accessToken, refreshToken, err = getTokens(logIn.Email, jwtConfig.OneTimeAccessTokenExpiration, jwtConfig.OneTimeRefreshTokenExpiration)
+		c.SetCookie("access_token", accessToken, jwtConfig.OneTimeAccessTokenExpiration, "/", "", false, true)
+		c.SetCookie("refresh_token", refreshToken, jwtConfig.OneTimeRefreshTokenExpiration, "/", "", false, true)
 	}
 
 	if err != nil {
