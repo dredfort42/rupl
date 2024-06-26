@@ -255,18 +255,18 @@ paths:
   /api/v1/auth/user/login:
     post:
       security:
-        - basic_auth: []
+        - basicAuth: []
       tags:
         - User
       summary: Login a user
       description: |
         Login a user with the rupl.org authorization service.
       operationId: login_user
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/UserLogin"
+      # requestBody:
+      #   content:
+      #     application/json:
+      #       schema:
+      #         $ref: "#/components/schemas/UserLogin"
       responses:
         "200":
           description: OK
@@ -336,10 +336,10 @@ paths:
                     error_description: "failed to update user tokens in the database"
 
 components:
-  # securitySchemes:
-  # basic_auth:
-  #   type: http
-  #   scheme: basic
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
   # OAuth2AccessToken:
   #   type: oauth2
   #   flows:

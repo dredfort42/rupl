@@ -13,7 +13,7 @@ func deleteExpiredSessions() {
 	query := `
 		DELETE FROM ` + db.tableSessions + ` 
 		WHERE (created_at < NOW() - INTERVAL '` + strconv.Itoa(s.JWTConfig.OneTimeRefreshTokenExpiration) + ` second' AND is_one_time = TRUE)
-				OR (created_at < NOW() - INTERVAL '` + strconv.Itoa(s.JWTConfig.BrowserRefreshTokenExpiration) + ` second' AND is_one_time = FALSE)
+		OR (created_at < NOW() - INTERVAL '` + strconv.Itoa(s.JWTConfig.BrowserRefreshTokenExpiration) + ` second' AND is_one_time = FALSE)
 	`
 
 	_, err := db.database.Exec(query)

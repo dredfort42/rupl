@@ -5,10 +5,12 @@ persistent_volumes/
 main
 docker-compose.yml
 .env
+.ini
 *.zip
 *.cfg
 *.crt
 *.key
+.42c
 
 # MacOS
 ## General
@@ -64,4 +66,3 @@ iOSInjectionProject/
 Packages/
 Package.pins
 Package.resolved
-

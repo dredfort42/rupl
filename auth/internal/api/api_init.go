@@ -13,6 +13,16 @@ import (
 func ApiInit() {
 	readJWTConfig()
 
+	host := cfg.Config["auth.host"]
+	if host == "" {
+		panic("auth.host is not set")
+	}
+
+	port := cfg.Config["auth.port"]
+	if port == "" {
+		panic("auth.port is not set")
+	}
+
 	if os.Getenv("DEBUG") != "1" {
 		gin.SetMode(gin.ReleaseMode)
 	} else {
@@ -22,8 +32,8 @@ func ApiInit() {
 	router := gin.Default()
 	router.Use(cors.Default())
 	router.POST("/api/v1/auth/user/signup", UserSignUp)
-	// router.POST("/api/v1/auth/user/login", UserLogIn)
-	// router.POST("/api/v1/auth/user/logout", LogOutUser) // remove tockens separately and all together
+	router.POST("/api/v1/auth/user/login", UserLogIn)
+	router.POST("/api/v1/auth/user/logout", UserLogOut) // remove tockens separately and all together
 	// router.DELETE("/api/v1/auth/user/delete", UserDelete)
 	// router.GET("/api/v1/auth/user/refresh", RefreshUserTokens)
 	// router.GET("/api/v1/auth/user/verify", VerifyUser)
@@ -34,8 +44,7 @@ func ApiInit() {
 	// router.GET("/api/v1/auth/device_verify", VerifyDevice)
 	// router.GET("/api/v1/auth/verify_email", VerifyEmail)
 
-	url := cfg.Config["auth.host"] + ":" + cfg.Config["auth.port"]
-
+	url := host + ":" + port
 	loger.Success("Service successfully started", url)
 	router.Run(url)
 }

@@ -1,20 +1,5 @@
 package db
 
-// UserUpdateIsBlocked updates a user's blocked status in the database
-func UserUpdateIsBlocked(email string, newState bool) (err error) {
-	query := `
-		UPDATE ` + db.tableUsers + `
-		SET
-			blocked = $2,
-			updated_at = CURRENT_TIMESTAMP
-		WHERE email = $1
-	`
-
-	_, err = db.database.Exec(query, email, newState)
-
-	return
-}
-
 // // RememberUserTokens remembers a user's tokens in the database
 // func RememberUserTokens(email string, accessToken string, refreshToken string) (err error) {
 // 	query := `

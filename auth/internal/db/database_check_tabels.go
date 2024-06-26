@@ -88,7 +88,6 @@ func checkUsersTable() {
 		CREATE TABLE IF NOT EXISTS ` + db.tableUsers + ` (
 			email VARCHAR(255) PRIMARY KEY,
 			password_hash VARCHAR(255) NOT NULL,
-			is_blocked BOOLEAN DEFAULT FALSE NOT NULL,
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
 			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 		);

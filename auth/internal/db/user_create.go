@@ -17,23 +17,7 @@ func UserSignUp(email string, password string, accessToken string, refreshToken 
 		return
 	}
 
-	query = `
-		INSERT INTO ` + db.tableSessions + ` (
-			email,
-			access_token,
-			refresh_token,
-			is_one_time,
-			created_at
-		) VALUES (
-			$1,
-			$2,
-			$3,
-			TRUE,
-			CURRENT_TIMESTAMP
-		)
-	`
-
-	_, err = db.database.Exec(query, email, accessToken, refreshToken)
+	err = SessionCreate(email, accessToken, refreshToken, true)
 
 	return
 }
