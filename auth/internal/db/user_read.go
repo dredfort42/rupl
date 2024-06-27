@@ -1,7 +1,7 @@
 package db
 
-// IsUserExists checks if a user exists in the database
-func IsUserExists(email string) (result bool) {
+// DoesUserExists checks if a user exists in the database
+func DoesUserExists(email string) (result bool) {
 	query := `
 		SELECT 1 
 		FROM ` + db.tableUsers + ` 
@@ -9,11 +9,12 @@ func IsUserExists(email string) (result bool) {
 	`
 
 	db.database.QueryRow(query, email).Scan(&result)
+
 	return
 }
 
-// IsPasswordCorrect checks if a user's password is correct
-func IsPasswordCorrect(email string, password string) (result bool) {
+// DoesUserPasswordCorrect checks if a user's password is correct
+func DoesUserPasswordCorrect(email string, password string) (result bool) {
 	query := `
 		SELECT 1
 		FROM ` + db.tableUsers + `
@@ -22,6 +23,7 @@ func IsPasswordCorrect(email string, password string) (result bool) {
 	`
 
 	db.database.QueryRow(query, email, password).Scan(&result)
+
 	return
 }
 

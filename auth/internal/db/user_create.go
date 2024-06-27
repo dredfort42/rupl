@@ -1,5 +1,7 @@
 package db
 
+import loger "github.com/dredfort42/tools/logprinter"
+
 // UserSignUp adds a new user to the database
 func UserSignUp(email string, password string, accessToken string, refreshToken string) (err error) {
 	query := `
@@ -14,6 +16,7 @@ func UserSignUp(email string, password string, accessToken string, refreshToken 
 
 	_, err = db.database.Exec(query, email, password)
 	if err != nil {
+		loger.Error("Failed to create user in the database", err)
 		return
 	}
 

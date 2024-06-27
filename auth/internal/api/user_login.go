@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"strings"
 
-	loger "github.com/dredfort42/tools/logprinter"
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,40 +20,42 @@ func UserLogIn(c *gin.Context) {
 
 	authHeader := c.GetHeader("Authorization")
 	if authHeader == "" {
-		loger.Info("Authorization header is empty")
-		c.Header("WWW-Authenticate", `Basic realm="Restricted"`)
-		c.AbortWithStatus(http.StatusUnauthorized)
+		errorResponse.Error = "invalid_parameter"
+		errorResponse.ErrorDescription = "authorization header is invalid"
+		c.IndentedJSON(http.StatusUnauthorized, errorResponse)
 		return
 	}
 
 	parts := strings.SplitN(authHeader, " ", 2)
 	if len(parts) != 2 || parts[0] != "Basic" {
-		loger.Info("Authorization header is invalid")
-		c.AbortWithStatus(http.StatusUnauthorized)
+		errorResponse.Error = "invalid_parameter"
+		errorResponse.ErrorDescription = "authorization header is invalid"
+		c.IndentedJSON(http.StatusUnauthorized, errorResponse)
 		return
 	}
 
 	payload, err := base64.StdEncoding.DecodeString(parts[1])
 	if err != nil {
-		loger.Info("Failed to decode base64 payload")
-		c.AbortWithStatus(http.StatusUnauthorized)
+		errorResponse.Error = "invalid_parameter"
+		errorResponse.ErrorDescription = "authorization header is invalid"
+		c.IndentedJSON(http.StatusUnauthorized, errorResponse)
 		return
 	}
 
 	pair := strings.SplitN(string(payload), ":", 2)
 	if len(pair) != 2 {
-		loger.Info("Failed to split payload")
-		c.AbortWithStatus(http.StatusUnauthorized)
+		errorResponse.Error = "invalid_parameter"
+		errorResponse.ErrorDescription = "authorization header is invalid"
+		c.IndentedJSON(http.StatusUnauthorized, errorResponse)
 		return
 	}
 
 	logIn.Email, logIn.Password = pair[0], pair[1]
 
-	if logIn.Email == "" || logIn.Password == "" || len(logIn.Password) < 8 ||
-		!db.IsUserExists(logIn.Email) || !db.IsPasswordCorrect(logIn.Email, logIn.Password) {
+	if !db.DoesUserPasswordCorrect(logIn.Email, logIn.Password) {
 		errorResponse.Error = "invalid_parameter"
 		errorResponse.ErrorDescription = "invalid email or password"
-		c.IndentedJSON(http.StatusBadRequest, errorResponse)
+		c.IndentedJSON(http.StatusUnauthorized, errorResponse)
 		return
 	}
 

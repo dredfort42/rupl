@@ -8,8 +8,7 @@ import (
 )
 
 // Verify user
-func VerifyUser(c *gin.Context) {
-	var email string
+func UserVerify(c *gin.Context) {
 	var accessToken string
 	var errorResponse s.ResponseError
 	var err error
@@ -17,20 +16,18 @@ func VerifyUser(c *gin.Context) {
 	accessToken, err = c.Cookie("access_token")
 	if err != nil {
 		errorResponse.Error = "token_error"
-		errorResponse.ErrorDescription = "missing access token " + err.Error()
+		errorResponse.ErrorDescription = "missing access token"
 		c.IndentedJSON(http.StatusUnauthorized, errorResponse)
 		return
 	}
 
-	email, err = verifyToken(accessToken, s.AccessToken)
+	_, err = verifyToken(accessToken, s.AccessToken)
 	if err != nil {
 		errorResponse.Error = "token_error"
-		errorResponse.ErrorDescription = "failed to verify access token " + err.Error()
+		errorResponse.ErrorDescription = "failed to verify access token"
 		c.IndentedJSON(http.StatusUnauthorized, errorResponse)
 		return
 	}
-
-	c.Header("email", email)
 
 	c.JSON(http.StatusOK, gin.H{"message": "user successfully verified"})
 }

@@ -41,12 +41,12 @@ func UserSignUp(c *gin.Context) {
 
 	if len(newUser.Password) < 8 {
 		errorResponse.Error = "invalid_parameter"
-		errorResponse.ErrorDescription = "password must be at least 8 characters long"
+		errorResponse.ErrorDescription = "password isn't strong enough | password must be at least 8 characters long"
 		c.IndentedJSON(http.StatusBadRequest, errorResponse)
 		return
 	}
 
-	result = db.IsUserExists(newUser.Email)
+	result = db.DoesUserExists(newUser.Email)
 	if result {
 		errorResponse.Error = "user_exists"
 		errorResponse.ErrorDescription = "user with this email already exists"
