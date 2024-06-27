@@ -37,7 +37,7 @@ func DatabaseInit() {
 
 	connectToDatabase()
 	checkTables()
-	startCleaner()
+	// startCleaner()
 
 	loger.Success("Database successfully initialized")
 }

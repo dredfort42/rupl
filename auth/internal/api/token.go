@@ -113,7 +113,7 @@ func verifyToken(token string, tokenType s.TokenType) (id string, err error) {
 		return
 	}
 
-	db.IsTokenExists(id, token, tokenType)
+	db.DoesTokenExist(id, token, tokenType)
 
 	return
 }

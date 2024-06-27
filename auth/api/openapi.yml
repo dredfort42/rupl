@@ -208,13 +208,21 @@ paths:
   /api/v1/auth/user/logout:
     post:
       security:
-        - OAuth2AccessToken: [write, admin]
+        - OAuth2AccessToken: []
       tags:
         - User
       summary: Logout a user
       description: |
         Logout a user from the rupl.org authorization service.
       operationId: logout_user
+      parameters:
+        - name: all
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: |
+            Sign out from all devices.
       responses:
         "200":
           description: OK
@@ -256,17 +264,20 @@ paths:
     post:
       security:
         - basicAuth: []
+      summary: Login a user
       tags:
         - User
-      summary: Login a user
       description: |
         Login a user with the rupl.org authorization service.
       operationId: login_user
-      # requestBody:
-      #   content:
-      #     application/json:
-      #       schema:
-      #         $ref: "#/components/schemas/UserLogin"
+      parameters:
+        - name: remember
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: |
+            Remember the user's login session on the client device.
       responses:
         "200":
           description: OK
@@ -340,16 +351,15 @@ components:
     basicAuth:
       type: http
       scheme: basic
-  # OAuth2AccessToken:
-  #   type: oauth2
-  #   flows:
-  #     password:
-  #       # tokenUrl: https://api.example.com/oauth/token
-  #       # refreshUrl: https://api.example.com/oauth/refresh
-  #       scopes:
-  #         read: Grants read access
-  #         write: Grants write access
-  #         admin: Grants access to admin operations
+    OAuth2AccessToken:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: "/api/v1/auth/login"
+          refreshUrl: "/api/v1/auth/refresh"
+          scopes:
+            write: "write access"
+            admin: "admin access"
   schemas:
     Error:
       description: |
