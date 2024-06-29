@@ -21,7 +21,7 @@ func SessionUpdateOneTime(email string, accessToken string, refreshToken string)
 func SessionUpdate(email string, refreshToken string, newAccessToken string, newRefreshToken string) (err error) {
 	query := `
 		UPDATE ` + db.tableSessions + `
-		SET access_token = $3, refresh_token = $4, created_at = NOW()
+		SET access_token = $3, refresh_token = $4, created_at = CURRENT_TIMESTAMP
 		WHERE email = $1
 		AND refresh_token = $2;
 	`

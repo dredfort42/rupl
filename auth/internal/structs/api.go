@@ -30,6 +30,18 @@ type LoginUserRequest struct {
 	Remember bool `json:"remember"`
 }
 
+// UserChangePasswordRequest is a struct for JSON
+type UserChangePasswordRequest struct {
+	OldPassword string `json:"old_password"`
+	NewPassword string `json:"new_password"`
+}
+
+// UserChangeEmailRequest is a struct for JSON
+type UserChangeEmailRequest struct {
+	NewEmail string `json:"new_email"`
+	Password string `json:"password"`
+}
+
 // ResponseError is a struct for JSON error
 type ResponseError struct {
 	Error            string `json:"error"`

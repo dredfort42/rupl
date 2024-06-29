@@ -73,6 +73,8 @@ func ApiInit() {
 	router.POST("/api/v1/auth/user/login", UserLogIn)
 	router.POST("/api/v1/auth/user/refresh", UserRefresh)
 	router.POST("/api/v1/auth/user/logout", UserLogOut)
+	router.POST("/api/v1/auth/user/password", UserPasswordChange)
+	router.POST("/api/v1/auth/user/email", UserEmailChange)
 	router.POST("/api/v1/auth/device/authorize", DeviceAuthorize)
 	router.POST("/api/v1/auth/device/verify", DeviceVerify)
 	router.POST("/api/v1/auth/device/token", DeviceTokens)

@@ -57,8 +57,8 @@ func checkDevicesTable() {
 	}
 }
 
-// checkTables checks if the tables exist, if not, it creates them
-func checkTables() {
+// tablesCheck checks if the tables exist, if not, it creates them
+func tablesCheck() {
 	checkUsersTable()
 	checkSessionsTable()
 	checkDevicesTable()

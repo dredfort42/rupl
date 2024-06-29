@@ -52,7 +52,7 @@ func UserLogIn(c *gin.Context) {
 
 	logIn.Email, logIn.Password = pair[0], pair[1]
 
-	if !db.DoesUserPasswordCorrect(logIn.Email, logIn.Password) {
+	if !db.IsUserPasswordCorrect(logIn.Email, logIn.Password) {
 		errorResponse.Error = "invalid_parameter"
 		errorResponse.ErrorDescription = "invalid email or password"
 		c.IndentedJSON(http.StatusUnauthorized, errorResponse)

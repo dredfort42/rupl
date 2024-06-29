@@ -35,9 +35,9 @@ func DatabaseInit() {
 		panic("Table devices is not set")
 	}
 
-	connectToDatabase()
-	checkTables()
-	// startCleaner()
+	databaseConnect()
+	tablesCheck()
+	databaseCleanerStart()
 
 	loger.Success("Database successfully initialized")
 }

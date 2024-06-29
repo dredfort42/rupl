@@ -21,6 +21,9 @@ func UserSignUp(email string, password string, accessToken string, refreshToken 
 	}
 
 	err = SessionCreate(email, accessToken, refreshToken, true)
+	if err != nil {
+		loger.Error("Failed to create session in the database", err)
+	}
 
 	return
 }

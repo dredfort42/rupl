@@ -32,6 +32,13 @@ func UserSignUp(c *gin.Context) {
 		return
 	}
 
+	if !IsUserEmailValid(newUser.Email) {
+		errorResponse.Error = "invalid_parameter"
+		errorResponse.ErrorDescription = "email address is invalid"
+		c.IndentedJSON(http.StatusBadRequest, errorResponse)
+		return
+	}
+
 	if newUser.Password == "" {
 		errorResponse.Error = "invalid_parameter"
 		errorResponse.ErrorDescription = "password is required"
@@ -39,14 +46,21 @@ func UserSignUp(c *gin.Context) {
 		return
 	}
 
-	if len(newUser.Password) < 8 {
+	if IsUserPasswordContainsForbiddenCharacters(newUser.Password) {
 		errorResponse.Error = "invalid_parameter"
-		errorResponse.ErrorDescription = "password isn't strong enough | password must be at least 8 characters long"
+		errorResponse.ErrorDescription = "password contains forbidden characters"
 		c.IndentedJSON(http.StatusBadRequest, errorResponse)
 		return
 	}
 
-	result = db.DoesUserExists(newUser.Email)
+	if !IsUserPasswordStrength(newUser.Password) {
+		errorResponse.Error = "invalid_parameter"
+		errorResponse.ErrorDescription = "password isn't strong enough"
+		c.IndentedJSON(http.StatusBadRequest, errorResponse)
+		return
+	}
+
+	result = db.IsUserExists(newUser.Email)
 	if result {
 		errorResponse.Error = "user_exists"
 		errorResponse.ErrorDescription = "user with this email already exists"

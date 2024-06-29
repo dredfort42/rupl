@@ -7,12 +7,12 @@ func DeviceCreate(email string, deviceUUID string, deviceAccessToken string, dev
 	query := `
 		INSERT INTO ` + db.tableDevices + `
 			(device_uuid, device_access_token, device_refresh_token, email, created_at)
-		VALUES ($1, $2, $3, $4, NOW())
+		VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
 		ON CONFLICT (device_uuid, email) DO 
 			UPDATE SET
 				device_access_token = $2,
 				device_refresh_token = $3,
-				created_at = NOW();
+				created_at = CURRENT_TIMESTAMP;
 	`
 
 	_, err = db.database.Exec(query, deviceUUID, deviceAccessToken, deviceRefreshToken, email)

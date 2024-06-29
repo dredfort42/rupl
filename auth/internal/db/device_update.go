@@ -6,7 +6,7 @@ import loger "github.com/dredfort42/tools/logprinter"
 func DeviceRefresh(deviceUUID string, deviceAccessToken string, deviceRefreshToken string) (err error) {
 	query := `
 		UPDATE ` + db.tableDevices + `
-		SET device_access_token = $2, device_refresh_token = $3, created_at = NOW()
+		SET device_access_token = $2, device_refresh_token = $3, created_at = CURRENT_TIMESTAMP
 		WHERE device_uuid = $1;
 	`
 

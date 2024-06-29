@@ -70,16 +70,26 @@ paths:
                   value:
                     error: "invalid_parameter"
                     error_description: "email address is required"
+                invalidEmail:
+                  summary: Invalid email
+                  value:
+                    error: "invalid_parameter"
+                    error_description: "email address is invalid"
                 missingPassword:
                   summary: Missing password
                   value:
                     error: "invalid_parameter"
                     error_description: "password is required"
+                passwordContainsForbiddenCharacters:
+                  summary: Password contains forbidden characters
+                  value:
+                    error: "invalid_parameter"
+                    error_description: "password contains forbidden characters"
                 passwordTooShort:
                   summary: Password isn't strong enough
                   value:
                     error: "invalid_parameter"
-                    error_description: "password isn't strong enough | ..."
+                    error_description: "password isn't strong enough"
                 userExists:
                   summary: User exists
                   value:
@@ -155,6 +165,23 @@ paths:
             application/json:
               example:
                 message: "user successfully deleted"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                jsonError:
+                  summary: Invalid request
+                  value:
+                    error: "invalid_request"
+                    error_description: "invalid JSON in the request body | ..."
+                invalidEmailOrPassword:
+                  summary: Invalid email or password
+                  value:
+                    error: "invalid_parameter"
+                    error_description: "email or password is invalid"
         "401":
           description: Unauthorized
           content:
@@ -172,6 +199,11 @@ paths:
                   value:
                     error: "token_error"
                     error_description: "failed to verify access token"
+                invalidPassword:
+                  summary: Invalid password
+                  value:
+                    error: "invalid_parameter"
+                    error_description: "password is invalid"
         "500":
           description: Internal Server Error
           content:
@@ -361,6 +393,206 @@ paths:
                   value:
                     error: "database_error"
                     error_description: "failed to delete user's tokens from the database | ..."
+
+  /api/v1/auth/user/password:
+    post:
+      security:
+        - OAuth2AccessToken: []
+      tags:
+        - User
+      summary: Change a user's password
+      description: |
+        Change a user's password with the rupl.org authorization service.
+      operationId: change_password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                old_password:
+                  $ref: "#/components/schemas/Password"
+                new_password:
+                  example: "q1w2e3r4t5y6u7i8o9p0"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              example:
+                message: "user password successfully changed"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                invalidJson:
+                  summary: Invalid request
+                  value:
+                    error: "invalid_request"
+                    error_description: "invalid JSON in the request body | ..."
+                missingPassword:
+                  summary: Missing old or new password
+                  value:
+                    error: "invalid_parameter"
+                    error_description: "old password and new password are required"
+                sameOldNewPassword:
+                  summary: Same old and new password
+                  value:
+                    error: "invalid_parameter"
+                    error_description: "old password and new password are the same"
+                passwordContainsForbiddenCharacters:
+                  summary: Password contains forbidden characters
+                  value:
+                    error: "invalid_parameter"
+                    error_description: "password contains forbidden characters"
+                passwordTooShort:
+                  summary: Password isn't strong enough
+                  value:
+                    error: "invalid_parameter"
+                    error_description: "password isn't strong enough"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingAccessToken:
+                  summary: Missing access token
+                  value:
+                    error: "token_error"
+                    error_description: "missing access token"
+                failedToVerifyToken:
+                  summary: Failed to verify token
+                  value:
+                    error: "token_error"
+                    error_description: "failed to verify access token"
+                invalidOldPassword:
+                  summary: Invalid old password
+                  value:
+                    error: "invalid_parameter"
+                    error_description: "old password is invalid"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                databaseError:
+                  summary: Database error
+                  value:
+                    error: "database_error"
+                    error_description: "failed to update user password in the database | ..."
+
+  /api/v1/auth/user/email:
+    post:
+      security:
+        - OAuth2AccessToken: []
+      tags:
+        - User
+      summary: Change a user's email
+      description: |
+        Change a user's email with the rupl.org authorization service.
+      operationId: change_email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                new_email:
+                  $ref: "#/components/schemas/Email"
+                password:
+                  $ref: "#/components/schemas/Password"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              example:
+                message: "user email successfully changed"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                invalidJson:
+                  summary: Invalid request
+                  value:
+                    error: "invalid_request"
+                    error_description: "invalid JSON in the request body | ..."
+                missingEmail:
+                  summary: Missing new email
+                  value:
+                    error: "invalid_parameter"
+                    error_description: "new email address is required"
+                invalidEmail:
+                  summary: Invalid new email
+                  value:
+                    error: "invalid_parameter"
+                    error_description: "new email address is invalid"
+                sameOldNewEmail:
+                  summary: Same old and new email
+                  value:
+                    error: "invalid_parameter"
+                    error_description: "new email address is the same as the old one"
+                missingPassword:
+                  summary: Missing password
+                  value:
+                    error: "invalid_parameter"
+                    error_description: "password is required"
+                invalidPassword:
+                  summary: Invalid password
+                  value:
+                    error: "invalid_parameter"
+                    error_description: "password is invalid"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingAccessToken:
+                  summary: Missing access token
+                  value:
+                    error: "token_error"
+                    error_description: "missing access token"
+                failedToVerifyToken:
+                  summary: Failed to verify token
+                  value:
+                    error: "token_error"
+                    error_description: "failed to verify access token"
+                invalidPassword:
+                  summary: Invalid password
+                  value:
+                    error: "invalid_parameter"
+                    error_description: "password is invalid"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                databaseError:
+                  summary: Database error
+                  value:
+                    error: "database_error"
+                    error_description: "failed to update user email in the database | ..."
+                databaseSessionDeleteAllError:
+                  summary: Database delete all user's sessions error
+                  value:
+                    error: "database_error"
+                    error_description: "failed to delete user's sessions from the database | ..."
 
   /api/v1/auth/device/authorize:
     post:

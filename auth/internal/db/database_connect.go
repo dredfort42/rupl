@@ -7,8 +7,8 @@ import (
 	cfg "github.com/dredfort42/tools/configreader"
 )
 
-// connectToDatabase connects to the database
-func connectToDatabase() {
+// databaseConnect connects to the database
+func databaseConnect() {
 	var url string = fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		cfg.Config["db.host"],
 		cfg.Config["db.port"],

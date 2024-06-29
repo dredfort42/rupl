@@ -33,7 +33,7 @@ func UserRefresh(c *gin.Context) {
 		return
 	}
 
-	if db.DoesOneTimeRefreshToken(refreshToken) {
+	if db.IsOneTimeRefreshToken(refreshToken) {
 		newAccessToken, newRefreshToken, err = getTokens(email, 15*60, 24*60*60)
 		c.SetCookie("access_token", newAccessToken, 15*60, "/", "", false, true)
 		c.SetCookie("refresh_token", newRefreshToken, 24*60*60, "/", "", false, true)

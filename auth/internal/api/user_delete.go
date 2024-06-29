@@ -10,12 +10,19 @@ import (
 
 // UserDelete deletes a user
 func UserDelete(c *gin.Context) {
+	var deleteRequest s.UserCredentials
 	var email string
-	var accessToken string
 	var errorResponse s.ResponseError
-	var err error
 
-	accessToken, err = c.Cookie("access_token")
+	err := c.BindJSON(&deleteRequest)
+	if err != nil {
+		errorResponse.Error = "invalid_request"
+		errorResponse.ErrorDescription = "invalid JSON in the request body | " + err.Error()
+		c.IndentedJSON(http.StatusBadRequest, errorResponse)
+		return
+	}
+
+	accessToken, err := c.Cookie("access_token")
 	if err != nil {
 		errorResponse.Error = "token_error"
 		errorResponse.ErrorDescription = "missing access token"
@@ -27,6 +34,20 @@ func UserDelete(c *gin.Context) {
 	if err != nil {
 		errorResponse.Error = "token_error"
 		errorResponse.ErrorDescription = "failed to verify access token"
+		c.IndentedJSON(http.StatusUnauthorized, errorResponse)
+		return
+	}
+
+	if deleteRequest.Email == "" || deleteRequest.Password == "" || deleteRequest.Email != email {
+		errorResponse.Error = "invalid_parameter"
+		errorResponse.ErrorDescription = "email or password is invalid"
+		c.IndentedJSON(http.StatusBadRequest, errorResponse)
+		return
+	}
+
+	if !db.IsUserPasswordCorrect(deleteRequest.Email, deleteRequest.Password) {
+		errorResponse.Error = "invalid_parameter"
+		errorResponse.ErrorDescription = "password is invalid"
 		c.IndentedJSON(http.StatusUnauthorized, errorResponse)
 		return
 	}

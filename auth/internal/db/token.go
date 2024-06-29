@@ -4,8 +4,8 @@ import (
 	s "auth/internal/structs"
 )
 
-// DoesTokenExist checks if token exists in the database
-func DoesTokenExist(id string, token string, tokenType s.TokenType) (result bool) {
+// IsTokenExist checks if token exists in the database
+func IsTokenExist(id string, token string, tokenType s.TokenType) (result bool) {
 	var query string
 
 	switch tokenType {
@@ -42,8 +42,8 @@ func DoesTokenExist(id string, token string, tokenType s.TokenType) (result bool
 	return
 }
 
-// DoesOneTimeRefreshToken checks if a refresh token is a one-time refresh token
-func DoesOneTimeRefreshToken(refreshToken string) (result bool) {
+// IsOneTimeRefreshToken checks if a refresh token is a one-time refresh token
+func IsOneTimeRefreshToken(refreshToken string) (result bool) {
 	query := `
 		SELECT 1
 		FROM ` + db.tableSessions + `
@@ -54,18 +54,3 @@ func DoesOneTimeRefreshToken(refreshToken string) (result bool) {
 
 	return
 }
-
-// // IsRefreshTokenRemembered checks if a user's refresh token is remembered in the user browsers
-// func IsRefreshTokenRemembered(id string, refreshToken string) (result bool) {
-// 	query := `
-// 		SELECT 1
-// 		FROM unnest((SELECT user_browsers FROM ` + db.tableUsers + ` WHERE id = $1)) AS ub
-// 		WHERE ub.remembered_refresh_token = $2;
-// 	`
-// 	err := db.database.QueryRow(query, id, refreshToken).Scan(&result)
-// 	if err != nil {
-// 		loger.Debug(err.Error())
-// 	}
-
-// 	return
-// }
