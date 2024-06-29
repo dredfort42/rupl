@@ -348,7 +348,7 @@ class AppSettings {
 			UserDefaults.standard.set(UUID().uuidString, forKey: clientIDKey)
 		}
 
-		UserDefaults.standard.set("https://rupl.org/api/v1/auth/device_authorization", forKey: deviceAuthURLKey)
+		UserDefaults.standard.set("https://rupl.org/api/v1/auth/device/authorization", forKey: deviceAuthURLKey)
 		UserDefaults.standard.set("https://rupl.org/api/v1/auth/device_token", forKey: deviceTokenURLKey)
 		UserDefaults.standard.set("https://rupl.org/api/v1/profile", forKey: profileURLKey)
 		UserDefaults.standard.set("https://rupl.org/api/v1/profile/devices", forKey: deviceInfoURLKey)

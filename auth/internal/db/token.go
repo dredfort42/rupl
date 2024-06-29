@@ -21,11 +21,17 @@ func DoesTokenExist(id string, token string, tokenType s.TokenType) (result bool
 			FROM ` + db.tableSessions + `
 			WHERE email = $1 AND refresh_token = $2;
 		`
-	case s.DeviceToken:
+	case s.DeviceAccessToken:
 		query = `
 			SELECT 1
 			FROM ` + db.tableDevices + `
-			WHERE email = $1 AND device_token = $2;
+			WHERE device_uuid = $1 AND device_access_token = $2;
+		`
+	case s.DeviceRefreshToken:
+		query = `
+			SELECT 1
+			FROM ` + db.tableDevices + `
+			WHERE device_uuid = $1 AND device_refresh_token = $2;
 		`
 	default:
 		return

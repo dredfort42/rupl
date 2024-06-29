@@ -47,11 +47,17 @@ func readJWTConfig() {
 	}
 	s.JWTConfig.BrowserRefreshTokenExpiration = expiration
 
-	expiration, err = strconv.Atoi(cfg.Config["jwt.device.token.expiration"])
+	expiration, err = strconv.Atoi(cfg.Config["jwt.device.access.token.expiration"])
 	if err != nil {
-		panic("JWT device token expiration is not set")
+		panic("JWT device access token expiration is not set")
 	}
-	s.JWTConfig.DeviceTokenExpiration = expiration
+	s.JWTConfig.DeviceAccessTokenExpiration = expiration
+
+	expiration, err = strconv.Atoi(cfg.Config["jwt.device.refresh.token.expiration"])
+	if err != nil {
+		panic("JWT device refresh token expiration is not set")
+	}
+	s.JWTConfig.DeviceRefreshTokenExpiration = expiration
 }
 
 // getToken generates token
@@ -119,38 +125,3 @@ func verifyToken(token string, tokenType s.TokenType) (id string, err error) {
 
 	return
 }
-
-// // isTokenExpired checks if token has expired
-// func isTokenExpired(tokenString string) (result bool, err error) {
-// 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-// 		return []byte("secret"), nil
-// 	})
-// 	if err != nil {
-// 		return
-// 	}
-
-// 	result = time.Now().Unix() > int64(token.Claims.(jwt.MapClaims)["exp"].(float64))
-
-// 	return
-// }
-
-// // refreshTokens with new access and refresh tokens
-// func refreshTokens(refreshToken string, accessTokenMinitesToExpire int, refreshTokenMinitesToExpire int) (newAccessToken string, newRefreshToken string, err error) {
-// 	var userID string
-
-// 	userID, err = parseToken(refreshToken)
-// 	if err != nil {
-// 		return
-// 	}
-
-// 	tokenHasExpired, err := isTokenExpired(refreshToken)
-// 	if err != nil {
-// 		return
-// 	} else if tokenHasExpired {
-// 		err = errors.New("refresh token has expired")
-
-// 		return
-// 	}
-
-// 	return GetAccessAndRefreshTokens(userID, accessTokenMinitesToExpire, refreshTokenMinitesToExpire)
-// }

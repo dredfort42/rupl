@@ -6,12 +6,13 @@ type TokenType int
 const (
 	AccessToken TokenType = iota
 	RefreshToken
-	DeviceToken
+	DeviceAccessToken
+	DeviceRefreshToken
 )
 
 // String method provides the string representation of the TokenType
 func (t TokenType) String() string {
-	return [...]string{"AccessToken", "RefreshToken", "DeviceToken"}[t]
+	return [...]string{"AccessToken", "RefreshToken", "DeviceAccessToken", "DeviceRefreshToken"}[t]
 }
 
 // JWTParamethers holds JWT parameters
@@ -21,7 +22,8 @@ type JWTParamethers struct {
 	OneTimeRefreshTokenExpiration int
 	BrowserAccessTokenExpiration  int
 	BrowserRefreshTokenExpiration int
-	DeviceTokenExpiration         int
+	DeviceAccessTokenExpiration   int
+	DeviceRefreshTokenExpiration  int
 }
 
 // JWTConfig holds JWT configuration

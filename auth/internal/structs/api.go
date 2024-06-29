@@ -12,9 +12,10 @@ type DeviceAuthorizationResponse struct {
 
 // DeviceAccessTokenResponse is a struct for JSON
 type DeviceAccessTokenResponse struct {
-	AccessToken string `json:"access_token"`
-	TokenType   string `json:"token_type"`
-	ExpiresIn   int    `json:"expires_in"`
+	TokenType    string `json:"token_type"`
+	ExpiresIn    int    `json:"expires_in"`
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
 }
 
 // UserCredentials is a struct for JSON

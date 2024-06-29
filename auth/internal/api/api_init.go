@@ -2,6 +2,7 @@ package api
 
 import (
 	"os"
+	"strconv"
 
 	cfg "github.com/dredfort42/tools/configreader"
 	loger "github.com/dredfort42/tools/logprinter"
@@ -9,18 +10,53 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var host string
+var port string
+var deviceVerificationURI string
+var deviceVerificationCodeCharSet string
+var deviceVerificationCodeLength int
+var deviceVerificationCodeExpiration int
+var deviceVerificationCodeAttempts int
+
 // ApiInit starts the web service
 func ApiInit() {
 	readJWTConfig()
 
-	host := cfg.Config["auth.host"]
+	host = cfg.Config["auth.host"]
 	if host == "" {
 		panic("auth.host is not set")
 	}
 
-	port := cfg.Config["auth.port"]
+	port = cfg.Config["auth.port"]
 	if port == "" {
 		panic("auth.port is not set")
+	}
+
+	deviceVerificationURI = cfg.Config["auth.device.verification.url"]
+	if deviceVerificationURI == "" {
+		panic("auth.device.verification.url is not set")
+	}
+
+	deviceVerificationCodeCharSet = cfg.Config["auth.device.verification.code.charset"]
+	if deviceVerificationCodeCharSet == "" {
+		panic("auth.device.verification.code.charset is not set")
+	}
+
+	var err error
+
+	deviceVerificationCodeLength, err = strconv.Atoi(cfg.Config["auth.device.verification.code.length"])
+	if err != nil {
+		panic("auth.device.verification.code.length is not set")
+	}
+
+	deviceVerificationCodeExpiration, err = strconv.Atoi(cfg.Config["auth.device.verification.code.expiration"])
+	if err != nil {
+		panic("auth.device.verification.code.expiration is not set")
+	}
+
+	deviceVerificationCodeAttempts, err = strconv.Atoi(cfg.Config["auth.device.verification.code.attempts"])
+	if err != nil {
+		panic("auth.device.verification.code.attempts is not set")
 	}
 
 	if os.Getenv("DEBUG") != "1" {
@@ -32,17 +68,17 @@ func ApiInit() {
 	router := gin.Default()
 	router.Use(cors.Default())
 	router.POST("/api/v1/auth/user/signup", UserSignUp)
-	router.GET("/api/v1/auth/user/verify", UserVerify)
+	router.GET("/api/v1/auth/user/identify", UserIdentify)
 	router.DELETE("/api/v1/auth/user/delete", UserDelete)
 	router.POST("/api/v1/auth/user/login", UserLogIn)
-	router.GET("/api/v1/auth/user/refresh", UserRefresh)
+	router.POST("/api/v1/auth/user/refresh", UserRefresh)
 	router.POST("/api/v1/auth/user/logout", UserLogOut)
-	// router.POST("/api/v1/auth/device_authorization", DeviceAuthorization)
-	// router.DELETE("/api/v1/auth/device_authorization", DeviceDeauthorization)
-	// router.POST("/api/v1/auth/device_identify", DeviceIdentification)
-	// router.POST("/api/v1/auth/device_token", GetDeviceAccessToken)
-	// router.GET("/api/v1/auth/device_verify", VerifyDevice)
-	// router.GET("/api/v1/auth/verify_email", VerifyEmail)
+	router.POST("/api/v1/auth/device/authorize", DeviceAuthorize)
+	router.POST("/api/v1/auth/device/verify", DeviceVerify)
+	router.POST("/api/v1/auth/device/token", DeviceTokens)
+	router.GET("/api/v1/auth/device/identify", DeviceIdentify)
+	router.DELETE("/api/v1/auth/device/delete", DeviceDelete)
+	router.POST("/api/v1/auth/device/refresh", DeviceRefresh)
 
 	url := host + ":" + port
 	loger.Success("Service successfully started", url)

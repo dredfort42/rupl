@@ -18,10 +18,10 @@ info:
 
 tags:
   - name: User
-    description: >-
+    description: |
       The OAuth 2.0 user authorization for browser-based web applications and other clients that can interact with a user-agent.
   - name: Device
-    description: >-
+    description: |
       The OAuth 2.0 device authorization for browserless and input-constrained devices like watches and fitness trackers.
 
 servers:
@@ -103,23 +103,23 @@ paths:
                     error: "database_error"
                     error_description: "error creating user in the database | ..."
 
-  /api/v1/auth/user/verify:
+  /api/v1/auth/user/identify:
     get:
       security:
         - OAuth2AccessToken: []
       tags:
         - User
-      summary: Verify a user's
+      summary: Identify a user's
       description: |
-        Verify a user with the rupl.org authorization service.
-      operationId: verify_user
+        Identify a user with the rupl.org authorization service.
+      operationId: identify_user
       responses:
         "200":
           description: OK
           content:
             application/json:
               example:
-                message: "user successfully verified"
+                message: "user successfully identified"
         "401":
           description: Unauthorized
           content:
@@ -362,11 +362,417 @@ paths:
                     error: "database_error"
                     error_description: "failed to delete user's tokens from the database | ..."
 
+  /api/v1/auth/device/authorize:
+    post:
+      tags:
+        - Device
+      summary: Authorize a device
+      description: |
+        Authorize a device with the rupl.org authorization service.
+      operationId: authorize_device
+      parameters:
+        - name: client_id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: |
+            The client's device UUID.
+          example: "d290f1ee-6c54-4b01-90e6-d701748f0851"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              example:
+                device_code: "969cd597-cfe9-469e-a28c-753b7c54f453"
+                user_code: "948Q-L9S1"
+                verification_uri: "https://example.server.com/device/verify"
+                verification_uri_complete: "https://example.server.com/device/verify?user_code=1A23-654B"
+                expires_in: 300
+                interval: 3
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                invalidClientId:
+                  summary: Invalid client ID
+                  value:
+                    error: "invalid_parameter"
+                    error_description: "client_id is invalid"
+
+  /api/v1/auth/device/verify:
+    post:
+      tags:
+        - Device
+      summary: Verify a device
+      description: |
+        Verify a device with the rupl.org authorization service.
+      operationId: verify_device
+      parameters:
+        - name: user_code
+          in: query
+          required: true
+          schema:
+            type: string
+          description: |
+            The user code from the device.
+          example: "948Q-L9S1"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              example:
+                message: "device successfully verified"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingUserCode:
+                  summary: Missing user code
+                  value:
+                    error: "invalid_parameter"
+                    error_description: "user_code is required"
+                invalidDeviceCode:
+                  summary: Invalid device code
+                  value:
+                    error: "invalid_parameter"
+                    error_description: "device_code is invalid"
+                invalidUserCode:
+                  summary: Invalid user code
+                  value:
+                    error: "invalid_parameter"
+                    error_description: "user_code is invalid"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingAccessToken:
+                  summary: Missing access token
+                  value:
+                    error: "token_error"
+                    error_description: "missing access token"
+                failedToVerifyToken:
+                  summary: Failed to verify token
+                  value:
+                    error: "token_error"
+                    error_description: "failed to verify access token"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                tokenError:
+                  summary: Token error
+                  value:
+                    error: "token_error"
+                    error_description: "failed to generate device tokens | ..."
+                databaseError:
+                  summary: Database error
+                  value:
+                    error: "database_error"
+                    error_description: "failed to create a new device in the database | ..."
+
+  /api/v1/auth/device/token:
+    post:
+      tags:
+        - Device
+      summary: Get a device token
+      description: |
+        Get a device token with the rupl.org authorization service.
+      operationId: get_device_token
+      parameters:
+        - name: grant_type
+          in: query
+          required: true
+          schema:
+            type: string
+          description: |
+            The grant type for the device.
+          example: "urn:ietf:params:oauth:grant-type:device_code"
+        - name: device_code
+          in: query
+          required: true
+          schema:
+            type: string
+          description: |
+            The device code from the device.
+          example: "e68df4a8-015c-4b09-bd63-ae421277a948"
+        - name: client_id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: |
+            The client's device UUID.
+          example: "d290f1ee-6c54-4b01-90e6-d701748f0"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              example:
+                access_token: "example42RsT5OjbzRn430zqMLgV3Ia"
+                token_type: "Bearer"
+                expires_in: 3600
+                refresh_token: "example42b7a3fac6b10e13bb3a276c2aab35e97298a060e0ede5b43ed1f720a8"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingRequiredParameter:
+                  summary: Missing required parameter
+                  value:
+                    error: "invalid_request"
+                    error_description: "missing required parameter"
+                invalidGrantType:
+                  summary: Invalid grant type
+                  value:
+                    error: "invalid_request"
+                    error_description: "grant_type is invalid"
+                invalidDeviceCode:
+                  summary: Invalid device code
+                  value:
+                    error: "invalid_request"
+                    error_description: "device_code is invalid"
+
+  /api/v1/auth/device/identify:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - Device
+      summary: Identify a device
+      description: |
+        Identify a device with the rupl.org authorization service.
+      operationId: identify_device
+      parameters:
+        - name: client_id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: |
+            The client's device UUID.
+          example: "d290f1ee-6c54-4b01-90e6-d701748f0851"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              example:
+                message: "device successfully identified"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingClientId:
+                  summary: Missing client ID
+                  value:
+                    error: "invalid_parameter"
+                    error_description: "client_id is required"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingAccessToken:
+                  summary: Missing device access token
+                  value:
+                    error: "token_error"
+                    error_description: "missing device access token"
+                failedToVerifyToken:
+                  summary: Failed to verify token
+                  value:
+                    error: "token_error"
+                    error_description: "failed to verify device access token"
+
+  /api/v1/auth/device/delete:
+    delete:
+      security:
+        - bearerAuth: []
+      tags:
+        - Device
+      summary: Delete a device
+      description: |
+        Delete a device from the rupl.org authorization service.
+      operationId: delete_device
+      parameters:
+        - name: client_id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: |
+            The client's device UUID.
+          example: "d290f1ee-6c54-4b01-90e6-d701748f0851"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              example:
+                message: "device successfully deleted"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingClientId:
+                  summary: Missing client ID
+                  value:
+                    error: "invalid_parameter"
+                    error_description: "client_id is required"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingAccessToken:
+                  summary: Missing device access token
+                  value:
+                    error: "token_error"
+                    error_description: "missing device access token"
+                failedToVerifyToken:
+                  summary: Failed to verify token
+                  value:
+                    error: "token_error"
+                    error_description: "failed to verify device access token"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                databaseError:
+                  summary: Database error
+                  value:
+                    error: "database_error"
+                    error_description: "failed to delete device from the database | ..."
+
+  /api/v1/auth/device/refresh:
+    post:
+      tags:
+        - Device
+      summary: Refresh a device's access and refresh tokens
+      description: |
+        Refresh a device's access and refresh tokens with the rupl.org authorization service.
+      operationId: refresh_device_tokens
+      parameters:
+        - name: client_id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: |
+            The client's device UUID.
+          example: "d290f1ee-6c54-4b01-90e6-d701748f0851"
+        - name: grant_type
+          in: query
+          required: true
+          schema:
+            type: string
+          description: |
+            The grant type for the device refresh_token.
+          example: "refresh_token"
+        - name: refresh_token
+          in: query
+          required: true
+          schema:
+            type: string
+          description: |
+            The refresh token from the device.
+          example: "example42b7a3fac6b10e13bb3a276c2aab35e97298a060e0ede5b43ed1f720a8"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              example:
+                access_token: "new21example42RsT5OjbzRn430zqMLgV3Ia"
+                token_type: "Bearer"
+                expires_in: 3600
+                refresh_token: "new21example42b7a3fac6b10e13bb3a276c2aab35e97298a060e0ede5b43ed1f720a8"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingParameter:
+                  summary: Missing parameter
+                  value:
+                    error: "invalid_parameter"
+                    error_description: "missing required parameter"
+                invalidGrantType:
+                  summary: Invalid grant type
+                  value:
+                    error: "invalid_parameter"
+                    error_description: "grant_type is invalid"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                failedToVerifyToken:
+                  summary: Failed to verify device refresh token
+                  value:
+                    error: "token_error"
+                    error_description: "failed to verify device refresh token"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                tokenError:
+                  summary: Token error
+                  value:
+                    error: "token_error"
+                    error_description: "failed to generate device tokens | ..."
+                databaseError:
+                  summary: Database error
+                  value:
+                    error: "database_error"
+                    error_description: "failed to update device tokens in the database | ..."
+
 components:
   securitySchemes:
     basicAuth:
       type: http
       scheme: basic
+    bearerAuth:
+      type: http
+      scheme: bearer
     OAuth2AccessToken:
       type: oauth2
       flows:
