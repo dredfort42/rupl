@@ -55,20 +55,19 @@ services:
   # Project services
   ## Auth service
   auth:
-    # build: ./auth
-    image: dredfort/rupl-auth:latest
+    image: dredfort/auth:latest
     hostname: auth
     container_name: auth
     restart: always
     networks:
       - rupl-net
     # TMP port for testing
-    # ports:
-    #   - 4242:4242
+    ports:
+      - 4242:4242
     depends_on:
       - db
     volumes:
-      - ./global.cfg:/app/global.cfg
+      - ./auch_config.ini:/app/config.ini
     environment:
       - DEBUG=1
 

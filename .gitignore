@@ -5,7 +5,7 @@ persistent_volumes/
 main
 docker-compose.yml
 .env
-.ini
+*.ini
 *.zip
 *.cfg
 *.crt
