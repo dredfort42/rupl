@@ -43,8 +43,8 @@ services:
     networks:
       - rupl-net
     # TMP port for testing
-    ports:
-      - 8484:5432
+    # ports:
+    #   - 8484:5432
     volumes:
       - ./persistent_volumes/db:/var/lib/postgresql/data
     environment:
@@ -67,7 +67,7 @@ services:
     depends_on:
       - db
     volumes:
-      - ./auch_config.ini:/app/config.ini
+      - ./auth_config.ini:/app/config.ini
     environment:
       - DEBUG=1
 
