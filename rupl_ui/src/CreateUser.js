@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Login = () => {
+const CreateUser = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
@@ -9,19 +9,16 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const response = await fetch("/login", {
+        const response = await fetch("/users", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, password }),
         });
 
         if (response.ok) {
-            const data = await response.json();
-            localStorage.setItem("userId", data.id);
-            localStorage.setItem("userName", username);
-            navigate("/chat");
+            navigate("/");
         } else {
-            alert("Login failed");
+            alert("Account creation failed");
         }
     };
 
@@ -64,17 +61,11 @@ const Login = () => {
                     type="submit"
                     className="w-full p-2 bg-blue-500 text-white rounded-md"
                 >
-                    Log In
+                    Create Account
                 </button>
-                <div className="mt-4 text-center">
-                    <span className="text-sm text-gray-600">Don't have an account? </span>
-                    <a href="/create-user" className="text-blue-500 hover:underline">
-                        Create one
-                    </a>
-                </div>
             </form>
         </div>
     );
 };
 
-export default Login;
+export default CreateUser;

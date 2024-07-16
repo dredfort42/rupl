@@ -109,7 +109,7 @@ struct SettingsView: View {
 
 	func sendRequest() {
 		deviceAuthorization = true
-		OAuth2.sendRequest { result in
+		OAuth2.sendAuthorizeRequest { result in
 			userCode = OAuth2.userCode
 			verificationUri = OAuth2.verificationUri
 		}
@@ -124,12 +124,13 @@ struct SettingsView: View {
 					self.sendRequest()
 				}
 
-				OAuth2.getDeviceAccessToken { result in
+				OAuth2.getDeviceTokens { result in
 					AppSettings.shared.deviceAccessToken = OAuth2.accessToken
+					AppSettings.shared.deviceRefreshToken = OAuth2.refreshToken
 					AppSettings.shared.deviceAccessTokenType = OAuth2.tokenType
-					AppSettings.shared.deviceAccessTokenExpiresIn = OAuth2.expiresIn.timeIntervalSince1970
+					AppSettings.shared.deviceAccessTokenExpiresIn = OAuth2.expiresIn
 
-					if !OAuth2.accessToken.isEmpty && !OAuth2.tokenType.isEmpty && OAuth2.expiresIn > Date() {
+					if !OAuth2.accessToken.isEmpty && !OAuth2.tokenType.isEmpty && OAuth2.expiresIn > Date.now {
 						self.polling = false
 						self.deviceAuthorization = false
 					}
@@ -139,17 +140,18 @@ struct SettingsView: View {
 			}
 
 			OAuth2.accessToken = ""
+			OAuth2.refreshToken = ""
 			OAuth2.tokenType = ""
-			OAuth2.expiresIn = Date()
+			OAuth2.expiresIn = Date.now
 		}
 	}
 
 	func resetDeviceAccess() {
 		DeviceInfo.shared.deleteDeviceInfo()
-		OAuth2.deleteDeviceAccess { result in
+		OAuth2.deleteDevice { result in
 			AppSettings.shared.deviceAccessToken = ""
 			AppSettings.shared.deviceAccessTokenType = ""
-			AppSettings.shared.deviceAccessTokenExpiresIn = 0
+			AppSettings.shared.deviceAccessTokenExpiresIn = Date.now
 			AppSettings.shared.userEmail = ""
 			AppSettings.shared.userFirstName = ""
 			AppSettings.shared.userLastName = ""

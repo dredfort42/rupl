@@ -1,9 +1,9 @@
 module sessions_receiver
 
-go 1.22.0
+go 1.22.5
 
 require (
-	github.com/dredfort42/tools v0.1.3
+	github.com/dredfort42/tools v0.1.5
 	github.com/gin-contrib/cors v1.7.2
 	github.com/gin-gonic/gin v1.10.0
 	github.com/google/uuid v1.6.0

@@ -25,11 +25,15 @@ class AppSettings {
 	private let clientIDKey = "clientID"
 	private let deviceAuthURLKey = "deviceAuthURL"
 	private let deviceTokenURLKey = "deviceTokenURL"
+	private let deviceIdentifyURLKey = "deviceIdentifyURL"
+	private let deviceDeleteURLKey = "deviceDeleteURL"
+	private let deviceRefreshURLKey = "deviceRefreshURL"
 	private let profileURLKey = "profileURL"
 	private let deviceInfoURLKey = "deviceInfoURL"
 	private let taskURLKey = "taskURL"
 	private let sessionURLKey = "sessionURL"
 	private let deviceAccessTokenKey = "deviceAccessToken"
+	private let deviceRefreshTokenKey = "deviceRefreshToken"
 	private let deviceAccessTokenTypeKey = "deviceAccessTokenType"
 	private let deviceAccessTokenExpiresInKey = "deviceAccessTokenExpiresIn"
 
@@ -82,6 +86,24 @@ class AppSettings {
 		}
 	}
 
+	var deviceIdentifyURL: String {
+		get {
+			return UserDefaults.standard.string(forKey: deviceIdentifyURLKey) ?? ""
+		}
+	}
+
+	var deviceDeleteURL: String {
+		get {
+			return UserDefaults.standard.string(forKey: deviceDeleteURLKey) ?? ""
+		}
+	}
+
+	var deviceRefreshURL: String {
+		get {
+			return UserDefaults.standard.string(forKey: deviceRefreshURLKey) ?? ""
+		}
+	}
+
 	var profileURL: String {
 		get {
 			return UserDefaults.standard.string(forKey: profileURLKey) ?? ""
@@ -115,6 +137,15 @@ class AppSettings {
 		}
 	}
 
+	var deviceRefreshToken: String {
+		get {
+			return UserDefaults.standard.string(forKey: deviceRefreshTokenKey) ?? ""
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: deviceRefreshTokenKey)
+		}
+	}
+
 	var deviceAccessTokenType: String {
 		get {
 			return UserDefaults.standard.string(forKey: deviceAccessTokenTypeKey) ?? ""
@@ -124,9 +155,10 @@ class AppSettings {
 		}
 	}
 
-	var deviceAccessTokenExpiresIn: Double {
+
+	var deviceAccessTokenExpiresIn: Date {
 		get {
-			return UserDefaults.standard.double(forKey: deviceAccessTokenExpiresInKey)
+			return UserDefaults.standard.object(forKey: deviceAccessTokenExpiresInKey) as? Date ?? Date.now
 		}
 		set {
 			UserDefaults.standard.set(newValue, forKey: deviceAccessTokenExpiresInKey)
@@ -348,8 +380,11 @@ class AppSettings {
 			UserDefaults.standard.set(UUID().uuidString, forKey: clientIDKey)
 		}
 
-		UserDefaults.standard.set("https://rupl.org/api/v1/auth/device/authorization", forKey: deviceAuthURLKey)
-		UserDefaults.standard.set("https://rupl.org/api/v1/auth/device_token", forKey: deviceTokenURLKey)
+		UserDefaults.standard.set("https://rupl.org/api/v1/auth/device/authorize", forKey: deviceAuthURLKey)
+		UserDefaults.standard.set("https://rupl.org/api/v1/auth/device/token", forKey: deviceTokenURLKey)
+		UserDefaults.standard.set("https://rupl.org/api/v1/auth/device/identify", forKey: deviceIdentifyURLKey)
+		UserDefaults.standard.set("https://rupl.org/api/v1/auth/device/delete", forKey: deviceDeleteURLKey)
+		UserDefaults.standard.set("https://rupl.org/api/v1/auth/device/refresh", forKey: deviceRefreshURLKey)
 		UserDefaults.standard.set("https://rupl.org/api/v1/profile", forKey: profileURLKey)
 		UserDefaults.standard.set("https://rupl.org/api/v1/profile/devices", forKey: deviceInfoURLKey)
 		UserDefaults.standard.set("https://rupl.org/api/v1/training/task", forKey: taskURLKey)
@@ -374,7 +409,7 @@ class AppSettings {
 		paceForAutoResume = 1.95
 		accelerationForAutoPause = 0.3
 		accelerationForAutoResume = 0.85 // was 0.75
-		timeForShowLastSegmentView = 20
+		timeForShowLastSegmentView = 15
 		soundNotificationTimeOut = 10
 		viewNotificationTimeOut = 20
 	}
@@ -388,5 +423,20 @@ class AppSettings {
 		} else {
 			return 21
 		}
+	}
+
+	func resetUser() {
+		connectedToRupl = false
+		
+		deviceAccessToken = ""
+		deviceRefreshToken = ""
+		deviceAccessTokenType = ""
+		deviceAccessTokenExpiresIn = Date.now
+
+		userEmail = ""
+		userFirstName = ""
+		userLastName = ""
+		userDateOfBirth = nil
+		userGender = ""
 	}
 }
