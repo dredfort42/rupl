@@ -7,9 +7,9 @@ import (
 	loger "github.com/dredfort42/tools/logprinter"
 )
 
-// ProfileCreate creates a new profile in the database
-func ProfileCreate(profile s.Profile) (err error) {
-	if CheckProfileExists(profile.Email) {
+// UserCreate creates a new profile in the database
+func UserCreate(user s.User) (err error) {
+	if CheckUserExists(user.Email) {
 		return errors.New("profile already exists")
 	}
 
@@ -18,7 +18,7 @@ func ProfileCreate(profile s.Profile) (err error) {
 		VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 	`
 
-	_, err = db.database.Exec(query, profile.Email, profile.FirstName, profile.LastName, profile.DateOfBirth, profile.Gender)
+	_, err = db.database.Exec(query, user.Email, user.FirstName, user.LastName, user.DateOfBirth, user.Gender)
 	if err != nil {
 		loger.Error("Failed to create profile in the database", err)
 	}

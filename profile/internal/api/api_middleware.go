@@ -1,7 +1,8 @@
 package api
 
 import (
-	"errors"
+	"encoding/json"
+	"io"
 	"net/http"
 
 	loger "github.com/dredfort42/tools/logprinter"
@@ -36,21 +37,23 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		var email string
+		var err error
 
 		switch clientType {
 		case USER:
-			email, err := UserIdentify(userToken)
+			email, err = UserIdentify(userToken)
 			if email == "" || err != nil {
 				c.Abort()
 				return
 			}
+
 		case DEVICE:
 			if clientID == "" {
 				c.Abort()
 				return
 			}
 
-			email, err := DeviceIdentify(clientID, deviceToken)
+			email, err = DeviceIdentify(clientID, deviceToken)
 			if email == "" || err != nil {
 				c.Abort()
 				return
@@ -82,15 +85,24 @@ func UserIdentify(accessToken string) (string, error) {
 	}
 	defer response.Body.Close()
 
-	var email string
+	var result struct {
+		Email string `json:"email"`
+	}
+
 	if response.StatusCode == http.StatusOK {
-		email = response.Header.Get("email")
-		if email == "" {
-			return "", errors.New("email not found")
+		body, err := io.ReadAll(response.Body)
+		if err != nil {
+			loger.Error("Error reading response body", err)
+			return "", err
+		}
+
+		if err := json.Unmarshal(body, &result); err != nil {
+			loger.Error("Error parsing response body", err)
+			return "", err
 		}
 	}
 
-	return email, nil
+	return result.Email, nil
 }
 
 // DeviceIdentify verifies the device based on the client ID and access token provided in the request.
@@ -113,13 +125,22 @@ func DeviceIdentify(clientID string, accessToken string) (string, error) {
 	}
 	defer response.Body.Close()
 
-	var email string
+	var result struct {
+		Email string `json:"email"`
+	}
+
 	if response.StatusCode == http.StatusOK {
-		email = response.Header.Get("email")
-		if email == "" {
-			return "", errors.New("email not found")
+		body, err := io.ReadAll(response.Body)
+		if err != nil {
+			loger.Error("Error reading response body", err)
+			return "", err
+		}
+
+		if err := json.Unmarshal(body, &result); err != nil {
+			loger.Error("Error parsing response body", err)
+			return "", err
 		}
 	}
 
-	return email, nil
+	return result.Email, nil
 }

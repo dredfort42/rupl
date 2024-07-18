@@ -1,7 +1,7 @@
 package structs
 
-// Profile is a struct for JSON
-type Profile struct {
+// User is a struct for JSON
+type User struct {
 	Email       string `json:"email"`
 	FirstName   string `json:"first_name"`
 	LastName    string `json:"last_name"`

@@ -1,0 +1,140 @@
+openapi: 3.0.0
+
+info:
+  version: 1.0.0
+  title: Profile service API
+  contact:
+    name: Dmitry Novikov
+    email: dredfort.42@gmail.com
+    url: "https://github.com/dredfort42"
+  license:
+    name: GNU General Public License v3.0
+    url: "https://www.gnu.org/licenses/gpl-3.0.html"
+  x-logo:
+    url: "https://avatars.githubusercontent.com/u/102029973?v=4"
+  description: |
+    This is a description of the Profile service API and its operations.
+
+tags:
+  - name: User
+    description: |
+      The Profile user operations.
+  - name: Device
+    description: |
+      The Profile device operations.
+
+servers:
+  - url: "http://localhost:4242"
+    description: "Local server"
+
+paths:
+  /api/v1/profile/user:
+    post:
+      tags:
+        - User
+      summary: "Create a new user"
+      description: "Create a new user in the Profile service."
+      operationId: "UserCreate"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserCreate"
+      responses:
+        "201":
+          description: "User created"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: "Invalid input"
+        "409":
+          description: "User already exists"
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - name
+        - email
+        - password
+    UserCreate:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+      required:
+        - name
+        - email
+        - password
+    Device:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        user_id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        type:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - user_id
+        - name
+        - type
+    DeviceCreate:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        type:
+          type: string
+      required:
+        - user_id
+        - name
+        - type
+
+  # authorized.GET("/api/v1/profile/user", UserGet)
+  # authorized.POST("/api/v1/profile/user", UserCreate)
+  # authorized.GET("/api/v1/profile/devices", DevicesGet)
+  # authorized.POST("/api/v1/profile/devices", DeviceCreate)
+  # authorized.PUT("/api/v1/profile/devices", UpdateDevice)
+  # authorized.DELETE("/api/v1/profile/devices", DeviceDelete)

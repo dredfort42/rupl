@@ -90,7 +90,7 @@ persistent_volumes/
 main
 docker-compose.yml
 .env
-*.ini
+*_config.ini
 *.zip
 *.cfg
 *.crt

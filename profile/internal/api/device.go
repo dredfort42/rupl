@@ -14,13 +14,15 @@ func DeviceCreate(c *gin.Context) {
 	var device s.Device
 	var errorResponse s.ResponseError
 
-	email := c.Request.URL.Query().Get("email")
-	if email == "" {
+	tmpEmail, exists := c.Get("email")
+	if !exists || tmpEmail.(string) == "" {
 		errorResponse.Error = "invalid_request"
 		errorResponse.ErrorDescription = "Missing email"
 		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
 		return
 	}
+
+	email := tmpEmail.(string)
 
 	err := c.ShouldBindJSON(&device)
 	if err != nil {
@@ -52,8 +54,8 @@ func UpdateDevice(c *gin.Context) {
 	var device s.Device
 	var errorResponse s.ResponseError
 
-	email := c.Request.URL.Query().Get("email")
-	if email == "" {
+	tmpEmail, exists := c.Get("email")
+	if !exists || tmpEmail.(string) == "" {
 		errorResponse.Error = "invalid_request"
 		errorResponse.ErrorDescription = "Missing email"
 		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
@@ -130,13 +132,15 @@ func deviceStructCheck(device s.Device, c *gin.Context) (success bool) {
 func DevicesGet(c *gin.Context) {
 	var errorResponse s.ResponseError
 
-	email := c.Request.URL.Query().Get("email")
-	if email == "" {
+	tmpEmail, exists := c.Get("email")
+	if !exists || tmpEmail.(string) == "" {
 		errorResponse.Error = "invalid_request"
 		errorResponse.ErrorDescription = "Missing email"
 		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
 		return
 	}
+
+	email := tmpEmail.(string)
 
 	devices, err := db.DevicesGet(email)
 	if err != nil {
@@ -156,8 +160,8 @@ func DeviceDelete(c *gin.Context) {
 	var device s.Device
 	var errorResponse s.ResponseError
 
-	email := c.Request.URL.Query().Get("email")
-	if email == "" {
+	tmpEmail, exists := c.Get("email")
+	if !exists || tmpEmail.(string) == "" {
 		errorResponse.Error = "invalid_request"
 		errorResponse.ErrorDescription = "Missing email"
 		c.IndentedJSON(http.StatusInternalServerError, errorResponse)

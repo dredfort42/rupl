@@ -1,7 +1,7 @@
 package db
 
-// checkProfilesTable() checks if the users table exists, if not, it creates it
-func checkProfilesTable() {
+// usersTableCheck() checks if the users table exists, if not, it creates it
+func usersTableCheck() {
 	query := `
 		CREATE TABLE IF NOT EXISTS ` + db.tableUsers + ` (
 			email VARCHAR(255) PRIMARY KEY,
@@ -20,8 +20,8 @@ func checkProfilesTable() {
 	}
 }
 
-// checkDevicesTable checks if the devices table exists, if not, it creates it
-func checkDevicesTable() {
+// devicesTableCheck checks if the devices table exists, if not, it creates it
+func devicesTableCheck() {
 	query := `
 			CREATE TABLE IF NOT EXISTS ` + db.tableDevices + ` (
 				id SERIAL PRIMARY KEY,
@@ -45,6 +45,6 @@ func checkDevicesTable() {
 
 // CheckTables checks if the tables exists, if not, it creates it
 func tablesCheck() {
-	checkProfilesTable()
-	checkDevicesTable()
+	usersTableCheck()
+	devicesTableCheck()
 }

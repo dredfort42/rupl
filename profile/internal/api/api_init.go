@@ -67,8 +67,8 @@ func ApiInit() {
 	// Apply the middleware to the routes you want to protect
 	authorized := router.Group("/", AuthMiddleware())
 	{
-		authorized.GET("/api/v1/profile/user", ProfileGet)
-		authorized.POST("/api/v1/profile/user", CreateProfile)
+		authorized.GET("/api/v1/profile/user", UserGet)
+		authorized.POST("/api/v1/profile/user", UserCreate)
 		authorized.GET("/api/v1/profile/devices", DevicesGet)
 		authorized.POST("/api/v1/profile/devices", DeviceCreate)
 		authorized.PUT("/api/v1/profile/devices", UpdateDevice)

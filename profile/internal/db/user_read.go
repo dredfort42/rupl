@@ -6,8 +6,8 @@ import (
 	loger "github.com/dredfort42/tools/logprinter"
 )
 
-// CheckProfileExists checks if a profile exists in the database based on the email provided
-func CheckProfileExists(email string) (result bool) {
+// CheckUserExists checks if a user exists in the database based on the email provided
+func CheckUserExists(email string) (result bool) {
 	query := `
 		SELECT 1
 	 	FROM ` + db.tableUsers + ` 
@@ -22,15 +22,15 @@ func CheckProfileExists(email string) (result bool) {
 	return
 }
 
-// ProfileGet returns a profile from the database
-func ProfileGet(email string) (profile s.Profile, err error) {
+// UserGet returns a user from the database
+func UserGet(email string) (user s.User, err error) {
 	query := `
-		SELECT * 
+		SELECT email, first_name, last_name, date_of_birth, gender
 		FROM ` + db.tableUsers + ` 
 		WHERE email = $1
 	`
 
-	err = db.database.QueryRow(query, email).Scan(&profile.Email, &profile.FirstName, &profile.LastName, &profile.DateOfBirth, &profile.Gender)
+	err = db.database.QueryRow(query, email).Scan(&user.Email, &user.FirstName, &user.LastName, &user.DateOfBirth, &user.Gender)
 	if err != nil {
 		loger.Error("Failed to get profile from the database", err)
 	}
