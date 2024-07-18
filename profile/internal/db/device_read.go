@@ -19,11 +19,13 @@ func CheckDeviceExists(deviceID string) bool {
 	return true
 }
 
-// GetDevices returns a device from the database
-func GetDevices(email string) (s.UserDevices, error) {
-	var devices s.UserDevices
-
-	query := `SELECT * FROM ` + db.tableDevices + ` WHERE email = $1;`
+// DevicesGet returns a device from the database
+func DevicesGet(email string) (devices s.UserDevices, err error) {
+	query := `
+		SELECT * 
+		FROM ` + db.tableDevices + ` 
+		WHERE email = $1;
+	`
 
 	rows, err := db.database.Query(query, email)
 	if err != nil {
@@ -38,10 +40,9 @@ func GetDevices(email string) (s.UserDevices, error) {
 		var created_at string
 		var updated_at string
 
-		if err := rows.Scan(&id, &tmpEmail, &device.DeviceModel, &device.DeviceName, &device.SystemName, &device.SystemVersion, &device.DeviceID, &device.AppVersion, &created_at, &updated_at); err != nil {
+		if err = rows.Scan(&id, &tmpEmail, &device.DeviceModel, &device.DeviceName, &device.SystemName, &device.SystemVersion, &device.DeviceID, &device.AppVersion, &created_at, &updated_at); err != nil {
 			loger.Error("Failed to get device from the database", err)
-
-			return s.UserDevices{}, err
+			return
 		}
 
 		devices.Devices = append(devices.Devices, device)
@@ -49,5 +50,5 @@ func GetDevices(email string) (s.UserDevices, error) {
 
 	devices.Email = email
 
-	return devices, nil
+	return
 }

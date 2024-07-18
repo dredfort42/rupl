@@ -9,18 +9,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GetProfile retrieves the user profile based on the access token provided in the request.
-func GetProfile(c *gin.Context) {
-	var userProfile s.Profile
-	var errorResponse ResponseError
-	var err error
+// ProfileGet retrieves the user profile based on the access token provided in the request.
+func ProfileGet(c *gin.Context) {
+	var errorResponse s.ResponseError
 
-	if clientID := c.Request.URL.Query().Get("client_id"); clientID != "" {
-		userProfile, err = db.GetProfile(VerifyDevice(c))
-	} else {
-		userProfile, err = db.GetProfile(VerifyUser(c))
+	email := c.Request.URL.Query().Get("email")
+	if email == "" {
+		errorResponse.Error = "invalid_request"
+		errorResponse.ErrorDescription = "Missing email"
+		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
+		return
 	}
 
+	userProfile, err := db.ProfileGet(email)
 	if err != nil {
 		errorResponse.Error = "server_error"
 		errorResponse.ErrorDescription = "Error getting user profile"
@@ -36,22 +37,13 @@ func GetProfile(c *gin.Context) {
 
 // CreateProfile creates a new user profile based on the access token provided in the request.
 func CreateProfile(c *gin.Context) {
-	var accessToken string
-	var errorResponse ResponseError
-	var err error
+	var errorResponse s.ResponseError
 
-	if accessToken, err = c.Cookie("access_token"); err != nil {
-		errorResponse.Error = "token_error"
-		errorResponse.ErrorDescription = "Missing access token"
-		c.IndentedJSON(http.StatusUnauthorized, errorResponse)
-		return
-	}
-
-	email := ValidateAccessToken(accessToken)
+	email := c.Request.URL.Query().Get("email")
 	if email == "" {
 		errorResponse.Error = "invalid_request"
-		errorResponse.ErrorDescription = "User not authenticated"
-		c.IndentedJSON(http.StatusUnauthorized, errorResponse)
+		errorResponse.ErrorDescription = "Missing email"
+		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
 		return
 	}
 
@@ -72,7 +64,7 @@ func CreateProfile(c *gin.Context) {
 	profileDB.DateOfBirth = profile.DateOfBirth
 	profileDB.Gender = profile.Gender
 
-	if err := db.CreateProfile(profileDB); err != nil {
+	if err := db.ProfileCreate(profileDB); err != nil {
 		errorResponse.Error = "server_error"
 		errorResponse.ErrorDescription = "Error creating user profile"
 		c.IndentedJSON(http.StatusInternalServerError, errorResponse)

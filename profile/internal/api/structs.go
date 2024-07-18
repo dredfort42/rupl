@@ -7,9 +7,3 @@ type Profile struct {
 	DateOfBirth string `json:"date_of_birth"`
 	Gender      string `json:"gender"`
 }
-
-// ResponseError is a struct for JSON error
-type ResponseError struct {
-	Error            string `json:"error"`
-	ErrorDescription string `json:"error_description"`
-}
