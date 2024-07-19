@@ -24,7 +24,7 @@ tags:
       The Profile device operations.
 
 servers:
-  - url: "http://localhost:4242"
+  - url: "http://localhost:4284"
     description: "Local server"
 
 paths:
@@ -32,7 +32,7 @@ paths:
     post:
       tags:
         - User
-      summary: "Create a new user"
+      summary: Create a new user
       description: "Create a new user in the Profile service."
       operationId: "UserCreate"
       requestBody:
@@ -43,94 +43,110 @@ paths:
               $ref: "#/components/schemas/UserCreate"
       responses:
         "201":
-          description: "User created"
+          description: OK
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Profile created successfully"
+                  profile:
+                    $ref: "#/components/schemas/User"
         "400":
-          description: "Invalid input"
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                invalidJSON:
+                  summary: Invalid JSON
+                  value:
+                    error: "invalid_request"
+                    error_description: "Invalid request"
+                missingFields:
+                  summary: Missing required fields
+                  value:
+                    error: "invalid_request"
+                    error_description: "Missing required fields"
         "409":
-          description: "User already exists"
+          description: Profile already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                profileExists:
+                  summary: Profile already exists
+                  value:
+                    error: "invalid_request"
+                    error_description: "Profile already exists"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingEmail:
+                  summary: Missing email
+                  value:
+                    error: "invalid_request"
+                    error_description: "Missing email"
+                createUserError:
+                  summary: Create user error
+                  value:
+                    error: "server_error"
+                    error_description: "Error creating user profile"
 
 components:
   schemas:
-    User:
-      type: object
-      properties:
-        id:
-          type: string
-          format:
-        name:
-          type: string
-        email:
-          type: string
-          format: email
-        password:
-          type: string
-          format: password
-        created_at:
-          type: string
-          format: date-time
-        updated_at:
-          type: string
-          format: date-time
-      required:
-        - name
-        - email
-        - password
     UserCreate:
       type: object
       properties:
-        name:
+        first_name:
           type: string
-        email:
+          example: "John"
+        last_name:
           type: string
-          format: email
-        password:
+          example: "Smith"
+        date_of_birth:
           type: string
-          format: password
+          format: date # YYYY-MM-DD
+        gender:
+          type: string
+          enum:
+            - man
+            - woman
+            - other
       required:
-        - name
-        - email
-        - password
-    Device:
+        - first_name
+        - last_name
+        - date_of_birth
+
+    User:
+      allOf:
+        - $ref: "#/components/schemas/UserCreate"
+        - type: object
+          properties:
+            email:
+              type: string
+              format: email
+              example: "john.smith@example.com"
+          required:
+            - email
+
+    Error:
       type: object
       properties:
-        id:
-          type: integer
-          format: int64
-        user_id:
-          type: integer
-          format: int64
-        name:
+        error:
           type: string
-        type:
+          example: "invalid_request"
+        error_description:
           type: string
-        created_at:
-          type: string
-          format: date-time
-        updated_at:
-          type: string
-          format: date-time
-      required:
-        - user_id
-        - name
-        - type
-    DeviceCreate:
-      type: object
-      properties:
-        user_id:
-          type: integer
-          format: int64
-        name:
-          type: string
-        type:
-          type: string
-      required:
-        - user_id
-        - name
-        - type
+          example: Missing required fields
 
   # authorized.GET("/api/v1/profile/user", UserGet)
   # authorized.POST("/api/v1/profile/user", UserCreate)

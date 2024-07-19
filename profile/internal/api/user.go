@@ -9,6 +9,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const (
+	GENDER_MAN   = "man"
+	GENDER_WOMAN = "woman"
+	GENDER_OTHER = "other"
+)
+
 // UserGet retrieves the user profile based on the access token provided in the request.
 func UserGet(c *gin.Context) {
 	var errorResponse s.ResponseError
@@ -61,12 +67,30 @@ func UserCreate(c *gin.Context) {
 		return
 	}
 
+	if profile.FirstName == "" || profile.LastName == "" || profile.DateOfBirth == "" {
+		errorResponse.Error = "invalid_request"
+		errorResponse.ErrorDescription = "Missing required fields"
+		c.IndentedJSON(http.StatusBadRequest, errorResponse)
+		return
+	}
+
+	if profile.Gender != GENDER_MAN && profile.Gender != GENDER_WOMAN {
+		profile.Gender = GENDER_OTHER
+	}
+
 	var profileDB s.User
 	profileDB.Email = email
 	profileDB.FirstName = profile.FirstName
 	profileDB.LastName = profile.LastName
 	profileDB.DateOfBirth = profile.DateOfBirth
 	profileDB.Gender = profile.Gender
+
+	if err := db.UserExistsCheck(email); err {
+		errorResponse.Error = "invalid_request"
+		errorResponse.ErrorDescription = "Profile already exists"
+		c.IndentedJSON(http.StatusConflict, errorResponse)
+		return
+	}
 
 	if err := db.UserCreate(profileDB); err != nil {
 		errorResponse.Error = "server_error"
@@ -76,7 +100,7 @@ func UserCreate(c *gin.Context) {
 	}
 
 	loger.Debug("User profile created successfully for an ID: ", email)
-	loger.Debug("User profile: ", profile.FirstName+" "+profile.LastName)
+	loger.Debug("User profile: ", profile.FirstName+" "+profile.LastName+" "+profile.DateOfBirth+" "+profile.Gender)
 
 	c.IndentedJSON(http.StatusCreated, gin.H{"message": "Profile created successfully", "profile": profileDB})
 }
