@@ -32,8 +32,10 @@ paths:
     post:
       tags:
         - User
-      summary: Create a new user
+      summary: Create a new user profile
       description: "Create a new user in the Profile service."
+      security:
+        - CookieAuth: []
       operationId: "UserCreate"
       requestBody:
         required: true
@@ -61,6 +63,11 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
               examples:
+                missingToken:
+                  summary: Missing token
+                  value:
+                    error: "invalid_request"
+                    error_description: "Missing or invalid token"
                 invalidJSON:
                   summary: Invalid JSON
                   value:
@@ -100,8 +107,149 @@ paths:
                   value:
                     error: "server_error"
                     error_description: "Error creating user profile"
+    get:
+      tags:
+        - User
+      summary: Get user profile
+      description: "Get user profile from the Profile service."
+      security:
+        - CookieAuth: []
+      operationId: "UserGet"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingToken:
+                  summary: Missing token
+                  value:
+                    error: "invalid_request"
+                    error_description: "Missing or invalid token"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingProfile:
+                  summary: Profile not found
+                  value:
+                    error: "not_found"
+                    error_description: "Profile not found"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingEmail:
+                  summary: Missing email
+                  value:
+                    error: "invalid_request"
+                    error_description: "Missing email"
+                getUserError:
+                  summary: Get user error
+                  value:
+                    error: "server_error"
+                    error_description: "Error getting user profile"
+
+    patch:
+      tags:
+        - User
+      summary: Update user profile
+      description: "Update user profile in the Profile service."
+      security:
+        - CookieAuth: []
+      operationId: "UserUpdate"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserCreate"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Profile updated successfully"
+                  profile:
+                    $ref: "#/components/schemas/User"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingToken:
+                  summary: Missing token
+                  value:
+                    error: "invalid_request"
+                    error_description: "Missing or invalid token"
+                invalidJSON:
+                  summary: Invalid JSON
+                  value:
+                    error: "invalid_request"
+                    error_description: "Invalid request"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingProfile:
+                  summary: Profile not found
+                  value:
+                    error: "not_found"
+                    error_description: "Profile not found"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingEmail:
+                  summary: Missing email
+                  value:
+                    error: "invalid_request"
+                    error_description: "Missing email"
+                getUserError:
+                  summary: Get user error
+                  value:
+                    error: "server_error"
+                    error_description: "Error getting user profile"
+                updateUserError:
+                  summary: Update user error
+                  value:
+                    error: "server_error"
+                    error_description: "Error updating user profile"
 
 components:
+  securitySchemes:
+    CookieAuth:
+      type: apiKey
+      in: cookie
+      name: access_token
+
   schemas:
     UserCreate:
       type: object

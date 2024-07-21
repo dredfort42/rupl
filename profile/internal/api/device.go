@@ -49,8 +49,8 @@ func DeviceCreate(c *gin.Context) {
 	c.IndentedJSON(http.StatusCreated, gin.H{"message": "Device created successfully", "device": device})
 }
 
-// UpdateDevice updates a device based on the access token provided in the request.
-func UpdateDevice(c *gin.Context) {
+// DeviceUpdate updates a device based on the access token provided in the request.
+func DeviceUpdate(c *gin.Context) {
 	var device s.Device
 	var errorResponse s.ResponseError
 

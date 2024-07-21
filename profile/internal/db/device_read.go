@@ -1,6 +1,7 @@
 package db
 
 import (
+	"database/sql"
 	s "profile/internal/structs"
 
 	loger "github.com/dredfort42/tools/logprinter"
@@ -10,8 +11,11 @@ import (
 func CheckDeviceExists(deviceID string) bool {
 	query := `SELECT device_id FROM ` + db.tableDevices + ` WHERE device_id = $1;`
 
-	if err := db.database.QueryRow(query, deviceID).Scan(&deviceID); err != nil {
-		loger.Error("Failed to check if device exists in the database", err)
+	err := db.database.QueryRow(query, deviceID).Scan(&deviceID)
+	if err != nil {
+		if err != sql.ErrNoRows {
+			loger.Error("Failed to check if device exists in the database", err)
+		}
 
 		return false
 	}
@@ -40,8 +44,12 @@ func DevicesGet(email string) (devices s.UserDevices, err error) {
 		var created_at string
 		var updated_at string
 
-		if err = rows.Scan(&id, &tmpEmail, &device.DeviceModel, &device.DeviceName, &device.SystemName, &device.SystemVersion, &device.DeviceID, &device.AppVersion, &created_at, &updated_at); err != nil {
-			loger.Error("Failed to get device from the database", err)
+		err = rows.Scan(&id, &tmpEmail, &device.DeviceModel, &device.DeviceName, &device.SystemName, &device.SystemVersion, &device.DeviceID, &device.AppVersion, &created_at, &updated_at)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				loger.Error("Failed to get device from the database", err)
+			}
+
 			return
 		}
 

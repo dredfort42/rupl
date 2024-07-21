@@ -33,7 +33,11 @@ func UserGet(email string) (user s.User, err error) {
 
 	err = db.database.QueryRow(query, email).Scan(&user.Email, &user.FirstName, &user.LastName, &user.DateOfBirth, &user.Gender)
 	if err != nil {
-		loger.Error("Failed to get profile from the database", err)
+		if err == sql.ErrNoRows {
+			err = nil
+		} else {
+			loger.Error("Failed to get profile from the database", err)
+		}
 	}
 
 	return
