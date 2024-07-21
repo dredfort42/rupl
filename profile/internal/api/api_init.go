@@ -16,6 +16,7 @@ type Server struct {
 	AuthServerURL      string
 	IdentifyPathUser   string
 	IdentifyPathDevice string
+	ChangePathEmail    string
 }
 
 var server Server
@@ -52,6 +53,11 @@ func ApiInit() {
 		panic("auth.identify.path.device is not set")
 	}
 
+	server.ChangePathEmail = cfg.Config["auth.change.path.email"]
+	if server.ChangePathEmail == "" {
+		panic("auth.change.path.email is not set")
+	}
+
 	if os.Getenv("DEBUG") != "true" && os.Getenv("DEBUG") != "1" {
 		gin.SetMode(gin.ReleaseMode)
 	} else {
@@ -71,7 +77,7 @@ func ApiInit() {
 		authorized.GET("/api/v1/profile/user", UserGet)
 		authorized.PATCH("/api/v1/profile/user", UserUpdate)
 		// authorized.DELETE("/api/v1/profile/user", UserDelete)
-		// authorized.POST("/api/v1/profile/user/email" UserEmailChange)
+		authorized.POST("/api/v1/profile/user/email", UserChangeEmail)
 		authorized.POST("/api/v1/profile/devices", DeviceCreate)
 		authorized.GET("/api/v1/profile/devices", DevicesGet)
 		authorized.PUT("/api/v1/profile/devices", DeviceUpdate)

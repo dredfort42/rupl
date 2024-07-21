@@ -7,20 +7,37 @@ import (
 	loger "github.com/dredfort42/tools/logprinter"
 )
 
-// CheckDeviceExists checks if a device exists in the database based on the email and device ID provided
-func CheckDeviceExists(deviceID string) bool {
-	query := `SELECT device_id FROM ` + db.tableDevices + ` WHERE device_id = $1;`
+// DeviceExistsCheck checks if a device exists in the database based on the email and device ID provided
+func DeviceExistsCheck(email string, deviceID string) (result bool) {
+	query := `
+		SELECT 1 
+		FROM ` + db.tableDevices + ` 
+		WHERE email = $1
+		AND device_id = $2;
+	`
 
-	err := db.database.QueryRow(query, deviceID).Scan(&deviceID)
-	if err != nil {
-		if err != sql.ErrNoRows {
-			loger.Error("Failed to check if device exists in the database", err)
-		}
-
-		return false
+	err := db.database.QueryRow(query, email, deviceID).Scan(&result)
+	if err != nil && err != sql.ErrNoRows {
+		loger.Error("Failed to check if device exists in the database", err)
 	}
 
-	return true
+	return
+}
+
+// UserDevicesExistsCheck checks if a user has any devices in the database based on the email provided
+func UserDevicesExistsCheck(email string) (result bool) {
+	query := `
+		SELECT 1 
+		FROM ` + db.tableDevices + ` 
+		WHERE email = $1;
+	`
+
+	err := db.database.QueryRow(query, email).Scan(&result)
+	if err != nil && err != sql.ErrNoRows {
+		loger.Error("Failed to check if user has any devices in the database", err)
+	}
+
+	return
 }
 
 // DevicesGet returns a device from the database
