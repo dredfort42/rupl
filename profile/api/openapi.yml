@@ -38,13 +38,13 @@ paths:
         Create a new user in the Profile service.
       security:
         - OAuth2AccessToken: []
-      operationId: "UserCreate"
+      operationId: "Profile"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UserCreate"
+              $ref: "#/components/schemas/Profile"
       responses:
         "201":
           description: |
@@ -189,7 +189,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UserCreate"
+              $ref: "#/components/schemas/Profile"
       responses:
         "200":
           description: |
@@ -448,6 +448,310 @@ paths:
                     error: "server_error"
                     error_description: "Error updating user profile email in the database"
 
+  /api/v1/profile/devices:
+    post:
+      tags:
+        - Device
+      summary: Add a new device
+      description: |
+        Add a new device to user profile in the Profile service.
+      security:
+        - OAuth2AccessToken: []
+      operationId: "DeviceAdd"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Device"
+      responses:
+        "201":
+          description: |
+            OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Device created successfully"
+                  device:
+                    $ref: "#/components/schemas/Device"
+        "400":
+          description: |
+            Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingToken:
+                  summary: Missing token
+                  value:
+                    error: "invalid_request"
+                    error_description: "Missing or invalid token"
+                invalidJSON:
+                  summary: Invalid JSON
+                  value:
+                    error: "invalid_request"
+                    error_description: "Invalid request"
+                missingFields:
+                  summary: Missing required fields
+                  value:
+                    error: "invalid_request"
+                    error_description: "Device struct check failed | ..."
+        "409":
+          description: |
+            Device already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                deviceExists:
+                  summary: Device already exists
+                  value:
+                    error: "invalid_request"
+                    error_description: "Device already exists"
+        "500":
+          description: |
+            Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingEmail:
+                  summary: Missing email
+                  value:
+                    error: "invalid_request"
+                    error_description: "Missing email"
+                createDeviceError:
+                  summary: Create device error
+                  value:
+                    error: "server_error"
+                    error_description: "Error creating device"
+
+    get:
+      tags:
+        - Device
+      summary: Get user devices
+      description: |
+        Get user devices from the Profile service.
+      security:
+        - OAuth2AccessToken: []
+      operationId: "DeviceGet"
+      responses:
+        "200":
+          description: |
+            OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDevices"
+        "400":
+          description: |
+            Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingToken:
+                  summary: Missing token
+                  value:
+                    error: "invalid_request"
+                    error_description: "Missing or invalid token"
+        "500":
+          description: |
+            Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingEmail:
+                  summary: Missing email
+                  value:
+                    error: "invalid_request"
+                    error_description: "Missing email"
+                getDevicesError:
+                  summary: Get devices error
+                  value:
+                    error: "server_error"
+                    error_description: "Error getting user devices"
+
+    put:
+      tags:
+        - Device
+      summary: Update user device
+      description: |
+        Update user device in the Profile service.
+      security:
+        - OAuth2AccessToken: []
+      operationId: "DeviceUpdate"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Device"
+      responses:
+        "200":
+          description: |
+            OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Device updated successfully"
+                  device:
+                    $ref: "#/components/schemas/Device"
+        "400":
+          description: |
+            Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingToken:
+                  summary: Missing token
+                  value:
+                    error: "invalid_request"
+                    error_description: "Missing or invalid token"
+                invalidJSON:
+                  summary: Invalid JSON
+                  value:
+                    error: "invalid_request"
+                    error_description: "Invalid request"
+                invalidDevice:
+                  summary: Invalid device
+                  value:
+                    error: "invalid_request"
+                    error_description: "Device struct check failed | ..."
+        "404":
+          description: |
+            Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingDevice:
+                  summary: Device not found
+                  value:
+                    error: "not_found"
+                    error_description: "Device not found"
+        "500":
+          description: |
+            Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingEmail:
+                  summary: Missing email
+                  value:
+                    error: "invalid_request"
+                    error_description: "Missing email"
+                updateDeviceError:
+                  summary: Update device error
+                  value:
+                    error: "server_error"
+                    error_description: "Error updating user device"
+
+    delete:
+      tags:
+        - Device
+      summary: Delete user device
+      description: |
+        Delete user device from the Profile service.
+      security:
+        - OAuth2AccessToken: []
+      operationId: "DeviceDelete"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                device_uuid:
+                  type: string
+                  example: "1234567890"
+      responses:
+        "200":
+          description: |
+            OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Device deleted successfully"
+        "400":
+          description: |
+            Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingToken:
+                  summary: Missing token
+                  value:
+                    error: "invalid_request"
+                    error_description: "Missing or invalid token"
+                invalidJSON:
+                  summary: Invalid JSON
+                  value:
+                    error: "invalid_request"
+                    error_description: "Invalid request"
+                missingDeviceUUID:
+                  summary: Missing device UUID
+                  value:
+                    error: "invalid_request"
+                    error_description: "Missing device UUID"
+        "404":
+          description: |
+            Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingDevice:
+                  summary: Device not found
+                  value:
+                    error: "not_found"
+                    error_description: "Device not found"
+        "500":
+          description: |
+            Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingEmail:
+                  summary: Missing email
+                  value:
+                    error: "invalid_request"
+                    error_description: "Missing email"
+                deleteDeviceError:
+                  summary: Delete device error
+                  value:
+                    error: "server_error"
+                    error_description: "Error deleting user device"
+
 components:
   securitySchemes:
     CookieAuth:
@@ -456,9 +760,8 @@ components:
       name: access_token
 
   schemas:
-    UserCreate:
+    Profile:
       description: |
-        |
         User profile creation request
       type: object
       properties:
@@ -484,7 +787,6 @@ components:
 
     Email:
       description: |
-        |
         User email address
       type: string
       format: email
@@ -492,7 +794,6 @@ components:
 
     Password:
       description: |
-        |
         User password (base64 encoded)
       type: string
       format: password
@@ -500,10 +801,9 @@ components:
 
     User:
       description: |
-        |
         User profile
       allOf:
-        - $ref: "#/components/schemas/UserCreate"
+        - $ref: "#/components/schemas/Profile"
         - type: object
           properties:
             email:
@@ -511,9 +811,53 @@ components:
           required:
             - email
 
+    Device:
+      description: |
+        User device
+      type: object
+      properties:
+        device_uuid:
+          type: string
+          example: "1234567890"
+        device_model:
+          type: string
+          example: "My_Device_Model"
+        device_name:
+          type: string
+          example: "My_Device"
+        system_name:
+          type: string
+          example: "My_Device_OS"
+        system_version:
+          type: string
+          example: "1.0"
+        app_version:
+          type: string
+          example: "1.0"
+      required:
+        - device_uuid
+        - device_model
+        - device_name
+        - system_name
+        - system_version
+        - app_version
+
+    UserDevices:
+      description: |
+        User devices
+      properties:
+        email:
+          $ref: "#/components/schemas/Email"
+        devices:
+          type: array
+          items:
+            $ref: "#/components/schemas/Device"
+      required:
+        - email
+        - devices
+
     Error:
       description: |
-        |
         Error response
       type: object
       properties:

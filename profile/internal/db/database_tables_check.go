@@ -24,16 +24,16 @@ func usersTableCheck() {
 func devicesTableCheck() {
 	query := `
 			CREATE TABLE IF NOT EXISTS ` + db.tableDevices + ` (
-				id SERIAL PRIMARY KEY,
 				email VARCHAR(255) NOT NULL,
+				device_uuid VARCHAR(255) NOT NULL,
 				device_model VARCHAR(255) NOT NULL,
 				device_name VARCHAR(255) NOT NULL,
 				system_name VARCHAR(255) NOT NULL,
 				system_version VARCHAR(255) NOT NULL,
-				device_id VARCHAR(255) NOT NULL,
 				app_version VARCHAR(255) NOT NULL,
-				created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+				created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+				updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+				CONSTRAINT profile_devices_unique UNIQUE (email, device_uuid)
 			);
 		`
 

@@ -27,7 +27,7 @@ func UserCreate(c *gin.Context) {
 		return
 	}
 
-	var profile Profile
+	var profile s.Profile
 	if err := c.BindJSON(&profile); err != nil {
 		errorResponse.Error = "invalid_request"
 		errorResponse.ErrorDescription = "Invalid request"
