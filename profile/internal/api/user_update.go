@@ -2,7 +2,6 @@ package api
 
 import (
 	"bytes"
-	"encoding/base64"
 	"encoding/json"
 	"net/http"
 	"profile/internal/db"
@@ -99,7 +98,6 @@ func UserChangeEmail(c *gin.Context) {
 		return
 	}
 
-	// payload, err := base64.StdEncoding.DecodeString(parts[1])
 	var changeEmail struct {
 		NewEmail string `json:"new_email"`
 		Password string `json:"password"`
@@ -111,16 +109,6 @@ func UserChangeEmail(c *gin.Context) {
 		c.IndentedJSON(http.StatusBadRequest, errorResponse)
 		return
 	}
-
-	password, err := base64.StdEncoding.DecodeString(changeEmail.Password)
-	if err != nil {
-		errorResponse.Error = "invalid_request"
-		errorResponse.ErrorDescription = "Invalid password"
-		c.IndentedJSON(http.StatusBadRequest, errorResponse)
-		return
-	}
-
-	changeEmail.Password = string(password)
 
 	url := server.AuthServerURL + server.ChangePathEmail
 	client := &http.Client{}

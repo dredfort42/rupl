@@ -17,6 +17,7 @@ type Server struct {
 	IdentifyPathUser   string
 	IdentifyPathDevice string
 	ChangePathEmail    string
+	DeletePathUser     string
 }
 
 var server Server
@@ -56,6 +57,11 @@ func ApiInit() {
 	server.ChangePathEmail = cfg.Config["auth.change.path.email"]
 	if server.ChangePathEmail == "" {
 		panic("auth.change.path.email is not set")
+	}
+
+	server.DeletePathUser = cfg.Config["auth.delete.path.user"]
+	if server.DeletePathUser == "" {
+		panic("auth.delete.path.user is not set")
 	}
 
 	if os.Getenv("DEBUG") != "true" && os.Getenv("DEBUG") != "1" {

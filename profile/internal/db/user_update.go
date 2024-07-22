@@ -44,6 +44,7 @@ func UserEmailChange(email string, newEmail string) (err error) {
 	_, err = db.database.Exec(query, email, newEmail)
 	if err != nil {
 		loger.Error("Failed to update email in the users table", err)
+		return
 	}
 
 	if !UserDevicesExistsCheck(email) {
