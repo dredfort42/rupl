@@ -7,7 +7,6 @@ import (
 // UserDelete deletes a user profile and all associated devices from the database
 func UserDelete(email string) (err error) {
 	if !UserExistsCheck(email) {
-		loger.Warning("User does not exist in the database")
 		return
 	}
 
@@ -23,7 +22,6 @@ func UserDelete(email string) (err error) {
 	}
 
 	if !UserDevicesExistsCheck(email) {
-		loger.Warning("Device does not exist in the database")
 		return
 	}
 

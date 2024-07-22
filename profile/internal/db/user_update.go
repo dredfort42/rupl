@@ -9,7 +9,6 @@ import (
 // UserUpdate updates a user profile in the database
 func UserUpdate(user s.User) (err error) {
 	if !UserExistsCheck(user.Email) {
-		loger.Warning("User does not exist in the database")
 		return
 	}
 
@@ -30,7 +29,6 @@ func UserUpdate(user s.User) (err error) {
 // UserEmailChange updates a user's email address in the database
 func UserEmailChange(email string, newEmail string) (err error) {
 	if !UserExistsCheck(email) {
-		loger.Warning("User does not exist in the database")
 		return
 	}
 
@@ -48,7 +46,6 @@ func UserEmailChange(email string, newEmail string) (err error) {
 	}
 
 	if !UserDevicesExistsCheck(email) {
-		loger.Warning("Device does not exist in the database")
 		return
 	}
 
