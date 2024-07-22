@@ -27,6 +27,21 @@ func UserDelete(c *gin.Context) {
 		return
 	}
 
+	userProfile, err := db.UserGet(body.Email)
+	if err != nil {
+		errorResponse.Error = "server_error"
+		errorResponse.ErrorDescription = "Error getting user profile"
+		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
+		return
+	}
+
+	if userProfile.Email == "" {
+		errorResponse.Error = "not_found"
+		errorResponse.ErrorDescription = "Profile not found"
+		c.IndentedJSON(http.StatusNotFound, errorResponse)
+		return
+	}
+
 	url := server.AuthServerURL + server.DeletePathUser
 	client := &http.Client{}
 
@@ -68,12 +83,12 @@ func UserDelete(c *gin.Context) {
 	err = db.UserDelete(body.Email)
 	if err != nil {
 		errorResponse.Error = "server_error"
-		errorResponse.ErrorDescription = "Error deleting user"
+		errorResponse.ErrorDescription = "Error deleting user profile"
 		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
 		return
 	}
 
-	loger.Debug("User profile deleted successfully for an ID: ", body.Email)
+	loger.Debug("User and profile deleted successfully for an ID: ", body.Email)
 
-	c.IndentedJSON(http.StatusOK, gin.H{"message": "Profile deleted"})
+	c.IndentedJSON(http.StatusOK, gin.H{"message": "User and profile deleted successfully"})
 }

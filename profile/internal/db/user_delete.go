@@ -1,9 +1,6 @@
 package db
 
 import (
-	"database/sql"
-	s "profile/internal/structs"
-
 	loger "github.com/dredfort42/tools/logprinter"
 )
 

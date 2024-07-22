@@ -25,7 +25,8 @@ tags:
 
 servers:
   - url: "http://localhost:4284"
-    description: "Local server"
+    description: |
+      Local server
 
 paths:
   /api/v1/profile/user:
@@ -33,9 +34,10 @@ paths:
       tags:
         - User
       summary: Create a new user profile
-      description: "Create a new user in the Profile service."
+      description: |
+        Create a new user in the Profile service.
       security:
-        - CookieAuth: []
+        - OAuth2AccessToken: []
       operationId: "UserCreate"
       requestBody:
         required: true
@@ -45,7 +47,8 @@ paths:
               $ref: "#/components/schemas/UserCreate"
       responses:
         "201":
-          description: OK
+          description: |
+            OK
           content:
             application/json:
               schema:
@@ -57,7 +60,8 @@ paths:
                   profile:
                     $ref: "#/components/schemas/User"
         "400":
-          description: Bad Request
+          description: |
+            Bad Request
           content:
             application/json:
               schema:
@@ -79,7 +83,8 @@ paths:
                     error: "invalid_request"
                     error_description: "Missing required fields"
         "409":
-          description: Profile already exists
+          description: |
+            Profile already exists
           content:
             application/json:
               schema:
@@ -91,7 +96,8 @@ paths:
                     error: "invalid_request"
                     error_description: "Profile already exists"
         "500":
-          description: Internal Server Error
+          description: |
+            Internal Server Error
           content:
             application/json:
               schema:
@@ -111,19 +117,22 @@ paths:
       tags:
         - User
       summary: Get user profile
-      description: "Get user profile from the Profile service."
+      description: |
+        Get user profile from the Profile service.
       security:
-        - CookieAuth: []
+        - OAuth2AccessToken: []
       operationId: "UserGet"
       responses:
         "200":
-          description: OK
+          description: |
+            OK
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
         "400":
-          description: Bad Request
+          description: |
+            Bad Request
           content:
             application/json:
               schema:
@@ -135,7 +144,8 @@ paths:
                     error: "invalid_request"
                     error_description: "Missing or invalid token"
         "404":
-          description: Not Found
+          description: |
+            Not Found
           content:
             application/json:
               schema:
@@ -147,7 +157,8 @@ paths:
                     error: "not_found"
                     error_description: "Profile not found"
         "500":
-          description: Internal Server Error
+          description: |
+            Internal Server Error
           content:
             application/json:
               schema:
@@ -168,9 +179,10 @@ paths:
       tags:
         - User
       summary: Update user profile
-      description: "Update user profile in the Profile service."
+      description: |
+        Update user profile in the Profile service.
       security:
-        - CookieAuth: []
+        - OAuth2AccessToken: []
       operationId: "UserUpdate"
       requestBody:
         required: true
@@ -180,7 +192,8 @@ paths:
               $ref: "#/components/schemas/UserCreate"
       responses:
         "200":
-          description: OK
+          description: |
+            OK
           content:
             application/json:
               schema:
@@ -192,7 +205,8 @@ paths:
                   profile:
                     $ref: "#/components/schemas/User"
         "400":
-          description: Bad Request
+          description: |
+            Bad Request
           content:
             application/json:
               schema:
@@ -209,7 +223,8 @@ paths:
                     error: "invalid_request"
                     error_description: "Invalid request"
         "404":
-          description: Not Found
+          description: |
+            Not Found
           content:
             application/json:
               schema:
@@ -221,7 +236,8 @@ paths:
                     error: "not_found"
                     error_description: "Profile not found"
         "500":
-          description: Internal Server Error
+          description: |
+            Internal Server Error
           content:
             application/json:
               schema:
@@ -243,6 +259,195 @@ paths:
                     error: "server_error"
                     error_description: "Error updating user profile"
 
+    delete:
+      tags:
+        - User
+      summary: Delete user profile
+      description: |
+        Delete user profile and all associated devices from the Profile service.
+      security:
+        - OAuth2AccessToken: []
+      operationId: "UserDelete"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  $ref: "#/components/schemas/Email"
+                password:
+                  $ref: "#/components/schemas/Password"
+      responses:
+        "200":
+          description: |
+            OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User and profile deleted successfully"
+        "400":
+          description: |
+            Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingToken:
+                  summary: Missing token
+                  value:
+                    error: "invalid_request"
+                    error_description: "Missing or invalid token"
+                invalidJSON:
+                  summary: Invalid JSON
+                  value:
+                    error: "invalid_request"
+                    error_description: "Invalid request"
+        "404":
+          description: |
+            Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingProfile:
+                  summary: Profile not found
+                  value:
+                    error: "not_found"
+                    error_description: "Profile not found"
+        "500":
+          description: |
+            Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingEmail:
+                  summary: Missing email
+                  value:
+                    error: "invalid_request"
+                    error_description: "Missing email"
+                errorGettingProfile:
+                  summary: Error getting profile
+                  value:
+                    error: "server_error"
+                    error_description: "Error getting user profile"
+                errorCreatingDeleteRequest:
+                  summary: Error creating delete user request
+                  value:
+                    error: "server_error"
+                    error_description: "Error creating delete user request"
+                errorSendingDeleteRequest:
+                  summary: Error sending delete user request
+                  value:
+                    error: "server_error"
+                    error_description: "Error sending delete user request"
+                errorDeleteUser:
+                  summary: Error deleting user
+                  value:
+                    error: "server_error"
+                    error_description: "Error deleting user"
+                deleteUserError:
+                  summary: Delete user error
+                  value:
+                    error: "server_error"
+                    error_description: "Error deleting user profile"
+
+  /api/v1/profile/user/email:
+    post:
+      security:
+        - OAuth2AccessToken: []
+      tags:
+        - User
+      summary: Change a user's email
+      description: |
+        Change a user's email address in the Profile service.
+      operationId: change_email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                new_email:
+                  $ref: "#/components/schemas/Email"
+                password:
+                  $ref: "#/components/schemas/Password"
+      responses:
+        "200":
+          description: |
+            OK
+          content:
+            application/json:
+              example:
+                message: "Profile email changed successfully"
+                email: new.email@example.com
+        "400":
+          description: |
+            Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingToken:
+                  summary: Missing token
+                  value:
+                    error: "invalid_request"
+                    error_description: "Missing or invalid token"
+                invalidJSON:
+                  summary: Invalid JSON
+                  value:
+                    error: "invalid_request"
+                    error_description: "Invalid request"
+        "500":
+          description: |
+            Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missingEmail:
+                  summary: Missing email
+                  value:
+                    error: "invalid_request"
+                    error_description: "Missing email"
+                errorGettingProfile:
+                  summary: Error getting profile
+                  value:
+                    error: "server_error"
+                    error_description: "Error getting user profile"
+                errorCreatingChangeEmailRequest:
+                  summary: Error creating change email request
+                  value:
+                    error: "server_error"
+                    error_description: "Error creating change email request"
+                errorSendingChangeEmailRequest:
+                  summary: Error sending change email request
+                  value:
+                    error: "server_error"
+                    error_description: "Error sending change email request"
+                errorChangeEmail:
+                  summary: Error changing email
+                  value:
+                    error: "server_error"
+                    error_description: "Error changing email"
+                errorUpdatingEmail:
+                  summary: Error updating user profile email in the database
+                  value:
+                    error: "server_error"
+                    error_description: "Error updating user profile email in the database"
+
 components:
   securitySchemes:
     CookieAuth:
@@ -252,6 +457,9 @@ components:
 
   schemas:
     UserCreate:
+      description: |
+        |
+        User profile creation request
       type: object
       properties:
         first_name:
@@ -274,19 +482,39 @@ components:
         - last_name
         - date_of_birth
 
+    Email:
+      description: |
+        |
+        User email address
+      type: string
+      format: email
+      example: john.smith@example.com
+
+    Password:
+      description: |
+        |
+        User password (base64 encoded)
+      type: string
+      format: password
+      example: P@ssw0rd
+
     User:
+      description: |
+        |
+        User profile
       allOf:
         - $ref: "#/components/schemas/UserCreate"
         - type: object
           properties:
             email:
-              type: string
-              format: email
-              example: "john.smith@example.com"
+              $ref: "#/components/schemas/Email"
           required:
             - email
 
     Error:
+      description: |
+        |
+        Error response
       type: object
       properties:
         error:
@@ -295,10 +523,3 @@ components:
         error_description:
           type: string
           example: Missing required fields
-
-  # authorized.GET("/api/v1/profile/user", UserGet)
-  # authorized.POST("/api/v1/profile/user", UserCreate)
-  # authorized.GET("/api/v1/profile/devices", DevicesGet)
-  # authorized.POST("/api/v1/profile/devices", DeviceCreate)
-  # authorized.PUT("/api/v1/profile/devices", UpdateDevice)
-  # authorized.DELETE("/api/v1/profile/devices", DeviceDelete)

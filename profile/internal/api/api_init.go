@@ -82,7 +82,7 @@ func ApiInit() {
 		authorized.POST("/api/v1/profile/user", UserCreate)
 		authorized.GET("/api/v1/profile/user", UserGet)
 		authorized.PATCH("/api/v1/profile/user", UserUpdate)
-		// authorized.DELETE("/api/v1/profile/user", UserDelete)
+		authorized.DELETE("/api/v1/profile/user", UserDelete)
 		authorized.POST("/api/v1/profile/user/email", UserChangeEmail)
 		authorized.POST("/api/v1/profile/devices", DeviceCreate)
 		authorized.GET("/api/v1/profile/devices", DevicesGet)

@@ -116,7 +116,7 @@ func UserChangeEmail(c *gin.Context) {
 	payload, err := json.Marshal(changeEmail)
 	if err != nil {
 		errorResponse.Error = "server_error"
-		errorResponse.ErrorDescription = "Error creating change email payload"
+		errorResponse.ErrorDescription = "Error creating change email request"
 		c.IndentedJSON(http.StatusInternalServerError, errorResponse)
 		return
 	}
