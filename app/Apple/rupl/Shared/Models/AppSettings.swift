@@ -385,7 +385,8 @@ class AppSettings {
 		UserDefaults.standard.set("https://rupl.org/api/v1/auth/device/identify", forKey: deviceIdentifyURLKey)
 		UserDefaults.standard.set("https://rupl.org/api/v1/auth/device/delete", forKey: deviceDeleteURLKey)
 		UserDefaults.standard.set("https://rupl.org/api/v1/auth/device/refresh", forKey: deviceRefreshURLKey)
-		UserDefaults.standard.set("https://rupl.org/api/v1/profile", forKey: profileURLKey)
+		UserDefaults.standard.set("https://rupl.org/api/v1/profile/user", forKey: profileURLKey)
+		
 		UserDefaults.standard.set("https://rupl.org/api/v1/profile/devices", forKey: deviceInfoURLKey)
 		UserDefaults.standard.set("https://rupl.org/api/v1/training/task", forKey: taskURLKey)
 		UserDefaults.standard.set("https://rupl.org/api/v1/session", forKey: sessionURLKey)

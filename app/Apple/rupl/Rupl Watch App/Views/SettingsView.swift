@@ -13,10 +13,11 @@ struct SettingsView: View {
 	@AppStorage(AppSettings.criticalHeartRateKey) var criticalHeartRate = AppSettings.shared.criticalHeartRate
 	@AppStorage(AppSettings.connectedToRuplKey) var isConnectedToRupl = AppSettings.shared.connectedToRupl
 
-	@State private var deviceAuthorization = false
+	@State private var deviceAuthorization: Bool = false
 	@State private var polling: Bool = false
 	@State private var userCode: String = ""
 	@State private var verificationUri: String = ""
+	@State private var deviceIdentified: Bool = false
 
 	var body: some View {
 		if !deviceAuthorization {
@@ -66,8 +67,14 @@ struct SettingsView: View {
 						}
 					} header: {
 						if isConnectedToRupl {
-							Text("● Connected to rupl.org")
-								.foregroundColor(.ruplGreen)
+							if deviceIdentified {
+								Text("● Connected to rupl.org")
+									.foregroundColor(.ruplGreen)
+							} else {
+								Text("○ Connected to rupl.org")
+									.foregroundColor(.ruplYellow)
+							}
+
 						} else {
 							Text("Connection to rupl.org")
 						}
@@ -93,6 +100,9 @@ struct SettingsView: View {
 					}
 				}
 			}
+			.onAppear() {
+				identifyDevice()
+			}
 		} else if userCode.isEmpty || verificationUri.isEmpty {
 			LoadingIndicatorView()
 		} else {
@@ -102,8 +112,15 @@ struct SettingsView: View {
 				}
 				.onDisappear() {
 					polling = false
-					
 				}
+		}
+	}
+
+	func identifyDevice() {
+		OAuth2.identifyDevice { result in
+			if result == "OK" {
+				deviceIdentified = true
+			}
 		}
 	}
 
@@ -133,6 +150,7 @@ struct SettingsView: View {
 					if !OAuth2.accessToken.isEmpty && !OAuth2.tokenType.isEmpty && OAuth2.expiresIn > Date.now {
 						self.polling = false
 						self.deviceAuthorization = false
+						Profile.getProfile()
 					}
 				}
 

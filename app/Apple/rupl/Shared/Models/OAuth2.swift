@@ -68,6 +68,7 @@ struct OAuth2 {
 		let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
 			if let error = error {
 				Logger.shared.log("Error: \(error)")
+				completion("KO")
 				return
 			}
 
@@ -83,8 +84,6 @@ struct OAuth2 {
 							self.refreshToken = refreshToken
 							self.tokenType = tokenType
 							self.expiresIn = Date.now + TimeInterval(expiresIn - 30)
-							print("A: ", accessToken)
-							print("R: ", refreshToken)
 						}
 					}
 				} catch {
@@ -96,7 +95,55 @@ struct OAuth2 {
 		task.resume()
 	}
 
+	static func checkAccessToken(completion: @escaping (String) -> Void) {
+		if AppSettings.shared.deviceAccessTokenExpiresIn > Date.now {
+			completion("OK")
+			return
+		} else {
+			let apiUrl = URL(string: "\(AppSettings.shared.deviceRefreshURL)?client_id=\(AppSettings.shared.clientID)&grant_type=refresh_token&refresh_token=\(AppSettings.shared.deviceRefreshToken)")!
+			var request = URLRequest(url: apiUrl)
+
+			request.httpMethod = "POST"
+
+			let task = URLSession.shared.dataTask(with: request) { data, response, error in
+				if let error = error {
+					Logger.shared.log("Error: \(error)")
+					completion("KO")
+					return
+				}
+
+				if let data = data {
+					do {
+						if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+							if let accessToken = json["access_token"] as? String,
+							   let refreshToken = json["refresh_token"] as? String,
+							   let tokenType = json["token_type"] as? String,
+							   let expiresIn = json["expires_in"] as? Int {
+
+								AppSettings.shared.deviceAccessToken = accessToken
+								AppSettings.shared.deviceRefreshToken = refreshToken
+								AppSettings.shared.deviceAccessTokenType = tokenType
+								AppSettings.shared.deviceAccessTokenExpiresIn = Date.now + TimeInterval(expiresIn - 30)
+							}
+						}
+					} catch {
+						Logger.shared.log("Error parsing JSON: \(error)")
+					}
+				}
+				completion("OK")
+			}
+			task.resume()
+		}
+	}
+
 	static func identifyDevice(completion: @escaping (String) -> Void) {
+		checkAccessToken() { result in
+			if result == "KO" {
+				completion("KO")
+				return
+			}
+		}
+
 		let apiUrl = URL(string: "\(AppSettings.shared.deviceIdentifyURL)?client_id=\(AppSettings.shared.clientID)")!
 		var request = URLRequest(url: apiUrl)
 
@@ -106,26 +153,30 @@ struct OAuth2 {
 		let task = URLSession.shared.dataTask(with: request) { data, response, error in
 			if let error = error {
 				Logger.shared.log("Error: \(error)")
+				completion("KO")
 				return
 			}
 
 			if let httpResponse = response as? HTTPURLResponse {
-				print("Status code: \(httpResponse.statusCode)")
 
-				if httpResponse.statusCode != 200 {
-					print("REFRESH TOKEN")
-					// TODO: chack access token
+				if httpResponse.statusCode == 200 {
+					completion("OK")
+				} else {
+					completion("KO")
 				}
 			}
 		}
 
 		task.resume()
-
 	}
 
 	static func deleteDevice(completion: @escaping (String) -> Void) {
-// TODO: chack access token
-
+		checkAccessToken() { result in
+			if result == "KO" {
+				completion("KO")
+				return
+			}
+		}
 
 		let apiUrl = URL(string: "\(AppSettings.shared.deviceDeleteURL)?client_id=\(AppSettings.shared.clientID)")!
 		var request = URLRequest(url: apiUrl)
@@ -146,53 +197,5 @@ struct OAuth2 {
 		task.resume()
 
 		AppSettings.shared.resetUser()
-	}
-
-	private func checkAccessToken(completion: @escaping (String) -> Void) {
-		if AppSettings.shared.deviceAccessTokenExpiresIn < Date.now {
-			let apiUrl = URL(string: "\(AppSettings.shared.deviceRefreshURL)?client_id=\(AppSettings.shared.clientID)&grant_type=refresh_token&refresh_token=\(AppSettings.shared.deviceRefreshToken)")!
-			var request = URLRequest(url: apiUrl)
-
-			request.httpMethod = "POST"
-
-			let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-				if let error = error {
-					Logger.shared.log("Error: \(error)")
-					return
-				}
-
-				if let httpResponse = response as? HTTPURLResponse {
-					if httpResponse.statusCode == 401 {
-						AppSettings.shared.resetUser()
-						completion("KO")
-						return
-					}
-				}
-
-				if let data = data {
-					do {
-						if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-							if let accessToken = json["access_token"] as? String,
-							   let refreshToken = json["refresh_token"] as? String,
-							   let tokenType = json["token_type"] as? String,
-							   let expiresIn = json["expires_in"] as? Int {
-
-								AppSettings.shared.deviceAccessToken = accessToken
-								AppSettings.shared.deviceRefreshToken = refreshToken
-								AppSettings.shared.deviceAccessTokenType = tokenType
-								AppSettings.shared.deviceAccessTokenExpiresIn = Date.now + TimeInterval(expiresIn - 30)
-								print("A: ", accessToken)
-								print("R: ", refreshToken)
-							}
-						}
-					} catch {
-						Logger.shared.log("Error parsing JSON: \(error)")
-					}
-				}
-				completion("OK")
-			}
-			task.resume()
-
-		}
 	}
 }
