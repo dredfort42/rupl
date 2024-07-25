@@ -37,8 +37,8 @@ extension WorkoutManager {
 			}
 
 			if self.session?.state == .running {
-//				if !self.checkCriticalHeartRate() && (-(self.session?.startDate ?? Date()).timeIntervalSinceNow > 300) {
-				if !self.checkCriticalHeartRate() {
+				if !self.checkCriticalHeartRate() && (-(self.session?.startDate ?? Date()).timeIntervalSinceNow > 300) {
+//				if !self.checkCriticalHeartRate() {
 					self.checkHeartRateZone()
 				}
 			}

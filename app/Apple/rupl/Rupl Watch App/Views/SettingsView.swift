@@ -13,10 +13,11 @@ struct SettingsView: View {
 	@AppStorage(AppSettings.criticalHeartRateKey) var criticalHeartRate = AppSettings.shared.criticalHeartRate
 	@AppStorage(AppSettings.connectedToRuplKey) var isConnectedToRupl = AppSettings.shared.connectedToRupl
 
-	@State private var deviceAuthorization = false
+	@State private var deviceAuthorization: Bool = false
 	@State private var polling: Bool = false
 	@State private var userCode: String = ""
 	@State private var verificationUri: String = ""
+	@State private var deviceIdentified: Bool = false
 
 	var body: some View {
 		if !deviceAuthorization {
@@ -66,8 +67,14 @@ struct SettingsView: View {
 						}
 					} header: {
 						if isConnectedToRupl {
-							Text("● Connected to rupl.org")
-								.foregroundColor(.ruplGreen)
+							if deviceIdentified {
+								Text("● Connected to rupl.org")
+									.foregroundColor(.ruplGreen)
+							} else {
+								Text("○ Connected to rupl.org")
+									.foregroundColor(.ruplYellow)
+							}
+
 						} else {
 							Text("Connection to rupl.org")
 						}
@@ -93,6 +100,9 @@ struct SettingsView: View {
 					}
 				}
 			}
+			.onAppear() {
+				identifyDevice()
+			}
 		} else if userCode.isEmpty || verificationUri.isEmpty {
 			LoadingIndicatorView()
 		} else {
@@ -102,14 +112,21 @@ struct SettingsView: View {
 				}
 				.onDisappear() {
 					polling = false
-					
 				}
+		}
+	}
+
+	func identifyDevice() {
+		OAuth2.identifyDevice { result in
+			if result == "OK" {
+				deviceIdentified = true
+			}
 		}
 	}
 
 	func sendRequest() {
 		deviceAuthorization = true
-		OAuth2.sendRequest { result in
+		OAuth2.sendAuthorizeRequest { result in
 			userCode = OAuth2.userCode
 			verificationUri = OAuth2.verificationUri
 		}
@@ -124,14 +141,16 @@ struct SettingsView: View {
 					self.sendRequest()
 				}
 
-				OAuth2.getDeviceAccessToken { result in
+				OAuth2.getDeviceTokens { result in
 					AppSettings.shared.deviceAccessToken = OAuth2.accessToken
+					AppSettings.shared.deviceRefreshToken = OAuth2.refreshToken
 					AppSettings.shared.deviceAccessTokenType = OAuth2.tokenType
-					AppSettings.shared.deviceAccessTokenExpiresIn = OAuth2.expiresIn.timeIntervalSince1970
+					AppSettings.shared.deviceAccessTokenExpiresIn = OAuth2.expiresIn
 
-					if !OAuth2.accessToken.isEmpty && !OAuth2.tokenType.isEmpty && OAuth2.expiresIn > Date() {
+					if !OAuth2.accessToken.isEmpty && !OAuth2.tokenType.isEmpty && OAuth2.expiresIn > Date.now {
 						self.polling = false
 						self.deviceAuthorization = false
+						Profile.getProfile()
 					}
 				}
 
@@ -139,17 +158,18 @@ struct SettingsView: View {
 			}
 
 			OAuth2.accessToken = ""
+			OAuth2.refreshToken = ""
 			OAuth2.tokenType = ""
-			OAuth2.expiresIn = Date()
+			OAuth2.expiresIn = Date.now
 		}
 	}
 
 	func resetDeviceAccess() {
 		DeviceInfo.shared.deleteDeviceInfo()
-		OAuth2.deleteDeviceAccess { result in
+		OAuth2.deleteDevice { result in
 			AppSettings.shared.deviceAccessToken = ""
 			AppSettings.shared.deviceAccessTokenType = ""
-			AppSettings.shared.deviceAccessTokenExpiresIn = 0
+			AppSettings.shared.deviceAccessTokenExpiresIn = Date.now
 			AppSettings.shared.userEmail = ""
 			AppSettings.shared.userFirstName = ""
 			AppSettings.shared.userLastName = ""

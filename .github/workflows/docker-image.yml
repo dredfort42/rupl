@@ -25,13 +25,6 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
 
-      - name: Build and push Docker image for auch
-        run: |
-          cd auth
-          docker pull dredfort/rupl-auth:latest || true
-          docker build -t dredfort/rupl-auth:latest .
-          docker push dredfort/rupl-auth:latest
-
       - name: Build and push Docker image for profile
         run: |
           cd profile
@@ -39,12 +32,12 @@ jobs:
           docker build -t dredfort/rupl-profile:latest .
           docker push dredfort/rupl-profile:latest
 
-      - name: Build and push Docker image for sessions receiver
-        run: |
-          cd sessions_receiver
-          docker pull dredfort/rupl-sessions-receiver:latest || true
-          docker build -t dredfort/rupl-sessions-receiver:latest .
-          docker push dredfort/rupl-sessions-receiver:latest
+      # - name: Build and push Docker image for sessions receiver
+      #   run: |
+      #     cd sessions_receiver
+      #     docker pull dredfort/rupl-sessions-receiver:latest || true
+      #     docker build -t dredfort/rupl-sessions-receiver:latest .
+      #     docker push dredfort/rupl-sessions-receiver:latest
 
       - name: Build and push Docker image for training
         run: |

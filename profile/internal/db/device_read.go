@@ -1,29 +1,52 @@
 package db
 
 import (
+	"database/sql"
 	s "profile/internal/structs"
 
 	loger "github.com/dredfort42/tools/logprinter"
 )
 
-// CheckDeviceExists checks if a device exists in the database based on the email and device ID provided
-func CheckDeviceExists(deviceID string) bool {
-	query := `SELECT device_id FROM ` + db.tableDevices + ` WHERE device_id = $1;`
+// DeviceExistsCheck checks if a device exists in the database based on the email and device ID provided
+func DeviceExistsCheck(email string, deviceUUID string) (result bool) {
+	query := `
+		SELECT 1 
+		FROM ` + db.tableDevices + ` 
+		WHERE email = $1
+		AND device_uuid = $2;
+	`
 
-	if err := db.database.QueryRow(query, deviceID).Scan(&deviceID); err != nil {
+	err := db.database.QueryRow(query, email, deviceUUID).Scan(&result)
+	if err != nil && err != sql.ErrNoRows {
 		loger.Error("Failed to check if device exists in the database", err)
-
-		return false
 	}
 
-	return true
+	return
 }
 
-// GetDevices returns a device from the database
-func GetDevices(email string) (s.UserDevices, error) {
-	var devices s.UserDevices
+// UserDevicesExistsCheck checks if a user has any devices in the database based on the email provided
+func UserDevicesExistsCheck(email string) (result bool) {
+	query := `
+		SELECT 1 
+		FROM ` + db.tableDevices + ` 
+		WHERE email = $1;
+	`
 
-	query := `SELECT * FROM ` + db.tableDevices + ` WHERE email = $1;`
+	err := db.database.QueryRow(query, email).Scan(&result)
+	if err != nil && err != sql.ErrNoRows {
+		loger.Error("Failed to check if user has any devices in the database", err)
+	}
+
+	return
+}
+
+// DevicesGet returns a device from the database
+func DevicesGet(email string) (devices s.UserDevices, err error) {
+	query := `
+		SELECT * 
+		FROM ` + db.tableDevices + ` 
+		WHERE email = $1;
+	`
 
 	rows, err := db.database.Query(query, email)
 	if err != nil {
@@ -32,16 +55,18 @@ func GetDevices(email string) (s.UserDevices, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		var id int
 		var tmpEmail string
 		var device s.Device
 		var created_at string
 		var updated_at string
 
-		if err := rows.Scan(&id, &tmpEmail, &device.DeviceModel, &device.DeviceName, &device.SystemName, &device.SystemVersion, &device.DeviceID, &device.AppVersion, &created_at, &updated_at); err != nil {
-			loger.Error("Failed to get device from the database", err)
+		err = rows.Scan(&tmpEmail, &device.DeviceUUID, &device.DeviceModel, &device.DeviceName, &device.SystemName, &device.SystemVersion, &device.AppVersion, &created_at, &updated_at)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				loger.Error("Failed to get device from the database", err)
+			}
 
-			return s.UserDevices{}, err
+			return
 		}
 
 		devices.Devices = append(devices.Devices, device)
@@ -49,5 +74,5 @@ func GetDevices(email string) (s.UserDevices, error) {
 
 	devices.Email = email
 
-	return devices, nil
+	return
 }

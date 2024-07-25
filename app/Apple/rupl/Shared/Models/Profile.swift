@@ -14,7 +14,7 @@ import os
 class Profile {
 
 	static func getProfile() {
-		let apiUrl = URL(string: "\(AppSettings.shared.profileURL)?client_id=\(AppSettings.shared.clientID)&access_token=\(AppSettings.shared.deviceAccessToken)")!
+		let apiUrl = URL(string: "\(AppSettings.shared.profileURL)")!
 		var request = URLRequest(url: apiUrl)
 
 		request.httpMethod = "GET"

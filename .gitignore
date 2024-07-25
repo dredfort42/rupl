@@ -1,23 +1,68 @@
-#global
-.vscode/
-.build/
-persistent_volumes/
-main
-docker-compose.yml
-.env
-*.zip
-*.cfg
-*.crt
-*.key
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# MacOS
-## General
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directories and tools
+coverage
+*.lcov
+.nyc_output
+lib-cov
+
+# Build and dependency directories
+build/
+bower_components
+node_modules/
+jspm_packages/
+web_modules/
+.serverless/
+.fusebox/
+.dynamodb/
+.nuxt/
+.vuepress/dist
+.next
+
+# Cache directories and files
+.cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+.eslintcache
+.stylelintcache
+*.tsbuildinfo
+.npm
+.grunt
+
+# Parcel and Snowpack
+.cache
+.web_modules/
+
+# Typescript
+*.tsbuildinfo
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Temporary files and directories
+tmp/
+temp/
+
+# OS-specific files
+## macOS
 .DS_Store
 .AppleDouble
 .LSOverride
-## Thumbnails
 ._*
-## Files that might appear in the root of a volume
 .DocumentRevisions-V100
 .fseventsd
 .Spotlight-V100
@@ -25,12 +70,32 @@ docker-compose.yml
 .Trashes
 .VolumeIcon.icns
 .com.apple.timemachine.donotpresent
-## Directories potentially created on remote AFP share
 .AppleDB
 .AppleDesktop
 Network Trash Folder
 Temporary Items
 .apdisk
+## Windows
+Thumbs.db
+ehthumbs.db
+
+# IDEs and editor files
+.idea/
+.nuclide/
+.tern-port
+
+# Project-specific files
+.build/
+persistent_volumes/
+main
+docker-compose.yml
+.env
+*_config.ini
+*.zip
+*.cfg
+*.crt
+*.key
+.42c
 
 # Xcode
 ## User settings
@@ -64,4 +129,3 @@ iOSInjectionProject/
 Packages/
 Package.pins
 Package.resolved
-

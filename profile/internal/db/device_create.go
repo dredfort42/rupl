@@ -6,19 +6,21 @@ import (
 	loger "github.com/dredfort42/tools/logprinter"
 )
 
-// CreateDevice creates a new device in the database
-func CreateDevice(email string, device s.Device) error {
-	if CheckDeviceExists(device.DeviceID) {
-		DeleteDevice(device.DeviceID)
+// DeviceCreate creates a new device in the database
+func DeviceCreate(email string, device s.Device) (err error) {
+	if DeviceExistsCheck(email, device.DeviceUUID) {
+		DeviceDelete(email, device.DeviceUUID)
 	}
 
-	query := `INSERT INTO ` + db.tableDevices + ` (email, device_model, device_name, system_name, system_version, device_id, app_version) VALUES ($1, $2, $3, $4, $5, $6, $7);`
+	query := `
+		INSERT INTO ` + db.tableDevices + ` (email, device_model, device_name, system_name, system_version, device_uuid, app_version) 
+		VALUES ($1, $2, $3, $4, $5, $6, $7);
+	`
 
-	if _, err := db.database.Exec(query, email, device.DeviceModel, device.DeviceName, device.SystemName, device.SystemVersion, device.DeviceID, device.AppVersion); err != nil {
+	_, err = db.database.Exec(query, email, device.DeviceModel, device.DeviceName, device.SystemName, device.SystemVersion, device.DeviceUUID, device.AppVersion)
+	if err != nil {
 		loger.Error("Failed to create device in the database", err)
-
-		return err
 	}
 
-	return nil
+	return
 }
