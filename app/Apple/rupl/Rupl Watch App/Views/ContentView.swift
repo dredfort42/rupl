@@ -44,7 +44,7 @@ struct ContentView: View {
 
 			if AppSettings.shared.connectedToRupl {
 				Profile.getProfile()
-				DeviceInfo.shared.sendDeviceInformation(createNew: false)
+				DeviceInfo.shared.sendDeviceInformation()
 				WorkoutData.shared.sendSessionDataFromStorage() { _ in }
 			}
 		}

@@ -49,7 +49,7 @@ struct OAuthInstructionView: View {
 		}
 		.onDisappear {
 			if AppSettings.shared.deviceAccessToken != "" {
-				DeviceInfo.shared.sendDeviceInformation(createNew: true)
+				DeviceInfo.shared.sendDeviceInformation()
 			}
 		}
 	}

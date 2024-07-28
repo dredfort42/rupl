@@ -9,14 +9,18 @@
 import Foundation
 import os
 
-
-
 class Profile {
-
 	static func getProfile() {
-		let apiUrl = URL(string: "\(AppSettings.shared.profileURL)")!
+		OAuth2.checkAccessToken() { result in
+			if result == "KO" {
+				return
+			}
+		}
+
+		let apiUrl = URL(string: "\(AppSettings.shared.profileURL)?client_id=\(AppSettings.shared.clientID)")!
 		var request = URLRequest(url: apiUrl)
 
+		request.setValue("Bearer \(AppSettings.shared.deviceAccessToken)", forHTTPHeaderField: "Authorization")
 		request.httpMethod = "GET"
 
 		let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
@@ -28,6 +32,16 @@ class Profile {
 			if let data = data {
 				do {
 
+					print(String(data: data, encoding: .utf8)!)
+					
+//					{
+//						"first_name": "John",
+//						"last_name": "Smith",
+//						"date_of_birth": "2024-07-25",
+//						"gender": "man",
+//						"email": "john.smith@example.com"
+//					}
+
 					if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
 						if let email = json["email"] as? String,
 						   let firstName = json["first_name"] as? String,
@@ -37,8 +51,7 @@ class Profile {
 							let dateFormatter = DateFormatter()
 
 							dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
-							dateFormatter.locale = Locale(identifier: "en_US_POSIX")
-							dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+							dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
 
 							AppSettings.shared.userEmail = email
 							AppSettings.shared.userFirstName = firstName
