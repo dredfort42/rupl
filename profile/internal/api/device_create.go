@@ -40,14 +40,6 @@ func DeviceCreate(c *gin.Context) {
 		return
 	}
 
-	exists = db.DeviceExistsCheck(tmpEmail.(string), device.DeviceUUID)
-	if exists {
-		errorResponse.Error = "invalid_request"
-		errorResponse.ErrorDescription = "Device already exists"
-		c.IndentedJSON(http.StatusConflict, errorResponse)
-		return
-	}
-
 	if err = db.DeviceCreate(email, device); err != nil {
 		errorResponse.Error = "server_error"
 		errorResponse.ErrorDescription = "Error creating device"
