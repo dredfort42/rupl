@@ -20,7 +20,8 @@ func DeviceCreate(email string, device s.Device) (err error) {
 			device_name = $3,
 			system_name = $4,
 			system_version = $5,
-			app_version = $7;
+			app_version = $7,
+			updated_at = CURRENT_TIMESTAMP;
 	`
 
 	_, err = db.database.Exec(query, email, device.DeviceModel, device.DeviceName, device.SystemName, device.SystemVersion, device.DeviceUUID, device.AppVersion)

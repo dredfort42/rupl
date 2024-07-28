@@ -68,12 +68,12 @@ class DeviceInfo {
 		request.httpMethod = "POST"
 
 		let task = URLSession.shared.dataTask(with: request) { data, response, error in
-//			guard let data = data else {
-//				Logger.shared.log("Error: \(error)")
-//				return
-//			}
+			guard let data = data else {
+				Logger.shared.log("Error: \(error)")
+				return
+			}
 #if DEBUG
-//			print(String(data: data, encoding: .utf8)!)
+			print(String(data: data, encoding: .utf8)!)
 #endif
 		}
 
