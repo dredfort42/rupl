@@ -37,20 +37,23 @@ class DeviceInfo {
 		print("App Version: \(AppSettings.shared.appVersion)")
 	}
 
-	func sendDeviceInformation(createNew: Bool) {
+	func sendDeviceInformation() {
 		guard let apiUrl = URL(string: "\(AppSettings.shared.deviceInfoURL)?client_id=\(AppSettings.shared.clientID)&access_token=\(AppSettings.shared.deviceAccessToken)") else {
 			print("Invalid URL")
 			return
 		}
+
 		var request = URLRequest(url: apiUrl)
+		request.setValue("Bearer \(AppSettings.shared.deviceAccessToken)", forHTTPHeaderField: "Authorization")
+
 		var parameters = [String: Any]()
 		var jsonData = Data()
 
+		parameters["device_uuid"] = device.identifier
 		parameters["device_model"] = device.model
 		parameters["device_name"] = device.name
 		parameters["system_name"] = device.system
 		parameters["system_version"] = device.version
-		parameters["device_id"] = device.identifier
 		parameters["app_version"] = AppSettings.shared.appVersion
 
 		do {
@@ -61,12 +64,8 @@ class DeviceInfo {
 
 		request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 		request.httpBody = jsonData
-		
-		if createNew {
-			request.httpMethod = "POST"
-		} else {
-			request.httpMethod = "PUT"
-		}
+
+		request.httpMethod = "POST"
 
 		let task = URLSession.shared.dataTask(with: request) { data, response, error in
 //			guard let data = data else {
