@@ -38,7 +38,7 @@ class DeviceInfo {
 	}
 
 	func sendDeviceInformation() {
-		guard let apiUrl = URL(string: "\(AppSettings.shared.deviceInfoURL)?client_id=\(AppSettings.shared.clientID)&access_token=\(AppSettings.shared.deviceAccessToken)") else {
+		guard let apiUrl = URL(string: "\(AppSettings.shared.deviceInfoURL)?client_id=\(AppSettings.shared.clientID)") else {
 			print("Invalid URL")
 			return
 		}
