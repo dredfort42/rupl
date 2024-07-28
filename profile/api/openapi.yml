@@ -501,19 +501,6 @@ paths:
                   value:
                     error: "invalid_request"
                     error_description: "Device struct check failed | ..."
-        "409":
-          description: |
-            Device already exists
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-              examples:
-                deviceExists:
-                  summary: Device already exists
-                  value:
-                    error: "invalid_request"
-                    error_description: "Device already exists"
         "500":
           description: |
             Internal Server Error
