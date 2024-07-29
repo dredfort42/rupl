@@ -29,7 +29,7 @@ class AppSettings {
 	private let deviceDeleteURLKey = "deviceDeleteURL"
 	private let deviceRefreshURLKey = "deviceRefreshURL"
 	private let profileURLKey = "profileURL"
-	private let deviceInfoURLKey = "deviceInfoURL"
+	private let deviceURLKey = "deviceInfoURL"
 	private let taskURLKey = "taskURL"
 	private let sessionURLKey = "sessionURL"
 	private let deviceAccessTokenKey = "deviceAccessToken"
@@ -110,9 +110,9 @@ class AppSettings {
 		}
 	}
 
-	var deviceInfoURL: String {
+	var deviceURL: String {
 		get {
-			return UserDefaults.standard.string(forKey: deviceInfoURLKey) ?? ""
+			return UserDefaults.standard.string(forKey: deviceURLKey) ?? ""
 		}
 	}
 
@@ -386,8 +386,8 @@ class AppSettings {
 		UserDefaults.standard.set("https://rupl.org/api/v1/auth/device/delete", forKey: deviceDeleteURLKey)
 		UserDefaults.standard.set("https://rupl.org/api/v1/auth/device/refresh", forKey: deviceRefreshURLKey)
 		UserDefaults.standard.set("https://rupl.org/api/v1/profile/user", forKey: profileURLKey)
+		UserDefaults.standard.set("https://rupl.org/api/v1/profile/devices", forKey: deviceURLKey)
 		
-		UserDefaults.standard.set("https://rupl.org/api/v1/profile/devices", forKey: deviceInfoURLKey)
 		UserDefaults.standard.set("https://rupl.org/api/v1/training/task", forKey: taskURLKey)
 		UserDefaults.standard.set("https://rupl.org/api/v1/session", forKey: sessionURLKey)
 
