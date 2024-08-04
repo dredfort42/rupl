@@ -2,7 +2,7 @@ package main
 
 import (
 	"sessions_receiver/internal/api"
-	"sessions_receiver/internal/db"
+	// "sessions_receiver/internal/db"
 
 	cfg "github.com/dredfort42/tools/configreader"
 )
@@ -13,6 +13,6 @@ func main() {
 		panic(err)
 	}
 
-	db.DatabaseInit()
+	// db.DatabaseInit()
 	api.ApiInit()
 }
