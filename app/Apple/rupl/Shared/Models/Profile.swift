@@ -34,14 +34,6 @@ class Profile {
 
 					print(String(data: data, encoding: .utf8)!)
 					
-//					{
-//						"first_name": "John",
-//						"last_name": "Smith",
-//						"date_of_birth": "2024-07-25",
-//						"gender": "man",
-//						"email": "john.smith@example.com"
-//					}
-
 					if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
 						if let email = json["email"] as? String,
 						   let firstName = json["first_name"] as? String,

@@ -73,7 +73,8 @@ class WorkoutData {
 			let sessionData: [String: Any] = [
 				"session_start_time": Int64(lastRun.startDate.timeIntervalSince1970),
 				"session_end_time": Int64(lastRun.endDate.timeIntervalSince1970),
-				"email": AppSettings.shared.userEmail
+				"email": AppSettings.shared.userEmail,
+				"device_name": DeviceInfo.shared.device.name
 			]
 
 			self.workoutData["session"] = sessionData
@@ -243,13 +244,10 @@ class WorkoutData {
 			return
 		}
 
-		guard let apiUrl = URL(string: "\(AppSettings.shared.sessionURL)?client_id=\(AppSettings.shared.clientID)&access_token=\(AppSettings.shared.deviceAccessToken)") else {
-			Logger.shared.log("Invalid URL")
-			completion(false)
-			return
-		}
-
+		let apiUrl = URL(string: "\(AppSettings.shared.sessionURL)?client_id=\(AppSettings.shared.clientID)")!
 		var request = URLRequest(url: apiUrl)
+
+		request.setValue("Bearer \(AppSettings.shared.deviceAccessToken)", forHTTPHeaderField: "Authorization")
 		request.httpMethod = "POST"
 		request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 		request.httpBody = jsonData
@@ -266,7 +264,7 @@ class WorkoutData {
 				return
 			}
 
-			if httpResponse.statusCode != 200 {
+			if httpResponse.statusCode != 201 {
 				completion(false)
 				return
 			}
