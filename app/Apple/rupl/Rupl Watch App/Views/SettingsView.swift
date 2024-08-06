@@ -165,16 +165,10 @@ struct SettingsView: View {
 	}
 
 	func resetDeviceAccess() {
-		DeviceInfo.shared.deleteDeviceInfo()
 		OAuth2.deleteDevice { result in
-			AppSettings.shared.deviceAccessToken = ""
-			AppSettings.shared.deviceAccessTokenType = ""
-			AppSettings.shared.deviceAccessTokenExpiresIn = Date.now
-			AppSettings.shared.userEmail = ""
-			AppSettings.shared.userFirstName = ""
-			AppSettings.shared.userLastName = ""
-			AppSettings.shared.userDateOfBirth = nil
-			AppSettings.shared.userGender = ""
+			if result == "OK" {
+				AppSettings.shared.resetUser()
+			}
 		}
 	}
 }

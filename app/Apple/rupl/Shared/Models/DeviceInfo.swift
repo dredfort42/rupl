@@ -38,7 +38,14 @@ class DeviceInfo {
 	}
 
 	func sendDeviceInformation() {
-		guard let apiUrl = URL(string: "\(AppSettings.shared.deviceInfoURL)?client_id=\(AppSettings.shared.clientID)") else {
+		OAuth2.checkAccessToken() { result in
+			if result == "KO" {
+				print("Failed check access token")
+				return
+			}
+		}
+
+		guard let apiUrl = URL(string: "\(AppSettings.shared.deviceURL)?client_id=\(AppSettings.shared.clientID)") else {
 			print("Invalid URL")
 			return
 		}
@@ -68,12 +75,12 @@ class DeviceInfo {
 		request.httpMethod = "POST"
 
 		let task = URLSession.shared.dataTask(with: request) { data, response, error in
-//			guard let data = data else {
-//				Logger.shared.log("Error: \(error)")
-//				return
-//			}
+			guard let data = data else {
+				Logger.shared.log("Error: \(error)")
+				return
+			}
 #if DEBUG
-//			print(String(data: data, encoding: .utf8)!)
+			print(String(data: data, encoding: .utf8)!)
 #endif
 		}
 
@@ -81,20 +88,18 @@ class DeviceInfo {
 	}
 
 	func deleteDeviceInfo() {
-		guard let apiUrl = URL(string: "\(AppSettings.shared.deviceInfoURL)?client_id=\(AppSettings.shared.clientID)&access_token=\(AppSettings.shared.deviceAccessToken)") else {
+		guard let apiUrl = URL(string: "\(AppSettings.shared.deviceURL)?client_id=\(AppSettings.shared.clientID)") else {
 			print("Invalid URL")
 			return
 		}
+
 		var request = URLRequest(url: apiUrl)
+		request.setValue("Bearer \(AppSettings.shared.deviceAccessToken)", forHTTPHeaderField: "Authorization")
+
 		var parameters = [String: Any]()
 		var jsonData = Data()
 
-		parameters["device_model"] = device.model
-		parameters["device_name"] = device.name
-		parameters["system_name"] = device.system
-		parameters["system_version"] = device.version
-		parameters["device_id"] = device.identifier
-		parameters["app_version"] = AppSettings.shared.appVersion
+		parameters["device_uuid"] = device.identifier
 
 		do {
 			jsonData = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
@@ -107,12 +112,12 @@ class DeviceInfo {
 		request.httpBody = jsonData
 
 		let task = URLSession.shared.dataTask(with: request) { data, response, error in
-//			guard let data = data else {
-//				Logger.shared.log("Error: \(error)")
-//				return
-//			}
+			guard let data = data else {
+				Logger.shared.log("Error: \(error)")
+				return
+			}
 #if DEBUG
-//			print(String(data: data, encoding: .utf8)!)
+			print(String(data: data, encoding: .utf8)!)
 #endif
 		}
 

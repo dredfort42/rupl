@@ -97,6 +97,7 @@ docker-compose.yml
 *.key
 .42c
 _*
+.*
 
 # Xcode
 ## User settings

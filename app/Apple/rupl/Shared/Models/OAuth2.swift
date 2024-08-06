@@ -158,7 +158,6 @@ struct OAuth2 {
 			}
 
 			if let httpResponse = response as? HTTPURLResponse {
-
 				if httpResponse.statusCode == 200 {
 					completion("OK")
 				} else {
@@ -178,6 +177,8 @@ struct OAuth2 {
 			}
 		}
 
+		DeviceInfo.shared.deleteDeviceInfo()
+
 		let apiUrl = URL(string: "\(AppSettings.shared.deviceDeleteURL)?client_id=\(AppSettings.shared.clientID)")!
 		var request = URLRequest(url: apiUrl)
 
@@ -187,15 +188,22 @@ struct OAuth2 {
 		let task = URLSession.shared.dataTask(with: request) { data, response, error in
 			guard let data = data else {
 				Logger.shared.log("Error: \(error)")
+				completion("KO")
 				return
 			}
 #if DEBUG
 			print(String(data: data, encoding: .utf8)!)
 #endif
+
+			if let httpResponse = response as? HTTPURLResponse {
+				if httpResponse.statusCode == 200 {
+					completion("OK")
+				} else {
+					completion("KO")
+				}
+			}
 		}
 
 		task.resume()
-
-		AppSettings.shared.resetUser()
 	}
 }
