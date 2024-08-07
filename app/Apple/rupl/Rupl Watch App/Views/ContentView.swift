@@ -43,9 +43,13 @@ struct ContentView: View {
 			selection = .controls
 
 			if AppSettings.shared.connectedToRupl {
-				Profile.getProfile()
-				DeviceInfo.shared.sendDeviceInformation()
-				WorkoutData.shared.sendSessionDataFromStorage() { _ in }
+				OAuth2.checkAccessToken() { result in
+					if result == "OK" {
+						Profile.getProfile()
+						DeviceInfo.shared.sendDeviceInformation()
+						WorkoutData.shared.sendSessionDataFromStorage() { _ in }
+					}
+				}
 			}
 		}
 		.sheet(isPresented: $isSheetActive) {
