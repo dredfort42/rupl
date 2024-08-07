@@ -113,6 +113,9 @@ struct OAuth2 {
 				}
 
 				if let data = data {
+#if DEBUG
+					print(String(data: data, encoding: .utf8)!)
+#endif
 					do {
 						if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
 							if let accessToken = json["access_token"] as? String,
