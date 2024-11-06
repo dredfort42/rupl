@@ -19,3 +19,6 @@ extension DeviceInfo {
 					  identifier: currentDevice.identifierForVendor?.uuidString ?? "N/A")
 	}
 }
+
+
+// test
