@@ -56,9 +56,9 @@ struct ControlsView: View {
 		} content: {
 			TaskView()
 		}
-		.onAppear() {
-			getTask(retryCount: 12)
-		}
+//		.onAppear() {
+//			getTask(retryCount: 12)
+//		}
 		.onDisappear() {
 			active = false
 		}

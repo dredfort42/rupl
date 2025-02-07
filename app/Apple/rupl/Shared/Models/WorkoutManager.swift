@@ -228,7 +228,7 @@ extension WorkoutManager{
 					try await routeBuilder?.finishRoute(with: finishedWorkout, metadata: nil)
 				}
 
-				WorkoutData.shared.postWorkout()
+//				WorkoutData.shared.postWorkout()
 			} catch {
 				Logger.shared.log("Failed to end workout: \(error)")
 			}
